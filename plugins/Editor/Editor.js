@@ -18,16 +18,21 @@ var EditorPlugIn = (function (_super) {
     EditorPlugIn.prototype.Delegate = function (caseViewer, caseModel) {
         $('.node').click(function (ev) {
             ev.stopPropagation();
-            var p = $(this).position();
+            var p0 = $(this).position();
+            var h4 = $(this).find("h4");
+            var p = h4.position();
+            p.left += p0.left;
+            p.top += p0.top;
             $('#editor').css({ position: 'absolute', top: p.top, left: p.left, display: 'block' }).appendTo($('#layer2')).focus().blur(function (e) {
                 e.stopPropagation();
                 $(this).css({ display: 'none' });
+                $('#editor').text("");
             }).on("keydown", function (e) {
                 if (e.keyCode == 27) {
                     e.stopPropagation();
                     $(this).css({ display: 'none' });
                 }
-            });
+            }).width(h4.outerWidth());
         });
         $('#layer1').click(function () {
             $('#editor').blur();
