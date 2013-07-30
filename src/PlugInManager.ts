@@ -39,6 +39,17 @@ class HTMLRenderPlugIn extends PlugIn {
 	}
 }
 
+class SVGRenderPlugIn extends PlugIn {
+	IsEnabled(caseViewer: CaseViewer, elementShape: ElementShape /* add args as necessary */) : boolean {
+		return true;
+	}
+
+	Delegate(caseViewer: CaseViewer, elementShape: ElementShape /* add args as necessary */) : boolean {
+		return true;
+	}
+
+}
+
 class PlugInManager {
 
 	ActionPlugIns : ActionPlugIn[];
@@ -46,6 +57,7 @@ class PlugInManager {
 	CheckerPlugInMap : { [index: string]: CheckerPlugIn};
 	DefaultHTMLRenderPlugIns : HTMLRenderPlugIn[];
 	HTMLRenderPlugInMap : { [index: string]: HTMLRenderPlugIn};
+	SVGRenderPlugInMap  : { [index: string]: SVGRenderPlugIn};
 
 	constructor() {
 		this.ActionPlugIns = [];
@@ -53,6 +65,7 @@ class PlugInManager {
 		this.CheckerPlugInMap = {};
 		this.DefaultHTMLRenderPlugIns = [];
 		this.HTMLRenderPlugInMap = {};
+		this.SVGRenderPlugInMap = {};
 	}
 
 
@@ -90,6 +103,10 @@ class PlugInManager {
 
 	AddHTMLRenderPlugIn(key: string, HTMLRenderPlugIn: HTMLRenderPlugIn) {
 		this.HTMLRenderPlugInMap[key] = HTMLRenderPlugIn;
+	}
+
+	AddSVGRenderPlugIn(key: string, SVGRenderPlugIn: SVGRenderPlugIn) {
+		this.SVGRenderPlugInMap[key] = SVGRenderPlugIn;
 	}
 }
 /** this is sample of ActionPlugIn */

@@ -21,7 +21,7 @@ class HTMLDoc {
 		this.DocBase = $('<div class="node">').css("position", "absolute");
 		this.DocBase.append($('<h4>' + CaseModel.Label + '</h4>'));
 		this.DocBase.append($('<p>' + CaseModel.Statement + '</p>'));
-		this.InvokePlugInRender(Viewer, CaseModel, this.DocBase);
+		this.InvokePlugInHTMLRender(Viewer, CaseModel, this.DocBase);
 		this.UpdateWidth(Viewer, CaseModel);
 		this.Resize(Viewer, CaseModel);
 	}
@@ -46,14 +46,12 @@ class HTMLDoc {
 		this.DocBase.width(CaseViewer.ElementWidth * 2 - this.DocBase.outerWidth());
 	}
 
-	InvokePlugInRender(caseViewer: CaseViewer, caseModel: CaseModel, DocBase: JQuery): void {
-		// FIXME remove hard-coded invocation
-		var AnnotationRender = caseViewer.GetPlugInRender("annotation");
-		AnnotationRender(caseViewer, caseModel, DocBase);
-		var NoteRender = caseViewer.GetPlugInRender("note");
-		NoteRender(caseViewer, caseModel, DocBase);
-		var MonitorRender = caseViewer.GetPlugInRender("monitor");
-		MonitorRender(caseViewer, caseModel, DocBase);
+	InvokePlugInHTMLRender(caseViewer: CaseViewer, caseModel: CaseModel, DocBase: JQuery): void {
+		var pluginMap : { [index: string]: HTMLRenderPlugIn} = caseViewer.pluginManager.HTMLRenderPlugInMap;
+		for(var key in pluginMap) {
+			var render = caseViewer.GetPlugInHTMLRender(key);
+			render(caseViewer, caseModel, DocBase);
+		}
 	}
 
 	Resize(Viewer: CaseViewer, Source: CaseModel): void {
@@ -306,21 +304,15 @@ class ElementShape {
 		this.SVGShape.Resize(this.CaseViewer, this.Source, this.HTMLDoc);
 	}
 
-	AppendHTMLElement(svgroot: JQuery, divroot: JQuery): void {
+	AppendHTMLElement(svgroot: JQuery, divroot: JQuery, caseViewer : CaseViewer): void {
 		divroot.append(this.HTMLDoc.DocBase);
 		this.HTMLDoc.SetPosition(this.AbsX, this.AbsY);
 		this.Resize();
 
 		svgroot.append(this.SVGShape.ShapeGroup);
 		this.SVGShape.SetPosition(this.AbsX, this.AbsY);
-		// TODO
-		// enable color-customization
-		if(this.HTMLDoc.DocBase.data('monitor')) {
-			this.SVGShape.SetColor("red", "black");
-		}
-		else {
-			this.SVGShape.SetColor("white", "black");
-		}
+		this.SVGShape.SetColor("white", "black");
+		this.InvokePlugInSVGRender(caseViewer);
 
 		// if it has an parent, add an arrow element.
 		if (this.ParentShape != null) {
@@ -343,6 +335,14 @@ class ElementShape {
 		p.x += this.AbsX;
 		p.y += this.AbsY;
 		return p;
+	}
+
+	InvokePlugInSVGRender(caseViewer: CaseViewer): void {
+		var pluginMap : { [index: string]: SVGRenderPlugIn} = caseViewer.pluginManager.SVGRenderPlugInMap;
+		for(var key in pluginMap) {
+			var render = caseViewer.GetPlugInSVGRender(key);
+			render(caseViewer, this);
+		}
 	}
 }
 
@@ -373,9 +373,15 @@ class CaseViewer {
 		this.Resize();
 	}
 
-	GetPlugInRender(PlugInName: string): (caseViewer: CaseViewer, caseModel: CaseModel, element: JQuery) => boolean {
+	GetPlugInHTMLRender(PlugInName: string): (caseViewer: CaseViewer, caseModel: CaseModel, element: JQuery) => boolean {
 		return (viewer: CaseViewer, model: CaseModel, e: JQuery) : boolean => {
 			return this.pluginManager.HTMLRenderPlugInMap[PlugInName].Delegate(viewer, model, e);
+		};
+	}
+
+	GetPlugInSVGRender(PlugInName: string): (caseViewer: CaseViewer, elementShape: ElementShape) => boolean {
+		return (viewer: CaseViewer, shape: ElementShape) : boolean => {
+			return this.pluginManager.SVGRenderPlugInMap[PlugInName].Delegate(viewer, shape);
 		};
 	}
 
@@ -403,7 +409,7 @@ class CaseViewer {
 		var shapelayer = $(Screen.ShapeLayer);
 		var screenlayer = $(Screen.ContentLayer);
 		for (var viewkey in this.ViewMap) {
-			this.ViewMap[viewkey].AppendHTMLElement(shapelayer, screenlayer);
+			this.ViewMap[viewkey].AppendHTMLElement(shapelayer, screenlayer, this);
 		}
 		this.pluginManager.RegisterActionEventListeners(this, this.Source, this.serverApi);
 		this.Resize();

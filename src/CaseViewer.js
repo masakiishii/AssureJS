@@ -18,7 +18,7 @@ var HTMLDoc = (function () {
         this.DocBase = $('<div class="node">').css("position", "absolute");
         this.DocBase.append($('<h4>' + CaseModel.Label + '</h4>'));
         this.DocBase.append($('<p>' + CaseModel.Statement + '</p>'));
-        this.InvokePlugInRender(Viewer, CaseModel, this.DocBase);
+        this.InvokePlugInHTMLRender(Viewer, CaseModel, this.DocBase);
         this.UpdateWidth(Viewer, CaseModel);
         this.Resize(Viewer, CaseModel);
     };
@@ -43,13 +43,12 @@ var HTMLDoc = (function () {
         this.DocBase.width(CaseViewer.ElementWidth * 2 - this.DocBase.outerWidth());
     };
 
-    HTMLDoc.prototype.InvokePlugInRender = function (caseViewer, caseModel, DocBase) {
-        var AnnotationRender = caseViewer.GetPlugInRender("annotation");
-        AnnotationRender(caseViewer, caseModel, DocBase);
-        var NoteRender = caseViewer.GetPlugInRender("note");
-        NoteRender(caseViewer, caseModel, DocBase);
-        var MonitorRender = caseViewer.GetPlugInRender("monitor");
-        MonitorRender(caseViewer, caseModel, DocBase);
+    HTMLDoc.prototype.InvokePlugInHTMLRender = function (caseViewer, caseModel, DocBase) {
+        var pluginMap = caseViewer.pluginManager.HTMLRenderPlugInMap;
+        for (var key in pluginMap) {
+            var render = caseViewer.GetPlugInHTMLRender(key);
+            render(caseViewer, caseModel, DocBase);
+        }
     };
 
     HTMLDoc.prototype.Resize = function (Viewer, Source) {
@@ -306,19 +305,15 @@ var ElementShape = (function () {
         this.SVGShape.Resize(this.CaseViewer, this.Source, this.HTMLDoc);
     };
 
-    ElementShape.prototype.AppendHTMLElement = function (svgroot, divroot) {
+    ElementShape.prototype.AppendHTMLElement = function (svgroot, divroot, caseViewer) {
         divroot.append(this.HTMLDoc.DocBase);
         this.HTMLDoc.SetPosition(this.AbsX, this.AbsY);
         this.Resize();
 
         svgroot.append(this.SVGShape.ShapeGroup);
         this.SVGShape.SetPosition(this.AbsX, this.AbsY);
-
-        if (this.HTMLDoc.DocBase.data('monitor')) {
-            this.SVGShape.SetColor("red", "black");
-        } else {
-            this.SVGShape.SetColor("white", "black");
-        }
+        this.SVGShape.SetColor("white", "black");
+        this.InvokePlugInSVGRender(caseViewer);
 
         if (this.ParentShape != null) {
             var p1 = null;
@@ -340,6 +335,14 @@ var ElementShape = (function () {
         p.x += this.AbsX;
         p.y += this.AbsY;
         return p;
+    };
+
+    ElementShape.prototype.InvokePlugInSVGRender = function (caseViewer) {
+        var pluginMap = caseViewer.pluginManager.SVGRenderPlugInMap;
+        for (var key in pluginMap) {
+            var render = caseViewer.GetPlugInSVGRender(key);
+            render(caseViewer, this);
+        }
     };
     return ElementShape;
 })();
@@ -371,10 +374,17 @@ var CaseViewer = (function () {
         this.ElementTop = Source.ElementTop;
         this.Resize();
     }
-    CaseViewer.prototype.GetPlugInRender = function (PlugInName) {
+    CaseViewer.prototype.GetPlugInHTMLRender = function (PlugInName) {
         var _this = this;
         return function (viewer, model, e) {
             return _this.pluginManager.HTMLRenderPlugInMap[PlugInName].Delegate(viewer, model, e);
+        };
+    };
+
+    CaseViewer.prototype.GetPlugInSVGRender = function (PlugInName) {
+        var _this = this;
+        return function (viewer, shape) {
+            return _this.pluginManager.SVGRenderPlugInMap[PlugInName].Delegate(viewer, shape);
         };
     };
 
@@ -397,7 +407,7 @@ var CaseViewer = (function () {
         var shapelayer = $(Screen.ShapeLayer);
         var screenlayer = $(Screen.ContentLayer);
         for (var viewkey in this.ViewMap) {
-            this.ViewMap[viewkey].AppendHTMLElement(shapelayer, screenlayer);
+            this.ViewMap[viewkey].AppendHTMLElement(shapelayer, screenlayer, this);
         }
         this.pluginManager.RegisterActionEventListeners(this, this.Source, this.serverApi);
         this.Resize();

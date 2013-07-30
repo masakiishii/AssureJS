@@ -2,7 +2,7 @@
 /// <reference path="../../src/CaseViewer.ts" />
 /// <reference path="../../src/PlugInManager.ts" />
 
-class MonitorPlugin extends HTMLRenderPlugIn {
+class MonitorHTMLRenderPlugIn extends HTMLRenderPlugIn {
 	IsEnabled(caseViewer: CaseViewer, caseModel: CaseModel) : boolean {
 		return true;
 	}
@@ -40,6 +40,20 @@ class MonitorPlugin extends HTMLRenderPlugIn {
 			}
 		});
 
+		return true;
+	}
+}
+
+class MonitorSVGRenderPlugIn extends SVGRenderPlugIn {
+	IsEnable(caseViewer: CaseViewer, element: JQuery) : boolean {
+		return true;
+	}
+
+	Delegate(caseViewer: CaseViewer, elementShape: ElementShape) : boolean {
+		var element: JQuery = elementShape.HTMLDoc.DocBase;
+		if(element.data('monitor')) {
+			elementShape.SVGShape.SetColor("red", "black");
+		}
 		return true;
 	}
 }

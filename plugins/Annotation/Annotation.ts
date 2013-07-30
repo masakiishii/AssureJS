@@ -2,7 +2,7 @@
 /// <reference path="../../src/CaseViewer.ts" />
 /// <reference path="../../src/PlugInManager.ts" />
 
-class AnnotationPlugIn extends HTMLRenderPlugIn {
+class AnnotationHTMLRenderPlugIn extends HTMLRenderPlugIn {
 	IsEnabled(caseViewer: CaseViewer, caseModel: CaseModel) : boolean {
 		return true;
 	}

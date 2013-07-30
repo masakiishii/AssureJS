@@ -55,6 +55,21 @@ var HTMLRenderPlugIn = (function (_super) {
     return HTMLRenderPlugIn;
 })(PlugIn);
 
+var SVGRenderPlugIn = (function (_super) {
+    __extends(SVGRenderPlugIn, _super);
+    function SVGRenderPlugIn() {
+        _super.apply(this, arguments);
+    }
+    SVGRenderPlugIn.prototype.IsEnabled = function (caseViewer, elementShape) {
+        return true;
+    };
+
+    SVGRenderPlugIn.prototype.Delegate = function (caseViewer, elementShape) {
+        return true;
+    };
+    return SVGRenderPlugIn;
+})(PlugIn);
+
 var PlugInManager = (function () {
     function PlugInManager() {
         this.ActionPlugIns = [];
@@ -62,6 +77,7 @@ var PlugInManager = (function () {
         this.CheckerPlugInMap = {};
         this.DefaultHTMLRenderPlugIns = [];
         this.HTMLRenderPlugInMap = {};
+        this.SVGRenderPlugInMap = {};
     }
     PlugInManager.prototype.AddActionPlugIn = function (key, actionPlugIn) {
         this.ActionPlugIns.push(actionPlugIn);
@@ -77,6 +93,10 @@ var PlugInManager = (function () {
 
     PlugInManager.prototype.AddHTMLRenderPlugIn = function (key, HTMLRenderPlugIn) {
         this.HTMLRenderPlugInMap[key] = HTMLRenderPlugIn;
+    };
+
+    PlugInManager.prototype.AddSVGRenderPlugIn = function (key, SVGRenderPlugIn) {
+        this.SVGRenderPlugInMap[key] = SVGRenderPlugIn;
     };
     return PlugInManager;
 })();

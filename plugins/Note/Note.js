@@ -4,17 +4,17 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-var NotePlugIn = (function (_super) {
-    __extends(NotePlugIn, _super);
-    function NotePlugIn() {
+var NoteHTMLRenderPlugIn = (function (_super) {
+    __extends(NoteHTMLRenderPlugIn, _super);
+    function NoteHTMLRenderPlugIn() {
         _super.apply(this, arguments);
     }
-    NotePlugIn.prototype.IsEnabled = function (caseViewer, caseModel) {
+    NoteHTMLRenderPlugIn.prototype.IsEnabled = function (caseViewer, caseModel) {
         return true;
     };
 
-    NotePlugIn.prototype.Delegate = function (caseViewer, caseModel) {
+    NoteHTMLRenderPlugIn.prototype.Delegate = function (caseViewer, caseModel) {
         return true;
     };
-    return NotePlugIn;
+    return NoteHTMLRenderPlugIn;
 })(HTMLRenderPlugIn);

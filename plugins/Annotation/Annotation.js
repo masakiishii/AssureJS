@@ -4,16 +4,16 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-var AnnotationPlugIn = (function (_super) {
-    __extends(AnnotationPlugIn, _super);
-    function AnnotationPlugIn() {
+var AnnotationHTMLRenderPlugIn = (function (_super) {
+    __extends(AnnotationHTMLRenderPlugIn, _super);
+    function AnnotationHTMLRenderPlugIn() {
         _super.apply(this, arguments);
     }
-    AnnotationPlugIn.prototype.IsEnabled = function (caseViewer, caseModel) {
+    AnnotationHTMLRenderPlugIn.prototype.IsEnabled = function (caseViewer, caseModel) {
         return true;
     };
 
-    AnnotationPlugIn.prototype.Delegate = function (caseViewer, caseModel, element) {
+    AnnotationHTMLRenderPlugIn.prototype.Delegate = function (caseViewer, caseModel, element) {
         if (caseModel.Annotations.length == 0)
             return;
 
@@ -28,5 +28,5 @@ var AnnotationPlugIn = (function (_super) {
 
         return true;
     };
-    return AnnotationPlugIn;
+    return AnnotationHTMLRenderPlugIn;
 })(HTMLRenderPlugIn);

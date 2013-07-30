@@ -4,16 +4,16 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-var MonitorPlugin = (function (_super) {
-    __extends(MonitorPlugin, _super);
-    function MonitorPlugin() {
+var MonitorHTMLRenderPlugIn = (function (_super) {
+    __extends(MonitorHTMLRenderPlugIn, _super);
+    function MonitorHTMLRenderPlugIn() {
         _super.apply(this, arguments);
     }
-    MonitorPlugin.prototype.IsEnabled = function (caseViewer, caseModel) {
+    MonitorHTMLRenderPlugIn.prototype.IsEnabled = function (caseViewer, caseModel) {
         return true;
     };
 
-    MonitorPlugin.prototype.Delegate = function (caseViewer, caseModel, element) {
+    MonitorHTMLRenderPlugIn.prototype.Delegate = function (caseViewer, caseModel, element) {
         var notes = caseModel.Notes;
         var found = false;
         for (var i in notes) {
@@ -50,5 +50,24 @@ var MonitorPlugin = (function (_super) {
 
         return true;
     };
-    return MonitorPlugin;
+    return MonitorHTMLRenderPlugIn;
 })(HTMLRenderPlugIn);
+
+var MonitorSVGRenderPlugIn = (function (_super) {
+    __extends(MonitorSVGRenderPlugIn, _super);
+    function MonitorSVGRenderPlugIn() {
+        _super.apply(this, arguments);
+    }
+    MonitorSVGRenderPlugIn.prototype.IsEnable = function (caseViewer, element) {
+        return true;
+    };
+
+    MonitorSVGRenderPlugIn.prototype.Delegate = function (caseViewer, elementShape) {
+        var element = elementShape.HTMLDoc.DocBase;
+        if (element.data('monitor')) {
+            elementShape.SVGShape.SetColor("red", "black");
+        }
+        return true;
+    };
+    return MonitorSVGRenderPlugIn;
+})(SVGRenderPlugIn);

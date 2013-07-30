@@ -15,9 +15,10 @@ $(function () {
 	var pluginManager = new PlugInManager();
 	pluginManager.AddActionPlugIn("menu", new MenuBarPlugIn());
 	pluginManager.AddActionPlugIn("editor", new EditorPlugIn());
-	pluginManager.AddHTMLRenderPlugIn("annotation", new AnnotationPlugIn());
-	pluginManager.AddHTMLRenderPlugIn("monitor", new MonitorPlugin());
-	pluginManager.AddHTMLRenderPlugIn("note", new NotePlugIn());
+	pluginManager.AddHTMLRenderPlugIn("annotation", new AnnotationHTMLRenderPlugIn());
+	pluginManager.AddHTMLRenderPlugIn("monitor", new MonitorHTMLRenderPlugIn());
+	pluginManager.AddHTMLRenderPlugIn("note", new NoteHTMLRenderPlugIn());
+	pluginManager.AddSVGRenderPlugIn("monitor", new MonitorSVGRenderPlugIn());
 
 	var JsonData = {
 		"DCaseName": "test",
