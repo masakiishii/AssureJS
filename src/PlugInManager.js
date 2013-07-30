@@ -40,18 +40,18 @@ var CheckerPlugIn = (function (_super) {
     return CheckerPlugIn;
 })(PlugIn);
 
-var RenderPlugIn = (function (_super) {
-    __extends(RenderPlugIn, _super);
-    function RenderPlugIn() {
+var HTMLRenderPlugIn = (function (_super) {
+    __extends(HTMLRenderPlugIn, _super);
+    function HTMLRenderPlugIn() {
         _super.apply(this, arguments);
     }
-    RenderPlugIn.prototype.IsEnabled = function (caseViewer, caseModel) {
+    HTMLRenderPlugIn.prototype.IsEnabled = function (caseViewer, caseModel) {
         return true;
     };
 
-    RenderPlugIn.prototype.Delegate = function (caseViewer, caseModel, element) {
+    HTMLRenderPlugIn.prototype.Delegate = function (caseViewer, caseModel, element) {
     };
-    return RenderPlugIn;
+    return HTMLRenderPlugIn;
 })(PlugIn);
 
 var PlugInManager = (function () {
@@ -59,8 +59,8 @@ var PlugInManager = (function () {
         this.ActionPlugIns = [];
         this.DefaultCheckerPlugIns = [];
         this.CheckerPlugInMap = {};
-        this.DefaultRenderPlugIns = [];
-        this.RenderPlugInMap = {};
+        this.DefaultHTMLRenderPlugIns = [];
+        this.HTMLRenderPlugInMap = {};
     }
     PlugInManager.prototype.AddActionPlugIn = function (key, actionPlugIn) {
         this.ActionPlugIns.push(actionPlugIn);
@@ -74,8 +74,8 @@ var PlugInManager = (function () {
         }
     };
 
-    PlugInManager.prototype.AddRenderPlugIn = function (key, renderPlugIn) {
-        this.RenderPlugInMap[key] = renderPlugIn;
+    PlugInManager.prototype.AddHTMLRenderPlugIn = function (key, HTMLRenderPlugIn) {
+        this.HTMLRenderPlugInMap[key] = HTMLRenderPlugIn;
     };
     return PlugInManager;
 })();

@@ -375,7 +375,7 @@ class CaseViewer {
 
 	GetPlugInRender(PlugInName: string): (caseViewer: CaseViewer, caseModel: CaseModel, element: JQuery) => string {
 		return (viewer: CaseViewer, model: CaseModel, e: JQuery) : string => {
-			this.pluginManager.RenderPlugInMap[PlugInName].Delegate(viewer, model, e);
+			this.pluginManager.HTMLRenderPlugInMap[PlugInName].Delegate(viewer, model, e);
 			return null;
 		};
 	}

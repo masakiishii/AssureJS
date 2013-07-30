@@ -374,7 +374,7 @@ var CaseViewer = (function () {
     CaseViewer.prototype.GetPlugInRender = function (PlugInName) {
         var _this = this;
         return function (viewer, model, e) {
-            _this.pluginManager.RenderPlugInMap[PlugInName].Delegate(viewer, model, e);
+            _this.pluginManager.HTMLRenderPlugInMap[PlugInName].Delegate(viewer, model, e);
             return null;
         };
     };

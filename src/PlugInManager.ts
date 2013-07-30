@@ -29,7 +29,7 @@ class CheckerPlugIn extends PlugIn {
 	}
 }
 
-class RenderPlugIn extends PlugIn {
+class HTMLRenderPlugIn extends PlugIn {
 	IsEnabled(caseViewer: CaseViewer, caseModel: CaseModel) : boolean {
 		return true;
 	}
@@ -43,15 +43,15 @@ class PlugInManager {
 	ActionPlugIns : ActionPlugIn[];
 	DefaultCheckerPlugIns : CheckerPlugIn[];
 	CheckerPlugInMap : { [index: string]: CheckerPlugIn};
-	DefaultRenderPlugIns : RenderPlugIn[];
-	RenderPlugInMap : { [index: string]: RenderPlugIn};
+	DefaultHTMLRenderPlugIns : HTMLRenderPlugIn[];
+	HTMLRenderPlugInMap : { [index: string]: HTMLRenderPlugIn};
 
 	constructor() {
 		this.ActionPlugIns = [];
 		this.DefaultCheckerPlugIns = [];
 		this.CheckerPlugInMap = {};
-		this.DefaultRenderPlugIns = [];
-		this.RenderPlugInMap = {};
+		this.DefaultHTMLRenderPlugIns = [];
+		this.HTMLRenderPlugInMap = {};
 	}
 
 
@@ -87,8 +87,8 @@ class PlugInManager {
 	}
 	**/
 
-	AddRenderPlugIn(key: string, renderPlugIn: RenderPlugIn) {
-		this.RenderPlugInMap[key] = renderPlugIn;
+	AddHTMLRenderPlugIn(key: string, HTMLRenderPlugIn: HTMLRenderPlugIn) {
+		this.HTMLRenderPlugInMap[key] = HTMLRenderPlugIn;
 	}
 }
 /** this is sample of ActionPlugIn */

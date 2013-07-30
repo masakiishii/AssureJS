@@ -49,4 +49,4 @@ var MonitorPlugin = (function (_super) {
         });
     };
     return MonitorPlugin;
-})(RenderPlugIn);
+})(HTMLRenderPlugIn);

@@ -2,7 +2,7 @@
 /// <reference path="../../src/CaseViewer.ts" />
 /// <reference path="../../src/PlugInManager.ts" />
 
-class MonitorPlugin extends RenderPlugIn {
+class MonitorPlugin extends HTMLRenderPlugIn {
 	IsEnabled(caseViewer: CaseViewer, caseModel: CaseModel) : boolean {
 		return true;
 	}
