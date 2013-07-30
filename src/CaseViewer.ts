@@ -373,10 +373,9 @@ class CaseViewer {
 		this.Resize();
 	}
 
-	GetPlugInRender(PlugInName: string): (caseViewer: CaseViewer, caseModel: CaseModel, element: JQuery) => string {
-		return (viewer: CaseViewer, model: CaseModel, e: JQuery) : string => {
-			this.pluginManager.HTMLRenderPlugInMap[PlugInName].Delegate(viewer, model, e);
-			return null;
+	GetPlugInRender(PlugInName: string): (caseViewer: CaseViewer, caseModel: CaseModel, element: JQuery) => boolean {
+		return (viewer: CaseViewer, model: CaseModel, e: JQuery) : boolean => {
+			return this.pluginManager.HTMLRenderPlugInMap[PlugInName].Delegate(viewer, model, e);
 		};
 	}
 

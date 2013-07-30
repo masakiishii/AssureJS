@@ -14,6 +14,7 @@ var NotePlugIn = (function (_super) {
     };
 
     NotePlugIn.prototype.Delegate = function (caseViewer, caseModel) {
+        return true;
     };
     return NotePlugIn;
 })(HTMLRenderPlugIn);

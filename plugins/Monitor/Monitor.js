@@ -47,6 +47,8 @@ var MonitorPlugin = (function (_super) {
                 console.log("error");
             }
         });
+
+        return true;
     };
     return MonitorPlugin;
 })(HTMLRenderPlugIn);

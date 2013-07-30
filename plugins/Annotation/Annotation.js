@@ -25,6 +25,8 @@ var AnnotationPlugIn = (function (_super) {
         }
 
         $('<div class="anno">' + '<p>' + text + '</p>' + '</div>').css({ position: 'absolute', 'font-size': 25, color: 'gray', top: p.top - 20, left: p.left + 80 }).appendTo(element);
+
+        return true;
     };
     return AnnotationPlugIn;
 })(HTMLRenderPlugIn);

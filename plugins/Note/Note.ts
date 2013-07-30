@@ -7,7 +7,8 @@ class NotePlugIn extends HTMLRenderPlugIn {
 		return true;
 	}
 
-	Delegate(caseViewer: CaseViewer, caseModel: CaseModel) : void {
+	Delegate(caseViewer: CaseViewer, caseModel: CaseModel) : boolean {
 		// TODO
+		return true;
 	}
 }

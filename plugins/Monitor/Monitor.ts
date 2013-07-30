@@ -7,7 +7,7 @@ class MonitorPlugin extends HTMLRenderPlugIn {
 		return true;
 	}
 
-	Delegate(caseViewer: CaseViewer, caseModel: CaseModel, element: JQuery) : void {
+	Delegate(caseViewer: CaseViewer, caseModel: CaseModel, element: JQuery) : boolean {
 		var notes : CaseNote[] = caseModel.Notes;
 		var found : boolean = false;
 		for (var i in notes) {
@@ -39,5 +39,7 @@ class MonitorPlugin extends HTMLRenderPlugIn {
 				console.log("error");
 			}
 		});
+
+		return true;
 	}
 }

@@ -50,6 +50,7 @@ var HTMLRenderPlugIn = (function (_super) {
     };
 
     HTMLRenderPlugIn.prototype.Delegate = function (caseViewer, caseModel, element) {
+        return true;
     };
     return HTMLRenderPlugIn;
 })(PlugIn);

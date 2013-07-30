@@ -34,7 +34,8 @@ class HTMLRenderPlugIn extends PlugIn {
 		return true;
 	}
 
-	Delegate(caseViewer: CaseViewer, caseModel: CaseModel, element: JQuery) : void {
+	Delegate(caseViewer: CaseViewer, caseModel: CaseModel, element: JQuery) : boolean {
+		return true;
 	}
 }
 

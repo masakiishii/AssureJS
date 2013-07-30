@@ -7,7 +7,7 @@ class AnnotationPlugIn extends HTMLRenderPlugIn {
 		return true;
 	}
 
-	Delegate(caseViewer: CaseViewer, caseModel: CaseModel, element: JQuery) : void {
+	Delegate(caseViewer: CaseViewer, caseModel: CaseModel, element: JQuery) : boolean {
 		if(caseModel.Annotations.length == 0) return;
 
 		var text : string = "";
@@ -21,5 +21,7 @@ class AnnotationPlugIn extends HTMLRenderPlugIn {
 			'<p>' + text + '</p>' +
 			'</div>')
 			.css({position: 'absolute', 'font-size': 25, color: 'gray', top: p.top - 20, left: p.left + 80}).appendTo(element);
+
+		return true;
 	}
 }
