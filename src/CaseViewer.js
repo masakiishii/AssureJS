@@ -48,6 +48,8 @@ var HTMLDoc = (function () {
         AnnotationRender(caseViewer, caseModel, DocBase);
         var NoteRender = caseViewer.GetPlugInRender("note");
         NoteRender(caseViewer, caseModel, DocBase);
+        var MonitorRender = caseViewer.GetPlugInRender("monitor");
+        MonitorRender(caseViewer, caseModel, DocBase);
     };
 
     HTMLDoc.prototype.Resize = function (Viewer, Source) {

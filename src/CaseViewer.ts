@@ -52,6 +52,8 @@ class HTMLDoc {
 		AnnotationRender(caseViewer, caseModel, DocBase);
 		var NoteRender = caseViewer.GetPlugInRender("note");
 		NoteRender(caseViewer, caseModel, DocBase);
+		var MonitorRender = caseViewer.GetPlugInRender("monitor");
+		MonitorRender(caseViewer, caseModel, DocBase);
 	}
 
 	Resize(Viewer: CaseViewer, Source: CaseModel): void {

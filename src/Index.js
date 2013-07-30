@@ -4,6 +4,7 @@ $(function () {
     pluginManager.AddActionPlugIn("menu", new MenuBarPlugIn());
     pluginManager.AddActionPlugIn("editor", new EditorPlugIn());
     pluginManager.AddRenderPlugIn("annotation", new AnnotationPlugIn());
+    pluginManager.AddRenderPlugIn("monitor", new MonitorPlugin());
     pluginManager.AddRenderPlugIn("note", new NotePlugIn());
 
     var JsonData = {
@@ -102,7 +103,14 @@ $(function () {
                 "NodeType": 3,
                 "Label": "E1",
                 "Annotations": [],
-                "Notes": []
+                "Notes": [
+                    {
+                        "Name": "Monitor",
+                        "Body": {
+                            "nodeID": 51
+                        }
+                    }
+                ]
             },
             {
                 "Children": [],
