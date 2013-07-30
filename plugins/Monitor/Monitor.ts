@@ -8,7 +8,6 @@ class MonitorPlugin extends RenderPlugIn {
 	}
 
 	Delegate(caseViewer: CaseViewer, caseModel: CaseModel, element: JQuery) : void {
-		console.log("hi");
 		var notes : CaseNote[] = caseModel.Notes;
 		var found : boolean = false;
 		for (var i in notes) {
@@ -25,6 +24,7 @@ class MonitorPlugin extends RenderPlugIn {
 		$.ajax({
 			url: "http://live.assure-it.org/rec/api/1.0/",
 			type: "POST",
+			async : false,
 			data: {
 				jsonrpc: "2.0",
 				method: "getMonitor",
@@ -33,10 +33,7 @@ class MonitorPlugin extends RenderPlugIn {
 					},
 				},
 			success: function(msg) {
-				/* FIXME currently, status code cannot get on this ajax call */ 
-				// TODO @okamoto
-				// filling monitor node w/ red or green depending on its status
-				// but at the moment, always filling green is preferred.
+				element.attr('data-monitor', msg.result[0]);
 			},
 			error: function(msg) {
 				console.log("error");

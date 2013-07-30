@@ -314,7 +314,11 @@ var ElementShape = (function () {
         svgroot.append(this.SVGShape.ShapeGroup);
         this.SVGShape.SetPosition(this.AbsX, this.AbsY);
 
-        this.SVGShape.SetColor("white", "black");
+        if (this.HTMLDoc.DocBase.data('monitor')) {
+            this.SVGShape.SetColor("red", "black");
+        } else {
+            this.SVGShape.SetColor("white", "black");
+        }
 
         if (this.ParentShape != null) {
             var p1 = null;

@@ -315,7 +315,12 @@ class ElementShape {
 		this.SVGShape.SetPosition(this.AbsX, this.AbsY);
 		// TODO
 		// enable color-customization
-		this.SVGShape.SetColor("white", "black");
+		if(this.HTMLDoc.DocBase.data('monitor')) {
+			this.SVGShape.SetColor("red", "black");
+		}
+		else {
+			this.SVGShape.SetColor("white", "black");
+		}
 
 		// if it has an parent, add an arrow element.
 		if (this.ParentShape != null) {

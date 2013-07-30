@@ -14,7 +14,6 @@ var MonitorPlugin = (function (_super) {
     };
 
     MonitorPlugin.prototype.Delegate = function (caseViewer, caseModel, element) {
-        console.log("hi");
         var notes = caseModel.Notes;
         var found = false;
         for (var i in notes) {
@@ -33,6 +32,7 @@ var MonitorPlugin = (function (_super) {
         $.ajax({
             url: "http://live.assure-it.org/rec/api/1.0/",
             type: "POST",
+            async: false,
             data: {
                 jsonrpc: "2.0",
                 method: "getMonitor",
@@ -41,6 +41,7 @@ var MonitorPlugin = (function (_super) {
                 }
             },
             success: function (msg) {
+                element.attr('data-monitor', msg.result[0]);
             },
             error: function (msg) {
                 console.log("error");
