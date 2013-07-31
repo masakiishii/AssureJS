@@ -171,6 +171,7 @@ class ContextShape extends SVGShape {
 	Render(CaseViewer: CaseViewer, CaseModel: CaseModel, HTMLDoc: HTMLDoc): void {
 		super.Render(CaseViewer, CaseModel, HTMLDoc);
 		this.BodyRect = <SVGRectElement>document.createSVGElement("rect");
+		this.ArrowPath.setAttribute("marker-end", "url(#Triangle-white)");
 		this.BodyRect.setAttribute("rx", "10");
 		this.BodyRect.setAttribute("ry", "10");
 		this.ShapeGroup.appendChild(this.BodyRect);

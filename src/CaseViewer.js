@@ -180,6 +180,7 @@ var ContextShape = (function (_super) {
     ContextShape.prototype.Render = function (CaseViewer, CaseModel, HTMLDoc) {
         _super.prototype.Render.call(this, CaseViewer, CaseModel, HTMLDoc);
         this.BodyRect = document.createSVGElement("rect");
+        this.ArrowPath.setAttribute("marker-end", "url(#Triangle-white)");
         this.BodyRect.setAttribute("rx", "10");
         this.BodyRect.setAttribute("ry", "10");
         this.ShapeGroup.appendChild(this.BodyRect);
