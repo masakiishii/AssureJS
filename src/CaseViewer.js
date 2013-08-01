@@ -9,33 +9,33 @@ var HTMLDoc = (function () {
         this.Width = 0;
         this.Height = 0;
     }
-    HTMLDoc.prototype.Render = function (Viewer, CaseModel) {
+    HTMLDoc.prototype.Render = function (Viewer, NodeModel) {
         if (this.DocBase != null) {
             var parent = this.DocBase.parent();
             if (parent != null)
                 parent.remove(this.DocBase);
         }
         this.DocBase = $('<div class="node">').css("position", "absolute");
-        this.DocBase.append($('<h4>' + CaseModel.Label + '</h4>'));
-        this.DocBase.append($('<p>' + CaseModel.Statement + '</p>'));
-        this.InvokePlugInHTMLRender(Viewer, CaseModel, this.DocBase);
-        this.UpdateWidth(Viewer, CaseModel);
-        this.Resize(Viewer, CaseModel);
+        this.DocBase.append($('<h4>' + NodeModel.Label + '</h4>'));
+        this.DocBase.append($('<p>' + NodeModel.Statement + '</p>'));
+        this.InvokePlugInHTMLRender(Viewer, NodeModel, this.DocBase);
+        this.UpdateWidth(Viewer, NodeModel);
+        this.Resize(Viewer, NodeModel);
     };
 
     HTMLDoc.prototype.UpdateWidth = function (Viewer, Source) {
         this.DocBase.width(CaseViewer.ElementWidth);
         switch (Source.Type) {
-            case CaseType.Goal:
+            case NodeType.Goal:
                 this.DocBase.css("padding", "5px 10px");
                 break;
-            case CaseType.Context:
+            case NodeType.Context:
                 this.DocBase.css("padding", "10px 10px");
                 break;
-            case CaseType.Strategy:
+            case NodeType.Strategy:
                 this.DocBase.css("padding", "5px 20px");
                 break;
-            case CaseType.Evidence:
+            case NodeType.Evidence:
             default:
                 this.DocBase.css("padding", "20px 20px");
                 break;
@@ -85,7 +85,7 @@ function ReverseDirection(Dir) {
 var SVGShape = (function () {
     function SVGShape() {
     }
-    SVGShape.prototype.Render = function (CaseViewer, CaseModel, HTMLDoc) {
+    SVGShape.prototype.Render = function (CaseViewer, NodeModel, HTMLDoc) {
         this.ShapeGroup = document.createSVGElement("g");
         this.ShapeGroup.setAttribute("transform", "translate(0,0)");
         this.ArrowPath = document.createSVGElement("path");
@@ -95,7 +95,7 @@ var SVGShape = (function () {
         this.ArrowPath.setAttribute("d", "M0,0 C0,0 0,0 0,0");
     };
 
-    SVGShape.prototype.Resize = function (CaseViewer, CaseModel, HTMLDoc) {
+    SVGShape.prototype.Resize = function (CaseViewer, NodeModel, HTMLDoc) {
         this.Width = HTMLDoc.Width;
         this.Height = HTMLDoc.Height;
     };
@@ -151,16 +151,16 @@ var GoalShape = (function (_super) {
     function GoalShape() {
         _super.apply(this, arguments);
     }
-    GoalShape.prototype.Render = function (CaseViewer, CaseModel, HTMLDoc) {
-        _super.prototype.Render.call(this, CaseViewer, CaseModel, HTMLDoc);
+    GoalShape.prototype.Render = function (CaseViewer, NodeModel, HTMLDoc) {
+        _super.prototype.Render.call(this, CaseViewer, NodeModel, HTMLDoc);
         this.BodyRect = document.createSVGElement("rect");
 
         this.ShapeGroup.appendChild(this.BodyRect);
-        this.Resize(CaseViewer, CaseModel, HTMLDoc);
+        this.Resize(CaseViewer, NodeModel, HTMLDoc);
     };
 
-    GoalShape.prototype.Resize = function (CaseViewer, CaseModel, HTMLDoc) {
-        _super.prototype.Resize.call(this, CaseViewer, CaseModel, HTMLDoc);
+    GoalShape.prototype.Resize = function (CaseViewer, NodeModel, HTMLDoc) {
+        _super.prototype.Resize.call(this, CaseViewer, NodeModel, HTMLDoc);
         this.BodyRect.setAttribute("width", this.Width.toString());
         this.BodyRect.setAttribute("height", this.Height.toString());
     };
@@ -177,18 +177,18 @@ var ContextShape = (function (_super) {
     function ContextShape() {
         _super.apply(this, arguments);
     }
-    ContextShape.prototype.Render = function (CaseViewer, CaseModel, HTMLDoc) {
-        _super.prototype.Render.call(this, CaseViewer, CaseModel, HTMLDoc);
+    ContextShape.prototype.Render = function (CaseViewer, NodeModel, HTMLDoc) {
+        _super.prototype.Render.call(this, CaseViewer, NodeModel, HTMLDoc);
         this.BodyRect = document.createSVGElement("rect");
         this.ArrowPath.setAttribute("marker-end", "url(#Triangle-white)");
         this.BodyRect.setAttribute("rx", "10");
         this.BodyRect.setAttribute("ry", "10");
         this.ShapeGroup.appendChild(this.BodyRect);
-        this.Resize(CaseViewer, CaseModel, HTMLDoc);
+        this.Resize(CaseViewer, NodeModel, HTMLDoc);
     };
 
-    ContextShape.prototype.Resize = function (CaseViewer, CaseModel, HTMLDoc) {
-        _super.prototype.Resize.call(this, CaseViewer, CaseModel, HTMLDoc);
+    ContextShape.prototype.Resize = function (CaseViewer, NodeModel, HTMLDoc) {
+        _super.prototype.Resize.call(this, CaseViewer, NodeModel, HTMLDoc);
         this.BodyRect.setAttribute("width", this.Width.toString());
         this.BodyRect.setAttribute("height", this.Height.toString());
     };
@@ -205,15 +205,15 @@ var StrategyShape = (function (_super) {
     function StrategyShape() {
         _super.apply(this, arguments);
     }
-    StrategyShape.prototype.Render = function (CaseViewer, CaseModel, HTMLDoc) {
-        _super.prototype.Render.call(this, CaseViewer, CaseModel, HTMLDoc);
+    StrategyShape.prototype.Render = function (CaseViewer, NodeModel, HTMLDoc) {
+        _super.prototype.Render.call(this, CaseViewer, NodeModel, HTMLDoc);
         this.BodyPolygon = document.createSVGElement("polygon");
         this.ShapeGroup.appendChild(this.BodyPolygon);
-        this.Resize(CaseViewer, CaseModel, HTMLDoc);
+        this.Resize(CaseViewer, NodeModel, HTMLDoc);
     };
 
-    StrategyShape.prototype.Resize = function (CaseViewer, CaseModel, HTMLDoc) {
-        _super.prototype.Resize.call(this, CaseViewer, CaseModel, HTMLDoc);
+    StrategyShape.prototype.Resize = function (CaseViewer, NodeModel, HTMLDoc) {
+        _super.prototype.Resize.call(this, CaseViewer, NodeModel, HTMLDoc);
         this.BodyPolygon.setAttribute("points", "10,0 " + this.Width + ",0 " + (this.Width - 10) + "," + this.Height + " 0," + this.Height);
     };
 
@@ -242,15 +242,15 @@ var EvidenceShape = (function (_super) {
     function EvidenceShape() {
         _super.apply(this, arguments);
     }
-    EvidenceShape.prototype.Render = function (CaseViewer, CaseModel, HTMLDoc) {
-        _super.prototype.Render.call(this, CaseViewer, CaseModel, HTMLDoc);
+    EvidenceShape.prototype.Render = function (CaseViewer, NodeModel, HTMLDoc) {
+        _super.prototype.Render.call(this, CaseViewer, NodeModel, HTMLDoc);
         this.BodyEllipse = document.createSVGElement("ellipse");
         this.ShapeGroup.appendChild(this.BodyEllipse);
-        this.Resize(CaseViewer, CaseModel, HTMLDoc);
+        this.Resize(CaseViewer, NodeModel, HTMLDoc);
     };
 
-    EvidenceShape.prototype.Resize = function (CaseViewer, CaseModel, HTMLDoc) {
-        _super.prototype.Resize.call(this, CaseViewer, CaseModel, HTMLDoc);
+    EvidenceShape.prototype.Resize = function (CaseViewer, NodeModel, HTMLDoc) {
+        _super.prototype.Resize.call(this, CaseViewer, NodeModel, HTMLDoc);
         this.BodyEllipse.setAttribute("cx", (this.Width / 2).toString());
         this.BodyEllipse.setAttribute("cy", (this.Height / 2).toString());
         this.BodyEllipse.setAttribute("rx", (this.Width / 2).toString());
@@ -269,13 +269,13 @@ var SVGShapeFactory = (function () {
     }
     SVGShapeFactory.Create = function (Type) {
         switch (Type) {
-            case CaseType.Goal:
+            case NodeType.Goal:
                 return new GoalShape();
-            case CaseType.Context:
+            case NodeType.Context:
                 return new ContextShape();
-            case CaseType.Strategy:
+            case NodeType.Strategy:
                 return new StrategyShape();
-            case CaseType.Evidence:
+            case NodeType.Evidence:
                 return new EvidenceShape();
         }
     };
@@ -286,8 +286,8 @@ document.createSVGElement = function (name) {
     return document.createElementNS('http://www.w3.org/2000/svg', name);
 };
 
-var ElementShape = (function () {
-    function ElementShape(CaseViewer, CaseModel) {
+var NodeView = (function () {
+    function NodeView(CaseViewer, NodeModel) {
         this.ParentDirection = Direction.Top;
         this.IsArrowReversed = false;
         this.AbsX = 0;
@@ -295,18 +295,18 @@ var ElementShape = (function () {
         this.x = 0;
         this.y = 0;
         this.CaseViewer = CaseViewer;
-        this.Source = CaseModel;
+        this.Source = NodeModel;
         this.HTMLDoc = new HTMLDoc();
-        this.HTMLDoc.Render(CaseViewer, CaseModel);
-        this.SVGShape = SVGShapeFactory.Create(CaseModel.Type);
-        this.SVGShape.Render(CaseViewer, CaseModel, this.HTMLDoc);
+        this.HTMLDoc.Render(CaseViewer, NodeModel);
+        this.SVGShape = SVGShapeFactory.Create(NodeModel.Type);
+        this.SVGShape.Render(CaseViewer, NodeModel, this.HTMLDoc);
     }
-    ElementShape.prototype.Resize = function () {
+    NodeView.prototype.Resize = function () {
         this.HTMLDoc.Resize(this.CaseViewer, this.Source);
         this.SVGShape.Resize(this.CaseViewer, this.Source, this.HTMLDoc);
     };
 
-    ElementShape.prototype.Update = function () {
+    NodeView.prototype.Update = function () {
         this.HTMLDoc.SetPosition(this.AbsX, this.AbsY);
         this.Resize();
         this.SVGShape.SetPosition(this.AbsX, this.AbsY);
@@ -325,7 +325,7 @@ var ElementShape = (function () {
         return;
     };
 
-    ElementShape.prototype.AppendHTMLElement = function (svgroot, divroot, caseViewer) {
+    NodeView.prototype.AppendHTMLElement = function (svgroot, divroot, caseViewer) {
         divroot.append(this.HTMLDoc.DocBase);
         svgroot.append(this.SVGShape.ShapeGroup);
         this.InvokePlugInSVGRender(caseViewer);
@@ -336,7 +336,7 @@ var ElementShape = (function () {
         this.Update();
         return;
     };
-    ElementShape.prototype.AppendHTMLElementRecursive = function (svgroot, divroot, caseViewer) {
+    NodeView.prototype.AppendHTMLElementRecursive = function (svgroot, divroot, caseViewer) {
         this.AppendHTMLElement(svgroot, divroot, caseViewer);
         var Children = this.Source.Children;
         var ViewMap = this.CaseViewer.ViewMap;
@@ -345,14 +345,14 @@ var ElementShape = (function () {
         }
         return;
     };
-    ElementShape.prototype.DeleteHTMLElement = function (svgroot, divroot) {
+    NodeView.prototype.DeleteHTMLElement = function (svgroot, divroot) {
         this.HTMLDoc.DocBase.remove();
         $(this.SVGShape.ShapeGroup).remove();
         if (this.ParentShape != null)
             $(this.SVGShape.ArrowPath).remove();
         return;
     };
-    ElementShape.prototype.DeleteHTMLElementRecursive = function (svgroot, divroot) {
+    NodeView.prototype.DeleteHTMLElementRecursive = function (svgroot, divroot) {
         this.DeleteHTMLElement(svgroot, divroot);
         var Children = this.Source.Children;
         var ViewMap = this.CaseViewer.ViewMap;
@@ -362,21 +362,21 @@ var ElementShape = (function () {
         return;
     };
 
-    ElementShape.prototype.GetAbsoluteConnectorPosition = function (Dir) {
+    NodeView.prototype.GetAbsoluteConnectorPosition = function (Dir) {
         var p = this.SVGShape.GetConnectorPosition(Dir);
         p.x += this.AbsX;
         p.y += this.AbsY;
         return p;
     };
 
-    ElementShape.prototype.InvokePlugInSVGRender = function (caseViewer) {
+    NodeView.prototype.InvokePlugInSVGRender = function (caseViewer) {
         var pluginMap = caseViewer.pluginManager.SVGRenderPlugInMap;
         for (var key in pluginMap) {
             var render = caseViewer.GetPlugInSVGRender(key);
             render(caseViewer, this);
         }
     };
-    return ElementShape;
+    return NodeView;
 })();
 
 var CaseViewerConfig = (function () {
@@ -395,7 +395,7 @@ var CaseViewer = (function () {
         this.ViewMap = [];
         for (var elementkey in Source.ElementMap) {
             var element = Source.ElementMap[elementkey];
-            this.ViewMap[element.Label] = new ElementShape(this, element);
+            this.ViewMap[element.Label] = new NodeView(this, element);
         }
         for (var elementkey in Source.ElementMap) {
             var element = Source.ElementMap[elementkey];

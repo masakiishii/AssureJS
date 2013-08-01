@@ -3,11 +3,11 @@
 /// <reference path="../../src/PlugInManager.ts" />
 
 class NoteHTMLRenderPlugIn extends HTMLRenderPlugIn {
-	IsEnabled(caseViewer: CaseViewer, caseModel: CaseModel) : boolean {
+	IsEnabled(caseViewer: CaseViewer, nodeModel: NodeModel) : boolean {
 		return true;
 	}
 
-	Delegate(caseViewer: CaseViewer, caseModel: CaseModel) : boolean {
+	Delegate(caseViewer: CaseViewer, nodeModel: NodeModel) : boolean {
 		// TODO
 		return true;
 	}

@@ -13,32 +13,32 @@ class HTMLDoc {
 	Width: number = 0;
 	Height: number = 0;
 
-	Render(Viewer: CaseViewer, CaseModel: CaseModel): void {
+	Render(Viewer: CaseViewer, NodeModel: NodeModel): void {
 		if (this.DocBase != null) {
 			var parent = this.DocBase.parent();
 			if (parent != null) parent.remove(this.DocBase);
 		}
 		this.DocBase = $('<div class="node">').css("position", "absolute");
-		this.DocBase.append($('<h4>' + CaseModel.Label + '</h4>'));
-		this.DocBase.append($('<p>' + CaseModel.Statement + '</p>'));
-		this.InvokePlugInHTMLRender(Viewer, CaseModel, this.DocBase);
-		this.UpdateWidth(Viewer, CaseModel);
-		this.Resize(Viewer, CaseModel);
+		this.DocBase.append($('<h4>' + NodeModel.Label + '</h4>'));
+		this.DocBase.append($('<p>' + NodeModel.Statement + '</p>'));
+		this.InvokePlugInHTMLRender(Viewer, NodeModel, this.DocBase);
+		this.UpdateWidth(Viewer, NodeModel);
+		this.Resize(Viewer, NodeModel);
 	}
 
-	UpdateWidth(Viewer: CaseViewer, Source: CaseModel) {
+	UpdateWidth(Viewer: CaseViewer, Source: NodeModel) {
 		this.DocBase.width(CaseViewer.ElementWidth);
 		switch (Source.Type) {
-			case CaseType.Goal:
+			case NodeType.Goal:
 				this.DocBase.css("padding", "5px 10px");
 				break;
-			case CaseType.Context:
+			case NodeType.Context:
 				this.DocBase.css("padding", "10px 10px");
 				break;
-			case CaseType.Strategy:
+			case NodeType.Strategy:
 				this.DocBase.css("padding", "5px 20px");
 				break;
-			case CaseType.Evidence:
+			case NodeType.Evidence:
 			default:
 				this.DocBase.css("padding", "20px 20px");
 				break;
@@ -46,7 +46,7 @@ class HTMLDoc {
 		this.DocBase.width(CaseViewer.ElementWidth * 2 - this.DocBase.outerWidth());
 	}
 
-	InvokePlugInHTMLRender(caseViewer: CaseViewer, caseModel: CaseModel, DocBase: JQuery): void {
+	InvokePlugInHTMLRender(caseViewer: CaseViewer, caseModel: NodeModel, DocBase: JQuery): void {
 		var pluginMap : { [index: string]: HTMLRenderPlugIn} = caseViewer.pluginManager.HTMLRenderPlugInMap;
 		for(var key in pluginMap) {
 			var render = caseViewer.GetPlugInHTMLRender(key);
@@ -54,7 +54,7 @@ class HTMLDoc {
 		}
 	}
 
-	Resize(Viewer: CaseViewer, Source: CaseModel): void {
+	Resize(Viewer: CaseViewer, Source: NodeModel): void {
 		this.Width = this.DocBase ? this.DocBase.outerWidth() : 0;
 		this.Height = this.DocBase ? this.DocBase.outerHeight() : 0;
 	}
@@ -82,7 +82,7 @@ class SVGShape {
 	ShapeGroup: SVGGElement;
 	ArrowPath: SVGPathElement;
 
-	Render(CaseViewer: CaseViewer, CaseModel: CaseModel, HTMLDoc: HTMLDoc): void {
+	Render(CaseViewer: CaseViewer, NodeModel: NodeModel, HTMLDoc: HTMLDoc): void {
 		this.ShapeGroup = <SVGGElement>document.createSVGElement("g");
 		this.ShapeGroup.setAttribute("transform", "translate(0,0)");
 		this.ArrowPath = <SVGPathElement>document.createSVGElement("path");
@@ -92,7 +92,7 @@ class SVGShape {
 		this.ArrowPath.setAttribute("d", "M0,0 C0,0 0,0 0,0");
 	}
 
-	Resize(CaseViewer: CaseViewer, CaseModel: CaseModel, HTMLDoc: HTMLDoc): void {
+	Resize(CaseViewer: CaseViewer, NodeModel: NodeModel, HTMLDoc: HTMLDoc): void {
 		this.Width = HTMLDoc.Width;
 		this.Height = HTMLDoc.Height;
 	}
@@ -145,16 +145,16 @@ class SVGShape {
 class GoalShape extends SVGShape {
 	BodyRect: SVGRectElement;
 
-	Render(CaseViewer: CaseViewer, CaseModel: CaseModel, HTMLDoc: HTMLDoc): void {
-		super.Render(CaseViewer, CaseModel, HTMLDoc);
+	Render(CaseViewer: CaseViewer, NodeModel: NodeModel, HTMLDoc: HTMLDoc): void {
+		super.Render(CaseViewer, NodeModel, HTMLDoc);
 		this.BodyRect = <SVGRectElement>document.createSVGElement("rect");
 
 		this.ShapeGroup.appendChild(this.BodyRect);
-		this.Resize(CaseViewer, CaseModel, HTMLDoc);
+		this.Resize(CaseViewer, NodeModel, HTMLDoc);
 	}
 
-	Resize(CaseViewer: CaseViewer, CaseModel: CaseModel, HTMLDoc: HTMLDoc): void {
-		super.Resize(CaseViewer, CaseModel, HTMLDoc);
+	Resize(CaseViewer: CaseViewer, NodeModel: NodeModel, HTMLDoc: HTMLDoc): void {
+		super.Resize(CaseViewer, NodeModel, HTMLDoc);
 		this.BodyRect.setAttribute("width", this.Width.toString());
 		this.BodyRect.setAttribute("height", this.Height.toString());
 	}
@@ -168,18 +168,18 @@ class GoalShape extends SVGShape {
 class ContextShape extends SVGShape {
 	BodyRect: SVGRectElement;
 
-	Render(CaseViewer: CaseViewer, CaseModel: CaseModel, HTMLDoc: HTMLDoc): void {
-		super.Render(CaseViewer, CaseModel, HTMLDoc);
+	Render(CaseViewer: CaseViewer, NodeModel: NodeModel, HTMLDoc: HTMLDoc): void {
+		super.Render(CaseViewer, NodeModel, HTMLDoc);
 		this.BodyRect = <SVGRectElement>document.createSVGElement("rect");
 		this.ArrowPath.setAttribute("marker-end", "url(#Triangle-white)");
 		this.BodyRect.setAttribute("rx", "10");
 		this.BodyRect.setAttribute("ry", "10");
 		this.ShapeGroup.appendChild(this.BodyRect);
-		this.Resize(CaseViewer, CaseModel, HTMLDoc);
+		this.Resize(CaseViewer, NodeModel, HTMLDoc);
 	}
 
-	Resize(CaseViewer: CaseViewer, CaseModel: CaseModel, HTMLDoc: HTMLDoc): void {
-		super.Resize(CaseViewer, CaseModel, HTMLDoc);
+	Resize(CaseViewer: CaseViewer, NodeModel: NodeModel, HTMLDoc: HTMLDoc): void {
+		super.Resize(CaseViewer, NodeModel, HTMLDoc);
 		this.BodyRect.setAttribute("width", this.Width.toString());
 		this.BodyRect.setAttribute("height", this.Height.toString());
 	}
@@ -193,15 +193,15 @@ class ContextShape extends SVGShape {
 class StrategyShape extends SVGShape {
 	BodyPolygon: SVGPolygonElement;
 
-	Render(CaseViewer: CaseViewer, CaseModel: CaseModel, HTMLDoc: HTMLDoc): void {
-		super.Render(CaseViewer, CaseModel, HTMLDoc);
+	Render(CaseViewer: CaseViewer, NodeModel: NodeModel, HTMLDoc: HTMLDoc): void {
+		super.Render(CaseViewer, NodeModel, HTMLDoc);
 		this.BodyPolygon = <SVGPolygonElement>document.createSVGElement("polygon");
 		this.ShapeGroup.appendChild(this.BodyPolygon);
-		this.Resize(CaseViewer, CaseModel, HTMLDoc);
+		this.Resize(CaseViewer, NodeModel, HTMLDoc);
 	}
 
-	Resize(CaseViewer: CaseViewer, CaseModel: CaseModel, HTMLDoc: HTMLDoc): void {
-		super.Resize(CaseViewer, CaseModel, HTMLDoc);
+	Resize(CaseViewer: CaseViewer, NodeModel: NodeModel, HTMLDoc: HTMLDoc): void {
+		super.Resize(CaseViewer, NodeModel, HTMLDoc);
 		this.BodyPolygon.setAttribute("points", "10,0 " + this.Width + ",0 " + (this.Width - 10) + "," + this.Height + " 0," + this.Height);
 	}
 
@@ -227,15 +227,15 @@ class StrategyShape extends SVGShape {
 class EvidenceShape extends SVGShape {
 	BodyEllipse: SVGEllipseElement;
 
-	Render(CaseViewer: CaseViewer, CaseModel: CaseModel, HTMLDoc: HTMLDoc): void {
-		super.Render(CaseViewer, CaseModel, HTMLDoc);
+	Render(CaseViewer: CaseViewer, NodeModel: NodeModel, HTMLDoc: HTMLDoc): void {
+		super.Render(CaseViewer, NodeModel, HTMLDoc);
 		this.BodyEllipse = <SVGEllipseElement>document.createSVGElement("ellipse");
 		this.ShapeGroup.appendChild(this.BodyEllipse);
-		this.Resize(CaseViewer, CaseModel, HTMLDoc);
+		this.Resize(CaseViewer, NodeModel, HTMLDoc);
 	}
 
-	Resize(CaseViewer: CaseViewer, CaseModel: CaseModel, HTMLDoc: HTMLDoc): void {
-		super.Resize(CaseViewer, CaseModel, HTMLDoc);
+	Resize(CaseViewer: CaseViewer, NodeModel: NodeModel, HTMLDoc: HTMLDoc): void {
+		super.Resize(CaseViewer, NodeModel, HTMLDoc);
 		this.BodyEllipse.setAttribute("cx", (this.Width / 2).toString());
 		this.BodyEllipse.setAttribute("cy", (this.Height / 2).toString());
 		this.BodyEllipse.setAttribute("rx", (this.Width / 2).toString());
@@ -249,15 +249,15 @@ class EvidenceShape extends SVGShape {
 }
 
 class SVGShapeFactory {
-	static Create(Type: CaseType): SVGShape {
+	static Create(Type: NodeType): SVGShape {
 		switch (Type) {
-			case CaseType.Goal:
+			case NodeType.Goal:
 				return new GoalShape();
-			case CaseType.Context:
+			case NodeType.Context:
 				return new ContextShape();
-			case CaseType.Strategy:
+			case NodeType.Strategy:
 				return new StrategyShape();
-			case CaseType.Evidence:
+			case NodeType.Evidence:
 				return new EvidenceShape();
 		}
 	}
@@ -276,12 +276,12 @@ document.createSVGElement = function (name: string): Element {
 	return document.createElementNS('http://www.w3.org/2000/svg', name);
 }
 
-class ElementShape {
+class NodeView {
 	CaseViewer: CaseViewer;
-	Source: CaseModel;
+	Source: NodeModel;
 	HTMLDoc: HTMLDoc;
 	SVGShape: SVGShape;
-	ParentShape: ElementShape;
+	ParentShape: NodeView;
 
 	ParentDirection: Direction = Direction.Top;
 	IsArrowReversed: boolean = false;
@@ -291,13 +291,13 @@ class ElementShape {
 	x: number = 0;
 	y: number = 0;
 
-	constructor(CaseViewer: CaseViewer, CaseModel: CaseModel) {
+	constructor(CaseViewer: CaseViewer, NodeModel: NodeModel) {
 		this.CaseViewer = CaseViewer;
-		this.Source = CaseModel;
+		this.Source = NodeModel;
 		this.HTMLDoc = new HTMLDoc();
-		this.HTMLDoc.Render(CaseViewer, CaseModel);
-		this.SVGShape = SVGShapeFactory.Create(CaseModel.Type);
-		this.SVGShape.Render(CaseViewer, CaseModel, this.HTMLDoc);
+		this.HTMLDoc.Render(CaseViewer, NodeModel);
+		this.SVGShape = SVGShapeFactory.Create(NodeModel.Type);
+		this.SVGShape.Render(CaseViewer, NodeModel, this.HTMLDoc);
 	}
 
 	Resize(): void {
@@ -384,15 +384,15 @@ class CaseViewerConfig {
 var ViewerConfig = new CaseViewerConfig();
 
 class CaseViewer {
-	ViewMap: { [index: string]: ElementShape; };
-	ElementTop : CaseModel;
+	ViewMap: { [index: string]: NodeView; };
+	ElementTop : NodeModel;
 	static ElementWidth = 150;
 
 	constructor(public Source: Case, public pluginManager : PlugInManager, public serverApi: ServerAPI) {
 		this.ViewMap = <any>[]; // a hack to avoid tsc's problem.
 		for (var elementkey in Source.ElementMap) {
 			var element = Source.ElementMap[elementkey];
-			this.ViewMap[element.Label] = new ElementShape(this, element);
+			this.ViewMap[element.Label] = new NodeView(this, element);
 		}
 		for (var elementkey in Source.ElementMap) {
 			var element = Source.ElementMap[elementkey];
@@ -404,14 +404,14 @@ class CaseViewer {
 		this.Resize();
 	}
 
-	GetPlugInHTMLRender(PlugInName: string): (caseViewer: CaseViewer, caseModel: CaseModel, element: JQuery) => boolean {
-		return (viewer: CaseViewer, model: CaseModel, e: JQuery) : boolean => {
+	GetPlugInHTMLRender(PlugInName: string): (caseViewer: CaseViewer, caseModel: NodeModel, element: JQuery) => boolean {
+		return (viewer: CaseViewer, model: NodeModel, e: JQuery) : boolean => {
 			return this.pluginManager.HTMLRenderPlugInMap[PlugInName].Delegate(viewer, model, e);
 		};
 	}
 
-	GetPlugInSVGRender(PlugInName: string): (caseViewer: CaseViewer, elementShape: ElementShape) => boolean {
-		return (viewer: CaseViewer, shape: ElementShape) : boolean => {
+	GetPlugInSVGRender(PlugInName: string): (caseViewer: CaseViewer, elementShape: NodeView) => boolean {
+		return (viewer: CaseViewer, shape: NodeView) : boolean => {
 			return this.pluginManager.SVGRenderPlugInMap[PlugInName].Delegate(viewer, shape);
 		};
 	}

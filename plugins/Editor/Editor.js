@@ -27,11 +27,11 @@ var EditorPlugIn = (function (_super) {
                 var orig_shape = caseViewer.ViewMap[label];
                 var decoder = new CaseDecoder();
                 var new_model = decoder.ParseASN(case0, $(this).val(), orig_model);
-                var new_shape = new ElementShape(caseViewer, new_model);
+                var new_shape = new NodeView(caseViewer, new_model);
                 (function (model, shape) {
                     for (var i = 0; i < model.Children.length; i++) {
                         var child_model = model.Children[i];
-                        var child_shape = new ElementShape(caseViewer, child_model);
+                        var child_shape = new NodeView(caseViewer, child_model);
                         arguments.callee(child_model, child_shape);
                     }
                     caseViewer.ViewMap[model.Label] = shape;

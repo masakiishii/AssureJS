@@ -3,11 +3,11 @@
 /// <reference path="../../src/PlugInManager.ts" />
 
 class MonitorHTMLRenderPlugIn extends HTMLRenderPlugIn {
-	IsEnabled(caseViewer: CaseViewer, caseModel: CaseModel) : boolean {
+	IsEnabled(caseViewer: CaseViewer, caseModel: NodeModel) : boolean {
 		return true;
 	}
 
-	Delegate(caseViewer: CaseViewer, caseModel: CaseModel, element: JQuery) : boolean {
+	Delegate(caseViewer: CaseViewer, caseModel: NodeModel, element: JQuery) : boolean {
 		var notes : CaseNote[] = caseModel.Notes;
 		var found : boolean = false;
 		for (var i in notes) {
@@ -49,10 +49,10 @@ class MonitorSVGRenderPlugIn extends SVGRenderPlugIn {
 		return true;
 	}
 
-	Delegate(caseViewer: CaseViewer, elementShape: ElementShape) : boolean {
-		var element: JQuery = elementShape.HTMLDoc.DocBase;
+	Delegate(caseViewer: CaseViewer, nodeView: NodeView) : boolean {
+		var element: JQuery = nodeView.HTMLDoc.DocBase;
 		if(element.data('monitor')) {
-			elementShape.SVGShape.SetColor("red", "black");
+			nodeView.SVGShape.SetColor("red", "black");
 		}
 		return true;
 	}

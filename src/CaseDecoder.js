@@ -22,40 +22,40 @@ var JsonParser = (function (_super) {
     __extends(JsonParser, _super);
     function JsonParser() {
         _super.apply(this, arguments);
-        this.CaseModelMap = {};
+        this.NodeModelMap = {};
     }
-    JsonParser.prototype.InitCaseModelMap = function (NodeList) {
+    JsonParser.prototype.InitNodeModelMap = function (NodeList) {
         for (var i = 0; i < NodeList.length; i++) {
-            this.CaseModelMap[NodeList[i]["Label"]] = NodeList[i];
+            this.NodeModelMap[NodeList[i]["Label"]] = NodeList[i];
         }
     };
 
     JsonParser.prototype.ParseChild = function (childLabel, Parent) {
-        var CaseModelData = this.CaseModelMap[childLabel];
-        var Type = CaseModelData["NodeType"];
-        var Statement = CaseModelData["Statement"];
-        var Children = CaseModelData["Children"];
-        var NoteData = CaseModelData["Notes"];
-        var AnnotationData = CaseModelData["Annotations"];
+        var NodeModelData = this.NodeModelMap[childLabel];
+        var Type = NodeModelData["NodeType"];
+        var Statement = NodeModelData["Statement"];
+        var Children = NodeModelData["Children"];
+        var NoteData = NodeModelData["Notes"];
+        var AnnotationData = NodeModelData["Annotations"];
 
-        var ChildCaseModel = new CaseModel(this.Case, Parent, Type, childLabel, Statement);
+        var ChildNodeModel = new NodeModel(this.Case, Parent, Type, childLabel, Statement);
 
         for (var i = 0; i < NoteData.length; i++) {
             var note = new CaseNote(NoteData[i].Name, NoteData[i].Body);
-            ChildCaseModel.Notes.push(note);
+            ChildNodeModel.Notes.push(note);
         }
 
         for (var i = 0; i < AnnotationData.length; i++) {
             var annotation = new CaseAnnotation(AnnotationData[i].Name, AnnotationData[i].Body);
-            ChildCaseModel.Annotations.push(annotation);
+            ChildNodeModel.Annotations.push(annotation);
         }
 
         for (var i = 0; i < Children.length; i++) {
-            this.ParseChild(Children[i], ChildCaseModel);
+            this.ParseChild(Children[i], ChildNodeModel);
         }
 
         if (Parent == null) {
-            return ChildCaseModel;
+            return ChildNodeModel;
         } else {
             return Parent;
         }
@@ -67,7 +67,7 @@ var JsonParser = (function (_super) {
         var TopGoalLabel = JsonData["TopGoalLabel"];
         var NodeList = JsonData["NodeList"];
 
-        this.InitCaseModelMap(NodeList);
+        this.InitNodeModelMap(NodeList);
 
         var root = this.ParseChild(TopGoalLabel, null);
 
@@ -90,7 +90,7 @@ var DCaseXMLParser = (function (_super) {
         _super.apply(this, arguments);
         this.nodes = {};
         this.links = {};
-        this.Text2CaseTypeMap = { "Goal": CaseType.Goal, "Strategy": CaseType.Strategy, "Context": CaseType.Context, "Evidence": CaseType.Evidence };
+        this.Text2NodeTypeMap = { "Goal": NodeType.Goal, "Strategy": NodeType.Strategy, "Context": NodeType.Context, "Evidence": NodeType.Evidence };
     }
     DCaseXMLParser.prototype.MakeTree = function (Id) {
         var ThisNode = this.nodes[Id];
@@ -139,7 +139,7 @@ var DCaseXMLParser = (function (_super) {
                 IsRootNode = false;
             }
 
-            var node = new CaseModel(self.Case, null, self.Text2CaseTypeMap[NodeType], Label, Statement);
+            var node = new NodeModel(self.Case, null, self.Text2NodeTypeMap[NodeType], Label, Statement);
             self.nodes[Id] = node;
 
             return null;
@@ -167,21 +167,21 @@ var ASNParser = (function (_super) {
     __extends(ASNParser, _super);
     function ASNParser() {
         _super.apply(this, arguments);
-        this.Text2CaseTypeMap = { "Goal": CaseType.Goal, "Strategy": CaseType.Strategy, "Context": CaseType.Context, "Evidence": CaseType.Evidence };
+        this.Text2NodeTypeMap = { "Goal": NodeType.Goal, "Strategy": NodeType.Strategy, "Context": NodeType.Context, "Evidence": NodeType.Evidence };
     }
-    ASNParser.prototype.Object2CaseModel = function (obj, orig) {
+    ASNParser.prototype.Object2NodeModel = function (obj, orig) {
         var Case = this.Case;
         var Parent = (obj["Parent"] != null) ? obj["Parent"] : orig.Parent;
-        var Type = (obj["Type"] != null) ? this.Text2CaseTypeMap[obj["Type"]] : orig.Type;
+        var Type = (obj["Type"] != null) ? this.Text2NodeTypeMap[obj["Type"]] : orig.Type;
         var Label = (obj["Label"] != null) ? obj["Label"] : orig.Label;
         var Statement = (obj["Statement"] != "") ? obj["Statement"] : orig.Statement;
 
-        var Model = new CaseModel(Case, Parent, Type, Label, Statement);
+        var Model = new NodeModel(Case, Parent, Type, Label, Statement);
 
         var Children = obj["Children"];
         if (Children.length != 0) {
             for (var i = 0; i < Children.length; i++) {
-                var Child = this.Object2CaseModel(Children[i], orig);
+                var Child = this.Object2NodeModel(Children[i], orig);
                 Child.Parent = Model;
                 Model.Children.push(Child);
             }
@@ -198,7 +198,7 @@ var ASNParser = (function (_super) {
     };
     ASNParser.prototype.Parse = function (ASNData, orig) {
         var obj = Peg.parse(ASNData)[1];
-        var root = this.Object2CaseModel(obj, orig);
+        var root = this.Object2NodeModel(obj, orig);
         return root;
     };
     return ASNParser;

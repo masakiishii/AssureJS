@@ -62,10 +62,10 @@ var MonitorSVGRenderPlugIn = (function (_super) {
         return true;
     };
 
-    MonitorSVGRenderPlugIn.prototype.Delegate = function (caseViewer, elementShape) {
-        var element = elementShape.HTMLDoc.DocBase;
+    MonitorSVGRenderPlugIn.prototype.Delegate = function (caseViewer, nodeView) {
+        var element = nodeView.HTMLDoc.DocBase;
         if (element.data('monitor')) {
-            elementShape.SVGShape.SetColor("red", "black");
+            nodeView.SVGShape.SetColor("red", "black");
         }
         return true;
     };

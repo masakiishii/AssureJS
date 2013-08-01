@@ -8,21 +8,21 @@ class CaseNote {
 	}
 }
 
-enum CaseType {
+enum NodeType {
 	Goal, Context, Strategy, Evidence
 }
 
-class CaseModel {
+class NodeModel {
 	Case : Case;
-	Type  : CaseType;
+	Type  : NodeType;
 	Label : string;
 	Statement: string;
 	Annotations : CaseAnnotation[];
 	Notes: CaseNote[];
-	Parent : CaseModel;
-	Children: CaseModel[];
+	Parent : NodeModel;
+	Children: NodeModel[];
 
-	constructor(Case : Case, Parent : CaseModel, Type : CaseType, Label : string, Statement : string) {
+	constructor(Case : Case, Parent : NodeModel, Type : NodeType, Label : string, Statement : string) {
 		this.Case = Case;
 		this.Type = Type;
 		this.Label = (Label == null) ? Case.NewLabel(Type) : Label;
@@ -38,7 +38,7 @@ class CaseModel {
 		Case.ElementMap[this.Label] = this; // TODO: ensure consistensy of labels
 	}
 
-	AppendChild(Node : CaseModel) : void {
+	AppendChild(Node : NodeModel) : void {
 		this.Children.push(Node);
 	}
 	
@@ -81,17 +81,17 @@ class CaseModel {
 }
 
 class CaseModifiers {
-	PlugInMap : { [index: string]: (Case, CaseModel, string, any) => boolean};
+	PlugInMap : { [index: string]: (Case, NodeModel, string, any) => boolean};
 
 	constructor() {
 		this.PlugInMap = {};
 	}
 	
-	AddPlugInModifier(key: string, f : (Case, CaseModel, string, any) => boolean) {
+	AddPlugInModifier(key: string, f : (Case, NodeModel, string, any) => boolean) {
 		this.PlugInMap[key] = f;
 	}
 	
-	GetPlugInModifier(key : string) : (Case, CaseModel, string, any) => boolean {
+	GetPlugInModifier(key : string) : (Case, NodeModel, string, any) => boolean {
 		return this.PlugInMap[key];
 	}
 }
@@ -101,8 +101,8 @@ var CaseModifierConfig = new CaseModifiers();
 class Case {
 	CaseId : number;  // TODO
 	IdCounters : number[];
-	ElementTop : CaseModel;
-	ElementMap : { [index: string]: CaseModel};
+	ElementTop : NodeModel;
+	ElementMap : { [index: string]: NodeModel};
 
 	IsModified : boolean;
 	//TopGoalLabel : string;
@@ -114,11 +114,11 @@ class Case {
 	}
 
 	/* Deprecated */
-	SetElementTop(ElementTop : CaseModel) : void{
+	SetElementTop(ElementTop : NodeModel) : void{
 		this.ElementTop = ElementTop;
 		this.SaveIdCounterMax(ElementTop);
 	}
-	SaveIdCounterMax(Element : CaseModel) : void {
+	SaveIdCounterMax(Element : NodeModel) : void {
 		for (var i = 0; i < Element.Children.length; i++) {
 			this.SaveIdCounterMax(Element.Children[i]);
 		}
@@ -128,28 +128,28 @@ class Case {
 			var count = Number(m[0].substring(1));
 			switch (prefix) {
 			case "G":
-				if (this.IdCounters[CaseType["Goal"]] < count) this.IdCounters[CaseType["Goal"]] = count;
+				if (this.IdCounters[NodeType["Goal"]] < count) this.IdCounters[NodeType["Goal"]] = count;
 				break;
 			case "C":
-				if (this.IdCounters[CaseType["Context"]] < count) this.IdCounters[CaseType["Context"]] = count;
+				if (this.IdCounters[NodeType["Context"]] < count) this.IdCounters[NodeType["Context"]] = count;
 				break;
 			case "S":
-				if (this.IdCounters[CaseType["Strategy"]] < count) this.IdCounters[CaseType["Strategy"]] = count;
+				if (this.IdCounters[NodeType["Strategy"]] < count) this.IdCounters[NodeType["Strategy"]] = count;
 				break;
 			case "E":
-				if (this.IdCounters[CaseType["Evidence"]] < count) this.IdCounters[CaseType["Evidence"]] = count;
+				if (this.IdCounters[NodeType["Evidence"]] < count) this.IdCounters[NodeType["Evidence"]] = count;
 				break;
 			default:
 				console.log("invalid label prefix :" + prefix);
 			}
 		}
 	}
-	NewLabel(Type : CaseType) : string {
+	NewLabel(Type : NodeType) : string {
 		this.IdCounters[Type] += 1;
-		return CaseType[Type].charAt(0) + this.IdCounters[Type];
+		return NodeType[Type].charAt(0) + this.IdCounters[Type];
 	}
 		
-	GetPlugInModifier(key : string) : (Case, CaseModel, string, any) => boolean {
+	GetPlugInModifier(key : string) : (Case, NodeModel, string, any) => boolean {
 		return CaseModifierConfig.PlugInMap[key];
 	}
 }

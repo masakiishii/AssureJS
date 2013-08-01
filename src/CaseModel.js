@@ -14,16 +14,16 @@ var CaseNote = (function () {
     return CaseNote;
 })();
 
-var CaseType;
-(function (CaseType) {
-    CaseType[CaseType["Goal"] = 0] = "Goal";
-    CaseType[CaseType["Context"] = 1] = "Context";
-    CaseType[CaseType["Strategy"] = 2] = "Strategy";
-    CaseType[CaseType["Evidence"] = 3] = "Evidence";
-})(CaseType || (CaseType = {}));
+var NodeType;
+(function (NodeType) {
+    NodeType[NodeType["Goal"] = 0] = "Goal";
+    NodeType[NodeType["Context"] = 1] = "Context";
+    NodeType[NodeType["Strategy"] = 2] = "Strategy";
+    NodeType[NodeType["Evidence"] = 3] = "Evidence";
+})(NodeType || (NodeType = {}));
 
-var CaseModel = (function () {
-    function CaseModel(Case, Parent, Type, Label, Statement) {
+var NodeModel = (function () {
+    function NodeModel(Case, Parent, Type, Label, Statement) {
         this.Case = Case;
         this.Type = Type;
         this.Label = (Label == null) ? Case.NewLabel(Type) : Label;
@@ -38,11 +38,11 @@ var CaseModel = (function () {
 
         Case.ElementMap[this.Label] = this;
     }
-    CaseModel.prototype.AppendChild = function (Node) {
+    NodeModel.prototype.AppendChild = function (Node) {
         this.Children.push(Node);
     };
 
-    CaseModel.prototype.GetAnnotation = function (Name) {
+    NodeModel.prototype.GetAnnotation = function (Name) {
         for (var a in this.Annotations) {
             if (a.Name == Name) {
                 return a;
@@ -51,7 +51,7 @@ var CaseModel = (function () {
         return a;
     };
 
-    CaseModel.prototype.SetAnnotation = function (Name, Body) {
+    NodeModel.prototype.SetAnnotation = function (Name, Body) {
         for (var a in this.Annotations) {
             if (a.Name == Name) {
                 a.Body = Body;
@@ -61,7 +61,7 @@ var CaseModel = (function () {
         this.Annotations.push(new CaseAnnotation(Name, Body));
     };
 
-    CaseModel.prototype.InvokePlugInModifier = function (EventType, EventBody) {
+    NodeModel.prototype.InvokePlugInModifier = function (EventType, EventBody) {
         var recall = false;
         for (var a in this.Annotations) {
             var f = this.Case.GetPlugInModifier(a.Name);
@@ -77,7 +77,7 @@ var CaseModel = (function () {
         }
         return recall;
     };
-    return CaseModel;
+    return NodeModel;
 })();
 
 var CaseModifiers = (function () {
@@ -116,20 +116,20 @@ var Case = (function () {
             var count = Number(m[0].substring(1));
             switch (prefix) {
                 case "G":
-                    if (this.IdCounters[CaseType["Goal"]] < count)
-                        this.IdCounters[CaseType["Goal"]] = count;
+                    if (this.IdCounters[NodeType["Goal"]] < count)
+                        this.IdCounters[NodeType["Goal"]] = count;
                     break;
                 case "C":
-                    if (this.IdCounters[CaseType["Context"]] < count)
-                        this.IdCounters[CaseType["Context"]] = count;
+                    if (this.IdCounters[NodeType["Context"]] < count)
+                        this.IdCounters[NodeType["Context"]] = count;
                     break;
                 case "S":
-                    if (this.IdCounters[CaseType["Strategy"]] < count)
-                        this.IdCounters[CaseType["Strategy"]] = count;
+                    if (this.IdCounters[NodeType["Strategy"]] < count)
+                        this.IdCounters[NodeType["Strategy"]] = count;
                     break;
                 case "E":
-                    if (this.IdCounters[CaseType["Evidence"]] < count)
-                        this.IdCounters[CaseType["Evidence"]] = count;
+                    if (this.IdCounters[NodeType["Evidence"]] < count)
+                        this.IdCounters[NodeType["Evidence"]] = count;
                     break;
                 default:
                     console.log("invalid label prefix :" + prefix);
@@ -138,7 +138,7 @@ var Case = (function () {
     };
     Case.prototype.NewLabel = function (Type) {
         this.IdCounters[Type] += 1;
-        return CaseType[Type].charAt(0) + this.IdCounters[Type];
+        return NodeType[Type].charAt(0) + this.IdCounters[Type];
     };
 
     Case.prototype.GetPlugInModifier = function (key) {

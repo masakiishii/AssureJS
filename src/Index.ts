@@ -266,7 +266,7 @@ $(function () {
 
 	var Case0: Case = new Case();
 	var caseDecoder: CaseDecoder = new CaseDecoder();
-	var root: CaseModel = caseDecoder.ParseJson(Case0, JsonData);
+	var root: NodeModel = caseDecoder.ParseJson(Case0, JsonData);
 
 	Case0.SetElementTop(root);
 	var Viewer = new CaseViewer(Case0, pluginManager, serverApi);

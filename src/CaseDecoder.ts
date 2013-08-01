@@ -14,7 +14,7 @@ class Parser {
 		this.Case = Case;
 	}
 
-	Parse(source : any, orig : CaseModel) : CaseModel {
+	Parse(source : any, orig : NodeModel) : NodeModel {
 		return null;
 	}
 
@@ -22,57 +22,57 @@ class Parser {
 
 class JsonParser extends Parser {
 
-	CaseModelMap : any = {};
+	NodeModelMap : any = {};
 
-	InitCaseModelMap(NodeList : any[] /* TODO: remove any type */) : void {
+	InitNodeModelMap(NodeList : any[] /* TODO: remove any type */) : void {
 		for(var i : number = 0; i < NodeList.length; i++) {
-			this.CaseModelMap[NodeList[i]["Label"]] = NodeList[i];
+			this.NodeModelMap[NodeList[i]["Label"]] = NodeList[i];
 		}
 	}
 
-	ParseChild(childLabel : string, Parent : CaseModel) : CaseModel {
-		var CaseModelData : any = this.CaseModelMap[childLabel]; // TODO: remove any type
-		var Type : CaseType = CaseModelData["NodeType"]; // fix NodeType's type
-		var Statement : string = CaseModelData["Statement"];
-		var Children : string[] = CaseModelData["Children"];
-		var NoteData : CaseNote[] = CaseModelData["Notes"];
-		var AnnotationData : any[] = CaseModelData["Annotations"];
+	ParseChild(childLabel : string, Parent : NodeModel) : NodeModel {
+		var NodeModelData : any = this.NodeModelMap[childLabel]; // TODO: remove any type
+		var Type : NodeType = NodeModelData["NodeType"]; // fix NodeType's type
+		var Statement : string = NodeModelData["Statement"];
+		var Children : string[] = NodeModelData["Children"];
+		var NoteData : CaseNote[] = NodeModelData["Notes"];
+		var AnnotationData : any[] = NodeModelData["Annotations"];
 
-		var ChildCaseModel : CaseModel = new CaseModel(this.Case, Parent, Type, childLabel, Statement);
+		var ChildNodeModel : NodeModel = new NodeModel(this.Case, Parent, Type, childLabel, Statement);
 
 		for(var i : number = 0; i < NoteData.length; i++) {
 			var note : CaseNote =
 							 new CaseNote(NoteData[i].Name, NoteData[i].Body);
-			ChildCaseModel.Notes.push(note);
+			ChildNodeModel.Notes.push(note);
 		}
 
 		for(var i : number = 0; i < AnnotationData.length; i++) {
 			var annotation : CaseAnnotation =
 							 new CaseAnnotation(AnnotationData[i].Name, AnnotationData[i].Body);
-			ChildCaseModel.Annotations.push(annotation);
+			ChildNodeModel.Annotations.push(annotation);
 		}
 
 		for(var i : number = 0; i < Children.length; i++) {
-			this.ParseChild(Children[i], ChildCaseModel);
+			this.ParseChild(Children[i], ChildNodeModel);
 		}
 
 		if(Parent == null) {
-			return ChildCaseModel;
+			return ChildNodeModel;
 		}
 		else {
 			return Parent;
 		}
 	}
 
-	Parse(JsonData : any /* TODO: remove any type */) : CaseModel {
+	Parse(JsonData : any /* TODO: remove any type */) : NodeModel {
 		var DCaseName : string = JsonData["DCaseName"]; // Is it necessary?
 		var NodeCount : number = JsonData["NodeCount"]; // Is it necessary?
 		var TopGoalLabel : string = JsonData["TopGoalLabel"]; // Is it necessary?
 		var NodeList : any[] = JsonData["NodeList"]; // TODO: remove any type
 
-		this.InitCaseModelMap(NodeList);
+		this.InitNodeModelMap(NodeList);
 
-		var root : CaseModel = this.ParseChild(TopGoalLabel, null);
+		var root : NodeModel = this.ParseChild(TopGoalLabel, null);
 
 		return root;
 	}
@@ -96,11 +96,11 @@ class DCaseXMLParser extends Parser {
 	Case : Case;
 	nodes : any = {};
 	links : any = {};
-	Text2CaseTypeMap : any = {"Goal" : CaseType.Goal, "Strategy" : CaseType.Strategy , "Context" : CaseType.Context, "Evidence" : CaseType.Evidence};
+	Text2NodeTypeMap : any = {"Goal" : NodeType.Goal, "Strategy" : NodeType.Strategy , "Context" : NodeType.Context, "Evidence" : NodeType.Evidence};
 	RootNodeId : string;
 
-	MakeTree(Id : string) : CaseModel {
-		var ThisNode : CaseModel = this.nodes[Id];
+	MakeTree(Id : string) : NodeModel {
+		var ThisNode : NodeModel = this.nodes[Id];
 
 		for(var LinkId in this.links) {
 			var link : DCaseLink = this.links[LinkId];
@@ -116,7 +116,7 @@ class DCaseXMLParser extends Parser {
 				}
 				delete this.links[LinkId];
 
-				var ChildNode : CaseModel = this.nodes[ChildNodeId];
+				var ChildNode : NodeModel = this.nodes[ChildNodeId];
 
 				ThisNode.AppendChild(ChildNode);
 				this.MakeTree(ChildNodeId);
@@ -126,7 +126,7 @@ class DCaseXMLParser extends Parser {
 		return ThisNode;
 	}
 
-	Parse(XMLData : string) : CaseModel {
+	Parse(XMLData : string) : NodeModel {
 		var self : DCaseXMLParser = this;
 		var IsRootNode : boolean = true;
 
@@ -147,7 +147,7 @@ class DCaseXMLParser extends Parser {
 				IsRootNode = false;
 			}
 
-			var node : CaseModel = new CaseModel(self.Case, null, self.Text2CaseTypeMap[NodeType], Label, Statement);
+			var node : NodeModel = new NodeModel(self.Case, null, self.Text2NodeTypeMap[NodeType], Label, Statement);
 			self.nodes[Id] = node;
 
 			return null;
@@ -164,29 +164,29 @@ class DCaseXMLParser extends Parser {
 			return null;
 		});
 
-		var root : CaseModel = this.MakeTree(this.RootNodeId);
+		var root : NodeModel = this.MakeTree(this.RootNodeId);
 
 		return root;
 	}
 }
 
 class ASNParser extends Parser {
-	Text2CaseTypeMap : any = {"Goal" : CaseType.Goal, "Strategy" : CaseType.Strategy , "Context" : CaseType.Context, "Evidence" : CaseType.Evidence};
-	Object2CaseModel(obj : any, orig : CaseModel) : CaseModel {
+	Text2NodeTypeMap : any = {"Goal" : NodeType.Goal, "Strategy" : NodeType.Strategy , "Context" : NodeType.Context, "Evidence" : NodeType.Evidence};
+	Object2NodeModel(obj : any, orig : NodeModel) : NodeModel {
 		var Case : Case = this.Case;//(obj["Case"] != null) ? obj["Case"] : this.Case;
-		var Parent : CaseModel = (obj["Parent"] != null) ? obj["Parent"] : orig.Parent;
-		var Type : CaseType = (obj["Type"] != null) ? this.Text2CaseTypeMap[obj["Type"]] : orig.Type;
+		var Parent : NodeModel = (obj["Parent"] != null) ? obj["Parent"] : orig.Parent;
+		var Type : NodeType = (obj["Type"] != null) ? this.Text2NodeTypeMap[obj["Type"]] : orig.Type;
 		var Label : string = (obj["Label"] != null) ? obj["Label"] : orig.Label;
 		var Statement : string = (obj["Statement"] != "") ? obj["Statement"] : orig.Statement;
 // 		var Notes = (obj["Notes"].length != 0) ? obj["Notes"] : orig.Notes;
 // 		var X = (obj["x"] != 0) ? obj["x"] : orig.x;
 // 		var Y = (obj["y"] != 0) ? obj["x"] : orig.y;
-		var Model : CaseModel = new CaseModel(Case, Parent,	Type, Label, Statement);
+		var Model : NodeModel = new NodeModel(Case, Parent,	Type, Label, Statement);
 
 		var Children = obj["Children"];
  		if (Children.length != 0) {
 			for (var i : number = 0; i < Children.length; i++) {
-				var Child = this.Object2CaseModel(Children[i], orig);
+				var Child = this.Object2NodeModel(Children[i], orig);
 				Child.Parent = Model;
 				Model.Children.push(Child);
 			}
@@ -204,9 +204,9 @@ class ASNParser extends Parser {
 		}
 		return Model;
 	}
-	Parse(ASNData : string, orig : CaseModel) : CaseModel {
+	Parse(ASNData : string, orig : NodeModel) : NodeModel {
 		var obj : any = Peg.parse(ASNData)[1];
-		var root : CaseModel = this.Object2CaseModel(obj, orig);
+		var root : NodeModel = this.Object2NodeModel(obj, orig);
 		return root;
 	}
 }
@@ -216,21 +216,21 @@ class CaseDecoder {
 	constructor() {
 	}
 
-	ParseJson(Case : Case, JsonData : any) : CaseModel  {
+	ParseJson(Case : Case, JsonData : any) : NodeModel  {
 		var parser : Parser = new JsonParser(Case);
-		var root : CaseModel = parser.Parse(JsonData, null);
+		var root : NodeModel = parser.Parse(JsonData, null);
 		return root;
 	}
 
-	ParseDCaseXML(Case : Case, XMLData : string) : CaseModel {
+	ParseDCaseXML(Case : Case, XMLData : string) : NodeModel {
 		var parser : Parser = new DCaseXMLParser(Case);
-		var root : CaseModel = parser.Parse(XMLData, null);
+		var root : NodeModel = parser.Parse(XMLData, null);
 		return root;
 	}
 
-	ParseASN(Case : Case,  ASNData: string, orig : CaseModel) : CaseModel {
+	ParseASN(Case : Case,  ASNData: string, orig : NodeModel) : NodeModel {
 		var parser : Parser = new ASNParser(Case);
-		var root : CaseModel = parser.Parse(ASNData, orig);
+		var root : NodeModel = parser.Parse(ASNData, orig);
 		return root;
 	}
 

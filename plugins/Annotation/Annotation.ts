@@ -3,11 +3,11 @@
 /// <reference path="../../src/PlugInManager.ts" />
 
 class AnnotationHTMLRenderPlugIn extends HTMLRenderPlugIn {
-	IsEnabled(caseViewer: CaseViewer, caseModel: CaseModel) : boolean {
+	IsEnabled(caseViewer: CaseViewer, caseModel: NodeModel) : boolean {
 		return true;
 	}
 
-	Delegate(caseViewer: CaseViewer, caseModel: CaseModel, element: JQuery) : boolean {
+	Delegate(caseViewer: CaseViewer, caseModel: NodeModel, element: JQuery) : boolean {
 		if(caseModel.Annotations.length == 0) return;
 
 		var text : string = "";

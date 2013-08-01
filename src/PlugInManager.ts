@@ -20,31 +20,31 @@ class ActionPlugIn extends PlugIn {
 }
 
 class CheckerPlugIn extends PlugIn {
-	IsEnabled(caseModel: CaseModel, EventType: string) : boolean {
+	IsEnabled(caseModel: NodeModel, EventType: string) : boolean {
 		return true;
 	}
 
-	Delegate(caseModel: CaseModel, y: string, z: string) : boolean {
+	Delegate(caseModel: NodeModel, y: string, z: string) : boolean {
 		return true;
 	}
 }
 
 class HTMLRenderPlugIn extends PlugIn {
-	IsEnabled(caseViewer: CaseViewer, caseModel: CaseModel) : boolean {
+	IsEnabled(caseViewer: CaseViewer, caseModel: NodeModel) : boolean {
 		return true;
 	}
 
-	Delegate(caseViewer: CaseViewer, caseModel: CaseModel, element: JQuery) : boolean {
+	Delegate(caseViewer: CaseViewer, caseModel: NodeModel, element: JQuery) : boolean {
 		return true;
 	}
 }
 
 class SVGRenderPlugIn extends PlugIn {
-	IsEnabled(caseViewer: CaseViewer, elementShape: ElementShape /* add args as necessary */) : boolean {
+	IsEnabled(caseViewer: CaseViewer, elementShape: NodeView /* add args as necessary */) : boolean {
 		return true;
 	}
 
-	Delegate(caseViewer: CaseViewer, elementShape: ElementShape /* add args as necessary */) : boolean {
+	Delegate(caseViewer: CaseViewer, elementShape: NodeView /* add args as necessary */) : boolean {
 		return true;
 	}
 
@@ -81,7 +81,7 @@ class PlugInManager {
 		}
 	}
 	/**
-	AddCheckerPlugIn(key: string, f : (x : CaseModel, y: string, z : any) => boolean) {
+	AddCheckerPlugIn(key: string, f : (x : NodeModel, y: string, z : any) => boolean) {
 		if(key == null) {
 			this.DefaultCheckerPlugIns.push(f);
 		}
@@ -91,7 +91,7 @@ class PlugInManager {
 	}
 
 
-	AddDefaultActionPlugIn(f : (x : CaseModel, y: string, z : any) => boolean) {
+	AddDefaultActionPlugIn(f : (x : NodeModel, y: string, z : any) => boolean) {
 		if(key == null) {
 			this.DefaultCheckerPlugIns.push(f);
 		}
@@ -111,8 +111,8 @@ class PlugInManager {
 }
 /** this is sample of ActionPlugIn */
 /*
-function OnClickApproval(CaseModel: CaseModel) : boolean {
-	CaseModel.SetAnnotation('@approval', CaseModel.Case.UserName);
+function OnClickApproval(NodeModel: NodeModel) : boolean {
+	NodeModel.SetAnnotation('@approval', NodeModel.Case.UserName);
 	return true; // resize, redraw
 }
 

@@ -69,7 +69,7 @@ function Check_CaseDecoder_ParseJson() : boolean {
 
 	var TestCase : Case = new Case();
 	var decoder : CaseDecoder = new CaseDecoder();
-	var root : CaseModel = decoder.ParseJson(TestCase, JsonData);
+	var root : NodeModel = decoder.ParseJson(TestCase, JsonData);
 
 	if("G1" != root.Label) return false;
 
@@ -96,7 +96,7 @@ function Check_CaseDecoder_ParseDCaseXML() : boolean {
 
 	var TestCase : Case = new Case();
 	var decoder : CaseDecoder = new CaseDecoder();
-	var root : CaseModel = decoder.ParseDCaseXML(TestCase, XMLData);
+	var root : NodeModel = decoder.ParseDCaseXML(TestCase, XMLData);
 
 	if("G_1" != root.Label) return false;
 

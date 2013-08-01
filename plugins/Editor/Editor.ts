@@ -29,15 +29,15 @@ class EditorPlugIn extends ActionPlugIn {
 				.one("blur", {node : node}, function(e: JQueryEventObject, node: JQuery) {
 					e.stopPropagation();
 					var label : string = e.data.node.text();
-					var orig_model : CaseModel = case0.ElementMap[label];
-					var orig_shape : ElementShape = caseViewer.ViewMap[label];
+					var orig_model : NodeModel = case0.ElementMap[label];
+					var orig_shape : NodeView = caseViewer.ViewMap[label];
 					var decoder : CaseDecoder = new CaseDecoder();
-					var new_model : CaseModel = decoder.ParseASN(case0, $(this).val(), orig_model);
-					var new_shape : ElementShape = new ElementShape(caseViewer, new_model);
-					(function(model : CaseModel, shape : ElementShape) : void {
+					var new_model : NodeModel = decoder.ParseASN(case0, $(this).val(), orig_model);
+					var new_shape : NodeView = new NodeView(caseViewer, new_model);
+					(function(model : NodeModel, shape : NodeView) : void {
 						for (var i = 0; i < model.Children.length; i++) {
 							var child_model = model.Children[i];
-							var child_shape : ElementShape = new ElementShape(caseViewer, child_model);
+							var child_shape : NodeView = new NodeView(caseViewer, child_model);
 							arguments.callee(child_model, child_shape);
 						}
 						caseViewer.ViewMap[model.Label] = shape;
