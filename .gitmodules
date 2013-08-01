@@ -1,3 +1,6 @@
 [submodule "test/qunit"]
 	path = test/qunit
 	url = git@github.com:jquery/qunit.git
+[submodule "lib/ASNParser"]
+	path = lib/ASNParser
+	url = https://github.com/shidasan/ASNParser.git

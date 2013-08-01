@@ -1,4 +1,5 @@
 /// <reference path="../d.ts/jquery.d.ts" />
+/// <reference path="../d.ts/ASNParser.d.ts" />
 /// <reference path="CaseModel.ts" />
 
 function OutputError(o : any) : void {
