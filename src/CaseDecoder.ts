@@ -171,10 +171,11 @@ class DCaseXMLParser extends Parser {
 }
 
 class ASNParser extends Parser {
+	Text2CaseTypeMap : any = {"Goal" : CaseType.Goal, "Strategy" : CaseType.Strategy , "Context" : CaseType.Context, "Evidence" : CaseType.Evidence};
 	Object2CaseModel(obj : any, orig : CaseModel) : CaseModel {
 		var Case : Case = this.Case;//(obj["Case"] != null) ? obj["Case"] : this.Case;
 		var Parent : CaseModel = (obj["Parent"] != null) ? obj["Parent"] : orig.Parent;
-		var Type : CaseType = (obj["Type"] != null) ? CaseType[obj["Type"]] : orig.Type;
+		var Type : CaseType = (obj["Type"] != null) ? this.Text2CaseTypeMap[obj["Type"]] : orig.Type;
 		var Label : string = (obj["Label"] != null) ? obj["Label"] : orig.Label;
 		var Statement : string = (obj["Statement"] != "") ? obj["Statement"] : orig.Statement;
 // 		var Notes = (obj["Notes"].length != 0) ? obj["Notes"] : orig.Notes;
@@ -185,7 +186,7 @@ class ASNParser extends Parser {
 		var Children = obj["Children"];
  		if (Children.length != 0) {
 			for (var i : number = 0; i < Children.length; i++) {
-				var Child = this.Object2CaseModel(Children[i], {});
+				var Child = this.Object2CaseModel(Children[i], orig);
 				Child.Parent = Model;
 				Model.Children.push(Child);
 			}

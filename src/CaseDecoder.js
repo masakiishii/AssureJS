@@ -167,11 +167,12 @@ var ASNParser = (function (_super) {
     __extends(ASNParser, _super);
     function ASNParser() {
         _super.apply(this, arguments);
+        this.Text2CaseTypeMap = { "Goal": CaseType.Goal, "Strategy": CaseType.Strategy, "Context": CaseType.Context, "Evidence": CaseType.Evidence };
     }
     ASNParser.prototype.Object2CaseModel = function (obj, orig) {
         var Case = this.Case;
         var Parent = (obj["Parent"] != null) ? obj["Parent"] : orig.Parent;
-        var Type = (obj["Type"] != null) ? CaseType[obj["Type"]] : orig.Type;
+        var Type = (obj["Type"] != null) ? this.Text2CaseTypeMap[obj["Type"]] : orig.Type;
         var Label = (obj["Label"] != null) ? obj["Label"] : orig.Label;
         var Statement = (obj["Statement"] != "") ? obj["Statement"] : orig.Statement;
 
@@ -180,7 +181,7 @@ var ASNParser = (function (_super) {
         var Children = obj["Children"];
         if (Children.length != 0) {
             for (var i = 0; i < Children.length; i++) {
-                var Child = this.Object2CaseModel(Children[i], {});
+                var Child = this.Object2CaseModel(Children[i], orig);
                 Child.Parent = Model;
                 Model.Children.push(Child);
             }
