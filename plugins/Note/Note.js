@@ -17,4 +17,4 @@ var NoteHTMLRenderPlugIn = (function (_super) {
         return true;
     };
     return NoteHTMLRenderPlugIn;
-})(HTMLRenderPlugIn);
+})(AssureIt.HTMLRenderPlugIn);

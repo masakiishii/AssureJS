@@ -6,18 +6,18 @@
 declare function wideArea(selector?: string): void;
 //---
 
-class EditorPlugIn extends ActionPlugIn {
+class EditorPlugIn extends AssureIt.ActionPlugIn {
 	constructor() {
 		super();
 		wideArea();
 		$('#editor').css({display: 'none'});
 	}
 
-	IsEnabled (caseViewer: CaseViewer, case0: Case) : boolean {
+	IsEnabled (caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case) : boolean {
 		return true;
 	}
 
-	Delegate(caseViewer: CaseViewer, case0: Case, serverApi: ServerAPI)  : boolean {
+	Delegate(caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case, serverApi: AssureIt.ServerAPI)  : boolean {
 		$('.node').click(function(ev) { //FIXME
 			ev.stopPropagation();
 			var node = $(this);
@@ -29,15 +29,15 @@ class EditorPlugIn extends ActionPlugIn {
 				.one("blur", {node : node}, function(e: JQueryEventObject, node: JQuery) {
 					e.stopPropagation();
 					var label : string = e.data.node.text();
-					var orig_model : NodeModel = case0.ElementMap[label];
-					var orig_shape : NodeView = caseViewer.ViewMap[label];
-					var decoder : CaseDecoder = new CaseDecoder();
-					var new_model : NodeModel = decoder.ParseASN(case0, $(this).val(), orig_model);
-					var new_shape : NodeView = new NodeView(caseViewer, new_model);
-					(function(model : NodeModel, shape : NodeView) : void {
+					var orig_model : AssureIt.NodeModel = case0.ElementMap[label];
+					var orig_shape : AssureIt.NodeView = caseViewer.ViewMap[label];
+					var decoder    : AssureIt.CaseDecoder = new AssureIt.CaseDecoder();
+					var new_model  : AssureIt.NodeModel = decoder.ParseASN(case0, $(this).val(), orig_model);
+					var new_shape  : AssureIt.NodeView = new AssureIt.NodeView(caseViewer, new_model);
+					(function(model : AssureIt.NodeModel, shape : AssureIt.NodeView) : void {
 						for (var i = 0; i < model.Children.length; i++) {
 							var child_model = model.Children[i];
-							var child_shape : NodeView = new NodeView(caseViewer, child_model);
+							var child_shape : AssureIt.NodeView = new AssureIt.NodeView(caseViewer, child_model);
 							arguments.callee(child_model, child_shape);
 						}
 						caseViewer.ViewMap[model.Label] = shape;

@@ -51,7 +51,7 @@ var MonitorHTMLRenderPlugIn = (function (_super) {
         return true;
     };
     return MonitorHTMLRenderPlugIn;
-})(HTMLRenderPlugIn);
+})(AssureIt.HTMLRenderPlugIn);
 
 var MonitorSVGRenderPlugIn = (function (_super) {
     __extends(MonitorSVGRenderPlugIn, _super);
@@ -70,4 +70,4 @@ var MonitorSVGRenderPlugIn = (function (_super) {
         return true;
     };
     return MonitorSVGRenderPlugIn;
-})(SVGRenderPlugIn);
+})(AssureIt.SVGRenderPlugIn);

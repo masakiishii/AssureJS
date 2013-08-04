@@ -11,8 +11,8 @@
 
 $(function () {
 
-	var serverApi = new ServerAPI('http://localhost/ait'); //TODO config for Path
-	var pluginManager = new PlugInManager();
+	var serverApi = new AssureIt.ServerAPI('http://localhost/ait'); //TODO config for Path
+	var pluginManager = new AssureIt.PlugInManager();
 	pluginManager.AddActionPlugIn("menu", new MenuBarPlugIn());
 	pluginManager.AddActionPlugIn("editor", new EditorPlugIn());
 	pluginManager.AddHTMLRenderPlugIn("annotation", new AnnotationHTMLRenderPlugIn());
@@ -264,18 +264,18 @@ $(function () {
 		]
 	}
 
-	var Case0: Case = new Case();
-	var caseDecoder: CaseDecoder = new CaseDecoder();
-	var root: NodeModel = caseDecoder.ParseJson(Case0, JsonData);
+	var Case0: AssureIt.Case = new AssureIt.Case();
+	var caseDecoder: AssureIt.CaseDecoder = new AssureIt.CaseDecoder();
+	var root: AssureIt.NodeModel = caseDecoder.ParseJson(Case0, JsonData);
 
 	Case0.SetElementTop(root);
-	var Viewer = new CaseViewer(Case0, pluginManager, serverApi);
+	var Viewer = new AssureIt.CaseViewer(Case0, pluginManager, serverApi);
 	var backgroundlayer = <HTMLDivElement>document.getElementById("background");
 	var shapelayer = <SVGGElement><any>document.getElementById("layer0");
 	var contentlayer = <HTMLDivElement>document.getElementById("layer1");
 	var controllayer = <HTMLDivElement>document.getElementById("layer2");
 
-	var Screen = new ScreenManager(shapelayer, contentlayer, controllayer, backgroundlayer);
+	var Screen = new AssureIt.ScreenManager(shapelayer, contentlayer, controllayer, backgroundlayer);
 	Viewer.Draw(Screen);
 });
 

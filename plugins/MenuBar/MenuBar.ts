@@ -1,14 +1,14 @@
 /// <reference path="../../src/CaseModel.ts" />
 /// <reference path="../../src/PlugInManager.ts" />
 
-class MenuBarPlugIn extends ActionPlugIn {
-	IsEnabled(caseViewer: CaseViewer, case0: Case): boolean {
+class MenuBarPlugIn extends AssureIt.ActionPlugIn {
+	IsEnabled(caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case): boolean {
 		return true;
 	}
 
 	static DelegateInvoked: boolean = false;
 
-	Delegate(caseViewer: CaseViewer, case0: Case, serverApi: ServerAPI): boolean {
+	Delegate(caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case, serverApi: AssureIt.ServerAPI): boolean {
 		if (MenuBarPlugIn.DelegateInvoked) return;
 		$('.node').hover(function () {
 			var node = $(this);

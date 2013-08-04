@@ -50,4 +50,4 @@ var MenuBarPlugIn = (function (_super) {
     };
     MenuBarPlugIn.DelegateInvoked = false;
     return MenuBarPlugIn;
-})(ActionPlugIn);
+})(AssureIt.ActionPlugIn);
