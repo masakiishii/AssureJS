@@ -207,7 +207,6 @@ var AssureIt;
             }
             var n = ElementList.length;
             for (var i = 0; i < n; i++) {
-                console.log(this.ViewMap[ElementList[i].Label].AbsX);
                 if (ElementList[i].Type == AssureIt.NodeType.Context) {
                     continue;
                 }
