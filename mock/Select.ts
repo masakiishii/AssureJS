@@ -6,6 +6,9 @@ $(function () {
 
 	var serverApi = new AssureIt.ServerAPI('http://localhost/ait'); //TODO config for Path
 
-	var mockData = {};
+	var selectCaseView = new AssureIt.SelectCaseView(serverApi, '#select-case');
+	selectCaseView.initEvents();
+	selectCaseView.clear();
+	selectCaseView.addElements(null);
 });
 

@@ -107,7 +107,7 @@ var AssureIt;
         }
         TableView.toTable = function (id, name, user, lastDate, lastUser, isLogin) {
             var Config = { BASEPATH: "FIXME" };
-            var html = '<td><a href="' + Config.BASEPATH + '/dcase/' + id + '">' + name + "</a></td><td>" + user + "</td><td>" + lastDate + "</td><td>" + lastUser + "</td>";
+            var html = '<td><a href="' + Config.BASEPATH + '/dcase/' + id + '">' + name + "</a><td>" + lastUser + "</td>";
             if (isLogin) {
                 html += "<td><a id=\"e" + id + "\" href=\"#\">Edit</a></td>" + "<td><a id=\"d" + id + "\" href=\"#\">Delete</a></td>";
             }
@@ -124,7 +124,7 @@ var AssureIt;
             this.api = api;
         }
         SelectCaseTableManager.prototype.clear = function () {
-            $("tbody#dcase-select-table *").remove();
+            $("tbody#case-select-table *").remove();
         };
 
         SelectCaseTableManager.prototype.updateContentsOrZeroView = function () {
@@ -135,8 +135,9 @@ var AssureIt;
     AssureIt.SelectCaseTableManager = SelectCaseTableManager;
 
     var SelectCaseView = (function () {
-        function SelectCaseView(api) {
+        function SelectCaseView(api, rootSelector) {
             this.api = api;
+            this.rootSelector = rootSelector;
             this.pageIndex = 1;
             this.maxPageSize = 2;
             this.manager = new SelectCaseTableManager(api);

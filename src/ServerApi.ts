@@ -12,7 +12,7 @@ module AssureIt {
 	export class ServerAPI {
 		uri : string;
 
-		constructor(basepath : string) {
+		constructor(public basepath: string) {
 			this.uri = basepath + "/api/1.0/";
 		}
 

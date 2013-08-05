@@ -54,36 +54,35 @@ module AssureIt {
 			});
 		}
 	}
-	
+
 	export class ThumnailView {
 		static toThumnail(id: number, name: string, user: string, lastDate: any, lastUser: any, isLogin: bool): JQuery {
 			var html = '<ul class="thumbnails"><li class="span4"><a href="#" class="thumbnail">'+name+'</a></li></ul>';
 			return $('<div></div>').html(html);
 		}
 	}
-	
-	export class SelectCaseThumbnailManager extends SelectCaseManager{
+
+	export class SelectCaseThumbnailManager extends SelectCaseManager {
 		constructor(public api: ServerAPI) {
 			super(api);
 		}
-	
+
 		clear() : void {
 			$("#select-case *").remove();
 			$("#select-case").append('<div class="row-fluid"></div>');
 		}
-	
+
 		updateContentsOrZeroView():void {
 			super._updateContentsOrZeroView($('#select-case .row-fluid'), "<font color=gray>Caseがありません</font>", ThumnailView.toThumnail);
 		}
 	}
-	
+
 	export class TableView {
 		static toTable(id: number, name: string, user: string, lastDate: any, lastUser: any, isLogin: bool): JQuery {
 			//FIXME
 			var Config = { BASEPATH: "FIXME"};
 			var html = '<td><a href="' + Config.BASEPATH + '/dcase/' + id + '">' + name +
-					"</a></td><td>" + user + "</td><td>" + lastDate + "</td><td>" +
-					lastUser + "</td>";
+					"</a><td>" + lastUser + "</td>";
 			if(isLogin) {
 				html += "<td><a id=\"e"+ id +"\" href=\"#\">Edit</a></td>"
 					+ "<td><a id=\"d"+ id +"\" href=\"#\">Delete</a></td>";
@@ -91,16 +90,16 @@ module AssureIt {
 			return $("<tr></tr>").html(html);
 		}
 	}
-	
-	export class SelectCaseTableManager extends SelectCaseManager{
+
+	export class SelectCaseTableManager extends SelectCaseManager {
 		constructor(public api: ServerAPI) {
 			super(api);
 		}
 
 		clear() : void {
-			$("tbody#dcase-select-table *").remove();
+			$("tbody#case-select-table *").remove();
 		}
-	
+
 		updateContentsOrZeroView():void {
 			super._updateContentsOrZeroView($('#case-select-table'), "<tr><td><font color=gray>Caseがありません</font></td><td></td><td></td><td></td></tr>", TableView.toTable);
 		}
@@ -110,17 +109,17 @@ module AssureIt {
 		pageIndex: number;
 		maxPageSize: number;
 		manager: SelectCaseManager;
-	
-		constructor(public api:ServerAPI) {
+
+		constructor(public api:ServerAPI, public rootSelector: string) {
 			this.pageIndex = 1;
 			this.maxPageSize = 2;
 			this.manager = new SelectCaseTableManager(api);
 		}
-	
+
 		clear(): void {
 			this.manager.clear();
 		}
-	
+
 		addElements(userId, pageIndex?: any, tags?: string[]): void {
 			if(pageIndex == null || pageIndex < 1) pageIndex = 1;
 			if(tags == null) tags = [];
@@ -136,7 +135,7 @@ module AssureIt {
 			});
 			this.manager.updateContentsOrZeroView();
 		}
-	
+
 		initEvents() {
 			var Config = { BASEPATH: "FIXME"}; //FIXME
 			$("#prev-page").click((e) => {
