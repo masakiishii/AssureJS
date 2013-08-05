@@ -219,7 +219,7 @@ module AssureIt {
 			}
 			var n: number = ElementList.length;
 			for (var i: number = 0; i < n; i++) {
-				console.log(this.ViewMap[ElementList[i].Label].AbsX);
+				//console.log(this.ViewMap[ElementList[i].Label].AbsX);
 				if (ElementList[i].Type == NodeType.Context) {
 					continue;
 				}
