@@ -37,7 +37,7 @@ var MenuBarPlugIn = (function (_super) {
             var node = $(this);
             $('#menu').remove();
             var p = node.position();
-            var j = $('<div id="menu">' + '<a href="#" ><img id="goal" src="images/icon.png" alt="" /></a>' + '<a href="#" ><img id="context" src="images/icon.png" alt="" /></a>' + '<a href="#" ><img id="strategy" src="images/icon.png" alt="" /></a>' + '<a href="#" ><img id="evidence" src="images/icon.png" alt="" /></a>' + '<a href="#" ><img src="images/icon.png" alt="" /></a>' + '<a href="#" ><img src="images/icon.png" alt="" /></a></div>');
+            var j = $('<div id="menu">' + '<a href="#" ><img id="goal" src="images/icon.png" title="Goal" alt="goal" /></a>' + '<a href="#" ><img id="context" src="images/icon.png" title="Context" alt="context" /></a>' + '<a href="#" ><img id="strategy" src="images/icon.png" title="Strategy" alt="strategy" /></a>' + '<a href="#" ><img id="evidence" src="images/icon.png" title="Evidence" alt="evidence" /></a></div>');
 
             j.appendTo($('#layer2'));
             j.css({ position: 'absolute', top: p.top + 75, display: 'none', opacity: 0 });
@@ -64,7 +64,7 @@ var MenuBarPlugIn = (function (_super) {
                 idle: 1500,
                 size: 48,
                 distance: 60,
-                labels: 'hoge,fuga,foo,bar',
+                labels: 'tc',
                 duration: 500,
                 source: function () {
                     return this.src.replace(/(jpg|gif)$/, 'png');
