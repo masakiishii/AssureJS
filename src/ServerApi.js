@@ -42,7 +42,7 @@ var AssureIt;
             return this.RemoteCall("getDCase", { dcaseId: CaseId });
         };
 
-        ServerAPI.prototype.SearchDCase = function (pageIndex, tags) {
+        ServerAPI.prototype.SearchCase = function (pageIndex, tags) {
             if (tags == null) {
                 tags = [];
             }
@@ -53,7 +53,7 @@ var AssureIt;
             }
         };
 
-        ServerAPI.prototype.CreateDCase = function (name, tree) {
+        ServerAPI.prototype.CreateCase = function (name, tree) {
             return this.RemoteCall("createDCase", {
                 dcaseName: name,
                 contents: tree
@@ -76,14 +76,14 @@ var AssureIt;
             }).commitId;
         };
 
-        ServerAPI.prototype.EditDCase = function (dcaseId, name) {
+        ServerAPI.prototype.EditCase = function (dcaseId, name) {
             return this.RemoteCall("editDCase", {
                 dcaseId: dcaseId,
                 dcaseName: name
             });
         };
 
-        ServerAPI.prototype.DeleteDCase = function (dcaseId) {
+        ServerAPI.prototype.DeleteCase = function (dcaseId) {
             return this.RemoteCall("deleteDCase", { dcaseId: dcaseId });
         };
 
@@ -95,7 +95,7 @@ var AssureIt;
             return this.RemoteCall("searchNode", { text: text }).searchResultList;
         };
 
-        ServerAPI.prototype.SearchDCaseHistory = function (dcaseId, text) {
+        ServerAPI.prototype.SearchCaseHistory = function (dcaseId, text) {
             return this.RemoteCall("searchDCaseHistory", { dcaseId: dcaseId, text: text });
         };
         return ServerAPI;

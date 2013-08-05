@@ -49,7 +49,7 @@ module AssureIt {
 
 		//-------------------------------------
 
-		SearchDCase(pageIndex: any, tags?: string[]) {
+		SearchCase(pageIndex: any, tags?: string[]) {
 			if(tags == null) {
 				tags = [];
 			}
@@ -60,7 +60,7 @@ module AssureIt {
 			}
 		}
 
-		CreateDCase(name, tree) {
+		CreateCase(name, tree) {
 			return this.RemoteCall("createDCase", {
 				dcaseName: name, contents: tree });
 		}
@@ -82,15 +82,14 @@ module AssureIt {
 			}).commitId;
 		}
 
-
-		EditDCase(dcaseId, name) {
+		EditCase(dcaseId, name) {
 			return this.RemoteCall("editDCase", {
 				dcaseId: dcaseId,
 				dcaseName: name
 			});
 		}
 
-		DeleteDCase(dcaseId) {
+		DeleteCase(dcaseId) {
 			return this.RemoteCall("deleteDCase", { dcaseId: dcaseId });
 		}
 
@@ -102,7 +101,7 @@ module AssureIt {
 			return this.RemoteCall("searchNode", { text: text }).searchResultList;
 		}
 
-		SearchDCaseHistory(dcaseId, text) {
+		SearchCaseHistory(dcaseId, text) {
 			return this.RemoteCall("searchDCaseHistory", {dcaseId: dcaseId, text: text});
 		}
 	}

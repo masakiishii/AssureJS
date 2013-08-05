@@ -3,8 +3,10 @@ src/CaseModel.ts
 src/CaseViewer.ts
 src/PlugInManager.ts
 src/ServerApi.ts
-src/Index.ts
+src/SelectComponent.ts
 src/Layout.ts
+mock/Index.ts
+mock/Select.ts
 plugins/Editor/Editor.ts
 plugins/MenuBar/MenuBar.ts
 plugins/Annotation/Annotation.ts
