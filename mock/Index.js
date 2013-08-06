@@ -241,6 +241,7 @@ $(function () {
     };
 
     var Case0 = new AssureIt.Case();
+    Case0.CommitId = 0;
     var caseDecoder = new AssureIt.CaseDecoder();
     var root = caseDecoder.ParseJson(Case0, JsonData);
 

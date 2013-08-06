@@ -265,6 +265,7 @@ $(function () {
 	}
 
 	var Case0: AssureIt.Case = new AssureIt.Case();
+	Case0.CommitId = 0;
 	var caseDecoder: AssureIt.CaseDecoder = new AssureIt.CaseDecoder();
 	var root: AssureIt.NodeModel = caseDecoder.ParseJson(Case0, JsonData);
 

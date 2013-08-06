@@ -13,46 +13,12 @@ function ReDraw(caseViewer: AssureIt.CaseViewer): void {
 	Screen.SetOffset(offset.left, offset.top);
 }
 
-function AddNode(caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case, element: JQuery, nodeType: AssureIt.NodeType): void {
-	var thisNodeView: AssureIt.NodeView = caseViewer.ViewMap[element.children("h4").text()];
+function AddNode(caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case, node: JQuery, nodeType: AssureIt.NodeType): void {
+	var thisNodeView: AssureIt.NodeView = caseViewer.ViewMap[node.children("h4").text()];
 	var newNodeModel: AssureIt.NodeModel = new AssureIt.NodeModel(case0, thisNodeView.Source, nodeType, null, null);
 	case0.SaveIdCounterMax(case0.ElementTop);
 	caseViewer.ViewMap[newNodeModel.Label] = new AssureIt.NodeView(caseViewer, newNodeModel);
 	caseViewer.ViewMap[newNodeModel.Label].ParentShape = caseViewer.ViewMap[newNodeModel.Parent.Label];
-	caseViewer.Resize();
-	ReDraw(caseViewer);
-}
-
-function GetDescendantLabels(labels: string[], children: AssureIt.NodeModel[]): string[] {
-	for(var i: number = 0; i < children.length; i++) {
-		labels.push(children[i].Label);
-		GetDescendantLabels(labels, children[i].Children);
-	}
-	return labels;
-}
-
-function RemoveNode(caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case, element: JQuery): void {
-	var thisLabel: string = element.children("h4").text();
-	var thisNodeView: AssureIt.NodeView = caseViewer.ViewMap[thisLabel];
-	var thisNodeModel: AssureIt.NodeModel = thisNodeView.Source;
-	var brotherNodeModels: AssureIt.NodeModel[] = thisNodeModel.Parent.Children;
-
-	for(var i: number = 0; i < brotherNodeModels.length; i++) {
-		if(brotherNodeModels[i].Label == thisLabel) {
-			brotherNodeModels.splice(i, 1);
-		}
-	}
-
-	var labels: string[] = [thisLabel];
-	labels = GetDescendantLabels(labels, thisNodeModel.Children);
-
-	for(var i: number = 0; i < labels.length; i++) {
-		delete case0.ElementMap[labels[i]];
-		var nodeView: AssureIt.NodeView = caseViewer.ViewMap[labels[i]];
-		nodeView.DeleteHTMLElementRecursive(null, null);
-		delete caseViewer.ViewMap[labels[i]];
-	}
-
 	caseViewer.Resize();
 	ReDraw(caseViewer);
 }
@@ -96,6 +62,44 @@ function ShowSubMenu(caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case, node
 	});
 }
 
+function GetDescendantLabels(labels: string[], children: AssureIt.NodeModel[]): string[] {
+	for(var i: number = 0; i < children.length; i++) {
+		labels.push(children[i].Label);
+		GetDescendantLabels(labels, children[i].Children);
+	}
+	return labels;
+}
+
+function RemoveNode(caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case, node: JQuery): void {
+	var thisLabel: string = node.children("h4").text();
+	var thisNodeView: AssureIt.NodeView = caseViewer.ViewMap[thisLabel];
+	var thisNodeModel: AssureIt.NodeModel = thisNodeView.Source;
+	var brotherNodeModels: AssureIt.NodeModel[] = thisNodeModel.Parent.Children;
+
+	for(var i: number = 0; i < brotherNodeModels.length; i++) {
+		if(brotherNodeModels[i].Label == thisLabel) {
+			brotherNodeModels.splice(i, 1);
+		}
+	}
+
+	var labels: string[] = [thisLabel];
+	labels = GetDescendantLabels(labels, thisNodeModel.Children);
+
+	for(var i: number = 0; i < labels.length; i++) {
+		delete case0.ElementMap[labels[i]];
+		var nodeView: AssureIt.NodeView = caseViewer.ViewMap[labels[i]];
+		nodeView.DeleteHTMLElementRecursive(null, null);
+		delete caseViewer.ViewMap[labels[i]];
+	}
+
+	caseViewer.Resize();
+	ReDraw(caseViewer);
+}
+
+function Commit(caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case, node: JQuery, serverApi: AssureIt.ServerAPI): void {
+	serverApi.Commit(case0.ElementTop, "test"/* TODO: input from textarea */, case0.CommitId);
+}
+
 class MenuBarPlugIn extends AssureIt.ActionPlugIn {
 	IsEnabled(caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case): boolean {
 		return true;
@@ -133,6 +137,10 @@ class MenuBarPlugIn extends AssureIt.ActionPlugIn {
 
 			$('#remove').click(function() {
 				RemoveNode(caseViewer, case0, node);
+			});
+
+			$('#commit').click(function() {
+				Commit(caseViewer, case0, node, serverApi);
 			});
 
 		}, function() { /* TODO */ });

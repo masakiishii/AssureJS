@@ -16,46 +16,12 @@ function ReDraw(caseViewer) {
     Screen.SetOffset(offset.left, offset.top);
 }
 
-function AddNode(caseViewer, case0, element, nodeType) {
-    var thisNodeView = caseViewer.ViewMap[element.children("h4").text()];
+function AddNode(caseViewer, case0, node, nodeType) {
+    var thisNodeView = caseViewer.ViewMap[node.children("h4").text()];
     var newNodeModel = new AssureIt.NodeModel(case0, thisNodeView.Source, nodeType, null, null);
     case0.SaveIdCounterMax(case0.ElementTop);
     caseViewer.ViewMap[newNodeModel.Label] = new AssureIt.NodeView(caseViewer, newNodeModel);
     caseViewer.ViewMap[newNodeModel.Label].ParentShape = caseViewer.ViewMap[newNodeModel.Parent.Label];
-    caseViewer.Resize();
-    ReDraw(caseViewer);
-}
-
-function GetDescendantLabels(labels, children) {
-    for (var i = 0; i < children.length; i++) {
-        labels.push(children[i].Label);
-        GetDescendantLabels(labels, children[i].Children);
-    }
-    return labels;
-}
-
-function RemoveNode(caseViewer, case0, element) {
-    var thisLabel = element.children("h4").text();
-    var thisNodeView = caseViewer.ViewMap[thisLabel];
-    var thisNodeModel = thisNodeView.Source;
-    var brotherNodeModels = thisNodeModel.Parent.Children;
-
-    for (var i = 0; i < brotherNodeModels.length; i++) {
-        if (brotherNodeModels[i].Label == thisLabel) {
-            brotherNodeModels.splice(i, 1);
-        }
-    }
-
-    var labels = [thisLabel];
-    labels = GetDescendantLabels(labels, thisNodeModel.Children);
-
-    for (var i = 0; i < labels.length; i++) {
-        delete case0.ElementMap[labels[i]];
-        var nodeView = caseViewer.ViewMap[labels[i]];
-        nodeView.DeleteHTMLElementRecursive(null, null);
-        delete caseViewer.ViewMap[labels[i]];
-    }
-
     caseViewer.Resize();
     ReDraw(caseViewer);
 }
@@ -98,6 +64,44 @@ function ShowSubMenu(caseViewer, case0, node) {
     $('#evidence').click(function () {
         AddNode(caseViewer, case0, node, AssureIt.NodeType.Evidence);
     });
+}
+
+function GetDescendantLabels(labels, children) {
+    for (var i = 0; i < children.length; i++) {
+        labels.push(children[i].Label);
+        GetDescendantLabels(labels, children[i].Children);
+    }
+    return labels;
+}
+
+function RemoveNode(caseViewer, case0, node) {
+    var thisLabel = node.children("h4").text();
+    var thisNodeView = caseViewer.ViewMap[thisLabel];
+    var thisNodeModel = thisNodeView.Source;
+    var brotherNodeModels = thisNodeModel.Parent.Children;
+
+    for (var i = 0; i < brotherNodeModels.length; i++) {
+        if (brotherNodeModels[i].Label == thisLabel) {
+            brotherNodeModels.splice(i, 1);
+        }
+    }
+
+    var labels = [thisLabel];
+    labels = GetDescendantLabels(labels, thisNodeModel.Children);
+
+    for (var i = 0; i < labels.length; i++) {
+        delete case0.ElementMap[labels[i]];
+        var nodeView = caseViewer.ViewMap[labels[i]];
+        nodeView.DeleteHTMLElementRecursive(null, null);
+        delete caseViewer.ViewMap[labels[i]];
+    }
+
+    caseViewer.Resize();
+    ReDraw(caseViewer);
+}
+
+function Commit(caseViewer, case0, node, serverApi) {
+    serverApi.Commit(case0.ElementTop, "test", case0.CommitId);
 }
 
 var MenuBarPlugIn = (function (_super) {
@@ -144,6 +148,10 @@ var MenuBarPlugIn = (function (_super) {
 
             $('#remove').click(function () {
                 RemoveNode(caseViewer, case0, node);
+            });
+
+            $('#commit').click(function () {
+                Commit(caseViewer, case0, node, serverApi);
             });
         }, function () {
         });
