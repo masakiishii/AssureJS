@@ -68,8 +68,7 @@ var MenuBarPlugIn = (function (_super) {
     };
 
     MenuBarPlugIn.prototype.Delegate = function (caseViewer, case0, serverApi) {
-        if (MenuBarPlugIn.DelegateInvoked)
-            return;
+        $('.node').unbind('hover');
         $('.node').hover(function () {
             var node = $(this);
             $('#menu').remove();
@@ -120,9 +119,8 @@ var MenuBarPlugIn = (function (_super) {
             });
         }, function () {
         });
-        MenuBarPlugIn.DelegateInvoked = true;
+
         return true;
     };
-    MenuBarPlugIn.DelegateInvoked = false;
     return MenuBarPlugIn;
 })(AssureIt.ActionPlugIn);

@@ -64,10 +64,8 @@ class MenuBarPlugIn extends AssureIt.ActionPlugIn {
 		return true;
 	}
 
-	static DelegateInvoked: boolean = false;
-
 	Delegate(caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case, serverApi: AssureIt.ServerAPI): boolean {
-		if (MenuBarPlugIn.DelegateInvoked) return;
+		$('.node').unbind('hover');
 		$('.node').hover(function () {
 			var node = $(this);
 			$('#menu').remove();
@@ -119,7 +117,6 @@ class MenuBarPlugIn extends AssureIt.ActionPlugIn {
 				//				$('#menu').remove();
 				//			}
 			});
-		MenuBarPlugIn.DelegateInvoked = true;
 		return true;
 	}
 }
