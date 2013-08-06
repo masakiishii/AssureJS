@@ -57,6 +57,45 @@ function RemoveNode(caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case, eleme
 	ReDraw(caseViewer);
 }
 
+function ShowSubMenu(caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case, node: JQuery): void {
+	$('#submenu').remove();
+
+	var submenu = $('<div id="submenu">' +
+		'<a href="#" ><img id="goal" src="images/icon.png" title="Goal" alt="goal" /></a>' +
+		'<a href="#" ><img id="context" src="images/icon.png" title="Context" alt="context" /></a>' +
+		'<a href="#" ><img id="strategy" src="images/icon.png" title="Strategy" alt="strategy" /></a>' +
+		'<a href="#" ><img id="evidence" src="images/icon.png" title="Evidence" alt="evidence" /></a></div>');
+	submenu.css({ position: 'absolute', top: node.position().top, left: node.position().left, display: 'block', opacity: 0 });
+	submenu.hover(function() {}, function() { $(this).remove(); });
+	(<any>submenu).jqDock({
+		align: 'right',
+		fadeIn: 200,
+		idle: 1500,
+		size: 48,
+		distance: 60,
+		labels: 'tc',
+		duration: 500,
+		source: function () { return this.src.replace(/(jpg|gif)$/, 'png'); },
+	});
+	submenu.appendTo($('#layer2'));
+
+	$('#goal').click(function() {
+		AddNode(caseViewer, case0, node, AssureIt.NodeType.Goal);
+	});
+
+	$('#context').click(function() {
+		AddNode(caseViewer, case0, node, AssureIt.NodeType.Context);
+	});
+
+	$('#strategy').click(function() {
+		AddNode(caseViewer, case0, node, AssureIt.NodeType.Strategy);
+	});
+
+	$('#evidence').click(function() {
+		AddNode(caseViewer, case0, node, AssureIt.NodeType.Evidence);
+	});
+}
+
 class MenuBarPlugIn extends AssureIt.ActionPlugIn {
 	IsEnabled(caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case): boolean {
 		return true;
@@ -67,38 +106,15 @@ class MenuBarPlugIn extends AssureIt.ActionPlugIn {
 		$('.node').hover(function () {
 			var node = $(this);
 			$('#menu').remove();
-			var p = node.position();
-			var j = $('<div id="menu">' +
+
+			var menu = $('<div id="menu">' +
+				'<a href="#" ><img id="add" src="images/icon.png" title="Add" alt="add" /></a>' +
 				'<a href="#" ><img id="remove" src="images/icon.png" title="Remove" alt="remove" /></a>' +
-				'<a href="#" ><img id="goal" src="images/icon.png" title="Goal" alt="goal" /></a>' +
-				'<a href="#" ><img id="context" src="images/icon.png" title="Context" alt="context" /></a>' +
-				'<a href="#" ><img id="strategy" src="images/icon.png" title="Strategy" alt="strategy" /></a>' +
-				'<a href="#" ><img id="evidence" src="images/icon.png" title="Evidence" alt="evidence" /></a></div>');
-
-			j.appendTo($('#layer2'));
-			j.css({ position: 'absolute', top: p.top + 75, display: 'none', opacity: 0 });
-
-			$('#remove').click(function() {
-				RemoveNode(caseViewer, case0, node);
-			});
-
-			$('#goal').click(function() {
-				AddNode(caseViewer, case0, node, AssureIt.NodeType.Goal);
-			});
-
-			$('#context').click(function() {
-				AddNode(caseViewer, case0, node, AssureIt.NodeType.Context);
-			});
-
-			$('#strategy').click(function() {
-				AddNode(caseViewer, case0, node, AssureIt.NodeType.Strategy);
-			});
-
-			$('#evidence').click(function() {
-				AddNode(caseViewer, case0, node, AssureIt.NodeType.Evidence);
-			});
-
-			(<any>$('#menu')).jqDock({
+				'<a href="#" ><img id="commit" src="images/icon.png" title="Commit" alt="remove" /></a>' +
+				'</div>');
+			menu.css({ position: 'absolute', top: node.position().top + 75, display: 'block', opacity: 0 });
+			menu.hover(function () { }, function () { $(this).remove(); });
+			(<any>menu).jqDock({
 				align: 'bottom',
 				fadeIn: 200,
 				idle: 1500,
@@ -107,14 +123,19 @@ class MenuBarPlugIn extends AssureIt.ActionPlugIn {
 				labels: 'tc',
 				duration: 500,
 				source: function () { return this.src.replace(/(jpg|gif)$/, 'png'); },
-				onReady: function () { $('#menu').css({ left: node.position().left + (node.outerWidth() - $('#menu').width()) / 2 }); },
+				onReady: function () { menu.css({ left: node.position().left + (node.outerWidth() - menu.width()) / 2 }); },
 			});
-			$('#menu').css({ display: 'block' }).hover(function () { }, function () { $(this).remove(); });
-		}, () => {
-				//			if(menuFlag) {
-				//				$('#menu').remove();
-				//			}
+			menu.appendTo($('#layer2'));
+
+			$('#add').click(function() {
+					ShowSubMenu(caseViewer, case0, node);
 			});
+
+			$('#remove').click(function() {
+				RemoveNode(caseViewer, case0, node);
+			});
+
+		}, function() { /* TODO */ });
 		return true;
 	}
 }
