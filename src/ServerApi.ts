@@ -115,7 +115,7 @@ module AssureIt {
 		}
 
 		EditProject(name: string, projectId: number) {
-			return this.RemoteCall("EditProject", {
+			return this.RemoteCall("editProject", {
 				name: name, projectId: projectId });
 		}
 	}

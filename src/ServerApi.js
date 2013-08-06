@@ -112,7 +112,7 @@ var AssureIt;
         };
 
         ServerAPI.prototype.EditProject = function (name, projectId) {
-            return this.RemoteCall("EditProject", {
+            return this.RemoteCall("editProject", {
                 name: name,
                 projectId: projectId
             });
