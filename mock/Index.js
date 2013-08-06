@@ -10,7 +10,7 @@ $(function () {
 
     var JsonData = {
         "DCaseName": "test",
-        "NodeCount": 23,
+        "NodeCount": 25,
         "TopGoalLabel": "G1",
         "NodeList": [
             {
@@ -222,7 +222,10 @@ $(function () {
                 "Notes": []
             },
             {
-                "Children": [],
+                "Children": [
+                    "C6",
+                    "E7"
+                ],
                 "Statement": "",
                 "NodeType": 0,
                 "Label": "G8",
@@ -234,6 +237,22 @@ $(function () {
                 "Statement": "",
                 "NodeType": 0,
                 "Label": "G9",
+                "Annotations": [],
+                "Notes": []
+            },
+            {
+                "Children": [],
+                "Statement": "",
+                "NodeType": 1,
+                "Label": "C6",
+                "Annotations": [],
+                "Notes": []
+            },
+            {
+                "Children": [],
+                "Statement": "",
+                "NodeType": 3,
+                "Label": "E7",
                 "Annotations": [],
                 "Notes": []
             }

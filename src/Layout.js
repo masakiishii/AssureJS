@@ -205,6 +205,7 @@ var AssureIt;
             } else {
                 var xPosition = this.ViewMap[ElementList[0].Label].AbsX;
             }
+
             var n = ElementList.length;
             for (var i = 0; i < n; i++) {
                 if (ElementList[i].Type == AssureIt.NodeType.Context) {
@@ -248,11 +249,11 @@ var AssureIt;
                         var PreviousParentChildren = PreviousNodeView.ParentShape.Source.Children;
                         var Min_xPosition = this.CalculateMinPosition(PreviousParentChildren);
                         var Max_xPosition = this.CalculateMaxPosition(PreviousParentChildren);
-                        var ArgumentMargin = (Max_xPosition - Min_xPosition) / 2;
-                        if (ArgumentMargin > (this.X_CONTEXT_MARGIN - this.X_MULTI_ELEMENT_MARGIN)) {
+                        var HalfChildrenWidth = (Max_xPosition - Min_xPosition) / 2;
+                        if (HalfChildrenWidth > (this.X_CONTEXT_MARGIN - this.X_MULTI_ELEMENT_MARGIN)) {
                             CurrentNodeView.AbsX += this.X_MULTI_ELEMENT_MARGIN;
                         } else {
-                            CurrentNodeView.AbsX += this.X_FOOT_MARGIN;
+                            CurrentNodeView.AbsX += this.X_CONTEXT_MARGIN - HalfChildrenWidth;
                         }
                     }
                     if (this.GetContextIndex(PreviousNodeView.Source) != -1) {
@@ -271,6 +272,7 @@ var AssureIt;
         LayoutPortrait.prototype.Traverse = function (Element, x, y) {
             if ((Element.Children.length == 0 && Element.Type != AssureIt.NodeType.Context) || (Element.Children.length == 1 && Element.Children[0].Type == AssureIt.NodeType.Context)) {
                 this.footelement.push(Element.Label);
+                console.log(this.footelement);
                 return;
             }
 

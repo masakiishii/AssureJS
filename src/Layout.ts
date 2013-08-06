@@ -217,6 +217,7 @@ module AssureIt {
 			else {
 				var xPosition: number = this.ViewMap[ElementList[0].Label].AbsX;
 			}
+//			var xPosition: number = this.ViewMap[ElementList[0].Label].AbsX;
 			var n: number = ElementList.length;
 			for (var i: number = 0; i < n; i++) {
 				//console.log(this.ViewMap[ElementList[i].Label].AbsX);
@@ -262,12 +263,12 @@ module AssureIt {
 						var PreviousParentChildren: NodeModel[] = PreviousNodeView.ParentShape.Source.Children;
 						var Min_xPosition: number = this.CalculateMinPosition(PreviousParentChildren);
 						var Max_xPosition: number = this.CalculateMaxPosition(PreviousParentChildren);
-						var ArgumentMargin: number = (Max_xPosition - Min_xPosition) / 2;
-						if (ArgumentMargin > (this.X_CONTEXT_MARGIN - this.X_MULTI_ELEMENT_MARGIN)) {
+						var HalfChildrenWidth: number = (Max_xPosition - Min_xPosition) / 2;
+						if (HalfChildrenWidth > (this.X_CONTEXT_MARGIN - this.X_MULTI_ELEMENT_MARGIN)) {
 							CurrentNodeView.AbsX += this.X_MULTI_ELEMENT_MARGIN;
 						}
 						else {
-							CurrentNodeView.AbsX += this.X_FOOT_MARGIN;
+							CurrentNodeView.AbsX +=  this.X_CONTEXT_MARGIN - HalfChildrenWidth;
 						}
 					}
 					if (this.GetContextIndex(PreviousNodeView.Source) != -1) {
@@ -286,6 +287,7 @@ module AssureIt {
 		Traverse(Element: NodeModel, x: number, y: number) {
 			if ((Element.Children.length == 0 && Element.Type != NodeType.Context) || (Element.Children.length == 1 && Element.Children[0].Type == NodeType.Context)) {
 				this.footelement.push(Element.Label);
+				console.log(this.footelement);
 				return;
 			}
 
