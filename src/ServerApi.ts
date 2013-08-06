@@ -60,12 +60,12 @@ module AssureIt {
 			}
 		}
 
-		CreateCase(name, tree) {
+		CreateCase(name: string, tree: any) {
 			return this.RemoteCall("createDCase", {
 				dcaseName: name, contents: tree });
 		}
 
-		GetCommitList(dcaseId) {
+		GetCommitList(dcaseId: number) {
 			return this.RemoteCall("getCommitList", { dcaseId:dcaseId }).commitList;
 		}
 
@@ -97,12 +97,26 @@ module AssureIt {
 			return JSON.parse(this.RemoteCall("getNodeTree", { commitId: commitId }).contents);
 		}
 
-		SearchNode(text) {
+		SearchNode(text: string) {
 			return this.RemoteCall("searchNode", { text: text }).searchResultList;
 		}
 
-		SearchCaseHistory(dcaseId, text) {
+		SearchCaseHistory(dcaseId: number, text: string) {
 			return this.RemoteCall("searchDCaseHistory", {dcaseId: dcaseId, text: text});
+		}
+
+		GetProjectList(userId: number) {
+			return this.RemoteCall("getProjectList", { userId:userId });
+		}
+
+		CreateProject(name: string, userId: number) {
+			return this.RemoteCall("createProject", {
+				name: name, userId: userId });
+		}
+
+		EditProject(name: string, projectId: number) {
+			return this.RemoteCall("EditProject", {
+				name: name, projectId: projectId });
 		}
 	}
 }

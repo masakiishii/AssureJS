@@ -99,6 +99,24 @@ var AssureIt;
         ServerAPI.prototype.SearchCaseHistory = function (dcaseId, text) {
             return this.RemoteCall("searchDCaseHistory", { dcaseId: dcaseId, text: text });
         };
+
+        ServerAPI.prototype.GetProjectList = function (userId) {
+            return this.RemoteCall("getProjectList", { userId: userId });
+        };
+
+        ServerAPI.prototype.CreateProject = function (name, userId) {
+            return this.RemoteCall("createProject", {
+                name: name,
+                userId: userId
+            });
+        };
+
+        ServerAPI.prototype.EditProject = function (name, projectId) {
+            return this.RemoteCall("EditProject", {
+                name: name,
+                projectId: projectId
+            });
+        };
         return ServerAPI;
     })();
     AssureIt.ServerAPI = ServerAPI;
