@@ -6,13 +6,11 @@ function ReDraw(caseViewer: AssureIt.CaseViewer): void {
 	var shapelayer = <SVGGElement><any>document.getElementById("layer0");
 	var contentlayer = <HTMLDivElement>document.getElementById("layer1");
 	var controllayer = <HTMLDivElement>document.getElementById("layer2");
-//	var styleOfLayer1 = $("#layer1").attr("style");
-//	var styleOfLayer2 = $("#layer2").offset("style");
+	var offset = $("#layer1").offset();
 
 	var Screen = new AssureIt.ScreenManager(shapelayer, contentlayer, controllayer, backgroundlayer);
 	caseViewer.Draw(Screen);
-//	$('#layer1').attr("style", styleOfLayer1); // TODO: focus
-//	$('#layer2').attr("style", styleOfLayer2); // TODO: focus
+	Screen.SetOffset(offset.left, offset.top);
 }
 
 function AddNode(caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case, element: JQuery, nodeType: AssureIt.NodeType): void {
