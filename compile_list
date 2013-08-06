@@ -1,4 +1,5 @@
 src/CaseDecoder.ts
+src/CaseEncoder.ts
 src/CaseModel.ts
 src/CaseViewer.ts
 src/PlugInManager.ts
