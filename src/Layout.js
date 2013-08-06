@@ -272,7 +272,7 @@ var AssureIt;
         LayoutPortrait.prototype.Traverse = function (Element, x, y) {
             if ((Element.Children.length == 0 && Element.Type != AssureIt.NodeType.Context) || (Element.Children.length == 1 && Element.Children[0].Type == AssureIt.NodeType.Context)) {
                 this.footelement.push(Element.Label);
-                console.log(this.footelement);
+
                 return;
             }
 

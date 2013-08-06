@@ -287,7 +287,7 @@ module AssureIt {
 		Traverse(Element: NodeModel, x: number, y: number) {
 			if ((Element.Children.length == 0 && Element.Type != NodeType.Context) || (Element.Children.length == 1 && Element.Children[0].Type == NodeType.Context)) {
 				this.footelement.push(Element.Label);
-				console.log(this.footelement);
+				//console.log(this.footelement);
 				return;
 			}
 
