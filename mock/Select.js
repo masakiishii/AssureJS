@@ -1,5 +1,5 @@
 $(function () {
-    var serverApi = new AssureIt.ServerAPI('http://192.168.189.146/ait');
+    var serverApi = new AssureIt.ServerAPI('http://localhost/ait');
 
     var selectCaseView = new AssureIt.SelectCaseView(serverApi, '#select-case');
     selectCaseView.initEvents();
