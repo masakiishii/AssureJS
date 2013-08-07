@@ -31,7 +31,6 @@ var EditorPlugIn = (function (_super) {
             var label = node.attr('id');
             var encoder = new AssureIt.CaseEncoder();
             var encoded = encoder.ConvertToASN(case0.ElementMap[label]);
-            editor.setValue(encoded);
             $('#editor-wrapper').css({ position: 'absolute', top: p.top, left: p.left, display: 'block' }).appendTo($('#layer2')).focus().one("blur", { node: node }, function (e, node) {
                 e.stopPropagation();
                 var label = e.data.node.attr('id');
@@ -64,10 +63,11 @@ var EditorPlugIn = (function (_super) {
                     $('#editor-wrapper').blur();
                 }
             });
+            editor.setValue(encoded);
+            editor.refresh();
         });
         $('#layer1').click(function () {
             $('#editor-wrapper').blur();
-            $('#editor-wrapper').css({ display: 'none' });
         });
         return true;
     };

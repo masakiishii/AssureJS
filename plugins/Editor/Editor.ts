@@ -35,7 +35,6 @@ class EditorPlugIn extends AssureIt.ActionPlugIn {
 			var label : string = node.attr('id');
 			var encoder : AssureIt.CaseEncoder = new AssureIt.CaseEncoder();
 			var encoded = encoder.ConvertToASN(case0.ElementMap[label]);
-			editor.setValue(encoded);
 			$('#editor-wrapper')
 				.css({position: 'absolute', top: p.top, left: p.left, display: 'block'})
 				.appendTo($('#layer2'))
@@ -72,10 +71,11 @@ class EditorPlugIn extends AssureIt.ActionPlugIn {
 						$('#editor-wrapper').blur();
 					}
 				});
+			editor.setValue(encoded);
+			editor.refresh();
 		});
 		$('#layer1').click(function(){
 			$('#editor-wrapper').blur(); 
-			$('#editor-wrapper').css({display: 'none'});
 		});
 		return true;
 	}
