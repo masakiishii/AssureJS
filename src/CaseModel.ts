@@ -50,6 +50,13 @@ module AssureIt {
 				}
 			}
 		}
+		UpdateChild(oldNode : NodeModel, newNode : NodeModel) : void {
+			for (var i = 0; i < this.Children.length; i++) {
+				if (this.Children[i].Label == oldNode.Label) {
+					this.Children[i] = newNode;
+				}
+			}
+		}
 	
 		GetAnnotation(Name: string) : CaseAnnotation {
 			for(var a in this.Annotations) {

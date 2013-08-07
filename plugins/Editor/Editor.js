@@ -39,8 +39,8 @@ var EditorPlugIn = (function (_super) {
                 var decoder = new AssureIt.CaseDecoder();
                 var new_model = decoder.ParseASN(case0, editor.getValue(), orig_model);
                 var new_view = new AssureIt.NodeView(caseViewer, new_model);
-                orig_model.Parent.AppendChild(new_model);
-                orig_model.Parent.RemoveChild(orig_model);
+
+                orig_model.Parent.UpdateChild(orig_model, new_model);
                 case0.DeleteNodesRecursive(orig_model);
                 orig_view.DeleteHTMLElementRecursive($("#layer0"), $("#layer1"));
                 caseViewer.DeleteViewsRecursive(orig_view);

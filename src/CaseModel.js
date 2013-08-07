@@ -52,6 +52,13 @@ var AssureIt;
                 }
             }
         };
+        NodeModel.prototype.UpdateChild = function (oldNode, newNode) {
+            for (var i = 0; i < this.Children.length; i++) {
+                if (this.Children[i].Label == oldNode.Label) {
+                    this.Children[i] = newNode;
+                }
+            }
+        };
 
         NodeModel.prototype.GetAnnotation = function (Name) {
             for (var a in this.Annotations) {
