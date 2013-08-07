@@ -20,7 +20,10 @@ var EditorPlugIn = (function (_super) {
             ev.stopPropagation();
             var node = $(this);
             var p = node.position();
-            $('#editor').css({ position: 'absolute', top: p.top, left: p.left, display: 'block' }).appendTo($('#layer2')).focus().one("blur", { node: node }, function (e, node) {
+            var label = node.text();
+            var encoder = new AssureIt.CaseEncoder();
+            var encoded = encoder.ConvertToASN(case0.ElementMap[label]);
+            $('#editor').css({ position: 'absolute', top: p.top, left: p.left, display: 'block' }).appendTo($('#layer2')).focus().val(encoded).one("blur", { node: node }, function (e, node) {
                 e.stopPropagation();
                 var label = e.data.node.text();
                 var orig_model = case0.ElementMap[label];

@@ -22,10 +22,14 @@ class EditorPlugIn extends AssureIt.ActionPlugIn {
 			ev.stopPropagation();
 			var node = $(this);
 			var p = node.position();
+			var label : string = node.text();
+			var encoder : AssureIt.CaseEncoder = new AssureIt.CaseEncoder();
+			var encoded = encoder.ConvertToASN(case0.ElementMap[label]);
 			$('#editor')
 				.css({position: 'absolute', top: p.top, left: p.left, display: 'block'})
 				.appendTo($('#layer2'))
 				.focus()
+				.val(encoded)
 				.one("blur", {node : node}, function(e: JQueryEventObject, node: JQuery) {
 					e.stopPropagation();
 					var label : string = e.data.node.text();

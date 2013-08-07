@@ -30,6 +30,39 @@ var AssureIt;
             return this.JsonRoot;
         };
 
+        CaseEncoder.prototype.ConvertToASN = function (root) {
+            var encoded = (function (model, prefix) {
+                var ret = "";
+                switch (model.Type) {
+                    case AssureIt.NodeType["Goal"]:
+                        ret += (prefix + "Goal" + "\n");
+                        break;
+                    case AssureIt.NodeType["Context"]:
+                        ret += (prefix + "Context" + "\n");
+                        break;
+                    case AssureIt.NodeType["Strategy"]:
+                        ret += (prefix + "Strategy" + "\n");
+                        break;
+                    case AssureIt.NodeType["Evidence"]:
+                        ret += (prefix + "Evidence" + "\n");
+                        break;
+                    default:
+                        console.log(model.Type);
+                }
+
+                if (model.Statement != null)
+                    ret += model.Statement;
+
+                for (var i = 0; i < model.Children.length; i++) {
+                    var child_model = model.Children[i];
+                    ret += arguments.callee(child_model, prefix + "*");
+                }
+                return ret;
+            })(root, "*");
+            console.log(encoded);
+            return encoded;
+        };
+
         CaseEncoder.prototype.GetChild = function (root, JsonNode) {
             JsonNode.Type = root.Type;
             JsonNode.Label = root.Label;

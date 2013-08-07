@@ -1,3 +1,5 @@
+/// <reference path="../d.ts/jquery.d.ts" />
+/// <reference path="../d.ts/ASNParser.d.ts" />
 /// <reference path="CaseModel.ts" />
 
 module AssureIt {
@@ -39,6 +41,40 @@ module AssureIt {
 
 			console.log(this.JsonRoot);
 			return this.JsonRoot;
+		}
+
+		ConvertToASN(root : NodeModel): string {
+			var encoded : string = (function(model : NodeModel, prefix : string) : string {
+				var ret : string = "";
+				switch (model.Type) {
+				case NodeType["Goal"]:
+					ret += (prefix + "Goal" + "\n");
+					break;
+				case NodeType["Context"]:
+					ret += (prefix + "Context" + "\n");
+					break;
+				case NodeType["Strategy"]:
+					ret += (prefix + "Strategy" + "\n");
+					break;
+				case NodeType["Evidence"]:
+					ret += (prefix + "Evidence" + "\n");
+					break;
+				default:
+					console.log(model.Type);
+				}
+				//	Label : string;
+				if (model.Statement != null) ret += model.Statement;
+				// 			for (var i = 0; i < model.CaseAnnotation.length; i++) {
+				// 				model.CaseAnnotation[i];
+				// 			}
+				for (var i = 0; i < model.Children.length; i++) {
+					var child_model = model.Children[i];
+					ret += arguments.callee(child_model, prefix + "*");
+				}
+				return ret;
+			})(root, "*");
+			console.log(encoded);
+			return encoded;
 		}
 
 		GetChild(root: NodeModel, JsonNode: JsonNodeModel): JsonNodeModel {

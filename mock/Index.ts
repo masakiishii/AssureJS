@@ -1,5 +1,6 @@
 /// <reference path="../src/CaseModel.ts" />
 /// <reference path="../src/CaseDecoder.ts" />
+/// <reference path="../src/CaseEncoder.ts" />
 /// <reference path="../src/CaseViewer.ts" />
 /// <reference path="../src/ServerApi.ts" />
 /// <reference path="../plugins/MenuBar/MenuBar.ts" />
