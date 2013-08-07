@@ -32,7 +32,7 @@ class EditorPlugIn extends AssureIt.ActionPlugIn {
 			ev.stopPropagation();
 			var node = $(this);
 			var p = node.position();
-			var label : string = node.text();
+			var label : string = node.attr('id');
 			var encoder : AssureIt.CaseEncoder = new AssureIt.CaseEncoder();
 			var encoded = encoder.ConvertToASN(case0.ElementMap[label]);
 			editor.setValue(encoded);
@@ -42,7 +42,7 @@ class EditorPlugIn extends AssureIt.ActionPlugIn {
 				.focus()
 				.one("blur", {node : node}, function(e: JQueryEventObject, node: JQuery) {
 					e.stopPropagation();
-					var label : string = e.data.node.text();
+					var label : string = e.data.node.attr('id');
 					var orig_model : AssureIt.NodeModel = case0.ElementMap[label];
 					var orig_shape : AssureIt.NodeView = caseViewer.ViewMap[label];
 					var decoder    : AssureIt.CaseDecoder = new AssureIt.CaseDecoder();
