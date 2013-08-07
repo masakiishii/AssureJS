@@ -4,3 +4,4 @@
 [submodule "lib/ASNParser"]
 	path = lib/ASNParser
 	url = https://github.com/assureit/ASNParser.git
+	ignore = dirty
