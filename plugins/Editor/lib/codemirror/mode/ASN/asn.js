@@ -133,7 +133,7 @@ CodeMirror.defineMode("asn", function(cmCfg, modeCfg) {
       return code;
     } else if (stream.eatSpace()) {
       return null;
-    } else if (stream.peek() === '#' || (state.prevLineHasContent && stream.match(headerRE)) ) {
+    } else if (stream.peek() === '*' || (state.prevLineHasContent && stream.match(headerRE)) ) {
       state.header = true;
     } else if (stream.eat('>')) {
       state.indentation++;
