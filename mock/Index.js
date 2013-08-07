@@ -70,7 +70,7 @@ $(function () {
                 "Children": [
                     "E1"
                 ],
-                "Statement": "",
+                "Statement": "Hoge",
                 "NodeType": 0,
                 "Label": "G4",
                 "Annotations": [],

@@ -1,5 +1,6 @@
 /// <reference path="CaseModel.ts" />
 /// <reference path="CaseDecoder.ts" />
+/// <reference path="CaseEncoder.ts" />
 /// <reference path="ServerApi.ts" />
 /// <reference path="Layout.ts" />
 /// <reference path="PlugInManager.ts" />
@@ -31,11 +32,19 @@ module AssureIt {
 		Render(Viewer: CaseViewer, NodeModel: NodeModel): void {
 			if (this.DocBase != null) {
 				var parent = this.DocBase.parent();
-				if (parent != null) parent.remove(this.DocBase);
+				//if (parent != null) parent.remove(this.DocBase);
+				this.DocBase.remove();
 			}
-			this.DocBase = $('<div class="node">').css("position", "absolute");
+			this.DocBase = $('<div class="node">').css("position", "absolute")
+				.attr('id', NodeModel.Label);
 			this.DocBase.append($('<h4>' + NodeModel.Label + '</h4>'));
 			this.DocBase.append($('<p>' + NodeModel.Statement + '</p>'));
+
+			/* TODO split into plugin */
+			for (var i in NodeModel.Notes) {
+				this.DocBase.append($('<p style="color: DarkOliveGreen">' + "Note: " + NodeModel.Notes[i].Name + '</p>'));
+			}
+
 			this.InvokePlugInHTMLRender(Viewer, NodeModel, this.DocBase);
 			this.UpdateWidth(Viewer, NodeModel);
 			this.Resize(Viewer, NodeModel);

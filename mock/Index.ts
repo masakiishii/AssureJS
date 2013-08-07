@@ -1,5 +1,6 @@
 /// <reference path="../src/CaseModel.ts" />
 /// <reference path="../src/CaseDecoder.ts" />
+/// <reference path="../src/CaseEncoder.ts" />
 /// <reference path="../src/CaseViewer.ts" />
 /// <reference path="../src/Converter.ts" />
 /// <reference path="../src/ServerApi.ts" />
@@ -90,7 +91,7 @@ $(function () {
 				"Children": [
 					"E1"
 				],
-				"Statement": "",
+				"Statement": "Hoge",
 				"NodeType": 0,
 				"Label": "G4",
 				"Annotations": [],

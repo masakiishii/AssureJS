@@ -10,14 +10,15 @@ declare class CodeMirror {
 };
 
 class EditorPlugIn extends AssureIt.ActionPlugIn {
+	editor;
 	constructor() {
 		super();
 		//wideArea();
-		var editor = CodeMirror.fromTextArea(document.getElementById('editor'), {
+		this.editor = CodeMirror.fromTextArea(document.getElementById('editor'), {
 			lineNumbers: true,
 			mode: "text/x-asn",
 		});
-		editor.setSize("200px","200px"); //FIXME
+		this.editor.setSize("200px","200px"); //FIXME
 		$('#editor-wrapper').css({display: 'none'});
 	}
 
@@ -26,38 +27,66 @@ class EditorPlugIn extends AssureIt.ActionPlugIn {
 	}
 
 	Delegate(caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case, serverApi: AssureIt.ServerAPI)  : boolean {
+		var editor = this.editor;
 		$('.node').click(function(ev) { //FIXME
 			ev.stopPropagation();
 			var node = $(this);
 			var p = node.position();
+			var label : string = node.attr('id');
+			var encoder : AssureIt.CaseEncoder = new AssureIt.CaseEncoder();
+			var encoded = encoder.ConvertToASN(case0.ElementMap[label]);
 			$('#editor-wrapper')
 				.css({position: 'absolute', top: p.top, left: p.left, display: 'block'})
 				.appendTo($('#layer2'))
 				.focus()
 				.one("blur", {node : node}, function(e: JQueryEventObject, node: JQuery) {
+					console.log("blur");
 					e.stopPropagation();
-					var label : string = e.data.node.text();
+					var label : string = e.data.node.attr('id');
 					var orig_model : AssureIt.NodeModel = case0.ElementMap[label];
 					var orig_shape : AssureIt.NodeView = caseViewer.ViewMap[label];
 					var decoder    : AssureIt.CaseDecoder = new AssureIt.CaseDecoder();
-					var new_model  : AssureIt.NodeModel = decoder.ParseASN(case0, $(this).val(), orig_model);
-					var new_shape  : AssureIt.NodeView = new AssureIt.NodeView(caseViewer, new_model);
-					(function(model : AssureIt.NodeModel, shape : AssureIt.NodeView) : void {
-						for (var i = 0; i < model.Children.length; i++) {
-							var child_model = model.Children[i];
-							var child_shape : AssureIt.NodeView = new AssureIt.NodeView(caseViewer, child_model);
-							arguments.callee(child_model, child_shape);
-						}
-						caseViewer.ViewMap[model.Label] = shape;
-						if (model.Parent != null) shape.ParentShape = caseViewer.ViewMap[model.Parent.Label];
-					})(new_model, new_shape);
+					var new_model  : AssureIt.NodeModel = decoder.ParseASN(case0, editor.getValue().trim(), orig_model);
+					/*update orig_model and redraw html*/
+					orig_model.Statement = new_model.Statement == null ? "" : new_model.Statement;
+					orig_model.Annotations = new_model.Annotations;
+					orig_model.Notes = new_model.Notes;
+					console.log("parsed notes");
+					console.log(new_model.Notes);
+					orig_shape.HTMLDoc.Render(caseViewer, orig_model);
+
 					caseViewer.Resize();
-					orig_shape.DeleteHTMLElementRecursive($("#layer0"), $("#layer1"));
-					new_shape.AppendHTMLElementRecursive($("#layer0"), $("#layer1"), caseViewer);
-					caseViewer.LayoutElement();
-					for (var viewkey in caseViewer.ViewMap) {
-						caseViewer.ViewMap[viewkey].Update();
-					}
+					var backgroundlayer = <HTMLDivElement>document.getElementById("background");
+					var shapelayer = <SVGGElement><any>document.getElementById("layer0");
+					var contentlayer = <HTMLDivElement>document.getElementById("layer1");
+					var controllayer = <HTMLDivElement>document.getElementById("layer2");
+					var offset = $("#layer1").offset();
+
+					var Screen = new AssureIt.ScreenManager(shapelayer, contentlayer, controllayer, backgroundlayer);
+					caseViewer.Draw(Screen);
+					Screen.SetOffset(offset.left, offset.top);
+
+					//var new_shape  : AssureIt.NodeView = new AssureIt.NodeView(caseViewer, new_model);
+					//(function(model : AssureIt.NodeModel, shape : AssureIt.NodeView) : void {
+					//	for (var i = 0; i < model.Children.length; i++) {
+					//		var child_model = model.Children[i];
+					//		child_model.Parent = model;
+					//		child_model.Case = case0;
+					//		child_model.Label = case0.NewLabel(child_model.Type);
+					//		case0.ElementMap[child_model.Label] = child_model;
+					//		var child_shape : AssureIt.NodeView = new AssureIt.NodeView(caseViewer, child_model);
+					//		arguments.callee(child_model, child_shape);
+					//	}
+					//	caseViewer.ViewMap[model.Label] = shape;
+					//	if (model.Parent != null) shape.ParentShape = caseViewer.ViewMap[model.Parent.Label];
+					//})(new_model, new_shape);
+					//caseViewer.Resize();
+					//orig_shape.DeleteHTMLElementRecursive($("#layer0"), $("#layer1"));
+					//new_shape.AppendHTMLElementRecursive($("#layer0"), $("#layer1"), caseViewer);
+					//caseViewer.LayoutElement();
+					//for (var viewkey in caseViewer.ViewMap) {
+					//	caseViewer.ViewMap[viewkey].Update();
+					//}
 					$(this).css({display: 'none'});
 				})
 				.on("keydown", function(e: JQueryEventObject) {
@@ -66,9 +95,11 @@ class EditorPlugIn extends AssureIt.ActionPlugIn {
 						$('#editor-wrapper').blur();
 					}
 				});
+			editor.setValue(encoded);
+			editor.refresh();
 		});
 		$('#layer1').click(function(){
-			$('#editor-wrapper').css({display: 'none'});
+			$('#editor-wrapper').blur(); 
 		});
 		return true;
 	}

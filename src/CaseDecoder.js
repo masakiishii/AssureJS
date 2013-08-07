@@ -204,8 +204,8 @@ var AssureIt;
         };
         ASNParser.prototype.Parse = function (ASNData, orig) {
             var obj = Peg.parse(ASNData)[1];
-            var root = this.Object2NodeModel(obj, orig);
-            return root;
+
+            return obj;
         };
         return ASNParser;
     })(Parser);

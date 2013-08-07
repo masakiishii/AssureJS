@@ -11,11 +11,11 @@ var EditorPlugIn = (function (_super) {
     function EditorPlugIn() {
         _super.call(this);
 
-        var editor = CodeMirror.fromTextArea(document.getElementById('editor'), {
+        this.editor = CodeMirror.fromTextArea(document.getElementById('editor'), {
             lineNumbers: true,
             mode: "text/x-asn"
         });
-        editor.setSize("200px", "200px");
+        this.editor.setSize("200px", "200px");
         $('#editor-wrapper').css({ display: 'none' });
     }
     EditorPlugIn.prototype.IsEnabled = function (caseViewer, case0) {
@@ -23,35 +23,41 @@ var EditorPlugIn = (function (_super) {
     };
 
     EditorPlugIn.prototype.Delegate = function (caseViewer, case0, serverApi) {
+        var editor = this.editor;
         $('.node').click(function (ev) {
             ev.stopPropagation();
             var node = $(this);
             var p = node.position();
+            var label = node.attr('id');
+            var encoder = new AssureIt.CaseEncoder();
+            var encoded = encoder.ConvertToASN(case0.ElementMap[label]);
             $('#editor-wrapper').css({ position: 'absolute', top: p.top, left: p.left, display: 'block' }).appendTo($('#layer2')).focus().one("blur", { node: node }, function (e, node) {
+                console.log("blur");
                 e.stopPropagation();
-                var label = e.data.node.text();
+                var label = e.data.node.attr('id');
                 var orig_model = case0.ElementMap[label];
                 var orig_shape = caseViewer.ViewMap[label];
                 var decoder = new AssureIt.CaseDecoder();
-                var new_model = decoder.ParseASN(case0, $(this).val(), orig_model);
-                var new_shape = new AssureIt.NodeView(caseViewer, new_model);
-                (function (model, shape) {
-                    for (var i = 0; i < model.Children.length; i++) {
-                        var child_model = model.Children[i];
-                        var child_shape = new AssureIt.NodeView(caseViewer, child_model);
-                        arguments.callee(child_model, child_shape);
-                    }
-                    caseViewer.ViewMap[model.Label] = shape;
-                    if (model.Parent != null)
-                        shape.ParentShape = caseViewer.ViewMap[model.Parent.Label];
-                })(new_model, new_shape);
+                var new_model = decoder.ParseASN(case0, editor.getValue().trim(), orig_model);
+
+                orig_model.Statement = new_model.Statement == null ? "" : new_model.Statement;
+                orig_model.Annotations = new_model.Annotations;
+                orig_model.Notes = new_model.Notes;
+                console.log("parsed notes");
+                console.log(new_model.Notes);
+                orig_shape.HTMLDoc.Render(caseViewer, orig_model);
+
                 caseViewer.Resize();
-                orig_shape.DeleteHTMLElementRecursive($("#layer0"), $("#layer1"));
-                new_shape.AppendHTMLElementRecursive($("#layer0"), $("#layer1"), caseViewer);
-                caseViewer.LayoutElement();
-                for (var viewkey in caseViewer.ViewMap) {
-                    caseViewer.ViewMap[viewkey].Update();
-                }
+                var backgroundlayer = document.getElementById("background");
+                var shapelayer = document.getElementById("layer0");
+                var contentlayer = document.getElementById("layer1");
+                var controllayer = document.getElementById("layer2");
+                var offset = $("#layer1").offset();
+
+                var Screen = new AssureIt.ScreenManager(shapelayer, contentlayer, controllayer, backgroundlayer);
+                caseViewer.Draw(Screen);
+                Screen.SetOffset(offset.left, offset.top);
+
                 $(this).css({ display: 'none' });
             }).on("keydown", function (e) {
                 if (e.keyCode == 27) {
@@ -59,9 +65,11 @@ var EditorPlugIn = (function (_super) {
                     $('#editor-wrapper').blur();
                 }
             });
+            editor.setValue(encoded);
+            editor.refresh();
         });
         $('#layer1').click(function () {
-            $('#editor-wrapper').css({ display: 'none' });
+            $('#editor-wrapper').blur();
         });
         return true;
     };

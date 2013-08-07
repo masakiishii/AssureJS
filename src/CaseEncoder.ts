@@ -1,3 +1,5 @@
+/// <reference path="../d.ts/jquery.d.ts" />
+/// <reference path="../d.ts/ASNParser.d.ts" />
 /// <reference path="CaseModel.ts" />
 
 module AssureIt {
@@ -39,6 +41,74 @@ module AssureIt {
 
 			console.log(this.JsonRoot);
 			return this.JsonRoot;
+		}
+
+		ConvertToASN(root : NodeModel): string {
+			var encoded : string = (function(model : NodeModel, prefix : string) : string {
+				var ret : string = "";
+				switch (model.Type) {
+				case NodeType["Goal"]:
+					prefix += "*";
+					ret += (prefix + "Goal");
+					break;
+				case NodeType["Context"]:
+					if (prefix == "") prefix += "*";
+					ret += (prefix + "Context");
+					break;
+				case NodeType["Strategy"]:
+					if (prefix == "") prefix += "*";
+					ret += (prefix + "Strategy");
+					break;
+				case NodeType["Evidence"]:
+					if (prefix == "") prefix += "*";
+					ret += (prefix + "Evidence");
+					break;
+				default:
+					console.log(model.Type);
+				}
+				//TODO:Label
+				var anno_num = model.Annotations.length;
+				if (anno_num != 0) {
+					for (var i = 0; i < model.Annotations.length; i++) {
+						ret += (" @" + model.Annotations[i].Name);
+					}
+				}
+				ret += "\n";
+
+				if (model.Statement != "") ret += (model.Statement + "\n");
+
+				var note_num = model.Notes.length;
+				if (note_num != 0) {
+					for (var i = 0; i < model.Notes.length; i++) {
+						var Note = model.Notes[i];
+						ret += Note.Name + "::" + "\n";
+						var keys = Object.keys(Note.Body);
+						console.log("keys");
+						console.log(keys);
+						for (var j in keys) {
+							ret += "\t" + keys[j] + ": " + Note.Body[keys[j]] + "\n";
+						}
+					}
+				}
+
+				for (var i = 0; i < model.Children.length; i++) {
+					var child_model = model.Children[i];
+					console.log(child_model.Type);
+					if (child_model.Type == NodeType["Context"]) {
+						ret += arguments.callee(child_model, prefix);
+						break;
+					}
+				}
+				for (var i = 0; i < model.Children.length; i++) {
+					var child_model = model.Children[i];
+					if (child_model.Type != NodeType["Context"]) {
+						ret += arguments.callee(child_model, prefix);
+					}
+				}
+				return ret;
+			})(root, "");
+			console.log(encoded);
+			return encoded;
 		}
 
 		GetChild(root: NodeModel, JsonNode: JsonNodeModel): JsonNodeModel {
