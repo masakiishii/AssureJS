@@ -34,6 +34,7 @@ var EditorPlugIn = (function (_super) {
             editor.setValue(encoded);
             $('#editor-wrapper').css({ position: 'absolute', top: p.top, left: p.left, display: 'block' }).appendTo($('#layer2')).focus().one("blur", { node: node }, function (e, node) {
                 e.stopPropagation();
+                console.log("hoge");
                 var label = e.data.node.text();
                 var orig_model = case0.ElementMap[label];
                 var orig_shape = caseViewer.ViewMap[label];
@@ -66,6 +67,7 @@ var EditorPlugIn = (function (_super) {
             });
         });
         $('#layer1').click(function () {
+            $('#editor-wrapper').blur();
             $('#editor-wrapper').css({ display: 'none' });
         });
         return true;

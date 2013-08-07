@@ -74,6 +74,7 @@ class EditorPlugIn extends AssureIt.ActionPlugIn {
 				});
 		});
 		$('#layer1').click(function(){
+			$('#editor-wrapper').blur(); 
 			$('#editor-wrapper').css({display: 'none'});
 		});
 		return true;
