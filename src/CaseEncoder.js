@@ -64,8 +64,24 @@ var AssureIt;
                     }
                 }
                 ret += "\n";
+
                 if (model.Statement != "")
                     ret += (model.Statement + "\n");
+
+                var note_num = model.Notes.length;
+                if (note_num != 0) {
+                    for (var i = 0; i < model.Notes.length; i++) {
+                        var Note = model.Notes[i];
+                        ret += Note.Name + "::" + "\n";
+                        var keys = Object.keys(Note.Body);
+                        console.log("keys");
+                        console.log(keys);
+                        for (var j in keys) {
+                            ret += "\t" + keys[j] + ": " + Note.Body[keys[j]] + "\n";
+                        }
+                    }
+                }
+
                 for (var i = 0; i < model.Children.length; i++) {
                     var child_model = model.Children[i];
                     console.log(child_model.Type);

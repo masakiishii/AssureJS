@@ -48,9 +48,11 @@ class EditorPlugIn extends AssureIt.ActionPlugIn {
 					var decoder    : AssureIt.CaseDecoder = new AssureIt.CaseDecoder();
 					var new_model  : AssureIt.NodeModel = decoder.ParseASN(case0, editor.getValue().trim(), orig_model);
 					/*update orig_model and redraw html*/
-					orig_model.Statement = new_model.Statement;
+					orig_model.Statement = new_model.Statement == null ? "" : new_model.Statement;
 					orig_model.Annotations = new_model.Annotations;
 					orig_model.Notes = new_model.Notes;
+					console.log("parsed notes");
+					console.log(new_model.Notes);
 					orig_shape.HTMLDoc.Render(caseViewer, orig_model);
 
 					caseViewer.Resize();

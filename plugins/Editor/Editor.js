@@ -40,9 +40,11 @@ var EditorPlugIn = (function (_super) {
                 var decoder = new AssureIt.CaseDecoder();
                 var new_model = decoder.ParseASN(case0, editor.getValue().trim(), orig_model);
 
-                orig_model.Statement = new_model.Statement;
+                orig_model.Statement = new_model.Statement == null ? "" : new_model.Statement;
                 orig_model.Annotations = new_model.Annotations;
                 orig_model.Notes = new_model.Notes;
+                console.log("parsed notes");
+                console.log(new_model.Notes);
                 orig_shape.HTMLDoc.Render(caseViewer, orig_model);
 
                 caseViewer.Resize();
