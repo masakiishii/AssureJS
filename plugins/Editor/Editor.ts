@@ -4,13 +4,22 @@
 
 //--- Interface for widearea.js
 declare function wideArea(selector?: string): void;
-//---
+//--- CodeMirror
+declare class CodeMirror {
+	static fromTextArea(selector: any, option: any): any;
+};
 
 class EditorPlugIn extends AssureIt.ActionPlugIn {
+	editor;
 	constructor() {
 		super();
-		wideArea();
-		$('#editor').css({display: 'none'});
+		//wideArea();
+		this.editor = CodeMirror.fromTextArea(document.getElementById('editor'), {
+			lineNumbers: true,
+			mode: "text/x-asn",
+		});
+		this.editor.setSize("200px","200px"); //FIXME
+		$('#editor-wrapper').css({display: 'none'});
 	}
 
 	IsEnabled (caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case) : boolean {
@@ -18,6 +27,7 @@ class EditorPlugIn extends AssureIt.ActionPlugIn {
 	}
 
 	Delegate(caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case, serverApi: AssureIt.ServerAPI)  : boolean {
+		var editor = this.editor;
 		$('.node').click(function(ev) { //FIXME
 			ev.stopPropagation();
 			var node = $(this);
@@ -25,11 +35,11 @@ class EditorPlugIn extends AssureIt.ActionPlugIn {
 			var label : string = node.text();
 			var encoder : AssureIt.CaseEncoder = new AssureIt.CaseEncoder();
 			var encoded = encoder.ConvertToASN(case0.ElementMap[label]);
-			$('#editor')
+			editor.setValue(encoded);
+			$('#editor-wrapper')
 				.css({position: 'absolute', top: p.top, left: p.left, display: 'block'})
 				.appendTo($('#layer2'))
 				.focus()
-				.val(encoded)
 				.one("blur", {node : node}, function(e: JQueryEventObject, node: JQuery) {
 					e.stopPropagation();
 					var label : string = e.data.node.text();
@@ -59,12 +69,12 @@ class EditorPlugIn extends AssureIt.ActionPlugIn {
 				.on("keydown", function(e: JQueryEventObject) {
 					if(e.keyCode == 27 /* ESC */){
 						e.stopPropagation();
-						$(this).css({display: 'none'});
+						$('#editor-wrapper').blur();
 					}
 				});
 		});
 		$('#layer1').click(function(){
-			$('#editor').blur();
+			$('#editor-wrapper').blur();
 		});
 		return true;
 	}

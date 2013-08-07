@@ -154,7 +154,7 @@ var MenuBarPlugIn = (function (_super) {
 
             var menuBarApi = new MenuBarAPI(caseViewer, case0, node, serverApi);
 
-            $('#add').click(function () {
+            $('#add').hover(function () {
                 menuBarApi.ShowSubMenu();
             });
 

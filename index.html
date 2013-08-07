@@ -1,7 +1,7 @@
 <html>
 <head>
     <title>Mock up</title>
-    <link rel='stylesheet' href='plugins/Editor/lib/widearea.css'>
+    <link rel='stylesheet' href='plugins/Editor/lib/codemirror/codemirror.css'>
     <link rel='stylesheet' href="plugins/MenuBar/lib/jquery-ui-1.10.3.custom.min.css">
     <script type="text/javascript" src="lib/jquery.min.js"></script>
     <script type="text/javascript" src="lib/pointer.min.js"></script>
@@ -12,7 +12,7 @@
     <script type="text/javascript" src="src/Layout.js"></script>
     <script type="text/javascript" src="src/PlugInManager.js"></script>
     <script type="text/javascript" src="src/ServerApi.js"></script>
-    <script type="text/javascript" src="plugins/Editor/lib/widearea.js"></script>
+    <script type="text/javascript" src="plugins/Editor/lib/codemirror/codemirror.js"></script>
     <script type="text/javascript" src="plugins/Editor/Editor.js"></script>
     <script type="text/javascript" src="plugins/MenuBar/lib/jquery.jqdock.min.js"></script>
     <script type="text/javascript" src="plugins/MenuBar/lib/jquery-ui-1.10.3.custom.min.js"></script>
@@ -45,6 +45,8 @@
             </marker>
         </defs>
     </svg>
-    <textarea id="editor" placeholder="Type something..." data-widearea="enable" class="widearea" data-widearea-id="1"></textarea>
+    <div id="editor-wrapper" style="border: 1px solid black">
+        <textarea id="editor" placeholder="Type something..."></textarea>
+    </div>
 </body>
 </html>

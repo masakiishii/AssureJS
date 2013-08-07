@@ -152,7 +152,7 @@ class MenuBarPlugIn extends AssureIt.ActionPlugIn {
 
 			var menuBarApi: MenuBarAPI = new MenuBarAPI(caseViewer, case0, node, serverApi);
 
-			$('#add').click(function() {
+			$('#add').hover(function() {
 				menuBarApi.ShowSubMenu();
 			});
 
