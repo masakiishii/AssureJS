@@ -8,7 +8,7 @@ var EditorPlugIn = (function (_super) {
     __extends(EditorPlugIn, _super);
     function EditorPlugIn() {
         _super.call(this);
-        wideArea();
+
         $('#editor').css({ display: 'none' });
     }
     EditorPlugIn.prototype.IsEnabled = function (caseViewer, case0) {

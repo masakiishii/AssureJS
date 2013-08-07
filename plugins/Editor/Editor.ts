@@ -9,7 +9,7 @@ declare function wideArea(selector?: string): void;
 class EditorPlugIn extends AssureIt.ActionPlugIn {
 	constructor() {
 		super();
-		wideArea();
+		//wideArea();
 		$('#editor').css({display: 'none'});
 	}
 
