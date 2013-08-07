@@ -51,6 +51,10 @@ class EditorPlugIn extends AssureIt.ActionPlugIn {
 					(function(model : AssureIt.NodeModel, shape : AssureIt.NodeView) : void {
 						for (var i = 0; i < model.Children.length; i++) {
 							var child_model = model.Children[i];
+							child_model.Parent = model;
+							child_model.Case = case0;
+							child_model.Label = case0.NewLabel(child_model.Type);
+							case0.ElementMap[child_model.Label] = child_model;
 							var child_shape : AssureIt.NodeView = new AssureIt.NodeView(caseViewer, child_model);
 							arguments.callee(child_model, child_shape);
 						}
