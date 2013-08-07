@@ -36,30 +36,36 @@ var AssureIt;
                 switch (model.Type) {
                     case AssureIt.NodeType["Goal"]:
                         prefix += "*";
-                        ret += (prefix + "Goal" + "\n");
+                        ret += (prefix + "Goal");
                         break;
                     case AssureIt.NodeType["Context"]:
                         if (prefix == "")
                             prefix += "*";
-                        ret += (prefix + "Context" + "\n");
+                        ret += (prefix + "Context");
                         break;
                     case AssureIt.NodeType["Strategy"]:
                         if (prefix == "")
                             prefix += "*";
-                        ret += (prefix + "Strategy" + "\n");
+                        ret += (prefix + "Strategy");
                         break;
                     case AssureIt.NodeType["Evidence"]:
                         if (prefix == "")
                             prefix += "*";
-                        ret += (prefix + "Evidence" + "\n");
+                        ret += (prefix + "Evidence");
                         break;
                     default:
                         console.log(model.Type);
                 }
 
+                var anno_num = model.Annotations.length;
+                if (anno_num != 0) {
+                    for (var i = 0; i < model.Annotations.length; i++) {
+                        ret += (" @" + model.Annotations[i].Name);
+                    }
+                }
+                ret += "\n";
                 if (model.Statement != "")
                     ret += (model.Statement + "\n");
-
                 for (var i = 0; i < model.Children.length; i++) {
                     var child_model = model.Children[i];
                     console.log(child_model.Type);
