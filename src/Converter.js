@@ -29,6 +29,7 @@ var AssureIt;
         };
 
         Converter.prototype.GenNewJson = function (oldJsonData) {
+            oldJsonData.contents = JSON.parse(oldJsonData.contents);
             var newJsonData = {
                 "DCaseName": "",
                 "NodeCount": 0,

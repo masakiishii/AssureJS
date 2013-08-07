@@ -126,6 +126,9 @@ module AssureIt {
 				this.SaveIdCounterMax(Element.Children[i]);
 			}
 			var m = Element.Label.match(/^[GCSE][0-9]+$/);
+			if(m == null) {
+				return; //FIXME Label which not use this Id rule
+			}
 			if (m.length == 1) {
 				var prefix = m[0][0];
 				var count = Number(m[0].substring(1));

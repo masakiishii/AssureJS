@@ -35,7 +35,7 @@ module AssureIt {
 		}
 
 		GenNewJson (oldJsonData : any) : any {
-			
+			oldJsonData.contents = JSON.parse(oldJsonData.contents);
 			var newJsonData = {
 				"DCaseName": "",
 				"NodeCount": 0,

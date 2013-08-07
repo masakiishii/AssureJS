@@ -1,6 +1,7 @@
 /// <reference path="../src/CaseModel.ts" />
 /// <reference path="../src/CaseDecoder.ts" />
 /// <reference path="../src/CaseViewer.ts" />
+/// <reference path="../src/Converter.ts" />
 /// <reference path="../src/ServerApi.ts" />
 /// <reference path="../plugins/MenuBar/MenuBar.ts" />
 /// <reference path="../plugins/Editor/Editor.ts" />
@@ -19,6 +20,12 @@ $(function () {
 	pluginManager.AddHTMLRenderPlugIn("monitor", new MonitorHTMLRenderPlugIn());
 	pluginManager.AddHTMLRenderPlugIn("note", new NoteHTMLRenderPlugIn());
 	pluginManager.AddSVGRenderPlugIn("monitor", new MonitorSVGRenderPlugIn());
+
+	/*
+	var oldJsonData = serverApi.GetCase("",96);
+	var converter = new AssureIt.Converter();
+	var JsonData = converter.GenNewJson(oldJsonData);
+	*/
 
 	var JsonData = {
 		"DCaseName": "test",
