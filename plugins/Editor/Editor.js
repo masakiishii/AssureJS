@@ -28,14 +28,13 @@ var EditorPlugIn = (function (_super) {
             ev.stopPropagation();
             var node = $(this);
             var p = node.position();
-            var label = node.text();
+            var label = node.attr('id');
             var encoder = new AssureIt.CaseEncoder();
             var encoded = encoder.ConvertToASN(case0.ElementMap[label]);
             editor.setValue(encoded);
             $('#editor-wrapper').css({ position: 'absolute', top: p.top, left: p.left, display: 'block' }).appendTo($('#layer2')).focus().one("blur", { node: node }, function (e, node) {
                 e.stopPropagation();
-                console.log("hoge");
-                var label = e.data.node.text();
+                var label = e.data.node.attr('id');
                 var orig_model = case0.ElementMap[label];
                 var orig_shape = caseViewer.ViewMap[label];
                 var decoder = new AssureIt.CaseDecoder();

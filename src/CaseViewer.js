@@ -21,7 +21,7 @@ var AssureIt;
                 if (parent != null)
                     parent.remove(this.DocBase);
             }
-            this.DocBase = $('<div class="node">').css("position", "absolute");
+            this.DocBase = $('<div class="node">').css("position", "absolute").attr('id', NodeModel.Label);
             this.DocBase.append($('<h4>' + NodeModel.Label + '</h4>'));
             this.DocBase.append($('<p>' + NodeModel.Statement + '</p>'));
             this.InvokePlugInHTMLRender(Viewer, NodeModel, this.DocBase);
