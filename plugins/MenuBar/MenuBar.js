@@ -89,7 +89,7 @@ var MenuBarPlugIn = (function (_super) {
 
             $('#menu').remove();
             var menu = $('<div id="menu">' + '<a href="#" ><img id="goal"     src="' + serverApi.basepath + '/images/icon.png" title="Goal" alt="goal" /></a>' + '<a href="#" ><img id="context"  src="' + serverApi.basepath + '/images/icon.png" title="Context" alt="context" /></a>' + '<a href="#" ><img id="strategy" src="' + serverApi.basepath + '/images/icon.png" title="Strategy" alt="strategy" /></a>' + '<a href="#" ><img id="evidence" src="' + serverApi.basepath + '/images/icon.png" title="Evidence" alt="evidence" /></a>' + '<a href="#" ><img id="remove"   src="' + serverApi.basepath + '/images/icon.png" title="Remove" alt="remove" /></a>' + '<a href="#" ><img id="commit"   src="' + serverApi.basepath + '/images/icon.png" title="Commit" alt="commit" /></a>' + '</div>');
-            menu.css({ position: 'absolute', top: node.position().top + 75, display: 'block', opacity: 0 });
+            menu.css({ position: 'absolute', top: node.position().top + node.height() + 30, display: 'block', opacity: 0 });
             menu.hover(function () {
             }, function () {
                 $(this).remove();
@@ -172,7 +172,6 @@ var MenuBarPlugIn = (function (_super) {
             });
 
             $('#commit_button').click(function () {
-                console.log("hoge");
                 serverApi.Commit(case0.ElementTop, $(this).val, case0.CommitId);
             });
         }, function () {
