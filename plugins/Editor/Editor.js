@@ -38,7 +38,7 @@ var EditorPlugIn = (function (_super) {
                 var orig_model = case0.ElementMap[label];
                 var orig_shape = caseViewer.ViewMap[label];
                 var decoder = new AssureIt.CaseDecoder();
-                var new_model = decoder.ParseASN(case0, $(this).val(), orig_model);
+                var new_model = decoder.ParseASN(case0, editor.getValue(), orig_model);
                 var new_shape = new AssureIt.NodeView(caseViewer, new_model);
                 (function (model, shape) {
                     for (var i = 0; i < model.Children.length; i++) {

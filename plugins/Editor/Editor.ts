@@ -46,7 +46,7 @@ class EditorPlugIn extends AssureIt.ActionPlugIn {
 					var orig_model : AssureIt.NodeModel = case0.ElementMap[label];
 					var orig_shape : AssureIt.NodeView = caseViewer.ViewMap[label];
 					var decoder    : AssureIt.CaseDecoder = new AssureIt.CaseDecoder();
-					var new_model  : AssureIt.NodeModel = decoder.ParseASN(case0, $(this).val(), orig_model);
+					var new_model  : AssureIt.NodeModel = decoder.ParseASN(case0, editor.getValue(), orig_model);
 					var new_shape  : AssureIt.NodeView = new AssureIt.NodeView(caseViewer, new_model);
 					(function(model : AssureIt.NodeModel, shape : AssureIt.NodeView) : void {
 						for (var i = 0; i < model.Children.length; i++) {
