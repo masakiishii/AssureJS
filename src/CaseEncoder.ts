@@ -63,11 +63,11 @@ module AssureIt {
 				default:
 					console.log(model.Type);
 				}
-				//	Label : string;
-				if (model.Statement != null) ret += model.Statement;
-				// 			for (var i = 0; i < model.CaseAnnotation.length; i++) {
-				// 				model.CaseAnnotation[i];
-				// 			}
+				//TODO:Label
+				if (model.Statement != "") ret += (model.Statement + "\n");
+// 				for (var i = 0; i < model.Annotations.length; i++) {
+// 					console.log(model.Annotations[i]);
+// 				}
 				for (var i = 0; i < model.Children.length; i++) {
 					var child_model = model.Children[i];
 					ret += arguments.callee(child_model, prefix);

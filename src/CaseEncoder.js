@@ -51,8 +51,8 @@ var AssureIt;
                         console.log(model.Type);
                 }
 
-                if (model.Statement != null)
-                    ret += model.Statement;
+                if (model.Statement != "")
+                    ret += (model.Statement + "\n");
 
                 for (var i = 0; i < model.Children.length; i++) {
                     var child_model = model.Children[i];
