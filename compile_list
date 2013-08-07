@@ -6,6 +6,7 @@ src/PlugInManager.ts
 src/ServerApi.ts
 src/SelectComponent.ts
 src/Layout.ts
+src/Converter.ts
 mock/Index.ts
 mock/Select.ts
 plugins/Editor/Editor.ts

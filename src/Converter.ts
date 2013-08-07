@@ -1,4 +1,6 @@
-	class Converter {
+module AssureIt {
+
+	export class Converter {
 		NodeMap : { [index: string]: number};
 		
 		constructor() {
@@ -19,7 +21,7 @@
 				newNodeListData.NodeType = 3;
 			}
 		}
-		
+
 		ConvertOldNodeListtoNewNodeList(newNodeListData : any, oldNodeListData : any) : void {
 			var n : number = oldNodeListData.Children.length;
 			for(var i : number = 0; i < n; i++) {
@@ -130,7 +132,9 @@
 			console.log(oldJsonData);
 		}
 	}
+}
 
+/*
 function main () {
 	var obj = new Converter();
 
@@ -260,3 +264,4 @@ function main () {
 }
 
 main();
+*/

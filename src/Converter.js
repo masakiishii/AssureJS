@@ -1,261 +1,127 @@
-var Converter = (function () {
-    function Converter() {
-        this.NodeMap = {};
-    }
-    Converter.prototype.ConvertOldNodeTypetoNewNodeType = function (newNodeListData, oldNodeListData) {
-        if (oldNodeListData.NodeType == "Goal") {
-            newNodeListData.NodeType = 0;
-        } else if (oldNodeListData.NodeType == "Context") {
-            newNodeListData.NodeType = 1;
-        } else if (oldNodeListData.NodeType == "Strategy") {
-            newNodeListData.NodeType = 2;
-        } else {
-            newNodeListData.NodeType = 3;
+var AssureIt;
+(function (AssureIt) {
+    var Converter = (function () {
+        function Converter() {
+            this.NodeMap = {};
         }
-    };
-
-    Converter.prototype.ConvertOldNodeListtoNewNodeList = function (newNodeListData, oldNodeListData) {
-        var n = oldNodeListData.Children.length;
-        for (var i = 0; i < n; i++) {
-            newNodeListData.Children.push(String(oldNodeListData.Children[i]));
-        }
-        this.ConvertOldNodeTypetoNewNodeType(newNodeListData, oldNodeListData);
-        newNodeListData.Statement = oldNodeListData.Description;
-        newNodeListData.Label = String(oldNodeListData.ThisNodeId);
-        newNodeListData.Annotation = oldNodeListData.Contexts;
-        newNodeListData.Notes = oldNodeListData.MetaData;
-    };
-
-    Converter.prototype.GenNewJson = function (oldJsonData) {
-        var newJsonData = {
-            "DCaseName": "",
-            "NodeCount": 0,
-            "TopGoalLabel": "",
-            "NodeList": []
+        Converter.prototype.ConvertOldNodeTypetoNewNodeType = function (newNodeListData, oldNodeListData) {
+            if (oldNodeListData.NodeType == "Goal") {
+                newNodeListData.NodeType = 0;
+            } else if (oldNodeListData.NodeType == "Context") {
+                newNodeListData.NodeType = 1;
+            } else if (oldNodeListData.NodeType == "Strategy") {
+                newNodeListData.NodeType = 2;
+            } else {
+                newNodeListData.NodeType = 3;
+            }
         };
 
-        newJsonData["DCaseName"] = oldJsonData.contents.DCaseName;
-        newJsonData["NodeCount"] = oldJsonData.contents.NodeCount;
-        newJsonData["TopGoalLabel"] = String(oldJsonData.contents.TopGoalId);
-        var n = oldJsonData.contents.NodeList.length;
-        for (var i = 0; i < n; i++) {
-            var NodeListData = {
-                "Children": [],
-                "Statement": "",
-                "NodeType": 0,
-                "Label": "",
-                "Annotations": [],
-                "Notes": []
-            };
-            newJsonData.NodeList.push(NodeListData);
-            var newNodeListData = newJsonData.NodeList[i];
-            var oldNodeListData = oldJsonData.contents.NodeList[i];
-            this.ConvertOldNodeListtoNewNodeList(newNodeListData, oldNodeListData);
-        }
-        console.log(newJsonData.NodeList);
-        return newJsonData;
-    };
+        Converter.prototype.ConvertOldNodeListtoNewNodeList = function (newNodeListData, oldNodeListData) {
+            var n = oldNodeListData.Children.length;
+            for (var i = 0; i < n; i++) {
+                newNodeListData.Children.push(String(oldNodeListData.Children[i]));
+            }
+            this.ConvertOldNodeTypetoNewNodeType(newNodeListData, oldNodeListData);
+            newNodeListData.Statement = oldNodeListData.Description;
+            newNodeListData.Label = String(oldNodeListData.ThisNodeId);
+            newNodeListData.Annotation = oldNodeListData.Contexts;
+            newNodeListData.Notes = oldNodeListData.MetaData;
+        };
 
-    Converter.prototype.SetNodeMap = function (newJsonData) {
-        var NodeList = newJsonData.NodeList;
-        var n = NodeList.length;
-        for (var i = 0; i < n; i++) {
-            this.NodeMap[NodeList[i].Label] = i + 1;
-        }
-    };
-
-    Converter.prototype.ConvertNewNodeTypetoOldNodeType = function (newNodeListData, oldNodeListData) {
-        if (newNodeListData.NodeType == 0) {
-            oldNodeListData.NodeType = "Goal";
-        } else if (newNodeListData.NodeType == 1) {
-            oldNodeListData.NodeType = "Context";
-        } else if (newNodeListData.NodeType == 2) {
-            oldNodeListData.NodeType = "Strategy";
-        } else {
-            oldNodeListData.NodeType = "Evidence";
-        }
-    };
-
-    Converter.prototype.ConvertNewNodeListtoOldNodeList = function (newNodeListData, oldNodeListData) {
-        var n = newNodeListData.Children.length;
-        for (var i = 0; i < n; i++) {
-            oldNodeListData.Children.push(this.NodeMap[newNodeListData.Children[i]]);
-        }
-        this.ConvertNewNodeTypetoOldNodeType(newNodeListData, oldNodeListData);
-        oldNodeListData.Description = newNodeListData.Statement;
-        oldNodeListData.ThisNodeId = this.NodeMap[newNodeListData.Label];
-        oldNodeListData.Contexts = newNodeListData.Annotation;
-        oldNodeListData.MetaData = newNodeListData.Notes;
-    };
-
-    Converter.prototype.GenOldJson = function (newJsonData) {
-        this.SetNodeMap(newJsonData);
-        var oldJsonData = {
-            "contents": {
-                "NodeList": [],
-                "TopGoalId": 0,
+        Converter.prototype.GenNewJson = function (oldJsonData) {
+            var newJsonData = {
+                "DCaseName": "",
                 "NodeCount": 0,
-                "DCaseName": ""
+                "TopGoalLabel": "",
+                "NodeList": []
+            };
+
+            newJsonData["DCaseName"] = oldJsonData.contents.DCaseName;
+            newJsonData["NodeCount"] = oldJsonData.contents.NodeCount;
+            newJsonData["TopGoalLabel"] = String(oldJsonData.contents.TopGoalId);
+            var n = oldJsonData.contents.NodeList.length;
+            for (var i = 0; i < n; i++) {
+                var NodeListData = {
+                    "Children": [],
+                    "Statement": "",
+                    "NodeType": 0,
+                    "Label": "",
+                    "Annotations": [],
+                    "Notes": []
+                };
+                newJsonData.NodeList.push(NodeListData);
+                var newNodeListData = newJsonData.NodeList[i];
+                var oldNodeListData = oldJsonData.contents.NodeList[i];
+                this.ConvertOldNodeListtoNewNodeList(newNodeListData, oldNodeListData);
+            }
+            console.log(newJsonData.NodeList);
+            return newJsonData;
+        };
+
+        Converter.prototype.SetNodeMap = function (newJsonData) {
+            var NodeList = newJsonData.NodeList;
+            var n = NodeList.length;
+            for (var i = 0; i < n; i++) {
+                this.NodeMap[NodeList[i].Label] = i + 1;
             }
         };
 
-        oldJsonData.contents["DCaseName"] = newJsonData.DCaseName;
-        oldJsonData.contents["NodeCount"] = newJsonData.NodeCount;
-        oldJsonData.contents["TopGoalId"] = this.NodeMap[newJsonData.TopGoalLabel];
-        var n = newJsonData.NodeList.length;
-        for (var i = 0; i < n; i++) {
-            var NodeListData = {
-                "ThisNodeId": 0,
-                "NodeType": "",
-                "Description": "",
-                "Children": [],
-                "Contexts": [],
-                "MetaData": []
-            };
-            oldJsonData.contents.NodeList.push(NodeListData);
-            var newNodeListData = newJsonData.NodeList[i];
-            var oldNodeListData = oldJsonData.contents.NodeList[i];
-            this.ConvertNewNodeListtoOldNodeList(newNodeListData, oldNodeListData);
-        }
-        console.log(oldJsonData);
-        console.log(oldJsonData.contents.NodeList[0].Children);
-        console.log(oldJsonData.contents.NodeList[1].Children);
-        console.log(oldJsonData.contents.NodeList[2].Children);
-        console.log(oldJsonData.contents.NodeList[3].Children);
-        console.log(oldJsonData.contents.NodeList[4].Children);
-        console.log(oldJsonData.contents.NodeList[5].Children);
-    };
-    return Converter;
-})();
-
-function main() {
-    var obj = new Converter();
-
-    var oldJsonData = {
-        "contents": {
-            "NodeList": [
-                {
-                    "ThisNodeId": 1,
-                    "NodeType": "Goal",
-                    "Description": "",
-                    "Children": [7, 9],
-                    "Contexts": [],
-                    "MetaData": []
-                },
-                {
-                    "ThisNodeId": 7,
-                    "NodeType": "Context",
-                    "Description": "",
-                    "Children": [],
-                    "Contexts": [],
-                    "MetaData": []
-                },
-                {
-                    "ThisNodeId": 9,
-                    "NodeType": "Strategy",
-                    "Description": "",
-                    "Children": [10, 11],
-                    "Contexts": [],
-                    "MetaData": []
-                },
-                {
-                    "ThisNodeId": 10,
-                    "NodeType": "Goal",
-                    "Description": "",
-                    "Children": [12],
-                    "Contexts": [],
-                    "MetaData": []
-                },
-                {
-                    "ThisNodeId": 12,
-                    "NodeType": "Evidence",
-                    "Description": "",
-                    "Children": [],
-                    "Contexts": [],
-                    "MetaData": []
-                },
-                {
-                    "ThisNodeId": 11,
-                    "NodeType": "Goal",
-                    "Description": "",
-                    "Children": [],
-                    "Contexts": [],
-                    "MetaData": []
-                }
-            ],
-            "TopGoalId": 1,
-            "NodeCount": 6,
-            "DCaseName": "Assure-It サンプル"
-        }
-    };
-
-    obj.GenNewJson(oldJsonData);
-
-    var newJsonData = {
-        "DCaseName": "test",
-        "NodeCount": 6,
-        "TopGoalLabel": "G1",
-        "NodeList": [
-            {
-                "Children": [
-                    "S1",
-                    "C1"
-                ],
-                "Statement": "",
-                "NodeType": 0,
-                "Label": "G1",
-                "Annotations": [],
-                "Notes": []
-            },
-            {
-                "Children": [],
-                "Statement": "",
-                "NodeType": 1,
-                "Label": "C1",
-                "Annotations": [],
-                "Notes": []
-            },
-            {
-                "Children": [
-                    "G2",
-                    "G3"
-                ],
-                "Statement": "",
-                "NodeType": 2,
-                "Label": "S1",
-                "Annotations": [],
-                "Notes": []
-            },
-            {
-                "Children": [
-                    "E2"
-                ],
-                "Statement": "",
-                "NodeType": 0,
-                "Label": "G2",
-                "Annotations": [],
-                "Notes": []
-            },
-            {
-                "Children": [],
-                "Statement": "",
-                "NodeType": 0,
-                "Label": "G3",
-                "Annotations": [],
-                "Notes": []
-            },
-            {
-                "Children": [],
-                "Statement": "",
-                "NodeType": 3,
-                "Label": "E2",
-                "Annotations": [],
-                "Notes": []
+        Converter.prototype.ConvertNewNodeTypetoOldNodeType = function (newNodeListData, oldNodeListData) {
+            if (newNodeListData.NodeType == 0) {
+                oldNodeListData.NodeType = "Goal";
+            } else if (newNodeListData.NodeType == 1) {
+                oldNodeListData.NodeType = "Context";
+            } else if (newNodeListData.NodeType == 2) {
+                oldNodeListData.NodeType = "Strategy";
+            } else {
+                oldNodeListData.NodeType = "Evidence";
             }
-        ]
-    };
+        };
 
-    obj.GenOldJson(newJsonData);
-}
+        Converter.prototype.ConvertNewNodeListtoOldNodeList = function (newNodeListData, oldNodeListData) {
+            var n = newNodeListData.Children.length;
+            for (var i = 0; i < n; i++) {
+                oldNodeListData.Children.push(this.NodeMap[newNodeListData.Children[i]]);
+            }
+            this.ConvertNewNodeTypetoOldNodeType(newNodeListData, oldNodeListData);
+            oldNodeListData.Description = newNodeListData.Statement;
+            oldNodeListData.ThisNodeId = this.NodeMap[newNodeListData.Label];
+            oldNodeListData.Contexts = newNodeListData.Annotation;
+            oldNodeListData.MetaData = newNodeListData.Notes;
+        };
 
-main();
+        Converter.prototype.GenOldJson = function (newJsonData) {
+            this.SetNodeMap(newJsonData);
+            var oldJsonData = {
+                "contents": {
+                    "NodeList": [],
+                    "TopGoalId": 0,
+                    "NodeCount": 0,
+                    "DCaseName": ""
+                }
+            };
+
+            oldJsonData.contents["DCaseName"] = newJsonData.DCaseName;
+            oldJsonData.contents["NodeCount"] = newJsonData.NodeCount;
+            oldJsonData.contents["TopGoalId"] = this.NodeMap[newJsonData.TopGoalLabel];
+            var n = newJsonData.NodeList.length;
+            for (var i = 0; i < n; i++) {
+                var NodeListData = {
+                    "ThisNodeId": 0,
+                    "NodeType": "",
+                    "Description": "",
+                    "Children": [],
+                    "Contexts": [],
+                    "MetaData": []
+                };
+                oldJsonData.contents.NodeList.push(NodeListData);
+                var newNodeListData = newJsonData.NodeList[i];
+                var oldNodeListData = oldJsonData.contents.NodeList[i];
+                this.ConvertNewNodeListtoOldNodeList(newNodeListData, oldNodeListData);
+            }
+            console.log(oldJsonData);
+        };
+        return Converter;
+    })();
+    AssureIt.Converter = Converter;
+})(AssureIt || (AssureIt = {}));
