@@ -52,12 +52,15 @@ module AssureIt {
 					ret += (prefix + "Goal" + "\n");
 					break;
 				case NodeType["Context"]:
+					if (prefix == "") prefix += "*";
 					ret += (prefix + "Context" + "\n");
 					break;
 				case NodeType["Strategy"]:
+					if (prefix == "") prefix += "*";
 					ret += (prefix + "Strategy" + "\n");
 					break;
 				case NodeType["Evidence"]:
+					if (prefix == "") prefix += "*";
 					ret += (prefix + "Evidence" + "\n");
 					break;
 				default:
@@ -70,7 +73,17 @@ module AssureIt {
 // 				}
 				for (var i = 0; i < model.Children.length; i++) {
 					var child_model = model.Children[i];
-					ret += arguments.callee(child_model, prefix);
+					console.log(child_model.Type);
+					if (child_model.Type == NodeType["Context"]) {
+						ret += arguments.callee(child_model, prefix);
+						break;
+					}
+				}
+				for (var i = 0; i < model.Children.length; i++) {
+					var child_model = model.Children[i];
+					if (child_model.Type != NodeType["Context"]) {
+						ret += arguments.callee(child_model, prefix);
+					}
 				}
 				return ret;
 			})(root, "");

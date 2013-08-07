@@ -39,12 +39,18 @@ var AssureIt;
                         ret += (prefix + "Goal" + "\n");
                         break;
                     case AssureIt.NodeType["Context"]:
+                        if (prefix == "")
+                            prefix += "*";
                         ret += (prefix + "Context" + "\n");
                         break;
                     case AssureIt.NodeType["Strategy"]:
+                        if (prefix == "")
+                            prefix += "*";
                         ret += (prefix + "Strategy" + "\n");
                         break;
                     case AssureIt.NodeType["Evidence"]:
+                        if (prefix == "")
+                            prefix += "*";
                         ret += (prefix + "Evidence" + "\n");
                         break;
                     default:
@@ -56,7 +62,17 @@ var AssureIt;
 
                 for (var i = 0; i < model.Children.length; i++) {
                     var child_model = model.Children[i];
-                    ret += arguments.callee(child_model, prefix);
+                    console.log(child_model.Type);
+                    if (child_model.Type == AssureIt.NodeType["Context"]) {
+                        ret += arguments.callee(child_model, prefix);
+                        break;
+                    }
+                }
+                for (var i = 0; i < model.Children.length; i++) {
+                    var child_model = model.Children[i];
+                    if (child_model.Type != AssureIt.NodeType["Context"]) {
+                        ret += arguments.callee(child_model, prefix);
+                    }
                 }
                 return ret;
             })(root, "");
