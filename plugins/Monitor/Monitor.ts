@@ -2,13 +2,13 @@
 /// <reference path="../../src/CaseViewer.ts" />
 /// <reference path="../../src/PlugInManager.ts" />
 
-class MonitorHTMLRenderPlugIn extends HTMLRenderPlugIn {
-	IsEnabled(caseViewer: CaseViewer, caseModel: CaseModel) : boolean {
+class MonitorHTMLRenderPlugIn extends AssureIt.HTMLRenderPlugIn {
+	IsEnabled(caseViewer: AssureIt.CaseViewer, caseModel: AssureIt.NodeModel) : boolean {
 		return true;
 	}
 
-	Delegate(caseViewer: CaseViewer, caseModel: CaseModel, element: JQuery) : boolean {
-		var notes : CaseNote[] = caseModel.Notes;
+	Delegate(caseViewer: AssureIt.CaseViewer, caseModel: AssureIt.NodeModel, element: JQuery) : boolean {
+		var notes : AssureIt.CaseNote[] = caseModel.Notes;
 		var found : boolean = false;
 		for (var i in notes) {
 			if (notes[i].Name == "Monitor") found = true;
@@ -44,15 +44,15 @@ class MonitorHTMLRenderPlugIn extends HTMLRenderPlugIn {
 	}
 }
 
-class MonitorSVGRenderPlugIn extends SVGRenderPlugIn {
-	IsEnable(caseViewer: CaseViewer, element: JQuery) : boolean {
+class MonitorSVGRenderPlugIn extends AssureIt.SVGRenderPlugIn {
+	IsEnable(caseViewer: AssureIt.CaseViewer, element: JQuery) : boolean {
 		return true;
 	}
 
-	Delegate(caseViewer: CaseViewer, elementShape: ElementShape) : boolean {
-		var element: JQuery = elementShape.HTMLDoc.DocBase;
+	Delegate(caseViewer: AssureIt.CaseViewer, nodeView: AssureIt.NodeView) : boolean {
+		var element: JQuery = nodeView.HTMLDoc.DocBase;
 		if(element.data('monitor')) {
-			elementShape.SVGShape.SetColor("red", "black");
+			nodeView.SVGShape.SetColor("red", "black");
 		}
 		return true;
 	}

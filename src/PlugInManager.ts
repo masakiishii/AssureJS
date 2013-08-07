@@ -2,118 +2,113 @@
 /// <reference path="CaseViewer.ts" />
 /// <reference path="ServerApi.ts" />
 
-class PlugIn {
-	Name : string;
-}
+module AssureIt {
 
-class ActionPlugIn extends PlugIn {
-	EventName   : string;
-	EventTarget : string;
-
-	IsEnabled(caseViewer: CaseViewer, case0: Case) : boolean {
-		return true;
+	export class PlugIn {
+		Name : string;
 	}
 
-	Delegate(caseViewer: CaseViewer, case0: Case, serverApi: ServerAPI)  : boolean {
-		return true;
-	}
-}
+	export class ActionPlugIn extends PlugIn {
+		EventName   : string;
+		EventTarget : string;
 
-class CheckerPlugIn extends PlugIn {
-	IsEnabled(caseModel: CaseModel, EventType: string) : boolean {
-		return true;
-	}
+		IsEnabled(caseViewer: CaseViewer, case0: Case) : boolean {
+			return true;
+		}
 
-	Delegate(caseModel: CaseModel, y: string, z: string) : boolean {
-		return true;
-	}
-}
-
-class HTMLRenderPlugIn extends PlugIn {
-	IsEnabled(caseViewer: CaseViewer, caseModel: CaseModel) : boolean {
-		return true;
+		Delegate(caseViewer: CaseViewer, case0: Case, serverApi: ServerAPI)  : boolean {
+			return true;
+		}
 	}
 
-	Delegate(caseViewer: CaseViewer, caseModel: CaseModel, element: JQuery) : boolean {
-		return true;
-	}
-}
+	export class CheckerPlugIn extends PlugIn {
+		IsEnabled(caseModel: NodeModel, EventType: string) : boolean {
+			return true;
+		}
 
-class SVGRenderPlugIn extends PlugIn {
-	IsEnabled(caseViewer: CaseViewer, elementShape: ElementShape /* add args as necessary */) : boolean {
-		return true;
-	}
-
-	Delegate(caseViewer: CaseViewer, elementShape: ElementShape /* add args as necessary */) : boolean {
-		return true;
+		Delegate(caseModel: NodeModel, y: string, z: string) : boolean {
+			return true;
+		}
 	}
 
-}
+	export class HTMLRenderPlugIn extends PlugIn {
+		IsEnabled(caseViewer: CaseViewer, caseModel: NodeModel) : boolean {
+			return true;
+		}
 
-class PlugInManager {
-
-	ActionPlugIns : ActionPlugIn[];
-	DefaultCheckerPlugIns : CheckerPlugIn[];
-	CheckerPlugInMap : { [index: string]: CheckerPlugIn};
-	DefaultHTMLRenderPlugIns : HTMLRenderPlugIn[];
-	HTMLRenderPlugInMap : { [index: string]: HTMLRenderPlugIn};
-	SVGRenderPlugInMap  : { [index: string]: SVGRenderPlugIn};
-
-	constructor() {
-		this.ActionPlugIns = [];
-		this.DefaultCheckerPlugIns = [];
-		this.CheckerPlugInMap = {};
-		this.DefaultHTMLRenderPlugIns = [];
-		this.HTMLRenderPlugInMap = {};
-		this.SVGRenderPlugInMap = {};
+		Delegate(caseViewer: CaseViewer, caseModel: NodeModel, element: JQuery) : boolean {
+			return true;
+		}
 	}
 
+	export class SVGRenderPlugIn extends PlugIn {
+		IsEnabled(caseViewer: CaseViewer, elementShape: NodeView /* add args as necessary */) : boolean {
+			return true;
+		}
 
-	AddActionPlugIn(key: string, actionPlugIn: ActionPlugIn) {
-		this.ActionPlugIns.push(actionPlugIn);
+		Delegate(caseViewer: CaseViewer, elementShape: NodeView /* add args as necessary */) : boolean {
+			return true;
+		}
+
 	}
 
-	RegisterActionEventListeners(CaseViewer: CaseViewer, case0: Case, serverApi: ServerAPI): void {
-		for(var i: number = 0; i < this.ActionPlugIns.length; i++) {
-			if(this.ActionPlugIns[i].IsEnabled(CaseViewer, case0)) {
-				this.ActionPlugIns[i].Delegate(CaseViewer, case0, serverApi);
+	export class PlugInManager {
+
+		ActionPlugIns : ActionPlugIn[];
+		DefaultCheckerPlugIns : CheckerPlugIn[];
+		CheckerPlugInMap : { [index: string]: CheckerPlugIn};
+		DefaultHTMLRenderPlugIns : HTMLRenderPlugIn[];
+		HTMLRenderPlugInMap : { [index: string]: HTMLRenderPlugIn};
+		SVGRenderPlugInMap  : { [index: string]: SVGRenderPlugIn};
+
+		constructor() {
+			this.ActionPlugIns = [];
+			this.DefaultCheckerPlugIns = [];
+			this.CheckerPlugInMap = {};
+			this.DefaultHTMLRenderPlugIns = [];
+			this.HTMLRenderPlugInMap = {};
+			this.SVGRenderPlugInMap = {};
+		}
+
+
+		AddActionPlugIn(key: string, actionPlugIn: ActionPlugIn) {
+			this.ActionPlugIns.push(actionPlugIn);
+		}
+
+		RegisterActionEventListeners(CaseViewer: CaseViewer, case0: Case, serverApi: ServerAPI): void {
+			for(var i: number = 0; i < this.ActionPlugIns.length; i++) {
+				if(this.ActionPlugIns[i].IsEnabled(CaseViewer, case0)) {
+					this.ActionPlugIns[i].Delegate(CaseViewer, case0, serverApi);
+				}
 			}
 		}
-	}
-	/**
-	AddCheckerPlugIn(key: string, f : (x : CaseModel, y: string, z : any) => boolean) {
-		if(key == null) {
-			this.DefaultCheckerPlugIns.push(f);
+		/**
+		AddCheckerPlugIn(key: string, f : (x : NodeModel, y: string, z : any) => boolean) {
+			if(key == null) {
+				this.DefaultCheckerPlugIns.push(f);
+			}
+			else {
+				this.CheckerPlugInMap[key] = f;
+			}
 		}
-		else {
-			this.CheckerPlugInMap[key] = f;
-		}
-	}
 
 
-	AddDefaultActionPlugIn(f : (x : CaseModel, y: string, z : any) => boolean) {
-		if(key == null) {
-			this.DefaultCheckerPlugIns.push(f);
+		AddDefaultActionPlugIn(f : (x : NodeModel, y: string, z : any) => boolean) {
+			if(key == null) {
+				this.DefaultCheckerPlugIns.push(f);
+			}
+			else {
+				this.CheckerPlugInMap[key] = f;
+			}
 		}
-		else {
-			this.CheckerPlugInMap[key] = f;
+		**/
+
+		AddHTMLRenderPlugIn(key: string, HTMLRenderPlugIn: HTMLRenderPlugIn) {
+			this.HTMLRenderPlugInMap[key] = HTMLRenderPlugIn;
 		}
-	}
-	**/
 
-	AddHTMLRenderPlugIn(key: string, HTMLRenderPlugIn: HTMLRenderPlugIn) {
-		this.HTMLRenderPlugInMap[key] = HTMLRenderPlugIn;
-	}
-
-	AddSVGRenderPlugIn(key: string, SVGRenderPlugIn: SVGRenderPlugIn) {
-		this.SVGRenderPlugInMap[key] = SVGRenderPlugIn;
+		AddSVGRenderPlugIn(key: string, SVGRenderPlugIn: SVGRenderPlugIn) {
+			this.SVGRenderPlugInMap[key] = SVGRenderPlugIn;
+		}
 	}
 }
-/** this is sample of ActionPlugIn */
-/*
-function OnClickApproval(CaseModel: CaseModel) : boolean {
-	CaseModel.SetAnnotation('@approval', CaseModel.Case.UserName);
-	return true; // resize, redraw
-}
-
-*/

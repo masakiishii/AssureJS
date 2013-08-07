@@ -2,12 +2,12 @@
 /// <reference path="../../src/CaseViewer.ts" />
 /// <reference path="../../src/PlugInManager.ts" />
 
-class AnnotationHTMLRenderPlugIn extends HTMLRenderPlugIn {
-	IsEnabled(caseViewer: CaseViewer, caseModel: CaseModel) : boolean {
+class AnnotationHTMLRenderPlugIn extends AssureIt.HTMLRenderPlugIn {
+	IsEnabled(caseViewer: AssureIt.CaseViewer, caseModel: AssureIt.NodeModel) : boolean {
 		return true;
 	}
 
-	Delegate(caseViewer: CaseViewer, caseModel: CaseModel, element: JQuery) : boolean {
+	Delegate(caseViewer: AssureIt.CaseViewer, caseModel: AssureIt.NodeModel, element: JQuery) : boolean {
 		if(caseModel.Annotations.length == 0) return;
 
 		var text : string = "";

@@ -29,4 +29,4 @@ var AnnotationHTMLRenderPlugIn = (function (_super) {
         return true;
     };
     return AnnotationHTMLRenderPlugIn;
-})(HTMLRenderPlugIn);
+})(AssureIt.HTMLRenderPlugIn);

@@ -1,7 +1,7 @@
-/// <reference path="CaseModel.ts" />
-/// <reference path="CaseDecoder.ts" />
-/// <reference path="CaseViewer.ts" />
-/// <reference path="ServerApi.ts" />
+/// <reference path="../src/CaseModel.ts" />
+/// <reference path="../src/CaseDecoder.ts" />
+/// <reference path="../src/CaseViewer.ts" />
+/// <reference path="../src/ServerApi.ts" />
 /// <reference path="../plugins/MenuBar/MenuBar.ts" />
 /// <reference path="../plugins/Editor/Editor.ts" />
 /// <reference path="../plugins/Annotation/Annotation.ts" />
@@ -11,8 +11,8 @@
 
 $(function () {
 
-	var serverApi = new ServerAPI('http://localhost/ait'); //TODO config for Path
-	var pluginManager = new PlugInManager();
+	var serverApi = new AssureIt.ServerAPI('http://localhost/ait'); //TODO config for Path
+	var pluginManager = new AssureIt.PlugInManager();
 	pluginManager.AddActionPlugIn("menu", new MenuBarPlugIn());
 	pluginManager.AddActionPlugIn("editor", new EditorPlugIn());
 	pluginManager.AddHTMLRenderPlugIn("annotation", new AnnotationHTMLRenderPlugIn());
@@ -22,7 +22,7 @@ $(function () {
 
 	var JsonData = {
 		"DCaseName": "test",
-		"NodeCount": 23,
+		"NodeCount": 25,
 		"TopGoalLabel": "G1",
 		"NodeList": [
 			{
@@ -245,6 +245,8 @@ $(function () {
 			},
 			{
 				"Children": [
+					"C6",
+					"E7"
 				],
 				"Statement": "",
 				"NodeType": 0,
@@ -261,21 +263,40 @@ $(function () {
 				"Annotations": [],
 				"Notes": []
 			},
+			{
+				"Children": [
+				],
+				"Statement": "",
+				"NodeType": 1,
+				"Label": "C6",
+				"Annotations": [],
+				"Notes": []
+			},
+			{
+				"Children": [
+				],
+				"Statement": "",
+				"NodeType": 3,
+				"Label": "E7",
+				"Annotations": [],
+				"Notes": []
+			},
 		]
 	}
 
-	var Case0: Case = new Case();
-	var caseDecoder: CaseDecoder = new CaseDecoder();
-	var root: CaseModel = caseDecoder.ParseJson(Case0, JsonData);
+	var Case0: AssureIt.Case = new AssureIt.Case();
+	Case0.CommitId = 0;
+	var caseDecoder: AssureIt.CaseDecoder = new AssureIt.CaseDecoder();
+	var root: AssureIt.NodeModel = caseDecoder.ParseJson(Case0, JsonData);
 
 	Case0.SetElementTop(root);
-	var Viewer = new CaseViewer(Case0, pluginManager, serverApi);
+	var Viewer = new AssureIt.CaseViewer(Case0, pluginManager, serverApi);
 	var backgroundlayer = <HTMLDivElement>document.getElementById("background");
 	var shapelayer = <SVGGElement><any>document.getElementById("layer0");
 	var contentlayer = <HTMLDivElement>document.getElementById("layer1");
 	var controllayer = <HTMLDivElement>document.getElementById("layer2");
 
-	var Screen = new ScreenManager(shapelayer, contentlayer, controllayer, backgroundlayer);
+	var Screen = new AssureIt.ScreenManager(shapelayer, contentlayer, controllayer, backgroundlayer);
 	Viewer.Draw(Screen);
 });
 

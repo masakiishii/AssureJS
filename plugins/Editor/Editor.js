@@ -25,13 +25,13 @@ var EditorPlugIn = (function (_super) {
                 var label = e.data.node.text();
                 var orig_model = case0.ElementMap[label];
                 var orig_shape = caseViewer.ViewMap[label];
-                var decoder = new CaseDecoder();
+                var decoder = new AssureIt.CaseDecoder();
                 var new_model = decoder.ParseASN(case0, $(this).val(), orig_model);
-                var new_shape = new ElementShape(caseViewer, new_model);
+                var new_shape = new AssureIt.NodeView(caseViewer, new_model);
                 (function (model, shape) {
                     for (var i = 0; i < model.Children.length; i++) {
                         var child_model = model.Children[i];
-                        var child_shape = new ElementShape(caseViewer, child_model);
+                        var child_shape = new AssureIt.NodeView(caseViewer, child_model);
                         arguments.callee(child_model, child_shape);
                     }
                     caseViewer.ViewMap[model.Label] = shape;
@@ -59,4 +59,4 @@ var EditorPlugIn = (function (_super) {
         return true;
     };
     return EditorPlugIn;
-})(ActionPlugIn);
+})(AssureIt.ActionPlugIn);

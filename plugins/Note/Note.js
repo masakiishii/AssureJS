@@ -9,12 +9,12 @@ var NoteHTMLRenderPlugIn = (function (_super) {
     function NoteHTMLRenderPlugIn() {
         _super.apply(this, arguments);
     }
-    NoteHTMLRenderPlugIn.prototype.IsEnabled = function (caseViewer, caseModel) {
+    NoteHTMLRenderPlugIn.prototype.IsEnabled = function (caseViewer, nodeModel) {
         return true;
     };
 
-    NoteHTMLRenderPlugIn.prototype.Delegate = function (caseViewer, caseModel) {
+    NoteHTMLRenderPlugIn.prototype.Delegate = function (caseViewer, nodeModel) {
         return true;
     };
     return NoteHTMLRenderPlugIn;
-})(HTMLRenderPlugIn);
+})(AssureIt.HTMLRenderPlugIn);

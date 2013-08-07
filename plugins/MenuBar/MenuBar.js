@@ -4,6 +4,116 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
+var MenuBarAPI = (function () {
+    function MenuBarAPI(caseViewer, case0, node, serverApi) {
+        this.caseViewer = caseViewer;
+        this.case0 = case0;
+        this.node = node;
+        this.serverApi = serverApi;
+    }
+    MenuBarAPI.prototype.ReDraw = function () {
+        var backgroundlayer = document.getElementById("background");
+        var shapelayer = document.getElementById("layer0");
+        var contentlayer = document.getElementById("layer1");
+        var controllayer = document.getElementById("layer2");
+        var offset = $("#layer1").offset();
+
+        var Screen = new AssureIt.ScreenManager(shapelayer, contentlayer, controllayer, backgroundlayer);
+        this.caseViewer.Draw(Screen);
+        Screen.SetOffset(offset.left, offset.top);
+    };
+
+    MenuBarAPI.prototype.AddNode = function (nodeType) {
+        var thisNodeView = this.caseViewer.ViewMap[this.node.children("h4").text()];
+        var newNodeModel = new AssureIt.NodeModel(this.case0, thisNodeView.Source, nodeType, null, null);
+        this.case0.SaveIdCounterMax(this.case0.ElementTop);
+        this.caseViewer.ViewMap[newNodeModel.Label] = new AssureIt.NodeView(this.caseViewer, newNodeModel);
+        this.caseViewer.ViewMap[newNodeModel.Label].ParentShape = this.caseViewer.ViewMap[newNodeModel.Parent.Label];
+        this.caseViewer.Resize();
+        this.ReDraw();
+    };
+
+    MenuBarAPI.prototype.ShowSubMenu = function () {
+        var self = this;
+        $('#submenu').remove();
+
+        var submenu = $('<div id="submenu">' + '<a href="#" ><img id="goal" src="images/icon.png" title="Goal" alt="goal" /></a>' + '<a href="#" ><img id="context" src="images/icon.png" title="Context" alt="context" /></a>' + '<a href="#" ><img id="strategy" src="images/icon.png" title="Strategy" alt="strategy" /></a>' + '<a href="#" ><img id="evidence" src="images/icon.png" title="Evidence" alt="evidence" /></a></div>');
+        submenu.css({ position: 'absolute', top: this.node.position().top, left: this.node.position().left, display: 'block', opacity: 0 });
+        submenu.hover(function () {
+        }, function () {
+            $(this).remove();
+        });
+        (submenu).jqDock({
+            align: 'right',
+            fadeIn: 200,
+            idle: 1500,
+            size: 48,
+            distance: 60,
+            labels: 'tc',
+            duration: 500,
+            source: function () {
+                return this.src.replace(/(jpg|gif)$/, 'png');
+            }
+        });
+        submenu.appendTo($('#layer2'));
+
+        $('#goal').click(function () {
+            self.AddNode(AssureIt.NodeType.Goal);
+        });
+
+        $('#context').click(function () {
+            self.AddNode(AssureIt.NodeType.Context);
+        });
+
+        $('#strategy').click(function () {
+            self.AddNode(AssureIt.NodeType.Strategy);
+        });
+
+        $('#evidence').click(function () {
+            self.AddNode(AssureIt.NodeType.Evidence);
+        });
+    };
+
+    MenuBarAPI.prototype.GetDescendantLabels = function (labels, children) {
+        for (var i = 0; i < children.length; i++) {
+            labels.push(children[i].Label);
+            this.GetDescendantLabels(labels, children[i].Children);
+        }
+        return labels;
+    };
+
+    MenuBarAPI.prototype.RemoveNode = function () {
+        var thisLabel = this.node.children("h4").text();
+        var thisNodeView = this.caseViewer.ViewMap[thisLabel];
+        var thisNodeModel = thisNodeView.Source;
+        var brotherNodeModels = thisNodeModel.Parent.Children;
+
+        for (var i = 0; i < brotherNodeModels.length; i++) {
+            if (brotherNodeModels[i].Label == thisLabel) {
+                brotherNodeModels.splice(i, 1);
+            }
+        }
+
+        var labels = [thisLabel];
+        labels = this.GetDescendantLabels(labels, thisNodeModel.Children);
+
+        for (var i = 0; i < labels.length; i++) {
+            delete this.case0.ElementMap[labels[i]];
+            var nodeView = this.caseViewer.ViewMap[labels[i]];
+            nodeView.DeleteHTMLElementRecursive(null, null);
+            delete this.caseViewer.ViewMap[labels[i]];
+        }
+
+        this.caseViewer.Resize();
+        this.ReDraw();
+    };
+
+    MenuBarAPI.prototype.Commit = function () {
+        this.serverApi.Commit(this.case0.ElementTop, "test", this.case0.CommitId);
+    };
+    return MenuBarAPI;
+})();
+
 var MenuBarPlugIn = (function (_super) {
     __extends(MenuBarPlugIn, _super);
     function MenuBarPlugIn() {
@@ -14,40 +124,50 @@ var MenuBarPlugIn = (function (_super) {
     };
 
     MenuBarPlugIn.prototype.Delegate = function (caseViewer, case0, serverApi) {
-        if (MenuBarPlugIn.DelegateInvoked)
-            return;
+        $('.node').unbind('hover');
         $('.node').hover(function () {
             var node = $(this);
             $('#menu').remove();
-            var p = node.position();
-            var j = $('<div id="menu">' + '<a href="#" ><img src="images/icon.png" alt="" /></a>' + '<a href="#" ><img src="images/icon.png" alt="" /></a>' + '<a href="#" ><img src="images/icon.png" alt="" /></a>' + '<a href="#" ><img src="images/icon.png" alt="" /></a>' + '<a href="#" ><img src="images/icon.png" alt="" /></a>' + '<a href="#" ><img src="images/icon.png" alt="" /></a></div>');
 
-            j.appendTo($('#layer2'));
-            j.css({ position: 'absolute', top: p.top + 75, display: 'none', opacity: 0 });
-            ($('#menu')).jqDock({
+            var menu = $('<div id="menu">' + '<a href="#" ><img id="add" src="images/add.png" title="Add" alt="add" /></a>' + '<a href="#" ><img id="remove" src="images/remove.png" title="Remove" alt="remove" /></a>' + '<a href="#" ><img id="commit" src="images/commit.png" title="Commit" alt="remove" /></a>' + '</div>');
+            menu.css({ position: 'absolute', top: node.position().top + 75, display: 'block', opacity: 0 });
+            menu.hover(function () {
+            }, function () {
+                $(this).remove();
+            });
+            (menu).jqDock({
                 align: 'bottom',
                 fadeIn: 200,
                 idle: 1500,
                 size: 48,
                 distance: 60,
-                labels: 'hoge,fuga,foo,bar',
+                labels: 'tc',
                 duration: 500,
                 source: function () {
                     return this.src.replace(/(jpg|gif)$/, 'png');
                 },
                 onReady: function () {
-                    $('#menu').css({ left: node.position().left + (node.outerWidth() - $('#menu').width()) / 2 });
+                    menu.css({ left: node.position().left + (node.outerWidth() - menu.width()) / 2 });
                 }
             });
-            $('#menu').css({ display: 'block' }).hover(function () {
-            }, function () {
-                $(this).remove();
+            menu.appendTo($('#layer2'));
+
+            var menuBarApi = new MenuBarAPI(caseViewer, case0, node, serverApi);
+
+            $('#add').click(function () {
+                menuBarApi.ShowSubMenu();
+            });
+
+            $('#remove').click(function () {
+                menuBarApi.RemoveNode();
+            });
+
+            $('#commit').click(function () {
+                menuBarApi.Commit();
             });
         }, function () {
         });
-        MenuBarPlugIn.DelegateInvoked = true;
         return true;
     };
-    MenuBarPlugIn.DelegateInvoked = false;
     return MenuBarPlugIn;
-})(ActionPlugIn);
+})(AssureIt.ActionPlugIn);
