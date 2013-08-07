@@ -18,8 +18,8 @@ var AssureIt;
         HTMLDoc.prototype.Render = function (Viewer, NodeModel) {
             if (this.DocBase != null) {
                 var parent = this.DocBase.parent();
-                if (parent != null)
-                    parent.remove(this.DocBase);
+
+                this.DocBase.remove();
             }
             this.DocBase = $('<div class="node">').css("position", "absolute").attr('id', NodeModel.Label);
             this.DocBase.append($('<h4>' + NodeModel.Label + '</h4>'));

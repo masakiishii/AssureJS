@@ -208,8 +208,8 @@ module AssureIt {
 		}
 		Parse(ASNData : string, orig : NodeModel) : NodeModel {
 			var obj : any = Peg.parse(ASNData)[1];
-			var root : NodeModel = this.Object2NodeModel(obj, orig);
-			return root;
+			//var root : NodeModel = this.Object2NodeModel(obj, orig);
+			return obj;
 		}
 	}
 
