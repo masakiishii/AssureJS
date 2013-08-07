@@ -4,6 +4,8 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
+;
+
 var EditorPlugIn = (function (_super) {
     __extends(EditorPlugIn, _super);
     function EditorPlugIn() {
@@ -13,8 +15,7 @@ var EditorPlugIn = (function (_super) {
             lineNumbers: true,
             mode: "text/x-asn"
         });
-        console.log(editor);
-        console.log(document.getElementById('editor'));
+        editor.setSize("200px", "200px");
         $('#editor-wrapper').css({ display: 'none' });
     }
     EditorPlugIn.prototype.IsEnabled = function (caseViewer, case0) {
@@ -55,7 +56,7 @@ var EditorPlugIn = (function (_super) {
             }).on("keydown", function (e) {
                 if (e.keyCode == 27) {
                     e.stopPropagation();
-                    $(this).css({ display: 'none' });
+                    $('#editor-wrapper').blur();
                 }
             });
         });

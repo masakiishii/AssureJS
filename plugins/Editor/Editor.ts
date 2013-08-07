@@ -4,7 +4,10 @@
 
 //--- Interface for widearea.js
 declare function wideArea(selector?: string): void;
-//---
+//--- CodeMirror
+declare class CodeMirror {
+	static fromTextArea(selector: any, option: any): any;
+};
 
 class EditorPlugIn extends AssureIt.ActionPlugIn {
 	constructor() {
@@ -14,6 +17,7 @@ class EditorPlugIn extends AssureIt.ActionPlugIn {
 			lineNumbers: true,
 			mode: "text/x-asn",
 		});
+		editor.setSize("200px","200px"); //FIXME
 		$('#editor-wrapper').css({display: 'none'});
 	}
 
@@ -59,7 +63,7 @@ class EditorPlugIn extends AssureIt.ActionPlugIn {
 				.on("keydown", function(e: JQueryEventObject) {
 					if(e.keyCode == 27 /* ESC */){
 						e.stopPropagation();
-						$(this).css({display: 'none'});
+						$('#editor-wrapper').blur();
 					}
 				});
 		});
