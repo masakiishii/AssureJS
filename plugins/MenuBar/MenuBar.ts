@@ -129,9 +129,9 @@ class MenuBarPlugIn extends AssureIt.ActionPlugIn {
 			$('#menu').remove();
 
 			var menu = $('<div id="menu">' +
-				'<a href="#" ><img id="add" src="images/icon.png" title="Add" alt="add" /></a>' +
-				'<a href="#" ><img id="remove" src="images/icon.png" title="Remove" alt="remove" /></a>' +
-				'<a href="#" ><img id="commit" src="images/icon.png" title="Commit" alt="remove" /></a>' +
+				'<a href="#" ><img id="add" src="images/add.png" title="Add" alt="add" /></a>' +
+				'<a href="#" ><img id="remove" src="images/remove.png" title="Remove" alt="remove" /></a>' +
+				'<a href="#" ><img id="commit" src="images/commit.png" title="Commit" alt="remove" /></a>' +
 				'</div>');
 			menu.css({ position: 'absolute', top: node.position().top + 75, display: 'block', opacity: 0 });
 			menu.hover(function () { }, function () { $(this).remove(); });
