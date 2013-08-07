@@ -10,7 +10,11 @@ class EditorPlugIn extends AssureIt.ActionPlugIn {
 	constructor() {
 		super();
 		//wideArea();
-		$('#editor').css({display: 'none'});
+		var editor = CodeMirror.fromTextArea(document.getElementById('editor'), {
+			lineNumbers: true,
+			mode: "text/x-asn",
+		});
+		$('#editor-wrapper').css({display: 'none'});
 	}
 
 	IsEnabled (caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case) : boolean {
@@ -22,7 +26,7 @@ class EditorPlugIn extends AssureIt.ActionPlugIn {
 			ev.stopPropagation();
 			var node = $(this);
 			var p = node.position();
-			$('#editor')
+			$('#editor-wrapper')
 				.css({position: 'absolute', top: p.top, left: p.left, display: 'block'})
 				.appendTo($('#layer2'))
 				.focus()
@@ -60,7 +64,7 @@ class EditorPlugIn extends AssureIt.ActionPlugIn {
 				});
 		});
 		$('#layer1').click(function(){
-			$('#editor').blur();
+			$('#editor-wrapper').blur();
 		});
 		return true;
 	}

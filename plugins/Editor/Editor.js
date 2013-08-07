@@ -9,7 +9,13 @@ var EditorPlugIn = (function (_super) {
     function EditorPlugIn() {
         _super.call(this);
 
-        $('#editor').css({ display: 'none' });
+        var editor = CodeMirror.fromTextArea(document.getElementById('editor'), {
+            lineNumbers: true,
+            mode: "text/x-asn"
+        });
+        console.log(editor);
+        console.log(document.getElementById('editor'));
+        $('#editor-wrapper').css({ display: 'none' });
     }
     EditorPlugIn.prototype.IsEnabled = function (caseViewer, case0) {
         return true;
@@ -20,7 +26,7 @@ var EditorPlugIn = (function (_super) {
             ev.stopPropagation();
             var node = $(this);
             var p = node.position();
-            $('#editor').css({ position: 'absolute', top: p.top, left: p.left, display: 'block' }).appendTo($('#layer2')).focus().one("blur", { node: node }, function (e, node) {
+            $('#editor-wrapper').css({ position: 'absolute', top: p.top, left: p.left, display: 'block' }).appendTo($('#layer2')).focus().one("blur", { node: node }, function (e, node) {
                 e.stopPropagation();
                 var label = e.data.node.text();
                 var orig_model = case0.ElementMap[label];
@@ -54,7 +60,7 @@ var EditorPlugIn = (function (_super) {
             });
         });
         $('#layer1').click(function () {
-            $('#editor').blur();
+            $('#editor-wrapper').blur();
         });
         return true;
     };
