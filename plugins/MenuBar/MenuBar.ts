@@ -113,8 +113,6 @@ class MenuBarAPI {
 
 	Commit(): void {
 		(<any>$('#commit_window')).dialog('open');
-
-		//this.serverApi.Commit(this.case0.ElementTop, "test"/* TODO: input from textarea */, this.case0.CommitId);
 	}
 
 }
@@ -180,9 +178,7 @@ class MenuBarPlugIn extends AssureIt.ActionPlugIn {
 			});
 
 			$('#commit_window').remove();
-			var commitWindow = $('<div id="commit_window">' +
-				'<textarea>Type your commit message here...</textarea>' +
-				'</div>');
+			var commitWindow = $('<div id="commit_window" title="Commit Message" />');
 			(<any>commitWindow).dialog({
 				autoOpen: false,
 				modal: true,
@@ -191,7 +187,33 @@ class MenuBarPlugIn extends AssureIt.ActionPlugIn {
 				show: "clip",
 				hide: "fade"
 			});
+
+			var defaultMessage: string = "Type your commit message...";
+			var commitMessage = $('<p align="center"><input id="commit_message" type="text" size="30" value="' + defaultMessage + '" /></p>');
+			commitMessage.css('color', 'gray');
+
+			var commitButton  = $('<p align="right"><input id="commit_button" type="button" value="commit"/></p>');
+			commitWindow.append(commitMessage);
+			commitWindow.append(commitButton);
 			commitWindow.appendTo($('layer2'));
+
+			$('#commit_message').focus(function() {
+				if($(this).val() == defaultMessage) {
+					$(this).val("");
+					$(this).css('color', 'black');
+				}
+			});
+
+			$('#commit_message').blur(function() {
+				if($(this).val() == "") {
+					$(this).val(defaultMessage);
+					$(this).css('color', 'gray');
+				}
+			});
+
+			$('#commit_button').click(function() {
+				serverApi.Commit(case0.ElementTop, $(this).val, case0.CommitId);
+			});
 
 		}, function() { /* TODO */ });
 		return true;
