@@ -33,47 +33,6 @@ var MenuBarAPI = (function () {
         this.ReDraw();
     };
 
-    MenuBarAPI.prototype.ShowSubMenu = function () {
-        var self = this;
-        $('#submenu').remove();
-
-        var submenu = $('<div id="submenu">' + '<a href="#" ><img id="goal" src="images/icon.png" title="Goal" alt="goal" /></a>' + '<a href="#" ><img id="context" src="images/icon.png" title="Context" alt="context" /></a>' + '<a href="#" ><img id="strategy" src="images/icon.png" title="Strategy" alt="strategy" /></a>' + '<a href="#" ><img id="evidence" src="images/icon.png" title="Evidence" alt="evidence" /></a></div>');
-        submenu.css({ position: 'absolute', top: this.node.position().top, left: this.node.position().left, display: 'block', opacity: 0 });
-        submenu.hover(function () {
-        }, function () {
-            $(this).remove();
-        });
-        (submenu).jqDock({
-            align: 'right',
-            fadeIn: 200,
-            idle: 1500,
-            size: 48,
-            distance: 60,
-            labels: 'tc',
-            duration: 500,
-            source: function () {
-                return this.src.replace(/(jpg|gif)$/, 'png');
-            }
-        });
-        submenu.appendTo($('#layer2'));
-
-        $('#goal').click(function () {
-            self.AddNode(AssureIt.NodeType.Goal);
-        });
-
-        $('#context').click(function () {
-            self.AddNode(AssureIt.NodeType.Context);
-        });
-
-        $('#strategy').click(function () {
-            self.AddNode(AssureIt.NodeType.Strategy);
-        });
-
-        $('#evidence').click(function () {
-            self.AddNode(AssureIt.NodeType.Evidence);
-        });
-    };
-
     MenuBarAPI.prototype.GetDescendantLabels = function (labels, children) {
         for (var i = 0; i < children.length; i++) {
             labels.push(children[i].Label);
@@ -129,7 +88,7 @@ var MenuBarPlugIn = (function (_super) {
             var node = $(this);
 
             $('#menu').remove();
-            var menu = $('<div id="menu">' + '<a href="#" ><img id="add" src="images/add.png" title="Add" alt="add" /></a>' + '<a href="#" ><img id="remove" src="images/remove.png" title="Remove" alt="remove" /></a>' + '<a href="#" ><img id="commit" src="images/commit.png" title="Commit" alt="commit" /></a>' + '</div>');
+            var menu = $('<div id="menu">' + '<a href="#" ><img id="goal" src="images/icon.png" title="Goal" alt="goal" /></a>' + '<a href="#" ><img id="context" src="images/icon.png" title="Context" alt="context" /></a>' + '<a href="#" ><img id="strategy" src="images/icon.png" title="Strategy" alt="strategy" /></a>' + '<a href="#" ><img id="evidence" src="images/icon.png" title="Evidence" alt="evidence" /></a>' + '<a href="#" ><img id="remove" src="images/icon.png" title="Remove" alt="remove" /></a>' + '<a href="#" ><img id="commit" src="images/icon.png" title="Commit" alt="commit" /></a>' + '</div>');
             menu.css({ position: 'absolute', top: node.position().top + 75, display: 'block', opacity: 0 });
             menu.hover(function () {
             }, function () {
@@ -139,7 +98,7 @@ var MenuBarPlugIn = (function (_super) {
                 align: 'bottom',
                 fadeIn: 200,
                 idle: 1500,
-                size: 48,
+                size: 45,
                 distance: 60,
                 labels: 'tc',
                 duration: 500,
@@ -154,8 +113,20 @@ var MenuBarPlugIn = (function (_super) {
 
             var menuBarApi = new MenuBarAPI(caseViewer, case0, node, serverApi);
 
-            $('#add').hover(function () {
-                menuBarApi.ShowSubMenu();
+            $('#goal').click(function () {
+                menuBarApi.AddNode(AssureIt.NodeType.Goal);
+            });
+
+            $('#context').click(function () {
+                menuBarApi.AddNode(AssureIt.NodeType.Context);
+            });
+
+            $('#strategy').click(function () {
+                menuBarApi.AddNode(AssureIt.NodeType.Strategy);
+            });
+
+            $('#evidence').click(function () {
+                menuBarApi.AddNode(AssureIt.NodeType.Evidence);
             });
 
             $('#remove').click(function () {
