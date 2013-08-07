@@ -35,6 +35,7 @@ var AssureIt;
                 var ret = "";
                 switch (model.Type) {
                     case AssureIt.NodeType["Goal"]:
+                        prefix += "*";
                         ret += (prefix + "Goal" + "\n");
                         break;
                     case AssureIt.NodeType["Context"]:
@@ -55,10 +56,10 @@ var AssureIt;
 
                 for (var i = 0; i < model.Children.length; i++) {
                     var child_model = model.Children[i];
-                    ret += arguments.callee(child_model, prefix + "*");
+                    ret += arguments.callee(child_model, prefix);
                 }
                 return ret;
-            })(root, "*");
+            })(root, "");
             console.log(encoded);
             return encoded;
         };

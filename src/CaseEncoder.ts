@@ -48,6 +48,7 @@ module AssureIt {
 				var ret : string = "";
 				switch (model.Type) {
 				case NodeType["Goal"]:
+					prefix += "*";
 					ret += (prefix + "Goal" + "\n");
 					break;
 				case NodeType["Context"]:
@@ -69,10 +70,10 @@ module AssureIt {
 				// 			}
 				for (var i = 0; i < model.Children.length; i++) {
 					var child_model = model.Children[i];
-					ret += arguments.callee(child_model, prefix + "*");
+					ret += arguments.callee(child_model, prefix);
 				}
 				return ret;
-			})(root, "*");
+			})(root, "");
 			console.log(encoded);
 			return encoded;
 		}
