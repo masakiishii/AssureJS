@@ -439,6 +439,14 @@ var AssureIt;
             this.LayoutElement();
         };
 
+        CaseViewer.prototype.DeleteViewsRecursive = function (root) {
+            var Children = root.Source.Children;
+            delete this.ViewMap[root.Source.Label];
+            for (var i = 0; i < Children.length; i++) {
+                this.DeleteViewsRecursive(this.ViewMap[Children[i].Label]);
+            }
+        };
+
         CaseViewer.prototype.LayoutElement = function () {
             var layout = new AssureIt.LayoutPortrait(this.ViewMap);
             layout.Init(this.ElementTop, 300, 0);

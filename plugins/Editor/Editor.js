@@ -35,27 +35,27 @@ var EditorPlugIn = (function (_super) {
                 e.stopPropagation();
                 var label = e.data.node.attr('id');
                 var orig_model = case0.ElementMap[label];
-                var orig_shape = caseViewer.ViewMap[label];
+                var orig_view = caseViewer.ViewMap[label];
                 var decoder = new AssureIt.CaseDecoder();
                 var new_model = decoder.ParseASN(case0, editor.getValue(), orig_model);
-                var new_shape = new AssureIt.NodeView(caseViewer, new_model);
-                (function (model, shape) {
+                var new_view = new AssureIt.NodeView(caseViewer, new_model);
+                orig_model.Parent.AppendChild(new_model);
+                orig_model.Parent.RemoveChild(orig_model);
+                case0.DeleteNodesRecursive(orig_model);
+                orig_view.DeleteHTMLElementRecursive($("#layer0"), $("#layer1"));
+                caseViewer.DeleteViewsRecursive(orig_view);
+                (function (model, view) {
+                    caseViewer.ViewMap[model.Label] = view;
                     for (var i = 0; i < model.Children.length; i++) {
                         var child_model = model.Children[i];
-                        child_model.Parent = model;
-                        child_model.Case = case0;
-                        child_model.Label = case0.NewLabel(child_model.Type);
-                        case0.ElementMap[child_model.Label] = child_model;
-                        var child_shape = new AssureIt.NodeView(caseViewer, child_model);
-                        arguments.callee(child_model, child_shape);
+                        var child_view = new AssureIt.NodeView(caseViewer, child_model);
+                        arguments.callee(child_model, child_view);
                     }
-                    caseViewer.ViewMap[model.Label] = shape;
                     if (model.Parent != null)
-                        shape.ParentShape = caseViewer.ViewMap[model.Parent.Label];
-                })(new_model, new_shape);
+                        view.ParentShape = caseViewer.ViewMap[model.Parent.Label];
+                })(new_model, new_view);
+                new_view.AppendHTMLElementRecursive($("#layer0"), $("#layer1"), caseViewer);
                 caseViewer.Resize();
-                orig_shape.DeleteHTMLElementRecursive($("#layer0"), $("#layer1"));
-                new_shape.AppendHTMLElementRecursive($("#layer0"), $("#layer1"), caseViewer);
                 caseViewer.LayoutElement();
                 for (var viewkey in caseViewer.ViewMap) {
                     caseViewer.ViewMap[viewkey].Update();

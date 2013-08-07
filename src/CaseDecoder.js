@@ -177,10 +177,10 @@ var AssureIt;
         }
         ASNParser.prototype.Object2NodeModel = function (obj, orig) {
             var Case = this.Case;
-            var Parent = (obj["Parent"] != null) ? obj["Parent"] : orig.Parent;
-            var Type = (obj["Type"] != null) ? this.Text2NodeTypeMap[obj["Type"]] : orig.Type;
-            var Label = (obj["Label"] != null) ? obj["Label"] : orig.Label;
-            var Statement = (obj["Statement"] != "") ? obj["Statement"] : orig.Statement;
+            var Parent = obj["Parent"];
+            var Type = AssureIt.NodeType[obj["Type"]];
+            var Label = obj["Label"];
+            var Statement = obj["Statement"];
 
             var Model = new AssureIt.NodeModel(Case, Parent, Type, Label, Statement);
 
@@ -205,6 +205,9 @@ var AssureIt;
         ASNParser.prototype.Parse = function (ASNData, orig) {
             var obj = Peg.parse(ASNData)[1];
             var root = this.Object2NodeModel(obj, orig);
+            if (orig != null) {
+                root.Parent = orig.Parent;
+            }
             return root;
         };
         return ASNParser;

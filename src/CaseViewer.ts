@@ -427,6 +427,14 @@ module AssureIt {
 			this.LayoutElement();
 		}
 
+		DeleteViewsRecursive(root : NodeView) : void {
+			var Children = root.Source.Children;
+			delete this.ViewMap[root.Source.Label];
+			for (var i = 0; i < Children.length; i++) {
+				this.DeleteViewsRecursive(this.ViewMap[Children[i].Label]);
+			}
+		}
+
 		LayoutElement() : void {
 			var layout : LayoutEngine = new LayoutPortrait(this.ViewMap); //TODO Enable switch Layout engine
 			layout.Init(this.ElementTop, 300, 0);

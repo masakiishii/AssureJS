@@ -45,6 +45,13 @@ var AssureIt;
         NodeModel.prototype.AppendChild = function (Node) {
             this.Children.push(Node);
         };
+        NodeModel.prototype.RemoveChild = function (Node) {
+            for (var i = 0; i < this.Children.length; i++) {
+                if (this.Children[i].Label == Node.Label) {
+                    this.Children.splice(i, 1);
+                }
+            }
+        };
 
         NodeModel.prototype.GetAnnotation = function (Name) {
             for (var a in this.Annotations) {
@@ -108,6 +115,14 @@ var AssureIt;
             this.IsModified = false;
             this.ElementMap = {};
         }
+        Case.prototype.DeleteNodesRecursive = function (root) {
+            var Children = root.Children;
+            delete this.ElementMap[root.Label];
+            for (var i = 0; i < Children.length; i++) {
+                this.DeleteNodesRecursive(Children[i]);
+            }
+        };
+
         Case.prototype.SetElementTop = function (ElementTop) {
             this.ElementTop = ElementTop;
             this.SaveIdCounterMax(ElementTop);
