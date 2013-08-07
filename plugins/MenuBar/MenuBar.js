@@ -109,7 +109,7 @@ var MenuBarAPI = (function () {
     };
 
     MenuBarAPI.prototype.Commit = function () {
-        this.serverApi.Commit(this.case0.ElementTop, "test", this.case0.CommitId);
+        ($('#commit_window')).dialog('open');
     };
     return MenuBarAPI;
 })();
@@ -127,9 +127,9 @@ var MenuBarPlugIn = (function (_super) {
         $('.node').unbind('hover');
         $('.node').hover(function () {
             var node = $(this);
-            $('#menu').remove();
 
-            var menu = $('<div id="menu">' + '<a href="#" ><img id="add" src="images/add.png" title="Add" alt="add" /></a>' + '<a href="#" ><img id="remove" src="images/remove.png" title="Remove" alt="remove" /></a>' + '<a href="#" ><img id="commit" src="images/commit.png" title="Commit" alt="remove" /></a>' + '</div>');
+            $('#menu').remove();
+            var menu = $('<div id="menu">' + '<a href="#" ><img id="add" src="images/add.png" title="Add" alt="add" /></a>' + '<a href="#" ><img id="remove" src="images/remove.png" title="Remove" alt="remove" /></a>' + '<a href="#" ><img id="commit" src="images/commit.png" title="Commit" alt="commit" /></a>' + '</div>');
             menu.css({ position: 'absolute', top: node.position().top + 75, display: 'block', opacity: 0 });
             menu.hover(function () {
             }, function () {
@@ -165,6 +165,18 @@ var MenuBarPlugIn = (function (_super) {
             $('#commit').click(function () {
                 menuBarApi.Commit();
             });
+
+            $('#commit_window').remove();
+            var commitWindow = $('<div id="commit_window">' + '<textarea>Type your commit message here...</textarea>' + '</div>');
+            (commitWindow).dialog({
+                autoOpen: false,
+                modal: true,
+                resizable: false,
+                draggable: false,
+                show: "clip",
+                hide: "fade"
+            });
+            commitWindow.appendTo($('layer2'));
         }, function () {
         });
         return true;
