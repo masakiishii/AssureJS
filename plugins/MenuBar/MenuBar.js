@@ -15,8 +15,26 @@ var MenuBar = (function () {
     MenuBar.prototype.Init = function () {
         var self = this;
 
+        var thisNodeLabel = self.node.children('h4').text();
+        var thisNodeType = self.case0.ElementMap[thisNodeLabel].Type;
+
         $('#menu').remove();
-        var menu = $('<div id="menu">' + '<a href="#" ><img id="goal"     src="images/icon.png" title="Goal" alt="goal" /></a>' + '<a href="#" ><img id="context"  src="images/icon.png" title="Context" alt="context" /></a>' + '<a href="#" ><img id="strategy" src="images/icon.png" title="Strategy" alt="strategy" /></a>' + '<a href="#" ><img id="evidence" src="images/icon.png" title="Evidence" alt="evidence" /></a>' + '<a href="#" ><img id="remove"   src="images/icon.png" title="Remove" alt="remove" /></a>' + '<a href="#" ><img id="commit"   src="images/icon.png" title="Commit" alt="commit" /></a>' + '</div>');
+        var menu = $('<div id="menu">' + '<a href="#" ><img id="commit"   src="images/icon.png" title="Commit" alt="commit" /></a>' + '<a href="#" ><img id="remove"   src="images/icon.png" title="Remove" alt="remove" /></a>' + '</div>');
+
+        switch (thisNodeType) {
+            case AssureIt.NodeType.Goal:
+                menu.append('<a href="#" ><img id="context"  src="images/icon.png" title="Context" alt="context" /></a>');
+                menu.append('<a href="#" ><img id="strategy" src="images/icon.png" title="Strategy" alt="strategy" /></a>');
+                menu.append('<a href="#" ><img id="evidence" src="images/icon.png" title="Evidence" alt="evidence" /></a>');
+                break;
+            case AssureIt.NodeType.Strategy:
+                menu.append('<a href="#" ><img id="goal"     src="images/icon.png" title="Goal" alt="goal" /></a>');
+                menu.append('<a href="#" ><img id="context"  src="images/icon.png" title="Context" alt="context" /></a>');
+                break;
+            default:
+                break;
+        }
+
         menu.css({ position: 'absolute', top: self.node.position().top + self.node.height() + 5, display: 'block', opacity: 0 });
         menu.hover(function () {
         }, function () {
