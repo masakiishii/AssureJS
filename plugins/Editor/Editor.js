@@ -12,7 +12,7 @@ var EditorPlugIn = (function (_super) {
         _super.call(this);
 
         this.editor = CodeMirror.fromTextArea(document.getElementById('editor'), {
-            lineNumbers: true,
+            lineNumbers: false,
             mode: "text/x-asn"
         });
         this.editor.setSize("300px", "200px");
@@ -24,13 +24,13 @@ var EditorPlugIn = (function (_super) {
 
     EditorPlugIn.prototype.Delegate = function (caseViewer, case0, serverApi) {
         var editor = this.editor;
-        $('.node').click(function (ev) {
+        $('.node').dblclick(function (ev) {
             ev.stopPropagation();
             var node = $(this);
             var p = node.position();
             var label = node.attr('id');
             var encoder = new AssureIt.CaseEncoder();
-            var encoded = encoder.ConvertToASN(case0.ElementMap[label]);
+            var encoded = encoder.ConvertToASN(case0.ElementMap[label], true);
             $('#editor-wrapper').css({ position: 'absolute', top: p.top, left: p.left, display: 'block' }).appendTo($('#layer2')).focus().one("blur", { node: node }, function (e, node) {
                 console.log("blur");
                 e.stopPropagation();

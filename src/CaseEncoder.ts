@@ -77,7 +77,7 @@ module AssureIt {
 			return this.JsonRoot;
 		}
 
-		ConvertToASN(root : NodeModel): string {
+		ConvertToASN(root : NodeModel, isSingleNode: boolean): string {
 			var encoded : string = (function(model : NodeModel, prefix : string) : string {
 				var ret : string = "";
 				switch (model.Type) {
@@ -123,6 +123,10 @@ module AssureIt {
 							ret += "\t" + keys[j] + ": " + Note.Body[keys[j]] + "\n";
 						}
 					}
+				}
+
+				if (isSingleNode) {
+					return ret;
 				}
 
 				for (var i = 0; i < model.Children.length; i++) {

@@ -38,6 +38,9 @@ class MenuBar {
 				menu.append('<a href="#" ><img id="goal"     src="'+this.serverApi.basepath+'images/icon.png" title="Goal" alt="goal" /></a>');
 				menu.append('<a href="#" ><img id="context"  src="'+this.serverApi.basepath+'images/icon.png" title="Context" alt="context" /></a>');
 				break;
+			case AssureIt.NodeType.Evidence:
+				menu.append('<a href="#" ><img id="context"  src="'+this.serverApi.basepath+'images/icon.png" title="Context" alt="context" /></a>');
+				break;
 			default:
 				break;
 		}
