@@ -67,6 +67,8 @@ var MenuBar = (function () {
 
         var Screen = new AssureIt.ScreenManager(shapelayer, contentlayer, controllayer, backgroundlayer);
         this.caseViewer.Draw(Screen);
+        this.caseViewer.Resize();
+        this.caseViewer.Draw(Screen);
         Screen.SetOffset(offset.left, offset.top);
     };
 
