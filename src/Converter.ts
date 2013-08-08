@@ -27,7 +27,7 @@ module AssureIt {
 			for(var i : number = 0; i < n; i++) {
 				newNodeListData.Children.push(String(oldNodeListData.Children[i]));
 			}
-			if(oldNodeListData.Contexts != null) {
+			if(oldNodeListData.Contexts != null && !(oldNodeListData.Contexts instanceof Array)) {
 				newNodeListData.Children.push(String(oldNodeListData.Contexts));
 			}
 			this.ConvertOldNodeTypetoNewNodeType(newNodeListData, oldNodeListData);
