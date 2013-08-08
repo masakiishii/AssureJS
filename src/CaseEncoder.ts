@@ -17,6 +17,39 @@ module AssureIt {
 
 	}
 
+	export class CaseEncoderDeprecated {
+
+		constructor() {
+		}
+
+		ConvertToOldJson(case0: Case): any {
+			var keys = Object.keys(case0.ElementMap);
+			var root = {
+				"NodeList":     [],
+				"TopGoalLabel": case0.ElementTop.Label,
+				"NodeCount":    keys.length,
+				"DCaseName":    case0.CaseName
+			};
+
+			for (var i:number = 0; i < keys.length; i++) {
+				var node = case0.ElementMap[keys[i]];
+				var json = {
+					Label: node.Label,
+					Type: node.Type,
+					Statement: node.Statement,
+					Annotations: node.Annotations,
+					Children: []
+				};
+				for(var j:number = 0; j < node.Children.length; j++) {
+					json.Children.push(node.Children[j].Label);
+				}
+				root.NodeList.push(json);
+			}
+
+			return root;
+		}
+	}
+
 	export class CaseEncoder {
 		JsonRoot: JsonNodeModel;
 
@@ -31,7 +64,7 @@ module AssureIt {
 			this.JsonRoot.Annotations = root.Annotations;
 			this.JsonRoot.Notes = root.Notes;
 
-			var JsonChildNodes: JsonNodeModel[] = new Array<JsonNodeModel>();
+			var JsonChildNodes: JsonNodeModel[] = [];
 			for (var i: number = 0; i < root.Children.length; i++) {
 				JsonChildNodes[i] = new JsonNodeModel();
 				this.GetChild(root.Children[i], JsonChildNodes[i]);

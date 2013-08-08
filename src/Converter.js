@@ -121,6 +121,7 @@ var AssureIt;
                 this.ConvertNewNodeListtoOldNodeList(newNodeListData, oldNodeListData);
             }
             console.log(oldJsonData);
+            return oldJsonData;
         };
         return Converter;
     })();

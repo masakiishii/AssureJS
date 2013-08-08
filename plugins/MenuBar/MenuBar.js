@@ -172,7 +172,6 @@ var MenuBarPlugIn = (function (_super) {
             });
 
             $('#commit_button').click(function () {
-                console.log("hoge");
                 serverApi.Commit(case0.ElementTop, $(this).val, case0.CommitId);
             });
         }, function () {

@@ -7,6 +7,39 @@ var AssureIt;
     })();
     AssureIt.JsonNodeModel = JsonNodeModel;
 
+    var CaseEncoderDeprecated = (function () {
+        function CaseEncoderDeprecated() {
+        }
+        CaseEncoderDeprecated.prototype.ConvertToOldJson = function (case0) {
+            var keys = Object.keys(case0.ElementMap);
+            var root = {
+                "NodeList": [],
+                "TopGoalLabel": case0.ElementTop.Label,
+                "NodeCount": keys.length,
+                "DCaseName": case0.CaseName
+            };
+
+            for (var i = 0; i < keys.length; i++) {
+                var node = case0.ElementMap[keys[i]];
+                var json = {
+                    Label: node.Label,
+                    Type: node.Type,
+                    Statement: node.Statement,
+                    Annotations: node.Annotations,
+                    Children: []
+                };
+                for (var j = 0; j < node.Children.length; j++) {
+                    json.Children.push(node.Children[j].Label);
+                }
+                root.NodeList.push(json);
+            }
+
+            return root;
+        };
+        return CaseEncoderDeprecated;
+    })();
+    AssureIt.CaseEncoderDeprecated = CaseEncoderDeprecated;
+
     var CaseEncoder = (function () {
         function CaseEncoder() {
         }
@@ -18,7 +51,7 @@ var AssureIt;
             this.JsonRoot.Annotations = root.Annotations;
             this.JsonRoot.Notes = root.Notes;
 
-            var JsonChildNodes = new Array();
+            var JsonChildNodes = [];
             for (var i = 0; i < root.Children.length; i++) {
                 JsonChildNodes[i] = new JsonNodeModel();
                 this.GetChild(root.Children[i], JsonChildNodes[i]);

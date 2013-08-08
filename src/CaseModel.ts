@@ -102,6 +102,7 @@ module AssureIt {
 
 	export class Case {
 		CaseId : number;  // TODO
+		CaseName : string;  // TODO
 		CommitId : number; // TODO
 		IdCounters : number[];
 		ElementTop : NodeModel;

@@ -100,7 +100,7 @@ module AssureIt {
 			oldNodeListData.MetaData = newNodeListData.Notes;
 		}
 
-		GenOldJson (newJsonData : any) : void {
+		GenOldJson (newJsonData : any) : any {
 			this.SetNodeMap(newJsonData);
 			var oldJsonData = {
 				"contents": {
@@ -130,6 +130,7 @@ module AssureIt {
 				this.ConvertNewNodeListtoOldNodeList(newNodeListData, oldNodeListData);
 			}
 			console.log(oldJsonData);
+			return oldJsonData;
 		}
 	}
 }
