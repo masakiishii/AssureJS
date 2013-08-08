@@ -27,12 +27,16 @@ class ColorThemePlugIn extends AssureIt.SVGRenderPlugIn {
 		switch(thisNodeType) {
 			case AssureIt.NodeType.Goal:
 				nodeView.SVGShape.SetColor(this.fill.Goal, this.stroke.Goal);
+				break;
 			case AssureIt.NodeType.Strategy:
 				nodeView.SVGShape.SetColor(this.fill.Strategy, this.stroke.Strategy);
+				break;
 			case AssureIt.NodeType.Context:
 				nodeView.SVGShape.SetColor(this.fill.Context, this.stroke.Context);
+				break;
 			case AssureIt.NodeType.Evidence:
 				nodeView.SVGShape.SetColor(this.fill.Evidence, this.stroke.Evidence);
+				break;
 			default:
 				break;
 		}
