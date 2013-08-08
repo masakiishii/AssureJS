@@ -18,7 +18,7 @@ class EditorPlugIn extends AssureIt.ActionPlugIn {
 			lineNumbers: true,
 			mode: "text/x-asn",
 		});
-		this.editor.setSize("200px","200px"); //FIXME
+		this.editor.setSize("300px","200px"); //FIXME
 		$('#editor-wrapper').css({display: 'none'});
 	}
 
