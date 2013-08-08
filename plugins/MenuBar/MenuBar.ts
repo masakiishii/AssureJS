@@ -136,7 +136,7 @@ class MenuBarPlugIn extends AssureIt.ActionPlugIn {
 				'<a href="#" ><img id="remove"   src="'+ serverApi.basepath +'/images/icon.png" title="Remove" alt="remove" /></a>' +
 				'<a href="#" ><img id="commit"   src="'+ serverApi.basepath +'/images/icon.png" title="Commit" alt="commit" /></a>' +
 				'</div>');
-			menu.css({ position: 'absolute', top: node.position().top + 75, display: 'block', opacity: 0 });
+			menu.css({ position: 'absolute', top: node.position().top + node.height() + 30 , display: 'block', opacity: 0 });
 			menu.hover(function () {}, function () { $(this).remove(); });
 			(<any>menu).jqDock({
 				align: 'bottom',
