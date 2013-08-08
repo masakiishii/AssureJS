@@ -11,9 +11,17 @@ module AssureIt {
 
 	export class ServerAPI {
 		uri : string;
+		basepath : string;
 
-		constructor(public basepath: string) {
+		constructor(basepath: string, isLocal?: boolean) {
+			if(isLocal == null) {
+				isLocal = false;
+			}
 			this.uri = basepath + "/api/1.0/";
+			this.basepath = basepath;
+			if(!isLocal) {
+				this.basepath = basepath + "/";
+			}
 		}
 
 		RemoteCall(method : string, params : any) {

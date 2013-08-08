@@ -13,7 +13,7 @@
 
 $(function () {
 
-	var serverApi = new AssureIt.ServerAPI('/ait'); //TODO config for Path
+	var serverApi = new AssureIt.ServerAPI('',true); //TODO config for Path
 	var pluginManager = new AssureIt.PlugInManager();
 	pluginManager.AddActionPlugIn("menu", new MenuBarPlugIn());
 	pluginManager.AddActionPlugIn("editor", new EditorPlugIn());

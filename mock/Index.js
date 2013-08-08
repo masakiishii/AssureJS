@@ -1,5 +1,5 @@
 $(function () {
-    var serverApi = new AssureIt.ServerAPI('/ait');
+    var serverApi = new AssureIt.ServerAPI('', true);
     var pluginManager = new AssureIt.PlugInManager();
     pluginManager.AddActionPlugIn("menu", new MenuBarPlugIn());
     pluginManager.AddActionPlugIn("editor", new EditorPlugIn());
