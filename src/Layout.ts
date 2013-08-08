@@ -303,22 +303,33 @@ module AssureIt {
 				ContextView.AbsX += x;
 				ContextView.AbsY += (y - h);
 				ContextView.AbsX += this.X_CONTEXT_MARGIN;
-				this.EmitChildrenElement(Element, ParentView.AbsX, ParentView.AbsY, i);
+				this.EmitChildrenElement(Element, ParentView.AbsX, ParentView.AbsY, i, ((h1>h2)?h1/2:h2/2));
 			} else {  //emit element data except context
-				this.EmitChildrenElement(Element, x, y, i);
+				var h2 = 0;
+				if(ParentView != null) {
+					h2 = ParentView.HTMLDoc.Height/2;
+				}
+				this.EmitChildrenElement(Element, x, y, i, h2);
 			}
 		}
 
-		EmitChildrenElement(Node: NodeModel, x: number, y: number, ContextId: number): void {
+		EmitChildrenElement(Node: NodeModel, x: number, y: number, ContextId: number, h: number): void {
 			var n: number = Node.Children.length;
 			for (var i: number = 0; i < n; i++) {
 				var ElementView: NodeView = this.ViewMap[Node.Children[i].Label];
+				var j = this.GetContextIndex(Node.Children[i]);
+				var ContextHeight = 0;
+				if(j != -1) {
+					ContextHeight = this.ViewMap[Node.Children[i].Children[j].Label].HTMLDoc.Height;
+				}
 				if (ContextId == i) {
 					continue;
 				}
 				else {
+					var height = (ContextHeight > ElementView.HTMLDoc.Height)?ContextHeight: ElementView.HTMLDoc.Height;
 					ElementView.AbsY = y;
-					ElementView.AbsY += this.Y_MARGIN;
+					ElementView.AbsY += ((height>this.Y_MARGIN)?height:this.Y_MARGIN) + h;
+					console.log(ElementView.AbsY);
 					this.Traverse(Node.Children[i], ElementView.AbsX, ElementView.AbsY);
 				}
 			}
