@@ -15,7 +15,7 @@ var EditorPlugIn = (function (_super) {
             lineNumbers: true,
             mode: "text/x-asn"
         });
-        this.editor.setSize("200px", "200px");
+        this.editor.setSize("300px", "200px");
         $('#editor-wrapper').css({ display: 'none' });
     }
     EditorPlugIn.prototype.IsEnabled = function (caseViewer, case0) {
