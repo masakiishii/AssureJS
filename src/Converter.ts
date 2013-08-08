@@ -31,7 +31,7 @@ module AssureIt {
 			newNodeListData.Statement = oldNodeListData.Description;
 			newNodeListData.Label = String(oldNodeListData.ThisNodeId);
 			newNodeListData.Annotation = oldNodeListData.Contexts;
-			newNodeListData.Notes = oldNodeListData.MetaData;
+			newNodeListData.Notes = JSON.stringify(oldNodeListData.MetaData);
 		}
 
 		GenNewJson (oldJsonData : any) : any {
@@ -54,14 +54,14 @@ module AssureIt {
 					"NodeType": 0,
 					"Label": "",
 					"Annotations": [],
-					"Notes": []
+					"Notes": ""
 				}
 				newJsonData.NodeList.push(NodeListData);
 				var newNodeListData : any = newJsonData.NodeList[i];
 				var oldNodeListData : any = oldJsonData.contents.NodeList[i];
 				this.ConvertOldNodeListtoNewNodeList(newNodeListData, oldNodeListData);
 			}
-			console.log(newJsonData.NodeList);
+//			console.log(newJsonData.NodeList);
 			return newJsonData;
 		}
 
@@ -120,14 +120,14 @@ module AssureIt {
 					"Description": "",
 					"Children": [],
 					"Contexts": [],
-					"MetaData": []
+					"MetaData": ""
 				}
 				oldJsonData.NodeList.push(NodeListData);
 				var newNodeListData : any = newJsonData.NodeList[i];
 				var oldNodeListData : any = oldJsonData.NodeList[i];
 				this.ConvertNewNodeListtoOldNodeList(newNodeListData, oldNodeListData);
 			}
-			console.log(oldJsonData);
+//			console.log(oldJsonData);
 			return oldJsonData;
 		}
 	}
