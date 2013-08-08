@@ -31,7 +31,17 @@ module AssureIt {
 			newNodeListData.Statement = oldNodeListData.Description;
 			newNodeListData.Label = String(oldNodeListData.ThisNodeId);
 			newNodeListData.Annotation = oldNodeListData.Contexts;
-			newNodeListData.Notes = oldNodeListData.MetaData;
+			n = oldNodeListData.MetaData.length;
+			for(var i : number = 0; i < n; i++) {
+				var json : any = { 
+					"Name" : "",
+					"Body" : {}
+				};
+				json.Name = oldNodeListData.MetaData[i].Type;
+				json.Body = oldNodeListData.MetaData[i];
+				console.log(oldNodeListData.MetaData[i].Type);
+				newNodeListData.Notes.push(json);
+			}
 		}
 
 		GenNewJson (oldJsonData : any) : any {
@@ -97,7 +107,10 @@ module AssureIt {
 			oldNodeListData.Description = newNodeListData.Statement;
 			oldNodeListData.ThisNodeId = this.NodeMap[newNodeListData.Label];
 			oldNodeListData.Contexts = newNodeListData.Annotation;
-			oldNodeListData.MetaData = newNodeListData.Notes;
+			n = newNodeListData.Notes.length;
+			for(var i : number = 0; i < n; i++) {
+				oldNodeListData.MetaData.push(newNodeListData.Notes[i].Body);
+			}
 		}
 
 		GenOldJson (newJsonData : any) : any {
