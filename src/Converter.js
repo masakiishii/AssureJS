@@ -21,10 +21,13 @@ var AssureIt;
             for (var i = 0; i < n; i++) {
                 newNodeListData.Children.push(String(oldNodeListData.Children[i]));
             }
+            if (oldNodeListData.Contexts != null) {
+                newNodeListData.Children.push(String(oldNodeListData.Contexts));
+            }
             this.ConvertOldNodeTypetoNewNodeType(newNodeListData, oldNodeListData);
             newNodeListData.Statement = oldNodeListData.Description;
             newNodeListData.Label = String(oldNodeListData.ThisNodeId);
-            newNodeListData.Annotation = oldNodeListData.Contexts;
+
             newNodeListData.Notes = oldNodeListData.MetaData;
         };
 

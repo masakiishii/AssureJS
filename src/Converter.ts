@@ -27,10 +27,13 @@ module AssureIt {
 			for(var i : number = 0; i < n; i++) {
 				newNodeListData.Children.push(String(oldNodeListData.Children[i]));
 			}
+			if(oldNodeListData.Contexts != null) {
+				newNodeListData.Children.push(String(oldNodeListData.Contexts));
+			}
 			this.ConvertOldNodeTypetoNewNodeType(newNodeListData, oldNodeListData);
 			newNodeListData.Statement = oldNodeListData.Description;
 			newNodeListData.Label = String(oldNodeListData.ThisNodeId);
-			newNodeListData.Annotation = oldNodeListData.Contexts;
+			//newNodeListData.Annotation = oldNodeListData.Contexts; //FIXME
 			newNodeListData.Notes = oldNodeListData.MetaData;
 		}
 
@@ -96,7 +99,7 @@ module AssureIt {
 			this.ConvertNewNodeTypetoOldNodeType(newNodeListData, oldNodeListData);
 			oldNodeListData.Description = newNodeListData.Statement;
 			oldNodeListData.ThisNodeId = this.NodeMap[newNodeListData.Label];
-			oldNodeListData.Contexts = newNodeListData.Annotation;
+			oldNodeListData.Contexts = newNodeListData.Annotation; //FIXME
 			oldNodeListData.MetaData = newNodeListData.Notes;
 		}
 
