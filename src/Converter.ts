@@ -34,16 +34,18 @@ module AssureIt {
 			newNodeListData.Statement = oldNodeListData.Description;
 			newNodeListData.Label = String(oldNodeListData.ThisNodeId);
 			//newNodeListData.Annotation = oldNodeListData.Contexts; //FIXME
-			n = oldNodeListData.MetaData.length;
-			for(var i : number = 0; i < n; i++) {
-				var json : any = { 
-					"Name" : "",
-					"Body" : {}
-				};
-				json.Name = oldNodeListData.MetaData[i].Type;
-				json.Body = oldNodeListData.MetaData[i];
-				console.log(oldNodeListData.MetaData[i].Type);
-				newNodeListData.Notes.push(json);
+			if(oldNodeListData.MetaData != null) {
+				n = oldNodeListData.MetaData.length;
+				for(var i : number = 0; i < n; i++) {
+					var json : any = { 
+						"Name" : "",
+						"Body" : {}
+					};
+					json.Name = oldNodeListData.MetaData[i].Type;
+					json.Body = oldNodeListData.MetaData[i];
+					console.log(oldNodeListData.MetaData[i].Type);
+					newNodeListData.Notes.push(json);
+				}
 			}
 		}
 
