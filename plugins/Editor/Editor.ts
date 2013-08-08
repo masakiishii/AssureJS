@@ -15,7 +15,7 @@ class EditorPlugIn extends AssureIt.ActionPlugIn {
 		super();
 		//wideArea();
 		this.editor = CodeMirror.fromTextArea(document.getElementById('editor'), {
-			lineNumbers: true,
+			lineNumbers: false,
 			mode: "text/x-asn",
 		});
 		this.editor.setSize("300px","200px"); //FIXME
@@ -28,13 +28,13 @@ class EditorPlugIn extends AssureIt.ActionPlugIn {
 
 	Delegate(caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case, serverApi: AssureIt.ServerAPI)  : boolean {
 		var editor = this.editor;
-		$('.node').click(function(ev) { //FIXME
+		$('.node').dblclick(function(ev) { //FIXME
 			ev.stopPropagation();
 			var node = $(this);
 			var p = node.position();
 			var label : string = node.attr('id');
 			var encoder : AssureIt.CaseEncoder = new AssureIt.CaseEncoder();
-			var encoded = encoder.ConvertToASN(case0.ElementMap[label]);
+			var encoded = encoder.ConvertToASN(case0.ElementMap[label], true/*single node*/);
 			$('#editor-wrapper')
 				.css({position: 'absolute', top: p.top, left: p.left, display: 'block'})
 				.appendTo($('#layer2'))

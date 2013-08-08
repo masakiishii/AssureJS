@@ -64,7 +64,7 @@ var AssureIt;
             return this.JsonRoot;
         };
 
-        CaseEncoder.prototype.ConvertToASN = function (root) {
+        CaseEncoder.prototype.ConvertToASN = function (root, isSingleNode) {
             var encoded = (function (model, prefix) {
                 var ret = "";
                 switch (model.Type) {
@@ -114,6 +114,10 @@ var AssureIt;
                             ret += "\t" + keys[j] + ": " + Note.Body[keys[j]] + "\n";
                         }
                     }
+                }
+
+                if (isSingleNode) {
+                    return ret;
                 }
 
                 for (var i = 0; i < model.Children.length; i++) {
