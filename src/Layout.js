@@ -150,7 +150,10 @@ var AssureIt;
             _super.call(this, ViewMap);
             this.ViewMap = ViewMap;
             this.X_MARGIN = 200;
-            this.Y_MARGIN = 160;
+            this.Y_MARGIN = 150;
+            this.Y_ADJUSTMENT_MARGIN = 50;
+            this.Y_NODE_MARGIN = 205;
+            this.Y_NODE_ADJUSTMENT_MARGIN = 70;
             this.X_CONTEXT_MARGIN = 200;
             this.X_FOOT_MARGIN = 100;
             this.X_MULTI_ELEMENT_MARGIN = 20;
@@ -300,6 +303,7 @@ var AssureIt;
 
         LayoutPortrait.prototype.EmitChildrenElement = function (Node, x, y, ContextId, h) {
             var n = Node.Children.length;
+            var MaxYPostition = 0;
             for (var i = 0; i < n; i++) {
                 var ElementView = this.ViewMap[Node.Children[i].Label];
                 var j = this.GetContextIndex(Node.Children[i]);
@@ -311,10 +315,20 @@ var AssureIt;
                     continue;
                 } else {
                     var height = (ContextHeight > ElementView.HTMLDoc.Height) ? ContextHeight : ElementView.HTMLDoc.Height;
+                    var ParentElementView = this.ViewMap[Node.Label];
                     ElementView.AbsY = y;
                     ElementView.AbsY += ((height > this.Y_MARGIN) ? height : this.Y_MARGIN) + h;
-                    console.log(ElementView.AbsY);
+                    ElementView.AbsY += (((ElementView.AbsY - ParentElementView.AbsY) < this.Y_NODE_MARGIN) ? this.Y_NODE_ADJUSTMENT_MARGIN : 0);
+                    MaxYPostition = (ElementView.AbsY > MaxYPostition) ? ElementView.AbsY : MaxYPostition;
                     this.Traverse(Node.Children[i], ElementView.AbsX, ElementView.AbsY);
+                }
+            }
+            for (var i = 0; i < n; i++) {
+                var ElementView = this.ViewMap[Node.Children[i].Label];
+                if (ContextId == i) {
+                    continue;
+                } else {
+                    ElementView.AbsY = MaxYPostition;
                 }
             }
             return;
