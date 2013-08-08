@@ -43,14 +43,18 @@ var AssureIt;
 
             var ChildNodeModel = new AssureIt.NodeModel(this.Case, Parent, Type, childLabel, Statement);
 
-            for (var i = 0; i < NoteData.length; i++) {
-                var note = new AssureIt.CaseNote(NoteData[i].Name, NoteData[i].Body);
-                ChildNodeModel.Notes.push(note);
+            if (NoteData != null) {
+                for (var i = 0; i < NoteData.length; i++) {
+                    var note = new AssureIt.CaseNote(NoteData[i].Name, NoteData[i].Body);
+                    ChildNodeModel.Notes.push(note);
+                }
             }
 
-            for (var i = 0; i < AnnotationData.length; i++) {
-                var annotation = new AssureIt.CaseAnnotation(AnnotationData[i].Name, AnnotationData[i].Body);
-                ChildNodeModel.Annotations.push(annotation);
+            if (AnnotationData != null) {
+                for (var i = 0; i < AnnotationData.length; i++) {
+                    var annotation = new AssureIt.CaseAnnotation(AnnotationData[i].Name, AnnotationData[i].Body);
+                    ChildNodeModel.Annotations.push(annotation);
+                }
             }
 
             for (var i = 0; i < Children.length; i++) {

@@ -68,11 +68,11 @@ var AssureIt;
         };
 
         Converter.prototype.ConvertNewNodeTypetoOldNodeType = function (newNodeListData, oldNodeListData) {
-            if (newNodeListData.NodeType == 0) {
+            if (newNodeListData.Type == 0) {
                 oldNodeListData.NodeType = "Goal";
-            } else if (newNodeListData.NodeType == 1) {
+            } else if (newNodeListData.Type == 1) {
                 oldNodeListData.NodeType = "Context";
-            } else if (newNodeListData.NodeType == 2) {
+            } else if (newNodeListData.Type == 2) {
                 oldNodeListData.NodeType = "Strategy";
             } else {
                 oldNodeListData.NodeType = "Evidence";
@@ -94,17 +94,15 @@ var AssureIt;
         Converter.prototype.GenOldJson = function (newJsonData) {
             this.SetNodeMap(newJsonData);
             var oldJsonData = {
-                "contents": {
-                    "NodeList": [],
-                    "TopGoalId": 0,
-                    "NodeCount": 0,
-                    "DCaseName": ""
-                }
+                "NodeList": [],
+                "TopGoalId": 0,
+                "NodeCount": 0,
+                "DCaseName": ""
             };
 
-            oldJsonData.contents["DCaseName"] = newJsonData.DCaseName;
-            oldJsonData.contents["NodeCount"] = newJsonData.NodeCount;
-            oldJsonData.contents["TopGoalId"] = this.NodeMap[newJsonData.TopGoalLabel];
+            oldJsonData.DCaseName = newJsonData.DCaseName;
+            oldJsonData.NodeCount = newJsonData.NodeCount;
+            oldJsonData.TopGoalId = this.NodeMap[newJsonData.TopGoalLabel];
             var n = newJsonData.NodeList.length;
             for (var i = 0; i < n; i++) {
                 var NodeListData = {
@@ -115,9 +113,9 @@ var AssureIt;
                     "Contexts": [],
                     "MetaData": []
                 };
-                oldJsonData.contents.NodeList.push(NodeListData);
+                oldJsonData.NodeList.push(NodeListData);
                 var newNodeListData = newJsonData.NodeList[i];
-                var oldNodeListData = oldJsonData.contents.NodeList[i];
+                var oldNodeListData = oldJsonData.NodeList[i];
                 this.ConvertNewNodeListtoOldNodeList(newNodeListData, oldNodeListData);
             }
             console.log(oldJsonData);

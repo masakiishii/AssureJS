@@ -172,7 +172,11 @@ var MenuBarPlugIn = (function (_super) {
             });
 
             $('#commit_button').click(function () {
-                serverApi.Commit(case0.ElementTop, $(this).val, case0.CommitId);
+                var encoder = new AssureIt.CaseEncoderDeprecated();
+                var converter = new AssureIt.Converter();
+                var contents = converter.GenOldJson(encoder.ConvertToOldJson(case0));
+                serverApi.Commit(contents, $(this).val, case0.CommitId);
+                window.location.reload();
             });
         }, function () {
         });

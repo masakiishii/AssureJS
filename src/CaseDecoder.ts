@@ -42,16 +42,20 @@ module AssureIt {
 
 			var ChildNodeModel : NodeModel = new NodeModel(this.Case, Parent, Type, childLabel, Statement);
 
-			for(var i : number = 0; i < NoteData.length; i++) {
-				var note : CaseNote =
-								 new CaseNote(NoteData[i].Name, NoteData[i].Body);
-				ChildNodeModel.Notes.push(note);
+			if(NoteData != null) {
+				for(var i : number = 0; i < NoteData.length; i++) {
+					var note : CaseNote =
+									 new CaseNote(NoteData[i].Name, NoteData[i].Body);
+					ChildNodeModel.Notes.push(note);
+				}
 			}
 
-			for(var i : number = 0; i < AnnotationData.length; i++) {
-				var annotation : CaseAnnotation =
-								 new CaseAnnotation(AnnotationData[i].Name, AnnotationData[i].Body);
-				ChildNodeModel.Annotations.push(annotation);
+			if(AnnotationData != null) {
+				for(var i : number = 0; i < AnnotationData.length; i++) {
+					var annotation : CaseAnnotation =
+									 new CaseAnnotation(AnnotationData[i].Name, AnnotationData[i].Body);
+					ChildNodeModel.Annotations.push(annotation);
+				}
 			}
 
 			for(var i : number = 0; i < Children.length; i++) {

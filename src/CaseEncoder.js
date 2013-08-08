@@ -26,6 +26,7 @@ var AssureIt;
                     Type: node.Type,
                     Statement: node.Statement,
                     Annotations: node.Annotations,
+                    Notes: node.Notes,
                     Children: []
                 };
                 for (var j = 0; j < node.Children.length; j++) {
