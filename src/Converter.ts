@@ -43,7 +43,7 @@ module AssureIt {
 					};
 					json.Name = oldNodeListData.MetaData[i].Type;
 					json.Body = oldNodeListData.MetaData[i];
-					console.log(oldNodeListData.MetaData[i].Type);
+//					console.log(oldNodeListData.MetaData[i].Type);
 					newNodeListData.Notes.push(json);
 				}
 			}
@@ -76,7 +76,7 @@ module AssureIt {
 				var oldNodeListData : any = oldJsonData.contents.NodeList[i];
 				this.ConvertOldNodeListtoNewNodeList(newNodeListData, oldNodeListData);
 			}
-			console.log(newJsonData.NodeList);
+//			console.log(newJsonData.NodeList);
 			return newJsonData;
 		}
 
@@ -145,7 +145,7 @@ module AssureIt {
 				var oldNodeListData : any = oldJsonData.NodeList[i];
 				this.ConvertNewNodeListtoOldNodeList(newNodeListData, oldNodeListData);
 			}
-			console.log(oldJsonData);
+//			console.log(oldJsonData);
 			return oldJsonData;
 		}
 	}
