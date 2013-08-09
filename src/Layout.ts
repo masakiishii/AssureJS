@@ -6,11 +6,12 @@ module AssureIt {
 	export class LayoutEngine {
 		X_MARGIN: number;
 		Y_MARGIN: number;
+		ElementWidth: number;
 
 		constructor(public ViewMap: { [index: string]: NodeView; }) {
 		}
 
-		Init(Element: NodeModel, x: number, y: number): void {
+		Init(Element: NodeModel, x: number, y: number, ElementWidth: number): void {
 		}
 
 		Traverse(Element: NodeModel, x: number, y: number): void {
@@ -155,6 +156,7 @@ module AssureIt {
 	}
 
 	export class LayoutPortrait extends LayoutEngine {
+		ElementWidth: number = 150;
 		X_MARGIN = 200;
 		Y_MARGIN = 150;
 		Y_ADJUSTMENT_MARGIN: number = 50;
@@ -284,8 +286,10 @@ module AssureIt {
 			return;
 		}
 
-		Init(Element: NodeModel, x: number, y: number): void {
+		Init(Element: NodeModel, x: number, y: number, ElementWidth: number): void {
 			this.ViewMap[Element.Label].AbsY += y;
+			this.X_MARGIN = ElementWidth + 50;
+			this.X_CONTEXT_MARGIN = ElementWidth + 50;
 		}
 
 		Traverse(Element: NodeModel, x: number, y: number) {

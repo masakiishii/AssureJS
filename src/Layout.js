@@ -10,7 +10,7 @@ var AssureIt;
         function LayoutEngine(ViewMap) {
             this.ViewMap = ViewMap;
         }
-        LayoutEngine.prototype.Init = function (Element, x, y) {
+        LayoutEngine.prototype.Init = function (Element, x, y, ElementWidth) {
         };
 
         LayoutEngine.prototype.Traverse = function (Element, x, y) {
@@ -149,6 +149,7 @@ var AssureIt;
         function LayoutPortrait(ViewMap) {
             _super.call(this, ViewMap);
             this.ViewMap = ViewMap;
+            this.ElementWidth = 150;
             this.X_MARGIN = 200;
             this.Y_MARGIN = 150;
             this.Y_ADJUSTMENT_MARGIN = 50;
@@ -268,8 +269,10 @@ var AssureIt;
             return;
         };
 
-        LayoutPortrait.prototype.Init = function (Element, x, y) {
+        LayoutPortrait.prototype.Init = function (Element, x, y, ElementWidth) {
             this.ViewMap[Element.Label].AbsY += y;
+            this.X_MARGIN = ElementWidth + 50;
+            this.X_CONTEXT_MARGIN = ElementWidth + 50;
         };
 
         LayoutPortrait.prototype.Traverse = function (Element, x, y) {

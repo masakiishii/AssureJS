@@ -238,7 +238,8 @@ module AssureIt {
 
 		Resize(CaseViewer: CaseViewer, NodeModel: NodeModel, HTMLDoc: HTMLDoc): void {
 			super.Resize(CaseViewer, NodeModel, HTMLDoc);
-			this.BodyPolygon.setAttribute("points", "10,0 " + this.Width + ",0 " + (this.Width - 10) + "," + this.Height + " 0," + this.Height);
+			var delta = 20;
+			this.BodyPolygon.setAttribute("points", ""+delta+",0 " + this.Width + ",0 " + (this.Width - delta) + "," + this.Height + " 0," + this.Height);
 		}
 
 		SetColor(fill: string, stroke: string) {
@@ -416,7 +417,7 @@ module AssureIt {
 	export class CaseViewer {
 		ViewMap: { [index: string]: NodeView; };
 		ElementTop : NodeModel;
-		static ElementWidth = 150;
+		static ElementWidth = 250;
 
 		constructor(public Source: Case, public pluginManager : PlugInManager, public serverApi: ServerAPI) {
 			this.ViewMap = <any>[]; // a hack to avoid tsc's problem.
@@ -455,7 +456,7 @@ module AssureIt {
 
 		LayoutElement() : void {
 			var layout : LayoutEngine = new LayoutPortrait(this.ViewMap); //TODO Enable switch Layout engine
-			layout.Init(this.ElementTop, 300, 0);
+			layout.Init(this.ElementTop, 300, 0, CaseViewer.ElementWidth);
 			layout.Traverse(this.ElementTop, 300, 0);
 			layout.SetFootElementPosition();
 			layout.SetAllElementPosition(this.ElementTop);

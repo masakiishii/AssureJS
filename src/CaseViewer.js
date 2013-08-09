@@ -242,7 +242,8 @@ var AssureIt;
 
         StrategyShape.prototype.Resize = function (CaseViewer, NodeModel, HTMLDoc) {
             _super.prototype.Resize.call(this, CaseViewer, NodeModel, HTMLDoc);
-            this.BodyPolygon.setAttribute("points", "10,0 " + this.Width + ",0 " + (this.Width - 10) + "," + this.Height + " 0," + this.Height);
+            var delta = 20;
+            this.BodyPolygon.setAttribute("points", "" + delta + ",0 " + this.Width + ",0 " + (this.Width - delta) + "," + this.Height + " 0," + this.Height);
         };
 
         StrategyShape.prototype.SetColor = function (fill, stroke) {
@@ -465,7 +466,7 @@ var AssureIt;
 
         CaseViewer.prototype.LayoutElement = function () {
             var layout = new AssureIt.LayoutPortrait(this.ViewMap);
-            layout.Init(this.ElementTop, 300, 0);
+            layout.Init(this.ElementTop, 300, 0, CaseViewer.ElementWidth);
             layout.Traverse(this.ElementTop, 300, 0);
             layout.SetFootElementPosition();
             layout.SetAllElementPosition(this.ElementTop);
@@ -480,7 +481,7 @@ var AssureIt;
             this.pluginManager.RegisterActionEventListeners(this, this.Source, this.serverApi);
             this.Resize();
         };
-        CaseViewer.ElementWidth = 150;
+        CaseViewer.ElementWidth = 250;
         return CaseViewer;
     })();
     AssureIt.CaseViewer = CaseViewer;
