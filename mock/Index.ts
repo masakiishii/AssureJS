@@ -9,6 +9,7 @@
 /// <reference path="../plugins/Annotation/Annotation.ts" />
 /// <reference path="../plugins/Monitor/Monitor.ts" />
 /// <reference path="../plugins/Note/Note.ts" />
+/// <reference path="../plugins/ColorTheme/ColorTheme.ts" />
 /// <reference path="../d.ts/jquery.d.ts" />
 
 $(function () {
@@ -20,6 +21,7 @@ $(function () {
 	pluginManager.AddHTMLRenderPlugIn("annotation", new AnnotationHTMLRenderPlugIn());
 	pluginManager.AddHTMLRenderPlugIn("monitor", new MonitorHTMLRenderPlugIn());
 	pluginManager.AddHTMLRenderPlugIn("note", new NoteHTMLRenderPlugIn());
+	pluginManager.AddSVGRenderPlugIn("colortheme", new TiffanyBlueThemePlugIn());
 	pluginManager.AddSVGRenderPlugIn("monitor", new MonitorSVGRenderPlugIn());
 
 	/*

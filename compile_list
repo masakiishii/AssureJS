@@ -14,4 +14,5 @@ plugins/MenuBar/MenuBar.ts
 plugins/Annotation/Annotation.ts
 plugins/Monitor/Monitor.ts
 plugins/Note/Note.ts
+plugins/ColorTheme/ColorTheme.ts
 test/CaseDecoderTest.ts

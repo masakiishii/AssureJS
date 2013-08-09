@@ -320,7 +320,6 @@ module AssureIt {
 			this.HTMLDoc.SetPosition(this.AbsX, this.AbsY);
 			this.Resize();
 			this.SVGShape.SetPosition(this.AbsX, this.AbsY);
-			this.SVGShape.SetColor("white", "black");
 			if (this.ParentShape != null) {
 				var p1: Point = null;
 				var p2: Point = null;

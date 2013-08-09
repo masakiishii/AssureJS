@@ -6,6 +6,7 @@ $(function () {
     pluginManager.AddHTMLRenderPlugIn("annotation", new AnnotationHTMLRenderPlugIn());
     pluginManager.AddHTMLRenderPlugIn("monitor", new MonitorHTMLRenderPlugIn());
     pluginManager.AddHTMLRenderPlugIn("note", new NoteHTMLRenderPlugIn());
+    pluginManager.AddSVGRenderPlugIn("colortheme", new TiffanyBlueThemePlugIn());
     pluginManager.AddSVGRenderPlugIn("monitor", new MonitorSVGRenderPlugIn());
 
     var JsonData = {
