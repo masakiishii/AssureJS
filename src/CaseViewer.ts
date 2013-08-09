@@ -150,6 +150,10 @@ module AssureIt {
 		SetColor(fill: string, stroke: string) {
 		}
 
+		GetColor(): {[index: string]: string} {
+			return {};
+		}
+
 		GetConnectorPosition(Dir: Direction): Point {
 			switch (Dir) {
 				case Direction.Right:
@@ -187,6 +191,10 @@ module AssureIt {
 			this.BodyRect.setAttribute("fill", fill);
 			this.BodyRect.setAttribute("stroke", stroke);
 		}
+
+		GetColor(): {[index: string]: string} {
+			return { "fill": this.BodyRect.getAttribute("fill"), "stroke": this.BodyRect.getAttribute("stroke") };
+		}
 	}
 
 	export class ContextShape extends SVGShape {
@@ -212,6 +220,10 @@ module AssureIt {
 			this.BodyRect.setAttribute("fill", fill);
 			this.BodyRect.setAttribute("stroke", stroke);
 		}
+
+		GetColor(): {[index: string]: string} {
+			return { "fill": this.BodyRect.getAttribute("fill"), "stroke": this.BodyRect.getAttribute("stroke") };
+		}
 	}
 
 	export class StrategyShape extends SVGShape {
@@ -232,6 +244,10 @@ module AssureIt {
 		SetColor(fill: string, stroke: string) {
 			this.BodyPolygon.setAttribute("fill", fill);
 			this.BodyPolygon.setAttribute("stroke", stroke);
+		}
+
+		GetColor(): {[index: string]: string} {
+			return { "fill": this.BodyPolygon.getAttribute("fill"), "stroke": this.BodyPolygon.getAttribute("stroke") };
 		}
 
 		GetConnectorPosition(Dir: Direction): Point {
@@ -269,6 +285,10 @@ module AssureIt {
 		SetColor(fill: string, stroke: string) {
 			this.BodyEllipse.setAttribute("fill", fill);
 			this.BodyEllipse.setAttribute("stroke", stroke);
+		}
+
+		GetColor(): {[index: string]: string} {
+			return { "fill": this.BodyEllipse.getAttribute("fill"), "stroke": this.BodyEllipse.getAttribute("stroke") };
 		}
 	}
 

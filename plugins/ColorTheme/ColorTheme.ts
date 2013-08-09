@@ -2,7 +2,7 @@
 /// <reference path="../../src/CaseViewer.ts" />
 /// <reference path="../../src/PlugInManager.ts" />
 
-class ColorThemePlugIn extends AssureIt.SVGRenderPlugIn {
+class ColorThemeSVGRenderPlugIn extends AssureIt.SVGRenderPlugIn {
 
 	stroke: any;
 	fill: any;
@@ -46,7 +46,7 @@ class ColorThemePlugIn extends AssureIt.SVGRenderPlugIn {
 
 }
 
-class DefaultColorThemePlugIn extends ColorThemePlugIn {
+class DefaultColorThemeSVGRenderPlugIn extends ColorThemeSVGRenderPlugIn {
 
 	constructor() {
 		super();
@@ -60,7 +60,7 @@ class DefaultColorThemePlugIn extends ColorThemePlugIn {
 
 }
 
-class TiffanyBlueThemePlugIn extends ColorThemePlugIn {
+class TiffanyBlueThemeSVGRenderPlugIn extends ColorThemeSVGRenderPlugIn {
 
 	constructor() {
 		super();
@@ -74,7 +74,7 @@ class TiffanyBlueThemePlugIn extends ColorThemePlugIn {
 
 }
 
-class SimpleColorThemePlugIn extends ColorThemePlugIn {
+class SimpleColorThemeSVGRenderPlugIn extends ColorThemeSVGRenderPlugIn {
 
 	constructor() {
 		super();
@@ -90,6 +90,30 @@ class SimpleColorThemePlugIn extends ColorThemePlugIn {
 			"Context":  "#ffffff",
 			"Evidence": "#ffffff"
 		};
+	}
+
+}
+
+class ColorThemeActionPlugIn extends AssureIt.ActionPlugIn {
+
+	IsEnabled(caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case): boolean {
+		return true;
+	}
+
+	Delegate(caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case, serverApi: AssureIt.ServerAPI): boolean {
+		var self = this;
+		var color: {[index: string]: string} = {};
+
+		$('.node').hover(function () {
+			var thisNodeLabel: string = $(this).children('h4').text();
+			color = caseViewer.ViewMap[thisNodeLabel].SVGShape.GetColor();
+			caseViewer.ViewMap[thisNodeLabel].SVGShape.SetColor(color["fill"], "orange");
+		}, function() {
+			var thisNodeLabel: string = $(this).children('h4').text();
+			caseViewer.ViewMap[thisNodeLabel].SVGShape.SetColor(color["fill"], color["stroke"]);
+		});
+
+		return true;
 	}
 
 }

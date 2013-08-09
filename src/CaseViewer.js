@@ -142,6 +142,10 @@ var AssureIt;
         SVGShape.prototype.SetColor = function (fill, stroke) {
         };
 
+        SVGShape.prototype.GetColor = function () {
+            return {};
+        };
+
         SVGShape.prototype.GetConnectorPosition = function (Dir) {
             switch (Dir) {
                 case Direction.Right:
@@ -183,6 +187,10 @@ var AssureIt;
             this.BodyRect.setAttribute("fill", fill);
             this.BodyRect.setAttribute("stroke", stroke);
         };
+
+        GoalShape.prototype.GetColor = function () {
+            return { "fill": this.BodyRect.getAttribute("fill"), "stroke": this.BodyRect.getAttribute("stroke") };
+        };
         return GoalShape;
     })(SVGShape);
     AssureIt.GoalShape = GoalShape;
@@ -212,6 +220,10 @@ var AssureIt;
             this.BodyRect.setAttribute("fill", fill);
             this.BodyRect.setAttribute("stroke", stroke);
         };
+
+        ContextShape.prototype.GetColor = function () {
+            return { "fill": this.BodyRect.getAttribute("fill"), "stroke": this.BodyRect.getAttribute("stroke") };
+        };
         return ContextShape;
     })(SVGShape);
     AssureIt.ContextShape = ContextShape;
@@ -236,6 +248,10 @@ var AssureIt;
         StrategyShape.prototype.SetColor = function (fill, stroke) {
             this.BodyPolygon.setAttribute("fill", fill);
             this.BodyPolygon.setAttribute("stroke", stroke);
+        };
+
+        StrategyShape.prototype.GetColor = function () {
+            return { "fill": this.BodyPolygon.getAttribute("fill"), "stroke": this.BodyPolygon.getAttribute("stroke") };
         };
 
         StrategyShape.prototype.GetConnectorPosition = function (Dir) {
@@ -277,6 +293,10 @@ var AssureIt;
         EvidenceShape.prototype.SetColor = function (fill, stroke) {
             this.BodyEllipse.setAttribute("fill", fill);
             this.BodyEllipse.setAttribute("stroke", stroke);
+        };
+
+        EvidenceShape.prototype.GetColor = function () {
+            return { "fill": this.BodyEllipse.getAttribute("fill"), "stroke": this.BodyEllipse.getAttribute("stroke") };
         };
         return EvidenceShape;
     })(SVGShape);

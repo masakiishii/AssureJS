@@ -3,10 +3,11 @@ $(function () {
     var pluginManager = new AssureIt.PlugInManager();
     pluginManager.AddActionPlugIn("menu", new MenuBarPlugIn());
     pluginManager.AddActionPlugIn("editor", new EditorPlugIn());
+    pluginManager.AddActionPlugIn("colortheme", new ColorThemeActionPlugIn());
     pluginManager.AddHTMLRenderPlugIn("annotation", new AnnotationHTMLRenderPlugIn());
     pluginManager.AddHTMLRenderPlugIn("monitor", new MonitorHTMLRenderPlugIn());
     pluginManager.AddHTMLRenderPlugIn("note", new NoteHTMLRenderPlugIn());
-    pluginManager.AddSVGRenderPlugIn("colortheme", new TiffanyBlueThemePlugIn());
+    pluginManager.AddSVGRenderPlugIn("colortheme", new TiffanyBlueThemeSVGRenderPlugIn());
     pluginManager.AddSVGRenderPlugIn("monitor", new MonitorSVGRenderPlugIn());
 
     var JsonData = {

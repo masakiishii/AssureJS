@@ -4,9 +4,9 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-var ColorThemePlugIn = (function (_super) {
-    __extends(ColorThemePlugIn, _super);
-    function ColorThemePlugIn() {
+var ColorThemeSVGRenderPlugIn = (function (_super) {
+    __extends(ColorThemeSVGRenderPlugIn, _super);
+    function ColorThemeSVGRenderPlugIn() {
         _super.call(this);
         this.stroke = {
             "Goal": "none",
@@ -15,11 +15,11 @@ var ColorThemePlugIn = (function (_super) {
             "Evidence": "none"
         };
     }
-    ColorThemePlugIn.prototype.IsEnable = function (caseViewer, element) {
+    ColorThemeSVGRenderPlugIn.prototype.IsEnable = function (caseViewer, element) {
         return true;
     };
 
-    ColorThemePlugIn.prototype.Delegate = function (caseViewer, nodeView) {
+    ColorThemeSVGRenderPlugIn.prototype.Delegate = function (caseViewer, nodeView) {
         var thisNodeType = nodeView.Source.Type;
 
         switch (thisNodeType) {
@@ -41,12 +41,12 @@ var ColorThemePlugIn = (function (_super) {
 
         return true;
     };
-    return ColorThemePlugIn;
+    return ColorThemeSVGRenderPlugIn;
 })(AssureIt.SVGRenderPlugIn);
 
-var DefaultColorThemePlugIn = (function (_super) {
-    __extends(DefaultColorThemePlugIn, _super);
-    function DefaultColorThemePlugIn() {
+var DefaultColorThemeSVGRenderPlugIn = (function (_super) {
+    __extends(DefaultColorThemeSVGRenderPlugIn, _super);
+    function DefaultColorThemeSVGRenderPlugIn() {
         _super.call(this);
         this.fill = {
             "Goal": "#E0E0E0",
@@ -55,12 +55,12 @@ var DefaultColorThemePlugIn = (function (_super) {
             "Evidence": "#D0D0D0"
         };
     }
-    return DefaultColorThemePlugIn;
-})(ColorThemePlugIn);
+    return DefaultColorThemeSVGRenderPlugIn;
+})(ColorThemeSVGRenderPlugIn);
 
-var TiffanyBlueThemePlugIn = (function (_super) {
-    __extends(TiffanyBlueThemePlugIn, _super);
-    function TiffanyBlueThemePlugIn() {
+var TiffanyBlueThemeSVGRenderPlugIn = (function (_super) {
+    __extends(TiffanyBlueThemeSVGRenderPlugIn, _super);
+    function TiffanyBlueThemeSVGRenderPlugIn() {
         _super.call(this);
         this.fill = {
             "Goal": "#b4d8df",
@@ -69,12 +69,12 @@ var TiffanyBlueThemePlugIn = (function (_super) {
             "Evidence": "#dbf5f3"
         };
     }
-    return TiffanyBlueThemePlugIn;
-})(ColorThemePlugIn);
+    return TiffanyBlueThemeSVGRenderPlugIn;
+})(ColorThemeSVGRenderPlugIn);
 
-var SimpleColorThemePlugIn = (function (_super) {
-    __extends(SimpleColorThemePlugIn, _super);
-    function SimpleColorThemePlugIn() {
+var SimpleColorThemeSVGRenderPlugIn = (function (_super) {
+    __extends(SimpleColorThemeSVGRenderPlugIn, _super);
+    function SimpleColorThemeSVGRenderPlugIn() {
         _super.call(this);
         this.stroke = {
             "Goal": "#000000",
@@ -89,5 +89,32 @@ var SimpleColorThemePlugIn = (function (_super) {
             "Evidence": "#ffffff"
         };
     }
-    return SimpleColorThemePlugIn;
-})(ColorThemePlugIn);
+    return SimpleColorThemeSVGRenderPlugIn;
+})(ColorThemeSVGRenderPlugIn);
+
+var ColorThemeActionPlugIn = (function (_super) {
+    __extends(ColorThemeActionPlugIn, _super);
+    function ColorThemeActionPlugIn() {
+        _super.apply(this, arguments);
+    }
+    ColorThemeActionPlugIn.prototype.IsEnabled = function (caseViewer, case0) {
+        return true;
+    };
+
+    ColorThemeActionPlugIn.prototype.Delegate = function (caseViewer, case0, serverApi) {
+        var self = this;
+        var color = {};
+
+        $('.node').hover(function () {
+            var thisNodeLabel = $(this).children('h4').text();
+            color = caseViewer.ViewMap[thisNodeLabel].SVGShape.GetColor();
+            caseViewer.ViewMap[thisNodeLabel].SVGShape.SetColor(color["fill"], "orange");
+        }, function () {
+            var thisNodeLabel = $(this).children('h4').text();
+            caseViewer.ViewMap[thisNodeLabel].SVGShape.SetColor(color["fill"], color["stroke"]);
+        });
+
+        return true;
+    };
+    return ColorThemeActionPlugIn;
+})(AssureIt.ActionPlugIn);

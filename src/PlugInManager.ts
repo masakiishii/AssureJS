@@ -19,6 +19,20 @@ module AssureIt {
 		Delegate(caseViewer: CaseViewer, case0: Case, serverApi: ServerAPI)  : boolean {
 			return true;
 		}
+
+		ReDraw(caseViewer: AssureIt.CaseViewer): void {
+			var backgroundlayer = <HTMLDivElement>document.getElementById("background");
+			var shapelayer = <SVGGElement><any>document.getElementById("layer0");
+			var contentlayer = <HTMLDivElement>document.getElementById("layer1");
+			var controllayer = <HTMLDivElement>document.getElementById("layer2");
+			var offset = $("#layer1").offset();
+
+			var Screen = new AssureIt.ScreenManager(shapelayer, contentlayer, controllayer, backgroundlayer);
+			caseViewer.Draw(Screen);
+			caseViewer.Resize();
+			caseViewer.Draw(Screen);
+			Screen.SetOffset(offset.left, offset.top);
+		}
 	}
 
 	export class CheckerPlugIn extends PlugIn {

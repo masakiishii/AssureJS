@@ -1,32 +1,20 @@
 /// <reference path="../../src/CaseModel.ts" />
 /// <reference path="../../src/PlugInManager.ts" />
 
-function ReDraw(caseViewer: AssureIt.CaseViewer): void {
-	var backgroundlayer = <HTMLDivElement>document.getElementById("background");
-	var shapelayer = <SVGGElement><any>document.getElementById("layer0");
-	var contentlayer = <HTMLDivElement>document.getElementById("layer1");
-	var controllayer = <HTMLDivElement>document.getElementById("layer2");
-	var offset = $("#layer1").offset();
-
-	var Screen = new AssureIt.ScreenManager(shapelayer, contentlayer, controllayer, backgroundlayer);
-	caseViewer.Draw(Screen);
-	caseViewer.Resize();
-	caseViewer.Draw(Screen);
-	Screen.SetOffset(offset.left, offset.top);
-}
-
 class MenuBar {
 
+	reDraw: () => void;
 	caseViewer: AssureIt.CaseViewer;
 	case0: AssureIt.Case;
 	node: JQuery;
 	serverApi: AssureIt.ServerAPI;
 
-	constructor(caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case, node: JQuery, serverApi: AssureIt.ServerAPI) {
+	constructor(caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case, node: JQuery, serverApi: AssureIt.ServerAPI, reDraw: () => void) {
 		this.caseViewer = caseViewer;
 		this.case0 = case0;
 		this.node = node;
 		this.serverApi = serverApi;
+		this.reDraw = reDraw;
 		this.Init();
 	}
 
@@ -82,7 +70,7 @@ class MenuBar {
 		this.caseViewer.ViewMap[newNodeModel.Label] = new AssureIt.NodeView(this.caseViewer, newNodeModel);
 		this.caseViewer.ViewMap[newNodeModel.Label].ParentShape = this.caseViewer.ViewMap[newNodeModel.Parent.Label];
 		this.caseViewer.Resize();
-		ReDraw(this.caseViewer);
+		this.reDraw();
 	}
 
 	GetDescendantLabels(labels: string[], children: AssureIt.NodeModel[]): string[] {
@@ -116,7 +104,7 @@ class MenuBar {
 		}
 
 		this.caseViewer.Resize();
-		ReDraw(this.caseViewer);
+		this.reDraw();
 	}
 
 	Commit(): void {
@@ -204,7 +192,7 @@ class CommitWindow {
 			var converter = new AssureIt.Converter();
 			var contents = converter.GenOldJson(encoder.ConvertToOldJson(case0));
 			serverApi.Commit(contents, $(this).val, case0.CommitId);
-			window.location.reload(); //FIXME`
+			window.location.reload(); //FIXME
 		});
 	}
 
@@ -216,17 +204,21 @@ class MenuBarPlugIn extends AssureIt.ActionPlugIn {
 	}
 
 	Delegate(caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case, serverApi: AssureIt.ServerAPI): boolean {
-		$('.node').unbind('hover');
+		var self = this;
+
+		$('.node').unbind('mouseenter').unbind('mouseleave'); // FIXME: this line may cause other plugin's event handler.
 		$('.node').hover(function () {
 			var node = $(this);
 
-			var menuBar: MenuBar = new MenuBar(caseViewer, case0, node, serverApi);
+			var menuBar: MenuBar = new MenuBar(caseViewer, case0, node, serverApi, function() {
+				self.ReDraw(caseViewer);
+			});
 			menuBar.SetEventHandlers();
 
 			var commitWindow: CommitWindow = new CommitWindow();
 			commitWindow.SetEventHandlers(caseViewer, case0, serverApi);
 
-		}, function() { /* TODO */ });
+		}, function () { /* TODO */ });
 		return true;
 	}
 
