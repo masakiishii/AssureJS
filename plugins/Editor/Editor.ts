@@ -9,7 +9,16 @@ declare class CodeMirror {
 	static fromTextArea(selector: any, option: any): any;
 };
 
-class EditorPlugIn extends AssureIt.ActionPlugIn {
+class EditorPlugIn extends AssureIt.PlugIn {
+
+	constructor() {
+		super();
+		this.ActionPlugIn = new EditorActionPlugIn();
+	}
+
+}
+
+class EditorActionPlugIn extends AssureIt.ActionPlugIn {
 	editor;
 	constructor() {
 		super();

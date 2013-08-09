@@ -10,6 +10,15 @@ var EditorPlugIn = (function (_super) {
     __extends(EditorPlugIn, _super);
     function EditorPlugIn() {
         _super.call(this);
+        this.ActionPlugIn = new EditorActionPlugIn();
+    }
+    return EditorPlugIn;
+})(AssureIt.PlugIn);
+
+var EditorActionPlugIn = (function (_super) {
+    __extends(EditorActionPlugIn, _super);
+    function EditorActionPlugIn() {
+        _super.call(this);
 
         this.editor = CodeMirror.fromTextArea(document.getElementById('editor'), {
             lineNumbers: false,
@@ -18,11 +27,11 @@ var EditorPlugIn = (function (_super) {
         this.editor.setSize("300px", "200px");
         $('#editor-wrapper').css({ display: 'none' });
     }
-    EditorPlugIn.prototype.IsEnabled = function (caseViewer, case0) {
+    EditorActionPlugIn.prototype.IsEnabled = function (caseViewer, case0) {
         return true;
     };
 
-    EditorPlugIn.prototype.Delegate = function (caseViewer, case0, serverApi) {
+    EditorActionPlugIn.prototype.Delegate = function (caseViewer, case0, serverApi) {
         var editor = this.editor;
         $('.node').dblclick(function (ev) {
             ev.stopPropagation();
@@ -73,5 +82,5 @@ var EditorPlugIn = (function (_super) {
         });
         return true;
     };
-    return EditorPlugIn;
+    return EditorActionPlugIn;
 })(AssureIt.ActionPlugIn);

@@ -4,6 +4,15 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
+var AnnotationPlugIn = (function (_super) {
+    __extends(AnnotationPlugIn, _super);
+    function AnnotationPlugIn() {
+        _super.call(this);
+        this.HTMLRenderPlugIn = new AnnotationHTMLRenderPlugIn();
+    }
+    return AnnotationPlugIn;
+})(AssureIt.PlugIn);
+
 var AnnotationHTMLRenderPlugIn = (function (_super) {
     __extends(AnnotationHTMLRenderPlugIn, _super);
     function AnnotationHTMLRenderPlugIn() {

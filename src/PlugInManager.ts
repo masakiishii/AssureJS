@@ -5,10 +5,21 @@
 module AssureIt {
 
 	export class PlugIn {
-		Name : string;
+
+		ActionPlugIn: ActionPlugIn;
+		CheckerPlugIn: CheckerPlugIn;
+		HTMLRenderPlugIn: HTMLRenderPlugIn;
+		SVGRenderPlugIn: SVGRenderPlugIn;
+
+		constructor() {
+			this.ActionPlugIn = null;
+			this.CheckerPlugIn = null;
+			this.HTMLRenderPlugIn = null;
+			this.SVGRenderPlugIn = null;
+		}
 	}
 
-	export class ActionPlugIn extends PlugIn {
+	export class ActionPlugIn {
 		EventName   : string;
 		EventTarget : string;
 
@@ -35,7 +46,7 @@ module AssureIt {
 		}
 	}
 
-	export class CheckerPlugIn extends PlugIn {
+	export class CheckerPlugIn {
 		IsEnabled(caseModel: NodeModel, EventType: string) : boolean {
 			return true;
 		}
@@ -45,7 +56,7 @@ module AssureIt {
 		}
 	}
 
-	export class HTMLRenderPlugIn extends PlugIn {
+	export class HTMLRenderPlugIn {
 		IsEnabled(caseViewer: CaseViewer, caseModel: NodeModel) : boolean {
 			return true;
 		}
@@ -55,7 +66,7 @@ module AssureIt {
 		}
 	}
 
-	export class SVGRenderPlugIn extends PlugIn {
+	export class SVGRenderPlugIn {
 		IsEnabled(caseViewer: CaseViewer, elementShape: NodeView /* add args as necessary */) : boolean {
 			return true;
 		}
@@ -68,31 +79,38 @@ module AssureIt {
 
 	export class PlugInManager {
 
-		ActionPlugIns : ActionPlugIn[];
-		DefaultCheckerPlugIns : CheckerPlugIn[];
-		CheckerPlugInMap : { [index: string]: CheckerPlugIn};
-		DefaultHTMLRenderPlugIns : HTMLRenderPlugIn[];
-		HTMLRenderPlugInMap : { [index: string]: HTMLRenderPlugIn};
-		SVGRenderPlugInMap  : { [index: string]: SVGRenderPlugIn};
+		ActionPlugInMap : { [index: string]: ActionPlugIn };
+		CheckerPlugInMap : { [index: string]: CheckerPlugIn };
+		HTMLRenderPlugInMap : { [index: string]: HTMLRenderPlugIn };
+		SVGRenderPlugInMap  : { [index: string]: SVGRenderPlugIn };
 
 		constructor() {
-			this.ActionPlugIns = [];
-			this.DefaultCheckerPlugIns = [];
+			this.ActionPlugInMap = {};
 			this.CheckerPlugInMap = {};
-			this.DefaultHTMLRenderPlugIns = [];
 			this.HTMLRenderPlugInMap = {};
 			this.SVGRenderPlugInMap = {};
 		}
 
+		SetPlugIn(key: string, plugIn: PlugIn) {
+			if(plugIn.ActionPlugIn) {
+				this.SetActionPlugIn(key, plugIn.ActionPlugIn);
+			}
+			if(plugIn.HTMLRenderPlugIn) {
+				this.SetHTMLRenderPlugIn(key, plugIn.HTMLRenderPlugIn);
+			}
+			if(plugIn.SVGRenderPlugIn) {
+				this.SetSVGRenderPlugIn(key, plugIn.SVGRenderPlugIn);
+			}
+		}
 
-		AddActionPlugIn(key: string, actionPlugIn: ActionPlugIn) {
-			this.ActionPlugIns.push(actionPlugIn);
+		SetActionPlugIn(key: string, actionPlugIn: ActionPlugIn) {
+			this.ActionPlugInMap[key] = actionPlugIn;
 		}
 
 		RegisterActionEventListeners(CaseViewer: CaseViewer, case0: Case, serverApi: ServerAPI): void {
-			for(var i: number = 0; i < this.ActionPlugIns.length; i++) {
-				if(this.ActionPlugIns[i].IsEnabled(CaseViewer, case0)) {
-					this.ActionPlugIns[i].Delegate(CaseViewer, case0, serverApi);
+			for(var key in this.ActionPlugInMap) {
+				if(this.ActionPlugInMap[key].IsEnabled(CaseViewer, case0)) {
+					this.ActionPlugInMap[key].Delegate(CaseViewer, case0, serverApi);
 				}
 			}
 		}
@@ -117,11 +135,11 @@ module AssureIt {
 		}
 		**/
 
-		AddHTMLRenderPlugIn(key: string, HTMLRenderPlugIn: HTMLRenderPlugIn) {
+		SetHTMLRenderPlugIn(key: string, HTMLRenderPlugIn: HTMLRenderPlugIn) {
 			this.HTMLRenderPlugInMap[key] = HTMLRenderPlugIn;
 		}
 
-		AddSVGRenderPlugIn(key: string, SVGRenderPlugIn: SVGRenderPlugIn) {
+		SetSVGRenderPlugIn(key: string, SVGRenderPlugIn: SVGRenderPlugIn) {
 			this.SVGRenderPlugInMap[key] = SVGRenderPlugIn;
 		}
 	}

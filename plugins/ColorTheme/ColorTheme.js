@@ -4,6 +4,36 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
+var DefaultColorThemePlugIn = (function (_super) {
+    __extends(DefaultColorThemePlugIn, _super);
+    function DefaultColorThemePlugIn() {
+        _super.call(this);
+        this.ActionPlugIn = new ColorThemeActionPlugIn();
+        this.SVGRenderPlugIn = new DefaultColorThemeSVGRenderPlugIn();
+    }
+    return DefaultColorThemePlugIn;
+})(AssureIt.PlugIn);
+
+var TiffanyBlueThemePlugIn = (function (_super) {
+    __extends(TiffanyBlueThemePlugIn, _super);
+    function TiffanyBlueThemePlugIn() {
+        _super.call(this);
+        this.ActionPlugIn = new ColorThemeActionPlugIn();
+        this.SVGRenderPlugIn = new TiffanyBlueThemeSVGRenderPlugIn();
+    }
+    return TiffanyBlueThemePlugIn;
+})(AssureIt.PlugIn);
+
+var SimpleColorThemePlugIn = (function (_super) {
+    __extends(SimpleColorThemePlugIn, _super);
+    function SimpleColorThemePlugIn() {
+        _super.call(this);
+        this.ActionPlugIn = new ColorThemeActionPlugIn();
+        this.SVGRenderPlugIn = new SimpleColorThemeSVGRenderPlugIn();
+    }
+    return SimpleColorThemePlugIn;
+})(AssureIt.PlugIn);
+
 var ColorThemeSVGRenderPlugIn = (function (_super) {
     __extends(ColorThemeSVGRenderPlugIn, _super);
     function ColorThemeSVGRenderPlugIn() {

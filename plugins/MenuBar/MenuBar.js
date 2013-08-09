@@ -197,13 +197,22 @@ var CommitWindow = (function () {
 var MenuBarPlugIn = (function (_super) {
     __extends(MenuBarPlugIn, _super);
     function MenuBarPlugIn() {
+        _super.call(this);
+        this.ActionPlugIn = new MenuBarActionPlugIn();
+    }
+    return MenuBarPlugIn;
+})(AssureIt.PlugIn);
+
+var MenuBarActionPlugIn = (function (_super) {
+    __extends(MenuBarActionPlugIn, _super);
+    function MenuBarActionPlugIn() {
         _super.apply(this, arguments);
     }
-    MenuBarPlugIn.prototype.IsEnabled = function (caseViewer, case0) {
+    MenuBarActionPlugIn.prototype.IsEnabled = function (caseViewer, case0) {
         return true;
     };
 
-    MenuBarPlugIn.prototype.Delegate = function (caseViewer, case0, serverApi) {
+    MenuBarActionPlugIn.prototype.Delegate = function (caseViewer, case0, serverApi) {
         var self = this;
 
         $('.node').unbind('mouseenter').unbind('mouseleave');
@@ -221,5 +230,5 @@ var MenuBarPlugIn = (function (_super) {
         });
         return true;
     };
-    return MenuBarPlugIn;
+    return MenuBarActionPlugIn;
 })(AssureIt.ActionPlugIn);

@@ -198,7 +198,16 @@ class CommitWindow {
 
 }
 
-class MenuBarPlugIn extends AssureIt.ActionPlugIn {
+class MenuBarPlugIn extends AssureIt.PlugIn {
+
+	constructor() {
+		super();
+		this.ActionPlugIn = new MenuBarActionPlugIn();
+	}
+
+}
+
+class MenuBarActionPlugIn extends AssureIt.ActionPlugIn {
 	IsEnabled(caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case): boolean {
 		return true;
 	}

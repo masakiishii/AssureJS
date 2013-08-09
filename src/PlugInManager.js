@@ -1,22 +1,18 @@
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
 var AssureIt;
 (function (AssureIt) {
     var PlugIn = (function () {
         function PlugIn() {
+            this.ActionPlugIn = null;
+            this.CheckerPlugIn = null;
+            this.HTMLRenderPlugIn = null;
+            this.SVGRenderPlugIn = null;
         }
         return PlugIn;
     })();
     AssureIt.PlugIn = PlugIn;
 
-    var ActionPlugIn = (function (_super) {
-        __extends(ActionPlugIn, _super);
+    var ActionPlugIn = (function () {
         function ActionPlugIn() {
-            _super.apply(this, arguments);
         }
         ActionPlugIn.prototype.IsEnabled = function (caseViewer, case0) {
             return true;
@@ -40,13 +36,11 @@ var AssureIt;
             Screen.SetOffset(offset.left, offset.top);
         };
         return ActionPlugIn;
-    })(PlugIn);
+    })();
     AssureIt.ActionPlugIn = ActionPlugIn;
 
-    var CheckerPlugIn = (function (_super) {
-        __extends(CheckerPlugIn, _super);
+    var CheckerPlugIn = (function () {
         function CheckerPlugIn() {
-            _super.apply(this, arguments);
         }
         CheckerPlugIn.prototype.IsEnabled = function (caseModel, EventType) {
             return true;
@@ -56,13 +50,11 @@ var AssureIt;
             return true;
         };
         return CheckerPlugIn;
-    })(PlugIn);
+    })();
     AssureIt.CheckerPlugIn = CheckerPlugIn;
 
-    var HTMLRenderPlugIn = (function (_super) {
-        __extends(HTMLRenderPlugIn, _super);
+    var HTMLRenderPlugIn = (function () {
         function HTMLRenderPlugIn() {
-            _super.apply(this, arguments);
         }
         HTMLRenderPlugIn.prototype.IsEnabled = function (caseViewer, caseModel) {
             return true;
@@ -72,13 +64,11 @@ var AssureIt;
             return true;
         };
         return HTMLRenderPlugIn;
-    })(PlugIn);
+    })();
     AssureIt.HTMLRenderPlugIn = HTMLRenderPlugIn;
 
-    var SVGRenderPlugIn = (function (_super) {
-        __extends(SVGRenderPlugIn, _super);
+    var SVGRenderPlugIn = (function () {
         function SVGRenderPlugIn() {
-            _super.apply(this, arguments);
         }
         SVGRenderPlugIn.prototype.IsEnabled = function (caseViewer, elementShape) {
             return true;
@@ -88,35 +78,45 @@ var AssureIt;
             return true;
         };
         return SVGRenderPlugIn;
-    })(PlugIn);
+    })();
     AssureIt.SVGRenderPlugIn = SVGRenderPlugIn;
 
     var PlugInManager = (function () {
         function PlugInManager() {
-            this.ActionPlugIns = [];
-            this.DefaultCheckerPlugIns = [];
+            this.ActionPlugInMap = {};
             this.CheckerPlugInMap = {};
-            this.DefaultHTMLRenderPlugIns = [];
             this.HTMLRenderPlugInMap = {};
             this.SVGRenderPlugInMap = {};
         }
-        PlugInManager.prototype.AddActionPlugIn = function (key, actionPlugIn) {
-            this.ActionPlugIns.push(actionPlugIn);
+        PlugInManager.prototype.SetPlugIn = function (key, plugIn) {
+            if (plugIn.ActionPlugIn) {
+                this.SetActionPlugIn(key, plugIn.ActionPlugIn);
+            }
+            if (plugIn.HTMLRenderPlugIn) {
+                this.SetHTMLRenderPlugIn(key, plugIn.HTMLRenderPlugIn);
+            }
+            if (plugIn.SVGRenderPlugIn) {
+                this.SetSVGRenderPlugIn(key, plugIn.SVGRenderPlugIn);
+            }
+        };
+
+        PlugInManager.prototype.SetActionPlugIn = function (key, actionPlugIn) {
+            this.ActionPlugInMap[key] = actionPlugIn;
         };
 
         PlugInManager.prototype.RegisterActionEventListeners = function (CaseViewer, case0, serverApi) {
-            for (var i = 0; i < this.ActionPlugIns.length; i++) {
-                if (this.ActionPlugIns[i].IsEnabled(CaseViewer, case0)) {
-                    this.ActionPlugIns[i].Delegate(CaseViewer, case0, serverApi);
+            for (var key in this.ActionPlugInMap) {
+                if (this.ActionPlugInMap[key].IsEnabled(CaseViewer, case0)) {
+                    this.ActionPlugInMap[key].Delegate(CaseViewer, case0, serverApi);
                 }
             }
         };
 
-        PlugInManager.prototype.AddHTMLRenderPlugIn = function (key, HTMLRenderPlugIn) {
+        PlugInManager.prototype.SetHTMLRenderPlugIn = function (key, HTMLRenderPlugIn) {
             this.HTMLRenderPlugInMap[key] = HTMLRenderPlugIn;
         };
 
-        PlugInManager.prototype.AddSVGRenderPlugIn = function (key, SVGRenderPlugIn) {
+        PlugInManager.prototype.SetSVGRenderPlugIn = function (key, SVGRenderPlugIn) {
             this.SVGRenderPlugInMap[key] = SVGRenderPlugIn;
         };
         return PlugInManager;

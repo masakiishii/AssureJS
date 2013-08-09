@@ -2,6 +2,36 @@
 /// <reference path="../../src/CaseViewer.ts" />
 /// <reference path="../../src/PlugInManager.ts" />
 
+class DefaultColorThemePlugIn extends AssureIt.PlugIn {
+
+	constructor() {
+		super();
+		this.ActionPlugIn = new ColorThemeActionPlugIn();
+		this.SVGRenderPlugIn = new DefaultColorThemeSVGRenderPlugIn();
+	}
+
+}
+
+class TiffanyBlueThemePlugIn extends AssureIt.PlugIn {
+
+	constructor() {
+		super();
+		this.ActionPlugIn = new ColorThemeActionPlugIn();
+		this.SVGRenderPlugIn = new TiffanyBlueThemeSVGRenderPlugIn();
+	}
+
+}
+
+class SimpleColorThemePlugIn extends AssureIt.PlugIn {
+
+	constructor() {
+		super();
+		this.ActionPlugIn = new ColorThemeActionPlugIn();
+		this.SVGRenderPlugIn = new SimpleColorThemeSVGRenderPlugIn();
+	}
+
+}
+
 class ColorThemeSVGRenderPlugIn extends AssureIt.SVGRenderPlugIn {
 
 	stroke: any;
