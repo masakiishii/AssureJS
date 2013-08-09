@@ -17,14 +17,24 @@ var MenuBar = (function () {
         var self = this;
 
         var thisNodeLabel = self.node.children('h4').text();
-        var thisNodeType = self.case0.ElementMap[thisNodeLabel].Type;
+        var thisNodeModel = self.case0.ElementMap[thisNodeLabel];
+        var thisNodeType = thisNodeModel.Type;
 
         $('#menu').remove();
         var menu = $('<div id="menu">' + '<a href="#" ><img id="commit"   src="' + this.serverApi.basepath + 'images/icon.png" title="Commit" alt="commit" /></a>' + '<a href="#" ><img id="remove"   src="' + this.serverApi.basepath + 'images/icon.png" title="Remove" alt="remove" /></a>' + '</div>');
 
         switch (thisNodeType) {
             case AssureIt.NodeType.Goal:
-                menu.append('<a href="#" ><img id="context"  src="' + this.serverApi.basepath + 'images/icon.png" title="Context" alt="context" /></a>');
+                var hasContext = false;
+
+                for (var i = 0; i < thisNodeModel.Children.length; i++) {
+                    if (thisNodeModel.Children[i].Type == AssureIt.NodeType.Context) {
+                        hasContext = true;
+                    }
+                }
+                if (!hasContext) {
+                    menu.append('<a href="#" ><img id="context"  src="' + this.serverApi.basepath + 'images/icon.png" title="Context" alt="context" /></a>');
+                }
                 menu.append('<a href="#" ><img id="strategy" src="' + this.serverApi.basepath + 'images/icon.png" title="Strategy" alt="strategy" /></a>');
                 menu.append('<a href="#" ><img id="evidence" src="' + this.serverApi.basepath + 'images/icon.png" title="Evidence" alt="evidence" /></a>');
                 break;
