@@ -1,6 +1,20 @@
 /// <reference path="../../src/CaseModel.ts" />
 /// <reference path="../../src/PlugInManager.ts" />
 
+function ReDraw(caseViewer: AssureIt.CaseViewer): void {
+	var backgroundlayer = <HTMLDivElement>document.getElementById("background");
+	var shapelayer = <SVGGElement><any>document.getElementById("layer0");
+	var contentlayer = <HTMLDivElement>document.getElementById("layer1");
+	var controllayer = <HTMLDivElement>document.getElementById("layer2");
+	var offset = $("#layer1").offset();
+
+	var Screen = new AssureIt.ScreenManager(shapelayer, contentlayer, controllayer, backgroundlayer);
+	caseViewer.Draw(Screen);
+	caseViewer.Resize();
+	caseViewer.Draw(Screen);
+	Screen.SetOffset(offset.left, offset.top);
+}
+
 class MenuBar {
 
 	caseViewer: AssureIt.CaseViewer;
@@ -61,20 +75,6 @@ class MenuBar {
 		menu.appendTo($('#layer2'));
 	}
 
-	ReDraw(): void {
-		var backgroundlayer = <HTMLDivElement>document.getElementById("background");
-		var shapelayer = <SVGGElement><any>document.getElementById("layer0");
-		var contentlayer = <HTMLDivElement>document.getElementById("layer1");
-		var controllayer = <HTMLDivElement>document.getElementById("layer2");
-		var offset = $("#layer1").offset();
-
-		var Screen = new AssureIt.ScreenManager(shapelayer, contentlayer, controllayer, backgroundlayer);
-		this.caseViewer.Draw(Screen);
-		this.caseViewer.Resize();
-		this.caseViewer.Draw(Screen);
-		Screen.SetOffset(offset.left, offset.top);
-	}
-
 	AddNode(nodeType: AssureIt.NodeType): void {
 		var thisNodeView: AssureIt.NodeView = this.caseViewer.ViewMap[this.node.children("h4").text()];
 		var newNodeModel: AssureIt.NodeModel = new AssureIt.NodeModel(this.case0, thisNodeView.Source, nodeType, null, null);
@@ -82,7 +82,7 @@ class MenuBar {
 		this.caseViewer.ViewMap[newNodeModel.Label] = new AssureIt.NodeView(this.caseViewer, newNodeModel);
 		this.caseViewer.ViewMap[newNodeModel.Label].ParentShape = this.caseViewer.ViewMap[newNodeModel.Parent.Label];
 		this.caseViewer.Resize();
-		this.ReDraw();
+		ReDraw(this.caseViewer);
 	}
 
 	GetDescendantLabels(labels: string[], children: AssureIt.NodeModel[]): string[] {
@@ -116,7 +116,7 @@ class MenuBar {
 		}
 
 		this.caseViewer.Resize();
-		this.ReDraw();
+		ReDraw(this.caseViewer);
 	}
 
 	Commit(): void {

@@ -4,6 +4,20 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
+function ReDraw(caseViewer) {
+    var backgroundlayer = document.getElementById("background");
+    var shapelayer = document.getElementById("layer0");
+    var contentlayer = document.getElementById("layer1");
+    var controllayer = document.getElementById("layer2");
+    var offset = $("#layer1").offset();
+
+    var Screen = new AssureIt.ScreenManager(shapelayer, contentlayer, controllayer, backgroundlayer);
+    caseViewer.Draw(Screen);
+    caseViewer.Resize();
+    caseViewer.Draw(Screen);
+    Screen.SetOffset(offset.left, offset.top);
+}
+
 var MenuBar = (function () {
     function MenuBar(caseViewer, case0, node, serverApi) {
         this.caseViewer = caseViewer;
@@ -61,20 +75,6 @@ var MenuBar = (function () {
         menu.appendTo($('#layer2'));
     };
 
-    MenuBar.prototype.ReDraw = function () {
-        var backgroundlayer = document.getElementById("background");
-        var shapelayer = document.getElementById("layer0");
-        var contentlayer = document.getElementById("layer1");
-        var controllayer = document.getElementById("layer2");
-        var offset = $("#layer1").offset();
-
-        var Screen = new AssureIt.ScreenManager(shapelayer, contentlayer, controllayer, backgroundlayer);
-        this.caseViewer.Draw(Screen);
-        this.caseViewer.Resize();
-        this.caseViewer.Draw(Screen);
-        Screen.SetOffset(offset.left, offset.top);
-    };
-
     MenuBar.prototype.AddNode = function (nodeType) {
         var thisNodeView = this.caseViewer.ViewMap[this.node.children("h4").text()];
         var newNodeModel = new AssureIt.NodeModel(this.case0, thisNodeView.Source, nodeType, null, null);
@@ -82,7 +82,7 @@ var MenuBar = (function () {
         this.caseViewer.ViewMap[newNodeModel.Label] = new AssureIt.NodeView(this.caseViewer, newNodeModel);
         this.caseViewer.ViewMap[newNodeModel.Label].ParentShape = this.caseViewer.ViewMap[newNodeModel.Parent.Label];
         this.caseViewer.Resize();
-        this.ReDraw();
+        ReDraw(this.caseViewer);
     };
 
     MenuBar.prototype.GetDescendantLabels = function (labels, children) {
@@ -116,7 +116,7 @@ var MenuBar = (function () {
         }
 
         this.caseViewer.Resize();
-        this.ReDraw();
+        ReDraw(this.caseViewer);
     };
 
     MenuBar.prototype.Commit = function () {
