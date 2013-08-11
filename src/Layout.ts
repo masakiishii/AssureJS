@@ -178,14 +178,15 @@ module AssureIt {
 		UpdateContextElementPosition(ContextElement: NodeModel): void {
 			var ContextView: NodeView = this.ViewMap[ContextElement.Label];
 			var ParentView: NodeView = ContextView.ParentShape;
-			var h1: number = ContextView.HTMLDoc.Height;
-			var h2: number = ParentView.HTMLDoc.Height;
+//			var h1: number = ContextView.HTMLDoc.Height;
+//			var h2: number = ParentView.HTMLDoc.Height;
 			ContextView.ParentDirection = Direction.Left;
 			ContextView.IsArrowReversed = true;
 			ContextView.IsArrowStraight = true;
 			ContextView.IsArrowWhite = true;
 			ContextView.AbsX = (ParentView.AbsX + this.X_CONTEXT_MARGIN);
-			ContextView.AbsY = (ParentView.AbsY - (h1 - h2) / 2);
+//			ContextView.AbsY = (ParentView.AbsY - (h1 - h2) / 2);
+			ContextView.AbsY = ParentView.AbsY;
 		}
 
 		SetAllElementPosition(Element: NodeModel): void {

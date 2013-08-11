@@ -166,14 +166,14 @@ var AssureIt;
         LayoutPortrait.prototype.UpdateContextElementPosition = function (ContextElement) {
             var ContextView = this.ViewMap[ContextElement.Label];
             var ParentView = ContextView.ParentShape;
-            var h1 = ContextView.HTMLDoc.Height;
-            var h2 = ParentView.HTMLDoc.Height;
+
             ContextView.ParentDirection = AssureIt.Direction.Left;
             ContextView.IsArrowReversed = true;
             ContextView.IsArrowStraight = true;
             ContextView.IsArrowWhite = true;
             ContextView.AbsX = (ParentView.AbsX + this.X_CONTEXT_MARGIN);
-            ContextView.AbsY = (ParentView.AbsY - (h1 - h2) / 2);
+
+            ContextView.AbsY = ParentView.AbsY;
         };
 
         LayoutPortrait.prototype.SetAllElementPosition = function (Element) {
