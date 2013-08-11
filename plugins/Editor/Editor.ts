@@ -72,6 +72,7 @@ class EditorActionPlugIn extends AssureIt.ActionPlugIn {
 
 					var Screen = new AssureIt.ScreenManager(shapelayer, contentlayer, controllayer, backgroundlayer);
 					caseViewer.Draw(Screen);
+					caseViewer.Draw(Screen);
 					Screen.SetOffset(offset.left, offset.top);
 
 					//var new_shape  : AssureIt.NodeView = new AssureIt.NodeView(caseViewer, new_model);

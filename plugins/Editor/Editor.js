@@ -66,6 +66,7 @@ var EditorActionPlugIn = (function (_super) {
 
                 var Screen = new AssureIt.ScreenManager(shapelayer, contentlayer, controllayer, backgroundlayer);
                 caseViewer.Draw(Screen);
+                caseViewer.Draw(Screen);
                 Screen.SetOffset(offset.left, offset.top);
 
                 $(this).css({ display: 'none' });

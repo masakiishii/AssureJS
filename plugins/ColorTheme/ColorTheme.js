@@ -148,6 +148,7 @@ var ColorThemeActionPlugIn = (function (_super) {
             caseViewer.ViewMap[thisNodeLabel].SVGShape.SetColor(color["fill"], "orange");
         }, function () {
             var thisNodeLabel = $(this).children('h4').text();
+            color = caseViewer.ViewMap[thisNodeLabel].SVGShape.GetColor();
             caseViewer.ViewMap[thisNodeLabel].SVGShape.SetColor(color["fill"], color["stroke"]);
         });
 
