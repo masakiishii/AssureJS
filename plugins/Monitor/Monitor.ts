@@ -4,10 +4,10 @@
 
 class MonitorPlugIn extends AssureIt.PlugIn {
 
-	constructor() {
-		super();
-		this.HTMLRenderPlugIn = new MonitorHTMLRenderPlugIn();
-		this.SVGRenderPlugIn = new MonitorSVGRenderPlugIn();
+	constructor(public plugInManager: AssureIt.PlugInManager) {
+		super(plugInManager);
+		this.HTMLRenderPlugIn = new MonitorHTMLRenderPlugIn(plugInManager);
+		this.SVGRenderPlugIn = new MonitorSVGRenderPlugIn(plugInManager);
 	}
 
 }

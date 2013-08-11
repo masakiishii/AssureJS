@@ -206,9 +206,9 @@ var CommitWindow = (function () {
 
 var MenuBarPlugIn = (function (_super) {
     __extends(MenuBarPlugIn, _super);
-    function MenuBarPlugIn() {
-        _super.call(this);
-        this.ActionPlugIn = new MenuBarActionPlugIn();
+    function MenuBarPlugIn(plugInManager) {
+        _super.call(this, plugInManager);
+        this.ActionPlugIn = new MenuBarActionPlugIn(plugInManager);
     }
     return MenuBarPlugIn;
 })(AssureIt.PlugIn);

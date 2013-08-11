@@ -4,30 +4,30 @@
 
 class DefaultColorThemePlugIn extends AssureIt.PlugIn {
 
-	constructor() {
-		super();
-		this.ActionPlugIn = new ColorThemeActionPlugIn();
-		this.SVGRenderPlugIn = new DefaultColorThemeSVGRenderPlugIn();
+	constructor(public plugInManager: AssureIt.PlugInManager) {
+		super(plugInManager);
+		this.ActionPlugIn = new ColorThemeActionPlugIn(plugInManager);
+		this.SVGRenderPlugIn = new DefaultColorThemeSVGRenderPlugIn(plugInManager);
 	}
 
 }
 
 class TiffanyBlueThemePlugIn extends AssureIt.PlugIn {
 
-	constructor() {
-		super();
-		this.ActionPlugIn = new ColorThemeActionPlugIn();
-		this.SVGRenderPlugIn = new TiffanyBlueThemeSVGRenderPlugIn();
+	constructor(public plugInManager: AssureIt.PlugInManager) {
+		super(plugInManager);
+		this.ActionPlugIn = new ColorThemeActionPlugIn(plugInManager);
+		this.SVGRenderPlugIn = new TiffanyBlueThemeSVGRenderPlugIn(plugInManager);
 	}
 
 }
 
 class SimpleColorThemePlugIn extends AssureIt.PlugIn {
 
-	constructor() {
-		super();
-		this.ActionPlugIn = new ColorThemeActionPlugIn();
-		this.SVGRenderPlugIn = new SimpleColorThemeSVGRenderPlugIn();
+	constructor(public plugInManager: AssureIt.PlugInManager) {
+		super(plugInManager);
+		this.ActionPlugIn = new ColorThemeActionPlugIn(plugInManager);
+		this.SVGRenderPlugIn = new SimpleColorThemeSVGRenderPlugIn(plugInManager);
 	}
 
 }
@@ -37,8 +37,8 @@ class ColorThemeSVGRenderPlugIn extends AssureIt.SVGRenderPlugIn {
 	stroke: any;
 	fill: any;
 
-	constructor() {
-		super();
+	constructor(public plugInManager: AssureIt.PlugInManager) {
+		super(plugInManager);
 		this.stroke = {
 			"Goal":     "none",
 			"Strategy": "none",
@@ -78,8 +78,8 @@ class ColorThemeSVGRenderPlugIn extends AssureIt.SVGRenderPlugIn {
 
 class DefaultColorThemeSVGRenderPlugIn extends ColorThemeSVGRenderPlugIn {
 
-	constructor() {
-		super();
+	constructor(public plugInManager: AssureIt.PlugInManager) {
+		super(plugInManager);
 		this.fill = {
 			"Goal":     "#E0E0E0",
 			"Strategy": "#C0C0C0",
@@ -92,8 +92,8 @@ class DefaultColorThemeSVGRenderPlugIn extends ColorThemeSVGRenderPlugIn {
 
 class TiffanyBlueThemeSVGRenderPlugIn extends ColorThemeSVGRenderPlugIn {
 
-	constructor() {
-		super();
+	constructor(public plugInManager: AssureIt.PlugInManager) {
+		super(plugInManager);
 		this.fill = {
 			"Goal":     "#b4d8df",
 			"Strategy": "#b4d8df",
@@ -106,8 +106,8 @@ class TiffanyBlueThemeSVGRenderPlugIn extends ColorThemeSVGRenderPlugIn {
 
 class SimpleColorThemeSVGRenderPlugIn extends ColorThemeSVGRenderPlugIn {
 
-	constructor() {
-		super();
+	constructor(public plugInManager: AssureIt.PlugInManager) {
+		super(plugInManager);
 		this.stroke = {
 			"Goal":     "#000000",
 			"Strategy": "#000000",

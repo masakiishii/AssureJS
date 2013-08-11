@@ -11,7 +11,7 @@ module AssureIt {
 		HTMLRenderPlugIn: HTMLRenderPlugIn;
 		SVGRenderPlugIn: SVGRenderPlugIn;
 
-		constructor() {
+		constructor(public plugInManager: PlugInManager) {
 			this.ActionPlugIn = null;
 			this.CheckerPlugIn = null;
 			this.HTMLRenderPlugIn = null;
@@ -19,9 +19,25 @@ module AssureIt {
 		}
 	}
 
-	export class ActionPlugIn {
+	export class AbstractPlugIn {
+		constructor(public plugInManager: PlugInManager) {
+		}
+
+		DeleteFromDOM() { //TODO
+		}
+
+		DisableEvent() { //TODO
+		}
+
+	}
+
+	export class ActionPlugIn extends AbstractPlugIn {
 		EventName   : string;
 		EventTarget : string;
+
+		constructor(public plugInManager: PlugInManager) {
+			super(plugInManager);
+		}
 
 		IsEnabled(caseViewer: CaseViewer, case0: Case) : boolean {
 			return true;
@@ -46,7 +62,12 @@ module AssureIt {
 		}
 	}
 
-	export class CheckerPlugIn {
+	export class CheckerPlugIn extends AbstractPlugIn {
+
+		constructor(public plugInManager: PlugInManager) {
+			super(plugInManager);
+		}
+
 		IsEnabled(caseModel: NodeModel, EventType: string) : boolean {
 			return true;
 		}
@@ -56,7 +77,12 @@ module AssureIt {
 		}
 	}
 
-	export class HTMLRenderPlugIn {
+	export class HTMLRenderPlugIn extends AbstractPlugIn {
+
+		constructor(public plugInManager: PlugInManager) {
+			super(plugInManager);
+		}
+
 		IsEnabled(caseViewer: CaseViewer, caseModel: NodeModel) : boolean {
 			return true;
 		}
@@ -66,7 +92,12 @@ module AssureIt {
 		}
 	}
 
-	export class SVGRenderPlugIn {
+	export class SVGRenderPlugIn extends AbstractPlugIn {
+
+		constructor(public plugInManager: PlugInManager) {
+			super(plugInManager);
+		}
+
 		IsEnabled(caseViewer: CaseViewer, elementShape: NodeView /* add args as necessary */) : boolean {
 			return true;
 		}
@@ -83,12 +114,14 @@ module AssureIt {
 		CheckerPlugInMap : { [index: string]: CheckerPlugIn };
 		HTMLRenderPlugInMap : { [index: string]: HTMLRenderPlugIn };
 		SVGRenderPlugInMap  : { [index: string]: SVGRenderPlugIn };
+		UILayer: AbstractPlugIn[];
 
 		constructor() {
 			this.ActionPlugInMap = {};
 			this.CheckerPlugInMap = {};
 			this.HTMLRenderPlugInMap = {};
 			this.SVGRenderPlugInMap = {};
+			this.UILayer = [];
 		}
 
 		SetPlugIn(key: string, plugIn: PlugIn) {
@@ -114,26 +147,6 @@ module AssureIt {
 				}
 			}
 		}
-		/**
-		AddCheckerPlugIn(key: string, f : (x : NodeModel, y: string, z : any) => boolean) {
-			if(key == null) {
-				this.DefaultCheckerPlugIns.push(f);
-			}
-			else {
-				this.CheckerPlugInMap[key] = f;
-			}
-		}
-
-
-		AddDefaultActionPlugIn(f : (x : NodeModel, y: string, z : any) => boolean) {
-			if(key == null) {
-				this.DefaultCheckerPlugIns.push(f);
-			}
-			else {
-				this.CheckerPlugInMap[key] = f;
-			}
-		}
-		**/
 
 		SetHTMLRenderPlugIn(key: string, HTMLRenderPlugIn: HTMLRenderPlugIn) {
 			this.HTMLRenderPlugInMap[key] = HTMLRenderPlugIn;
@@ -141,6 +154,12 @@ module AssureIt {
 
 		SetSVGRenderPlugIn(key: string, SVGRenderPlugIn: SVGRenderPlugIn) {
 			this.SVGRenderPlugInMap[key] = SVGRenderPlugIn;
+		}
+
+		UseUILayer(plugin :AbstractPlugIn): void {
+			var beforePlugin = this.UILayer.pop();
+			beforePlugin.DeleteFromDOM();
+			this.UILayer.push(plugin);
 		}
 	}
 }

@@ -6,10 +6,11 @@ var __extends = this.__extends || function (d, b) {
 };
 var MonitorPlugIn = (function (_super) {
     __extends(MonitorPlugIn, _super);
-    function MonitorPlugIn() {
-        _super.call(this);
-        this.HTMLRenderPlugIn = new MonitorHTMLRenderPlugIn();
-        this.SVGRenderPlugIn = new MonitorSVGRenderPlugIn();
+    function MonitorPlugIn(plugInManager) {
+        _super.call(this, plugInManager);
+        this.plugInManager = plugInManager;
+        this.HTMLRenderPlugIn = new MonitorHTMLRenderPlugIn(plugInManager);
+        this.SVGRenderPlugIn = new MonitorSVGRenderPlugIn(plugInManager);
     }
     return MonitorPlugIn;
 })(AssureIt.PlugIn);

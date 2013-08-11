@@ -8,18 +8,17 @@ var __extends = this.__extends || function (d, b) {
 
 var EditorPlugIn = (function (_super) {
     __extends(EditorPlugIn, _super);
-    function EditorPlugIn() {
-        _super.call(this);
-        this.ActionPlugIn = new EditorActionPlugIn();
+    function EditorPlugIn(plugInManager) {
+        _super.call(this, plugInManager);
+        this.ActionPlugIn = new EditorActionPlugIn(plugInManager);
     }
     return EditorPlugIn;
 })(AssureIt.PlugIn);
 
 var EditorActionPlugIn = (function (_super) {
     __extends(EditorActionPlugIn, _super);
-    function EditorActionPlugIn() {
-        _super.call(this);
-
+    function EditorActionPlugIn(plugInManager) {
+        _super.call(this, plugInManager);
         this.editor = CodeMirror.fromTextArea(document.getElementById('editor'), {
             lineNumbers: false,
             mode: "text/x-asn"

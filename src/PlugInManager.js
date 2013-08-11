@@ -1,7 +1,14 @@
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
 var AssureIt;
 (function (AssureIt) {
     var PlugIn = (function () {
-        function PlugIn() {
+        function PlugIn(plugInManager) {
+            this.plugInManager = plugInManager;
             this.ActionPlugIn = null;
             this.CheckerPlugIn = null;
             this.HTMLRenderPlugIn = null;
@@ -11,8 +18,24 @@ var AssureIt;
     })();
     AssureIt.PlugIn = PlugIn;
 
-    var ActionPlugIn = (function () {
-        function ActionPlugIn() {
+    var AbstractPlugIn = (function () {
+        function AbstractPlugIn(plugInManager) {
+            this.plugInManager = plugInManager;
+        }
+        AbstractPlugIn.prototype.DeleteFromDOM = function () {
+        };
+
+        AbstractPlugIn.prototype.DisableEvent = function () {
+        };
+        return AbstractPlugIn;
+    })();
+    AssureIt.AbstractPlugIn = AbstractPlugIn;
+
+    var ActionPlugIn = (function (_super) {
+        __extends(ActionPlugIn, _super);
+        function ActionPlugIn(plugInManager) {
+            _super.call(this, plugInManager);
+            this.plugInManager = plugInManager;
         }
         ActionPlugIn.prototype.IsEnabled = function (caseViewer, case0) {
             return true;
@@ -36,11 +59,14 @@ var AssureIt;
             Screen.SetOffset(offset.left, offset.top);
         };
         return ActionPlugIn;
-    })();
+    })(AbstractPlugIn);
     AssureIt.ActionPlugIn = ActionPlugIn;
 
-    var CheckerPlugIn = (function () {
-        function CheckerPlugIn() {
+    var CheckerPlugIn = (function (_super) {
+        __extends(CheckerPlugIn, _super);
+        function CheckerPlugIn(plugInManager) {
+            _super.call(this, plugInManager);
+            this.plugInManager = plugInManager;
         }
         CheckerPlugIn.prototype.IsEnabled = function (caseModel, EventType) {
             return true;
@@ -50,11 +76,14 @@ var AssureIt;
             return true;
         };
         return CheckerPlugIn;
-    })();
+    })(AbstractPlugIn);
     AssureIt.CheckerPlugIn = CheckerPlugIn;
 
-    var HTMLRenderPlugIn = (function () {
-        function HTMLRenderPlugIn() {
+    var HTMLRenderPlugIn = (function (_super) {
+        __extends(HTMLRenderPlugIn, _super);
+        function HTMLRenderPlugIn(plugInManager) {
+            _super.call(this, plugInManager);
+            this.plugInManager = plugInManager;
         }
         HTMLRenderPlugIn.prototype.IsEnabled = function (caseViewer, caseModel) {
             return true;
@@ -64,11 +93,14 @@ var AssureIt;
             return true;
         };
         return HTMLRenderPlugIn;
-    })();
+    })(AbstractPlugIn);
     AssureIt.HTMLRenderPlugIn = HTMLRenderPlugIn;
 
-    var SVGRenderPlugIn = (function () {
-        function SVGRenderPlugIn() {
+    var SVGRenderPlugIn = (function (_super) {
+        __extends(SVGRenderPlugIn, _super);
+        function SVGRenderPlugIn(plugInManager) {
+            _super.call(this, plugInManager);
+            this.plugInManager = plugInManager;
         }
         SVGRenderPlugIn.prototype.IsEnabled = function (caseViewer, elementShape) {
             return true;
@@ -78,7 +110,7 @@ var AssureIt;
             return true;
         };
         return SVGRenderPlugIn;
-    })();
+    })(AbstractPlugIn);
     AssureIt.SVGRenderPlugIn = SVGRenderPlugIn;
 
     var PlugInManager = (function () {
@@ -87,6 +119,7 @@ var AssureIt;
             this.CheckerPlugInMap = {};
             this.HTMLRenderPlugInMap = {};
             this.SVGRenderPlugInMap = {};
+            this.UILayer = [];
         }
         PlugInManager.prototype.SetPlugIn = function (key, plugIn) {
             if (plugIn.ActionPlugIn) {
@@ -118,6 +151,12 @@ var AssureIt;
 
         PlugInManager.prototype.SetSVGRenderPlugIn = function (key, SVGRenderPlugIn) {
             this.SVGRenderPlugInMap[key] = SVGRenderPlugIn;
+        };
+
+        PlugInManager.prototype.UseUILayer = function (plugin) {
+            var beforePlugin = this.UILayer.pop();
+            beforePlugin.DeleteFromDOM();
+            this.UILayer.push(plugin);
         };
         return PlugInManager;
     })();

@@ -4,9 +4,9 @@
 
 class NotePlugIn extends AssureIt.PlugIn {
 
-	constructor() {
-		super();
-		this.HTMLRenderPlugIn = new NoteHTMLRenderPlugIn();
+	constructor(public plugInManager: AssureIt.PlugInManager) {
+		super(plugInManager);
+		this.HTMLRenderPlugIn = new NoteHTMLRenderPlugIn(plugInManager);
 	}
 
 }

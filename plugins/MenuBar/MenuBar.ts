@@ -210,9 +210,9 @@ class CommitWindow {
 
 class MenuBarPlugIn extends AssureIt.PlugIn {
 
-	constructor() {
-		super();
-		this.ActionPlugIn = new MenuBarActionPlugIn();
+	constructor(plugInManager: AssureIt.PlugInManager) {
+		super(plugInManager);
+		this.ActionPlugIn = new MenuBarActionPlugIn(plugInManager);
 	}
 
 }

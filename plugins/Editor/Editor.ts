@@ -11,18 +11,17 @@ declare class CodeMirror {
 
 class EditorPlugIn extends AssureIt.PlugIn {
 
-	constructor() {
-		super();
-		this.ActionPlugIn = new EditorActionPlugIn();
+	constructor(plugInManager: AssureIt.PlugInManager) {
+		super(plugInManager);
+		this.ActionPlugIn = new EditorActionPlugIn(plugInManager);
 	}
 
 }
 
 class EditorActionPlugIn extends AssureIt.ActionPlugIn {
 	editor;
-	constructor() {
-		super();
-		//wideArea();
+	constructor(plugInManager: AssureIt.PlugInManager) {
+		super(plugInManager);
 		this.editor = CodeMirror.fromTextArea(document.getElementById('editor'), {
 			lineNumbers: false,
 			mode: "text/x-asn",

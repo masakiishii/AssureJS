@@ -1,12 +1,12 @@
 $(function () {
     var serverApi = new AssureIt.ServerAPI('', true);
     var pluginManager = new AssureIt.PlugInManager();
-    pluginManager.SetPlugIn("menu", new MenuBarPlugIn());
-    pluginManager.SetPlugIn("editor", new EditorPlugIn());
-    pluginManager.SetPlugIn("colortheme", new TiffanyBlueThemePlugIn());
-    pluginManager.SetPlugIn("annotation", new AnnotationPlugIn());
-    pluginManager.SetPlugIn("note", new NotePlugIn());
-    pluginManager.SetPlugIn("monitor", new MonitorPlugIn());
+    pluginManager.SetPlugIn("menu", new MenuBarPlugIn(pluginManager));
+    pluginManager.SetPlugIn("editor", new EditorPlugIn(pluginManager));
+    pluginManager.SetPlugIn("colortheme", new TiffanyBlueThemePlugIn(pluginManager));
+    pluginManager.SetPlugIn("annotation", new AnnotationPlugIn(pluginManager));
+    pluginManager.SetPlugIn("note", new NotePlugIn(pluginManager));
+    pluginManager.SetPlugIn("monitor", new MonitorPlugIn(pluginManager));
 
     var JsonData = {
         "DCaseName": "test",

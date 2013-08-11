@@ -6,9 +6,10 @@ var __extends = this.__extends || function (d, b) {
 };
 var NotePlugIn = (function (_super) {
     __extends(NotePlugIn, _super);
-    function NotePlugIn() {
-        _super.call(this);
-        this.HTMLRenderPlugIn = new NoteHTMLRenderPlugIn();
+    function NotePlugIn(plugInManager) {
+        _super.call(this, plugInManager);
+        this.plugInManager = plugInManager;
+        this.HTMLRenderPlugIn = new NoteHTMLRenderPlugIn(plugInManager);
     }
     return NotePlugIn;
 })(AssureIt.PlugIn);

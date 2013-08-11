@@ -4,9 +4,9 @@
 
 class AnnotationPlugIn extends AssureIt.PlugIn {
 
-	constructor() {
-		super();
-		this.HTMLRenderPlugIn = new AnnotationHTMLRenderPlugIn();
+	constructor(public plugInManager: AssureIt.PlugInManager) {
+		super(plugInManager);
+		this.HTMLRenderPlugIn = new AnnotationHTMLRenderPlugIn(plugInManager);
 	}
 
 }

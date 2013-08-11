@@ -6,9 +6,10 @@ var __extends = this.__extends || function (d, b) {
 };
 var AnnotationPlugIn = (function (_super) {
     __extends(AnnotationPlugIn, _super);
-    function AnnotationPlugIn() {
-        _super.call(this);
-        this.HTMLRenderPlugIn = new AnnotationHTMLRenderPlugIn();
+    function AnnotationPlugIn(plugInManager) {
+        _super.call(this, plugInManager);
+        this.plugInManager = plugInManager;
+        this.HTMLRenderPlugIn = new AnnotationHTMLRenderPlugIn(plugInManager);
     }
     return AnnotationPlugIn;
 })(AssureIt.PlugIn);

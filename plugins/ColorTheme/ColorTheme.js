@@ -6,38 +6,42 @@ var __extends = this.__extends || function (d, b) {
 };
 var DefaultColorThemePlugIn = (function (_super) {
     __extends(DefaultColorThemePlugIn, _super);
-    function DefaultColorThemePlugIn() {
-        _super.call(this);
-        this.ActionPlugIn = new ColorThemeActionPlugIn();
-        this.SVGRenderPlugIn = new DefaultColorThemeSVGRenderPlugIn();
+    function DefaultColorThemePlugIn(plugInManager) {
+        _super.call(this, plugInManager);
+        this.plugInManager = plugInManager;
+        this.ActionPlugIn = new ColorThemeActionPlugIn(plugInManager);
+        this.SVGRenderPlugIn = new DefaultColorThemeSVGRenderPlugIn(plugInManager);
     }
     return DefaultColorThemePlugIn;
 })(AssureIt.PlugIn);
 
 var TiffanyBlueThemePlugIn = (function (_super) {
     __extends(TiffanyBlueThemePlugIn, _super);
-    function TiffanyBlueThemePlugIn() {
-        _super.call(this);
-        this.ActionPlugIn = new ColorThemeActionPlugIn();
-        this.SVGRenderPlugIn = new TiffanyBlueThemeSVGRenderPlugIn();
+    function TiffanyBlueThemePlugIn(plugInManager) {
+        _super.call(this, plugInManager);
+        this.plugInManager = plugInManager;
+        this.ActionPlugIn = new ColorThemeActionPlugIn(plugInManager);
+        this.SVGRenderPlugIn = new TiffanyBlueThemeSVGRenderPlugIn(plugInManager);
     }
     return TiffanyBlueThemePlugIn;
 })(AssureIt.PlugIn);
 
 var SimpleColorThemePlugIn = (function (_super) {
     __extends(SimpleColorThemePlugIn, _super);
-    function SimpleColorThemePlugIn() {
-        _super.call(this);
-        this.ActionPlugIn = new ColorThemeActionPlugIn();
-        this.SVGRenderPlugIn = new SimpleColorThemeSVGRenderPlugIn();
+    function SimpleColorThemePlugIn(plugInManager) {
+        _super.call(this, plugInManager);
+        this.plugInManager = plugInManager;
+        this.ActionPlugIn = new ColorThemeActionPlugIn(plugInManager);
+        this.SVGRenderPlugIn = new SimpleColorThemeSVGRenderPlugIn(plugInManager);
     }
     return SimpleColorThemePlugIn;
 })(AssureIt.PlugIn);
 
 var ColorThemeSVGRenderPlugIn = (function (_super) {
     __extends(ColorThemeSVGRenderPlugIn, _super);
-    function ColorThemeSVGRenderPlugIn() {
-        _super.call(this);
+    function ColorThemeSVGRenderPlugIn(plugInManager) {
+        _super.call(this, plugInManager);
+        this.plugInManager = plugInManager;
         this.stroke = {
             "Goal": "none",
             "Strategy": "none",
@@ -76,8 +80,9 @@ var ColorThemeSVGRenderPlugIn = (function (_super) {
 
 var DefaultColorThemeSVGRenderPlugIn = (function (_super) {
     __extends(DefaultColorThemeSVGRenderPlugIn, _super);
-    function DefaultColorThemeSVGRenderPlugIn() {
-        _super.call(this);
+    function DefaultColorThemeSVGRenderPlugIn(plugInManager) {
+        _super.call(this, plugInManager);
+        this.plugInManager = plugInManager;
         this.fill = {
             "Goal": "#E0E0E0",
             "Strategy": "#C0C0C0",
@@ -90,8 +95,9 @@ var DefaultColorThemeSVGRenderPlugIn = (function (_super) {
 
 var TiffanyBlueThemeSVGRenderPlugIn = (function (_super) {
     __extends(TiffanyBlueThemeSVGRenderPlugIn, _super);
-    function TiffanyBlueThemeSVGRenderPlugIn() {
-        _super.call(this);
+    function TiffanyBlueThemeSVGRenderPlugIn(plugInManager) {
+        _super.call(this, plugInManager);
+        this.plugInManager = plugInManager;
         this.fill = {
             "Goal": "#b4d8df",
             "Strategy": "#b4d8df",
@@ -104,8 +110,9 @@ var TiffanyBlueThemeSVGRenderPlugIn = (function (_super) {
 
 var SimpleColorThemeSVGRenderPlugIn = (function (_super) {
     __extends(SimpleColorThemeSVGRenderPlugIn, _super);
-    function SimpleColorThemeSVGRenderPlugIn() {
-        _super.call(this);
+    function SimpleColorThemeSVGRenderPlugIn(plugInManager) {
+        _super.call(this, plugInManager);
+        this.plugInManager = plugInManager;
         this.stroke = {
             "Goal": "#000000",
             "Strategy": "#000000",
