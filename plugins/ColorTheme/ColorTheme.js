@@ -142,13 +142,13 @@ var ColorThemeActionPlugIn = (function (_super) {
         var self = this;
         var color = {};
 
+        color = caseViewer.ViewMap[case0.ElementTop.Label].SVGShape.GetColor();
         $('.node').hover(function () {
             var thisNodeLabel = $(this).children('h4').text();
             color = caseViewer.ViewMap[thisNodeLabel].SVGShape.GetColor();
             caseViewer.ViewMap[thisNodeLabel].SVGShape.SetColor(color["fill"], "orange");
         }, function () {
             var thisNodeLabel = $(this).children('h4').text();
-            color = caseViewer.ViewMap[thisNodeLabel].SVGShape.GetColor();
             caseViewer.ViewMap[thisNodeLabel].SVGShape.SetColor(color["fill"], color["stroke"]);
         });
 

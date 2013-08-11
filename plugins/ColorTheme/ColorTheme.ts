@@ -134,13 +134,13 @@ class ColorThemeActionPlugIn extends AssureIt.ActionPlugIn {
 		var self = this;
 		var color: {[index: string]: string} = {};
 
+		color = caseViewer.ViewMap[case0.ElementTop.Label].SVGShape.GetColor();
 		$('.node').hover(function () {
 			var thisNodeLabel: string = $(this).children('h4').text();
 			color = caseViewer.ViewMap[thisNodeLabel].SVGShape.GetColor();
 			caseViewer.ViewMap[thisNodeLabel].SVGShape.SetColor(color["fill"], "orange");
 		}, function() {
 			var thisNodeLabel: string = $(this).children('h4').text();
-			color = caseViewer.ViewMap[thisNodeLabel].SVGShape.GetColor();
 			caseViewer.ViewMap[thisNodeLabel].SVGShape.SetColor(color["fill"], color["stroke"]);
 		});
 

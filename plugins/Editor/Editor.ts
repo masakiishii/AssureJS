@@ -114,7 +114,6 @@ class EditorActionPlugIn extends AssureIt.ActionPlugIn {
 	}
 
 	DeleteFromDOM(): void {
-		console.log('Editor');
 		$('#editor-wrapper').blur();
 	}
 }

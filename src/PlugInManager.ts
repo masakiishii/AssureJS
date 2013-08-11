@@ -161,7 +161,6 @@ module AssureIt {
 				beforePlugin.DeleteFromDOM();
 			}
 			this.UILayer.push(plugin);
-			console.log(this.UILayer);
 		}
 
 		UnuseUILayer(plugin :AbstractPlugIn): void { //TODO
