@@ -76,7 +76,7 @@ var AssureIt;
 
             this.InitNodeModelMap(NodeList);
 
-            var root = this.ParseChild(TopGoalLabel, null);
+            var root = this.ParseChild("G" + TopGoalLabel, null);
 
             return root;
         };
