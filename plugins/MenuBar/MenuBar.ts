@@ -9,7 +9,7 @@ class MenuBar {
 	node: JQuery;
 	serverApi: AssureIt.ServerAPI;
 
-	constructor(caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case, node: JQuery, serverApi: AssureIt.ServerAPI, reDraw: () => void) {
+	constructor(caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case, node: JQuery, serverApi: AssureIt.ServerAPI, public plugIn: MenuBarActionPlugIn, reDraw: () => void) {
 		this.caseViewer = caseViewer;
 		this.case0 = case0;
 		this.node = node;
@@ -71,6 +71,7 @@ class MenuBar {
 			onReady: function () { menu.css({ left: self.node.position().left + (self.node.outerWidth() - menu.width()) / 2 }); },
 		});
 		menu.appendTo($('#layer2'));
+		this.plugIn.plugInManager.UseUILayer(this.plugIn);
 	}
 
 	AddNode(nodeType: AssureIt.NodeType): void {
@@ -122,30 +123,29 @@ class MenuBar {
 	}
 
 	SetEventHandlers(): void {
-		var self = this;
 
-		$('#goal').click(function() {
-			self.AddNode(AssureIt.NodeType.Goal);
+		$('#goal').click(() => {
+			this.AddNode(AssureIt.NodeType.Goal);
 		});
 
-		$('#context').click(function() {
-			self.AddNode(AssureIt.NodeType.Context);
+		$('#context').click(() => {
+			this.AddNode(AssureIt.NodeType.Context);
 		});
 
-		$('#strategy').click(function() {
-			self.AddNode(AssureIt.NodeType.Strategy);
+		$('#strategy').click(() => {
+			this.AddNode(AssureIt.NodeType.Strategy);
 		});
 
-		$('#evidence').click(function() {
-			self.AddNode(AssureIt.NodeType.Evidence);
+		$('#evidence').click(() => {
+			this.AddNode(AssureIt.NodeType.Evidence);
 		});
 
-		$('#remove').click(function() {
-			self.RemoveNode();
+		$('#remove').click(() => {
+			this.RemoveNode();
 		});
 
-		$('#commit').click(function() {
-			self.Commit();
+		$('#commit').click(() => {
+			this.Commit();
 		});
 	}
 
@@ -218,6 +218,11 @@ class MenuBarPlugIn extends AssureIt.PlugIn {
 }
 
 class MenuBarActionPlugIn extends AssureIt.ActionPlugIn {
+
+	constructor(plugInManager: AssureIt.PlugInManager) {
+		super(plugInManager);
+	}
+
 	IsEnabled(caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case): boolean {
 		return true;
 	}
@@ -229,7 +234,7 @@ class MenuBarActionPlugIn extends AssureIt.ActionPlugIn {
 		$('.node').hover(function () {
 			var node = $(this);
 
-			var menuBar: MenuBar = new MenuBar(caseViewer, case0, node, serverApi, function() {
+			var menuBar: MenuBar = new MenuBar(caseViewer, case0, node, serverApi, self , function() {
 				self.ReDraw(caseViewer);
 			});
 			menuBar.SetEventHandlers();
@@ -241,4 +246,8 @@ class MenuBarActionPlugIn extends AssureIt.ActionPlugIn {
 		return true;
 	}
 
+	DeleteFromDOM(): void {
+		console.log('hi');
+		$('#menu').remove();
+	}
 }

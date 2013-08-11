@@ -5,7 +5,8 @@ var __extends = this.__extends || function (d, b) {
     d.prototype = new __();
 };
 var MenuBar = (function () {
-    function MenuBar(caseViewer, case0, node, serverApi, reDraw) {
+    function MenuBar(caseViewer, case0, node, serverApi, plugIn, reDraw) {
+        this.plugIn = plugIn;
         this.caseViewer = caseViewer;
         this.case0 = case0;
         this.node = node;
@@ -70,6 +71,7 @@ var MenuBar = (function () {
             }
         });
         menu.appendTo($('#layer2'));
+        this.plugIn.plugInManager.UseUILayer(this.plugIn);
     };
 
     MenuBar.prototype.AddNode = function (nodeType) {
@@ -121,30 +123,29 @@ var MenuBar = (function () {
     };
 
     MenuBar.prototype.SetEventHandlers = function () {
-        var self = this;
-
+        var _this = this;
         $('#goal').click(function () {
-            self.AddNode(AssureIt.NodeType.Goal);
+            _this.AddNode(AssureIt.NodeType.Goal);
         });
 
         $('#context').click(function () {
-            self.AddNode(AssureIt.NodeType.Context);
+            _this.AddNode(AssureIt.NodeType.Context);
         });
 
         $('#strategy').click(function () {
-            self.AddNode(AssureIt.NodeType.Strategy);
+            _this.AddNode(AssureIt.NodeType.Strategy);
         });
 
         $('#evidence').click(function () {
-            self.AddNode(AssureIt.NodeType.Evidence);
+            _this.AddNode(AssureIt.NodeType.Evidence);
         });
 
         $('#remove').click(function () {
-            self.RemoveNode();
+            _this.RemoveNode();
         });
 
         $('#commit').click(function () {
-            self.Commit();
+            _this.Commit();
         });
     };
     return MenuBar;
@@ -215,8 +216,8 @@ var MenuBarPlugIn = (function (_super) {
 
 var MenuBarActionPlugIn = (function (_super) {
     __extends(MenuBarActionPlugIn, _super);
-    function MenuBarActionPlugIn() {
-        _super.apply(this, arguments);
+    function MenuBarActionPlugIn(plugInManager) {
+        _super.call(this, plugInManager);
     }
     MenuBarActionPlugIn.prototype.IsEnabled = function (caseViewer, case0) {
         return true;
@@ -229,7 +230,7 @@ var MenuBarActionPlugIn = (function (_super) {
         $('.node').hover(function () {
             var node = $(this);
 
-            var menuBar = new MenuBar(caseViewer, case0, node, serverApi, function () {
+            var menuBar = new MenuBar(caseViewer, case0, node, serverApi, self, function () {
                 self.ReDraw(caseViewer);
             });
             menuBar.SetEventHandlers();
@@ -239,6 +240,11 @@ var MenuBarActionPlugIn = (function (_super) {
         }, function () {
         });
         return true;
+    };
+
+    MenuBarActionPlugIn.prototype.DeleteFromDOM = function () {
+        console.log('hi');
+        $('#menu').remove();
     };
     return MenuBarActionPlugIn;
 })(AssureIt.ActionPlugIn);

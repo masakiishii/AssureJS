@@ -23,10 +23,10 @@ module AssureIt {
 		constructor(public plugInManager: PlugInManager) {
 		}
 
-		DeleteFromDOM() { //TODO
+		DeleteFromDOM(): void { //TODO
 		}
 
-		DisableEvent() { //TODO
+		DisableEvent(): void { //TODO
 		}
 
 	}
@@ -105,7 +105,6 @@ module AssureIt {
 		Delegate(caseViewer: CaseViewer, elementShape: NodeView /* add args as necessary */) : boolean {
 			return true;
 		}
-
 	}
 
 	export class PlugInManager {
@@ -158,8 +157,18 @@ module AssureIt {
 
 		UseUILayer(plugin :AbstractPlugIn): void {
 			var beforePlugin = this.UILayer.pop();
-			beforePlugin.DeleteFromDOM();
+			if(beforePlugin != plugin && beforePlugin) {
+				beforePlugin.DeleteFromDOM();
+			}
 			this.UILayer.push(plugin);
+			console.log(this.UILayer);
+		}
+
+		UnuseUILayer(plugin :AbstractPlugIn): void { //TODO
+			var beforePlugin = this.UILayer.pop();
+			if(beforePlugin) {
+				beforePlugin.DeleteFromDOM();
+			}
 		}
 	}
 }

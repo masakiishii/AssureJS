@@ -32,8 +32,10 @@ var EditorActionPlugIn = (function (_super) {
 
     EditorActionPlugIn.prototype.Delegate = function (caseViewer, case0, serverApi) {
         var editor = this.editor;
+        var self = this;
         $('.node').dblclick(function (ev) {
             ev.stopPropagation();
+            self.plugInManager.UseUILayer(self);
             var node = $(this);
             var p = node.position();
             var label = node.attr('id');
@@ -80,6 +82,11 @@ var EditorActionPlugIn = (function (_super) {
             $('#editor-wrapper').blur();
         });
         return true;
+    };
+
+    EditorActionPlugIn.prototype.DeleteFromDOM = function () {
+        console.log('Editor');
+        $('#editor-wrapper').blur();
     };
     return EditorActionPlugIn;
 })(AssureIt.ActionPlugIn);

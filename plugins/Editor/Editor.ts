@@ -2,8 +2,6 @@
 /// <reference path="../../src/ServerApi.ts" />
 /// <reference path="../../src/PlugInManager.ts" />
 
-//--- Interface for widearea.js
-declare function wideArea(selector?: string): void;
 //--- CodeMirror
 declare class CodeMirror {
 	static fromTextArea(selector: any, option: any): any;
@@ -36,8 +34,10 @@ class EditorActionPlugIn extends AssureIt.ActionPlugIn {
 
 	Delegate(caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case, serverApi: AssureIt.ServerAPI)  : boolean {
 		var editor = this.editor;
+		var self = this; //FIXME
 		$('.node').dblclick(function(ev) { //FIXME
 			ev.stopPropagation();
+			self.plugInManager.UseUILayer(self);
 			var node = $(this);
 			var p = node.position();
 			var label : string = node.attr('id');
@@ -110,5 +110,10 @@ class EditorActionPlugIn extends AssureIt.ActionPlugIn {
 			$('#editor-wrapper').blur(); 
 		});
 		return true;
+	}
+
+	DeleteFromDOM(): void {
+		console.log('Editor');
+		$('#editor-wrapper').blur();
 	}
 }
