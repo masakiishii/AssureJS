@@ -56,6 +56,7 @@ var EditorActionPlugIn = (function (_super) {
     EditorActionPlugIn.prototype.Delegate = function (caseViewer, case0, serverApi) {
         var editor = this.editor;
         var self = this;
+        $('.node').unbind('dblclick');
         $('.node').dblclick(function (ev) {
             console.log("dblclick");
             ev.stopPropagation();

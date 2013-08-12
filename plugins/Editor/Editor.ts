@@ -60,6 +60,7 @@ class EditorActionPlugIn extends AssureIt.ActionPlugIn {
 	Delegate(caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case, serverApi: AssureIt.ServerAPI)  : boolean {
 		var editor = this.editor;
 		var self = this; //FIXME
+		$('.node').unbind('dblclick');
 		$('.node').dblclick(function(ev) { //FIXME
 				console.log("dblclick");
 			ev.stopPropagation();
