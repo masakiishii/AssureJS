@@ -159,7 +159,6 @@ var AssureIt;
                 beforePlugin.DeleteFromDOM();
             }
             this.UILayer.push(plugin);
-            console.log(this.UILayer);
         };
 
         PlugInManager.prototype.UnuseUILayer = function (plugin) {

@@ -23,9 +23,10 @@ class EditorActionPlugIn extends AssureIt.ActionPlugIn {
 		this.editor = CodeMirror.fromTextArea(document.getElementById('editor'), {
 			lineNumbers: false,
 			mode: "text/x-asn",
+			lineWrapping: true,
 		});
 		this.editor.setSize("300px","200px"); //FIXME
-		$('#editor-wrapper').css({display: 'none'});
+		$('#editor-wrapper').css({display: 'none', opacity: '0.6'});
 	}
 
 	IsEnabled (caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case) : boolean {
@@ -40,11 +41,12 @@ class EditorActionPlugIn extends AssureIt.ActionPlugIn {
 			self.plugInManager.UseUILayer(self);
 			var node = $(this);
 			var p = node.position();
+			var p_div = node.children("p").position();
 			var label : string = node.attr('id');
 			var encoder : AssureIt.CaseEncoder = new AssureIt.CaseEncoder();
 			var encoded = encoder.ConvertToASN(case0.ElementMap[label], true/*single node*/);
 			$('#editor-wrapper')
-				.css({position: 'absolute', top: p.top, left: p.left, display: 'block'})
+				.css({position: 'absolute', top: p.top + p_div.top, left: p.left + p_div.left, display: 'block'})
 				.appendTo($('#layer2'))
 				.focus()
 				.one("blur", {node : node}, function(e: JQueryEventObject, node: JQuery) {

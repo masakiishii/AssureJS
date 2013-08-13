@@ -21,10 +21,11 @@ var EditorActionPlugIn = (function (_super) {
         _super.call(this, plugInManager);
         this.editor = CodeMirror.fromTextArea(document.getElementById('editor'), {
             lineNumbers: false,
-            mode: "text/x-asn"
+            mode: "text/x-asn",
+            lineWrapping: true
         });
         this.editor.setSize("300px", "200px");
-        $('#editor-wrapper').css({ display: 'none' });
+        $('#editor-wrapper').css({ display: 'none', opacity: '0.6' });
     }
     EditorActionPlugIn.prototype.IsEnabled = function (caseViewer, case0) {
         return true;
@@ -38,10 +39,11 @@ var EditorActionPlugIn = (function (_super) {
             self.plugInManager.UseUILayer(self);
             var node = $(this);
             var p = node.position();
+            var p_div = node.children("p").position();
             var label = node.attr('id');
             var encoder = new AssureIt.CaseEncoder();
             var encoded = encoder.ConvertToASN(case0.ElementMap[label], true);
-            $('#editor-wrapper').css({ position: 'absolute', top: p.top, left: p.left, display: 'block' }).appendTo($('#layer2')).focus().one("blur", { node: node }, function (e, node) {
+            $('#editor-wrapper').css({ position: 'absolute', top: p.top + p_div.top, left: p.left + p_div.left, display: 'block' }).appendTo($('#layer2')).focus().one("blur", { node: node }, function (e, node) {
                 console.log("blur");
                 e.stopPropagation();
                 var label = e.data.node.attr('id');
@@ -86,7 +88,6 @@ var EditorActionPlugIn = (function (_super) {
     };
 
     EditorActionPlugIn.prototype.DeleteFromDOM = function () {
-        console.log('Editor');
         $('#editor-wrapper').blur();
     };
     return EditorActionPlugIn;
