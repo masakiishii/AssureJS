@@ -6,14 +6,25 @@ var __extends = this.__extends || function (d, b) {
 };
 var NotePlugIn = (function (_super) {
     __extends(NotePlugIn, _super);
-    function NotePlugIn() {
+    function NotePlugIn(plugInManager) {
+        _super.call(this, plugInManager);
+        this.plugInManager = plugInManager;
+        this.HTMLRenderPlugIn = new NoteHTMLRenderPlugIn(plugInManager);
+    }
+    return NotePlugIn;
+})(AssureIt.PlugIn);
+
+var NoteHTMLRenderPlugIn = (function (_super) {
+    __extends(NoteHTMLRenderPlugIn, _super);
+    function NoteHTMLRenderPlugIn() {
         _super.apply(this, arguments);
     }
-    NotePlugIn.prototype.IsEnabled = function (caseViewer, caseModel) {
+    NoteHTMLRenderPlugIn.prototype.IsEnabled = function (caseViewer, nodeModel) {
         return true;
     };
 
-    NotePlugIn.prototype.Delegate = function (caseViewer, caseModel) {
+    NoteHTMLRenderPlugIn.prototype.Delegate = function (caseViewer, nodeModel) {
+        return true;
     };
-    return NotePlugIn;
-})(RenderPlugIn);
+    return NoteHTMLRenderPlugIn;
+})(AssureIt.HTMLRenderPlugIn);

@@ -4,40 +4,90 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
+;
+
 var EditorPlugIn = (function (_super) {
     __extends(EditorPlugIn, _super);
-    function EditorPlugIn() {
-        _super.call(this);
-        wideArea();
-        $('#editor').css({ display: 'none' });
+    function EditorPlugIn(plugInManager) {
+        _super.call(this, plugInManager);
+        this.ActionPlugIn = new EditorActionPlugIn(plugInManager);
     }
-    EditorPlugIn.prototype.IsEnabled = function (caseViewer, caseModel) {
+    return EditorPlugIn;
+})(AssureIt.PlugIn);
+
+var EditorActionPlugIn = (function (_super) {
+    __extends(EditorActionPlugIn, _super);
+    function EditorActionPlugIn(plugInManager) {
+        _super.call(this, plugInManager);
+        this.editor = CodeMirror.fromTextArea(document.getElementById('editor'), {
+            lineNumbers: false,
+            mode: "text/x-asn"
+        });
+        this.editor.setSize("300px", "200px");
+        $('#editor-wrapper').css({ display: 'none' });
+    }
+    EditorActionPlugIn.prototype.IsEnabled = function (caseViewer, case0) {
         return true;
     };
 
-    EditorPlugIn.prototype.Delegate = function (caseViewer, caseModel) {
-        $('.node').click(function (ev) {
+    EditorActionPlugIn.prototype.Delegate = function (caseViewer, case0, serverApi) {
+        var editor = this.editor;
+        var self = this;
+        $('.node').dblclick(function (ev) {
             ev.stopPropagation();
-            var p0 = $(this).position();
-            var h4 = $(this).find("h4");
-            var p = h4.position();
-            p.left += p0.left;
-            p.top += p0.top;
-            $('#editor').css({ position: 'absolute', top: p.top, left: p.left, display: 'block' }).appendTo($('#layer2')).focus().blur(function (e) {
+            self.plugInManager.UseUILayer(self);
+            var node = $(this);
+            var p = node.position();
+            var label = node.attr('id');
+            var encoder = new AssureIt.CaseEncoder();
+            var encoded = encoder.ConvertToASN(case0.ElementMap[label], true);
+            $('#editor-wrapper').css({ position: 'absolute', top: p.top, left: p.left, display: 'block' }).appendTo($('#layer2')).focus().one("blur", { node: node }, function (e, node) {
+                console.log("blur");
                 e.stopPropagation();
+                var label = e.data.node.attr('id');
+                var orig_model = case0.ElementMap[label];
+                var orig_shape = caseViewer.ViewMap[label];
+                var decoder = new AssureIt.CaseDecoder();
+                var new_model = decoder.ParseASN(case0, editor.getValue().trim(), orig_model);
+
+                orig_model.Statement = new_model.Statement == null ? "" : new_model.Statement;
+                orig_model.Annotations = new_model.Annotations;
+                orig_model.Notes = new_model.Notes;
+                console.log("parsed notes");
+                console.log(new_model.Notes);
+                orig_shape.HTMLDoc.Render(caseViewer, orig_model);
+
+                caseViewer.Resize();
+                var backgroundlayer = document.getElementById("background");
+                var shapelayer = document.getElementById("layer0");
+                var contentlayer = document.getElementById("layer1");
+                var controllayer = document.getElementById("layer2");
+                var offset = $("#layer1").offset();
+
+                var Screen = new AssureIt.ScreenManager(shapelayer, contentlayer, controllayer, backgroundlayer);
+                caseViewer.Draw(Screen);
+                caseViewer.Draw(Screen);
+                Screen.SetOffset(offset.left, offset.top);
+
                 $(this).css({ display: 'none' });
-                $('#editor').text("");
             }).on("keydown", function (e) {
                 if (e.keyCode == 27) {
                     e.stopPropagation();
-                    $(this).css({ display: 'none' });
+                    $('#editor-wrapper').blur();
                 }
-            }).width(h4.outerWidth());
+            });
+            editor.setValue(encoded);
+            editor.refresh();
         });
         $('#layer1').click(function () {
-            $('#editor').blur();
+            $('#editor-wrapper').blur();
         });
         return true;
     };
-    return EditorPlugIn;
-})(ActionPlugIn);
+
+    EditorActionPlugIn.prototype.DeleteFromDOM = function () {
+        console.log('Editor');
+        $('#editor-wrapper').blur();
+    };
+    return EditorActionPlugIn;
+})(AssureIt.ActionPlugIn);

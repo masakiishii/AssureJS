@@ -2,12 +2,21 @@
 /// <reference path="../../src/CaseViewer.ts" />
 /// <reference path="../../src/PlugInManager.ts" />
 
-class AnnotationPlugIn extends RenderPlugIn {
-	IsEnabled(caseViewer: CaseViewer, caseModel: CaseModel) : boolean {
+class AnnotationPlugIn extends AssureIt.PlugIn {
+
+	constructor(public plugInManager: AssureIt.PlugInManager) {
+		super(plugInManager);
+		this.HTMLRenderPlugIn = new AnnotationHTMLRenderPlugIn(plugInManager);
+	}
+
+}
+
+class AnnotationHTMLRenderPlugIn extends AssureIt.HTMLRenderPlugIn {
+	IsEnabled(caseViewer: AssureIt.CaseViewer, caseModel: AssureIt.NodeModel) : boolean {
 		return true;
 	}
 
-	Delegate(caseViewer: CaseViewer, caseModel: CaseModel, element: JQuery) : void {
+	Delegate(caseViewer: AssureIt.CaseViewer, caseModel: AssureIt.NodeModel, element: JQuery) : boolean {
 		if(caseModel.Annotations.length == 0) return;
 
 		var text : string = "";
@@ -21,5 +30,7 @@ class AnnotationPlugIn extends RenderPlugIn {
 			'<p>' + text + '</p>' +
 			'</div>')
 			.css({position: 'absolute', 'font-size': 25, color: 'gray', top: p.top - 20, left: p.left + 80}).appendTo(element);
+
+		return true;
 	}
 }

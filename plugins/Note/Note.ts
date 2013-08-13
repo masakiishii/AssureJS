@@ -2,12 +2,22 @@
 /// <reference path="../../src/CaseViewer.ts" />
 /// <reference path="../../src/PlugInManager.ts" />
 
-class NotePlugIn extends RenderPlugIn {
-	IsEnabled(caseViewer: CaseViewer, caseModel: CaseModel) : boolean {
+class NotePlugIn extends AssureIt.PlugIn {
+
+	constructor(public plugInManager: AssureIt.PlugInManager) {
+		super(plugInManager);
+		this.HTMLRenderPlugIn = new NoteHTMLRenderPlugIn(plugInManager);
+	}
+
+}
+
+class NoteHTMLRenderPlugIn extends AssureIt.HTMLRenderPlugIn {
+	IsEnabled(caseViewer: AssureIt.CaseViewer, nodeModel: AssureIt.NodeModel) : boolean {
 		return true;
 	}
 
-	Delegate(caseViewer: CaseViewer, caseModel: CaseModel) : void {
+	Delegate(caseViewer: AssureIt.CaseViewer, nodeModel: AssureIt.NodeModel) : boolean {
 		// TODO
+		return true;
 	}
 }

@@ -6,14 +6,24 @@ var __extends = this.__extends || function (d, b) {
 };
 var AnnotationPlugIn = (function (_super) {
     __extends(AnnotationPlugIn, _super);
-    function AnnotationPlugIn() {
+    function AnnotationPlugIn(plugInManager) {
+        _super.call(this, plugInManager);
+        this.plugInManager = plugInManager;
+        this.HTMLRenderPlugIn = new AnnotationHTMLRenderPlugIn(plugInManager);
+    }
+    return AnnotationPlugIn;
+})(AssureIt.PlugIn);
+
+var AnnotationHTMLRenderPlugIn = (function (_super) {
+    __extends(AnnotationHTMLRenderPlugIn, _super);
+    function AnnotationHTMLRenderPlugIn() {
         _super.apply(this, arguments);
     }
-    AnnotationPlugIn.prototype.IsEnabled = function (caseViewer, caseModel) {
+    AnnotationHTMLRenderPlugIn.prototype.IsEnabled = function (caseViewer, caseModel) {
         return true;
     };
 
-    AnnotationPlugIn.prototype.Delegate = function (caseViewer, caseModel, element) {
+    AnnotationHTMLRenderPlugIn.prototype.Delegate = function (caseViewer, caseModel, element) {
         if (caseModel.Annotations.length == 0)
             return;
 
@@ -25,6 +35,8 @@ var AnnotationPlugIn = (function (_super) {
         }
 
         $('<div class="anno">' + '<p>' + text + '</p>' + '</div>').css({ position: 'absolute', 'font-size': 25, color: 'gray', top: p.top - 20, left: p.left + 80 }).appendTo(element);
+
+        return true;
     };
-    return AnnotationPlugIn;
-})(RenderPlugIn);
+    return AnnotationHTMLRenderPlugIn;
+})(AssureIt.HTMLRenderPlugIn);

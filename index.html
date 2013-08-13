@@ -1,24 +1,33 @@
 <html>
 <head>
     <title>Mock up</title>
-    <link rel='stylesheet' href='plugins/Editor/lib/widearea.css'>
+    <link rel='stylesheet' href='plugins/Editor/lib/codemirror/codemirror.css'>
+    <link rel='stylesheet' href="plugins/MenuBar/lib/jquery-ui-1.10.3.custom.min.css">
     <script type="text/javascript" src="lib/jquery.min.js"></script>
     <script type="text/javascript" src="lib/pointer.min.js"></script>
+    <script type="text/javascript" src="lib/underscore-min.js"></script>
+    <script type="text/javascript" src="lib/ASNParser/peg.js"></script>
     <script type="text/javascript" src="src/CaseModel.js"></script>
     <script type="text/javascript" src="src/CaseViewer.js"></script>
     <script type="text/javascript" src="src/Layout.js"></script>
     <script type="text/javascript" src="src/PlugInManager.js"></script>
+    <script type="text/javascript" src="src/Converter.js"></script>
     <script type="text/javascript" src="src/ServerApi.js"></script>
-    <script type="text/javascript" src="plugins/Editor/lib/widearea.js"></script>
+    <script type="text/javascript" src="plugins/Editor/lib/codemirror/codemirror.js"></script>
+    <script type="text/javascript" src="plugins/Editor/lib/codemirror/mode/ASN/asn.js"></script>
     <script type="text/javascript" src="plugins/Editor/Editor.js"></script>
     <script type="text/javascript" src="plugins/MenuBar/lib/jquery.jqdock.min.js"></script>
+    <script type="text/javascript" src="plugins/MenuBar/lib/jquery-ui-1.10.3.custom.min.js"></script>
     <script type="text/javascript" src="plugins/MenuBar/MenuBar.js"></script>
     <script type="text/javascript" src="plugins/Annotation/Annotation.js"></script>
+    <script type="text/javascript" src="plugins/Monitor/Monitor.js"></script>
     <script type="text/javascript" src="plugins/Note/Note.js"></script>
+    <script type="text/javascript" src="plugins/ColorTheme/ColorTheme.js"></script>
     <script type="text/javascript" src="src/CaseDecoder.js"></script>
-    <script type="text/javascript" src="src/Index.js"></script>
+    <script type="text/javascript" src="src/CaseEncoder.js"></script>
+    <script type="text/javascript" src="mock/Index.js"></script>
 </head>
-<body style="overflow: hidden";>
+<body style="overflow: hidden; margin: 0px;">
     <div id="viewer" style="width: 100%; height: 100%;">
         <svg id="layer0box" xmlns="http://www.w3.org/2000/svg" version="1.1" style="width: 100%; height: 100%; position: absolute">
             <g id="layer0" transform="translate(0,0)"></g>
@@ -39,6 +48,8 @@
             </marker>
         </defs>
     </svg>
-    <textarea id="editor" placeholder="Type something..." data-widearea="enable" class="widearea" data-widearea-id="1"></textarea>
+    <div id="editor-wrapper" style="border: 1px solid black">
+        <textarea id="editor" placeholder="Type something..."></textarea>
+    </div>
 </body>
 </html>

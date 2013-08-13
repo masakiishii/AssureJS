@@ -1,108 +1,130 @@
 ///<reference path='../d.ts/jquery.d.ts'/>
 
-var default_success_callback = function(result) {
-	// do nothing
-};
+module AssureIt {
+	var default_success_callback = function(result) {
+		// do nothing
+	};
 
-var default_error_callback = function(req, stat, err) {
-	alert("ajax error");
-};
+	var default_error_callback = function(req, stat, err) {
+		alert("ajax error");
+	};
 
-class ServerAPI {
-	uri : string;
-	
-	constructor(basepath : string) {
-		this.uri = basepath + "/api/1.0/";
-	}
+	export class ServerAPI {
+		uri : string;
+		basepath : string;
 
-	RemoteCall(method : string, params : any) {
-		var cmd = {
-			jsonrpc: "2.0",
-			method: method,
-			id: 1,
-			params: params
-		};
-		var async = callback != null;
-		var callback = default_success_callback;
-		var error_callback = default_error_callback;
-		var res = $.ajax({
-			type: "POST",
-			url: this.uri,
-			async: async,
-			data: JSON.stringify(cmd),
-			dataType: "json",
-			contentType: "application/json; charset=utf-8",
-			success: function(response) {
-				callback(response.result);
-			},
-			error: error_callback
-		});
-		if(!async) {
-			return JSON.parse(res.responseText).result;
+		constructor(basepath: string, isLocal?: boolean) {
+			if(isLocal == null) {
+				isLocal = false;
+			}
+			this.uri = basepath + "/api/1.0/";
+			this.basepath = basepath;
+			if(!isLocal) {
+				this.basepath = basepath + "/";
+			}
 		}
-	}
 
-	GetCase (ProjectName : string, CaseId : number) : Object {
-		return <Object> this.RemoteCall("getDCase", { dcaseId: CaseId });
-	}
-
-	//-------------------------------------
-
-	SearchDCase(pageIndex: any, tags?: string[]) {
-		if(tags == null) {
-			tags = [];
+		RemoteCall(method : string, params : any) {
+			var cmd = {
+				jsonrpc: "2.0",
+				method: method,
+				id: 1,
+				params: params
+			};
+			var async = callback != null;
+			var callback = default_success_callback;
+			var error_callback = default_error_callback;
+			var res = $.ajax({
+				type: "POST",
+				url: this.uri,
+				async: async,
+				data: JSON.stringify(cmd),
+				dataType: "json",
+				contentType: "application/json; charset=utf-8",
+				success: function(response) {
+					callback(response.result);
+				},
+				error: error_callback
+			});
+			if(!async) {
+				return JSON.parse(res.responseText).result;
+			}
 		}
-		try{
-			return this.RemoteCall("searchDCase", {page: pageIndex, tagList: tags});
-		}catch(e){
-			return [];
+
+		GetCase (ProjectName : string, CaseId : number) : Object {
+			return <Object> this.RemoteCall("getDCase", { dcaseId: CaseId });
 		}
-	}
 
-	CreateDCase(name, tree) {
-		return this.RemoteCall("createDCase", {
-			dcaseName: name, contents: tree });
-	}
+		//-------------------------------------
 
-	GetCommitList(dcaseId) {
-		return this.RemoteCall("getCommitList", { dcaseId:dcaseId }).commitList;
-	}
+		SearchCase(pageIndex: any, tags?: string[]) {
+			if(tags == null) {
+				tags = [];
+			}
+			try{
+				return this.RemoteCall("searchDCase", {page: pageIndex, tagList: tags});
+			}catch(e){
+				return [];
+			}
+		}
 
-	GetTagList() {
-		return this.RemoteCall("getTagList", {});
-	}
+		CreateCase(name: string, tree: any) {
+			return this.RemoteCall("createDCase", {
+				dcaseName: name, contents: tree });
+		}
 
-	Commit(tree, msg, commitId) {
-		return this.RemoteCall("commit", {
-			contents: tree,
-			commitMessage: msg,
-			commitId: commitId,
-	//		userId: userId
-		}).commitId;
-	}
+		GetCommitList(dcaseId: number) {
+			return this.RemoteCall("getCommitList", { dcaseId:dcaseId }).commitList;
+		}
 
+		GetTagList() {
+			return this.RemoteCall("getTagList", {});
+		}
 
-	EditDCase(dcaseId, name) {
-		return this.RemoteCall("editDCase", {
-			dcaseId: dcaseId,
-			dcaseName: name
-		});
-	}
+		Commit(tree, msg, commitId) {
+			return this.RemoteCall("commit", {
+				contents: tree,
+				commitMessage: msg,
+				commitId: commitId,
+		//		userId: userId
+			}).commitId;
+		}
 
-	DeleteDCase(dcaseId) {
-		return this.RemoteCall("deleteDCase", { dcaseId: dcaseId });
-	}
+		EditCase(dcaseId, name) {
+			return this.RemoteCall("editDCase", {
+				dcaseId: dcaseId,
+				dcaseName: name
+			});
+		}
 
-	GetNodeTree(commitId) {
-		return JSON.parse(this.RemoteCall("getNodeTree", { commitId: commitId }).contents);
-	}
+		DeleteCase(dcaseId) {
+			return this.RemoteCall("deleteDCase", { dcaseId: dcaseId });
+		}
 
-	SearchNode(text) {
-		return this.RemoteCall("searchNode", { text: text }).searchResultList;
-	}
+		GetNodeTree(commitId) {
+			return JSON.parse(this.RemoteCall("getNodeTree", { commitId: commitId }).contents);
+		}
 
-	SearchDCaseHistory(dcaseId, text) {
-		return this.RemoteCall("searchDCaseHistory", {dcaseId: dcaseId, text: text});
+		SearchNode(text: string) {
+			return this.RemoteCall("searchNode", { text: text }).searchResultList;
+		}
+
+		SearchCaseHistory(dcaseId: number, text: string) {
+			return this.RemoteCall("searchDCaseHistory", {dcaseId: dcaseId, text: text});
+		}
+
+		GetProjectList(userId: number) {
+			return this.RemoteCall("getProjectList", { userId:userId });
+		}
+
+		CreateProject(name: string, userId: number) {
+			return this.RemoteCall("createProject", {
+				name: name, userId: userId });
+		}
+
+		EditProject(name: string, projectId: number) {
+			return this.RemoteCall("editProject", {
+				name: name, projectId: projectId });
+		}
 	}
 }
-
