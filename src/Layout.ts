@@ -82,6 +82,8 @@ module AssureIt {
 			if (Element.Type == NodeType.Context) {
 				CaseView.ParentDirection = Direction.Bottom;
 				CaseView.IsArrowReversed = true;
+				CaseView.IsArrowStraight = true;
+				CaseView.IsArrowWhite = true;
 			} else {
 				CaseView.ParentDirection = Direction.Left;
 			}
@@ -180,6 +182,8 @@ module AssureIt {
 			var h2: number = ParentView.HTMLDoc.Height;
 			ContextView.ParentDirection = Direction.Left;
 			ContextView.IsArrowReversed = true;
+			ContextView.IsArrowStraight = true;
+			ContextView.IsArrowWhite = true;
 			ContextView.AbsX = (ParentView.AbsX + this.X_CONTEXT_MARGIN);
 			ContextView.AbsY = (ParentView.AbsY - (h1 - h2) / 2);
 		}

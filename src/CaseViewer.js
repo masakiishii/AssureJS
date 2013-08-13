@@ -137,6 +137,14 @@ var AssureIt;
             }
         };
 
+        SVGShape.prototype.SetArrowColorWhite = function (white) {
+            if (white) {
+                this.ArrowPath.setAttribute("marker-end", "url(#Triangle-white)");
+            } else {
+                this.ArrowPath.setAttribute("marker-end", "url(#Triangle-black)");
+            }
+        };
+
         SVGShape.prototype.SetColor = function (fill, stroke) {
         };
 
@@ -324,6 +332,8 @@ var AssureIt;
         function NodeView(CaseViewer, NodeModel) {
             this.ParentDirection = Direction.Top;
             this.IsArrowReversed = false;
+            this.IsArrowStraight = false;
+            this.IsArrowWhite = false;
             this.AbsX = 0;
             this.AbsY = 0;
             this.x = 0;
@@ -347,12 +357,23 @@ var AssureIt;
             if (this.ParentShape != null) {
                 var p1 = null;
                 var p2 = null;
-                p1 = this.ParentShape.GetAbsoluteConnectorPosition(ReverseDirection(this.ParentDirection));
-                p2 = this.GetAbsoluteConnectorPosition(this.ParentDirection);
                 if (this.IsArrowReversed) {
-                    this.SVGShape.SetArrowPosition(p2, p1, this.ParentDirection);
+                    p1 = this.ParentShape.GetAbsoluteConnectorPosition(ReverseDirection(this.ParentDirection));
+                    p2 = this.GetAbsoluteConnectorPosition(this.ParentDirection);
                 } else {
-                    this.SVGShape.SetArrowPosition(p1, p2, this.ParentDirection);
+                    p1 = this.GetAbsoluteConnectorPosition(this.ParentDirection);
+                    p2 = this.ParentShape.GetAbsoluteConnectorPosition(ReverseDirection(this.ParentDirection));
+                }
+                if (this.IsArrowStraight) {
+                    if (this.ParentDirection == Direction.Bottom || this.ParentDirection == Direction.Top) {
+                        p1.x = p2.x;
+                    } else {
+                        p1.y = p2.y;
+                    }
+                }
+                this.SVGShape.SetArrowPosition(p1, p2, this.ParentDirection);
+                if (this.IsArrowWhite) {
+                    this.SVGShape.SetArrowColorWhite(true);
                 }
             }
             return;
