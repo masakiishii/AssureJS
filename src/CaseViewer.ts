@@ -147,6 +147,14 @@ module AssureIt {
 			}
 		}
 
+		SetArrowColorWhite(white: boolean) {
+			if (white) {
+				this.ArrowPath.setAttribute("marker-end", "url(#Triangle-white)");
+			} else {
+				this.ArrowPath.setAttribute("marker-end", "url(#Triangle-black)");
+			}
+		}
+
 		SetColor(fill: string, stroke: string) {
 		}
 
@@ -317,6 +325,8 @@ module AssureIt {
 
 		ParentDirection: Direction = Direction.Top;
 		IsArrowReversed: boolean = false;
+		IsArrowStraight: boolean = false;
+		IsArrowWhite: boolean = false;
 
 		AbsX: number = 0;
 		AbsY: number = 0;
@@ -344,12 +354,23 @@ module AssureIt {
 			if (this.ParentShape != null) {
 				var p1: Point = null;
 				var p2: Point = null;
-				p1 = this.ParentShape.GetAbsoluteConnectorPosition(ReverseDirection(this.ParentDirection));
-				p2 = this.GetAbsoluteConnectorPosition(this.ParentDirection);
 				if (this.IsArrowReversed) {
-					this.SVGShape.SetArrowPosition(p2, p1, this.ParentDirection);
+					p1 = this.ParentShape.GetAbsoluteConnectorPosition(ReverseDirection(this.ParentDirection));
+					p2 = this.GetAbsoluteConnectorPosition(this.ParentDirection);
 				} else {
-					this.SVGShape.SetArrowPosition(p1, p2, this.ParentDirection);
+					p1 = this.GetAbsoluteConnectorPosition(this.ParentDirection);
+					p2 = this.ParentShape.GetAbsoluteConnectorPosition(ReverseDirection(this.ParentDirection));
+				}
+				if (this.IsArrowStraight) {
+					if (this.ParentDirection == Direction.Bottom || this.ParentDirection == Direction.Top) {
+						p1.x = p2.x;
+					} else {
+						p1.y = p2.y;
+					}
+				}
+				this.SVGShape.SetArrowPosition(p1, p2, this.ParentDirection);
+				if (this.IsArrowWhite) {
+					this.SVGShape.SetArrowColorWhite(true);
 				}
 			}
 			return; // TODO

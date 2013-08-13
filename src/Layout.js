@@ -80,6 +80,8 @@ var AssureIt;
             if (Element.Type == AssureIt.NodeType.Context) {
                 CaseView.ParentDirection = AssureIt.Direction.Bottom;
                 CaseView.IsArrowReversed = true;
+                CaseView.IsArrowStraight = true;
+                CaseView.IsArrowWhite = true;
             } else {
                 CaseView.ParentDirection = AssureIt.Direction.Left;
             }
@@ -168,6 +170,8 @@ var AssureIt;
             var h2 = ParentView.HTMLDoc.Height;
             ContextView.ParentDirection = AssureIt.Direction.Left;
             ContextView.IsArrowReversed = true;
+            ContextView.IsArrowStraight = true;
+            ContextView.IsArrowWhite = true;
             ContextView.AbsX = (ParentView.AbsX + this.X_CONTEXT_MARGIN);
             ContextView.AbsY = (ParentView.AbsY - (h1 - h2) / 2);
         };
