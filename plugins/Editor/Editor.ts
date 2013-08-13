@@ -12,8 +12,27 @@ class EditorPlugIn extends AssureIt.PlugIn {
 	constructor(plugInManager: AssureIt.PlugInManager) {
 		super(plugInManager);
 		this.ActionPlugIn = new EditorActionPlugIn(plugInManager);
+		this.HTMLRenderPlugIn = new EditorLayoutPlugIn(plugInManager);
 	}
 
+}
+
+class EditorLayoutPlugIn extends AssureIt.HTMLRenderPlugIn {
+	constructor(plugInManager: AssureIt.PlugInManager) {
+		super(plugInManager);
+	}
+
+	IsEnabled (caseViewer: AssureIt.CaseViewer, caseModel: AssureIt.NodeModel) : boolean {
+		return true;
+	}
+
+	Delegate(caseViewer: AssureIt.CaseViewer, caseModel: AssureIt.NodeModel, element: JQuery) : boolean {
+		console.log(caseModel.IsEditing);
+		if (caseModel.IsEditing) {
+			element.height(200);
+		}
+		return true;
+	}
 }
 
 class EditorActionPlugIn extends AssureIt.ActionPlugIn {
@@ -41,12 +60,13 @@ class EditorActionPlugIn extends AssureIt.ActionPlugIn {
 			self.plugInManager.UseUILayer(self);
 			var node = $(this);
 			var p = node.position();
-			var p_div = node.children("p").position();
+			var p_contents = node.children("p").position();
+			editor.setSize($(node.children("p")).width(), 200);
 			var label : string = node.attr('id');
 			var encoder : AssureIt.CaseEncoder = new AssureIt.CaseEncoder();
 			var encoded = encoder.ConvertToASN(case0.ElementMap[label], true/*single node*/);
 			$('#editor-wrapper')
-				.css({position: 'absolute', top: p.top + p_div.top, left: p.left + p_div.left, display: 'block'})
+				.css({position: 'absolute', top: p.top + p_contents.top, left: p.left + p_contents.left, display: 'block'})
 				.appendTo($('#layer2'))
 				.focus()
 				.one("blur", {node : node}, function(e: JQueryEventObject, node: JQuery) {
@@ -58,6 +78,7 @@ class EditorActionPlugIn extends AssureIt.ActionPlugIn {
 					var decoder    : AssureIt.CaseDecoder = new AssureIt.CaseDecoder();
 					var new_model  : AssureIt.NodeModel = decoder.ParseASN(case0, editor.getValue().trim(), orig_model);
 					/*update orig_model and redraw html*/
+					orig_model.IsEditing = false;
 					orig_model.Statement = new_model.Statement == null ? "" : new_model.Statement;
 					orig_model.Annotations = new_model.Annotations;
 					orig_model.Notes = new_model.Notes;
@@ -73,7 +94,6 @@ class EditorActionPlugIn extends AssureIt.ActionPlugIn {
 					var offset = $("#layer1").offset();
 
 					var Screen = new AssureIt.ScreenManager(shapelayer, contentlayer, controllayer, backgroundlayer);
-					caseViewer.Draw(Screen);
 					caseViewer.Draw(Screen);
 					Screen.SetOffset(offset.left, offset.top);
 

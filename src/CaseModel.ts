@@ -24,6 +24,8 @@ module AssureIt {
 		Parent : NodeModel;
 		Children: NodeModel[];
 
+		IsEditing: boolean;
+
 		constructor(Case : Case, Parent : NodeModel, Type : NodeType, Label : string, Statement : string) {
 			this.Case = Case;
 			this.Type = Type;
@@ -36,6 +38,7 @@ module AssureIt {
 			this.Children = [];
 			this.Annotations = [];
 			this.Notes = [];
+			this.IsEditing = false;
 
 			Case.ElementMap[this.Label] = this; // TODO: ensure consistensy of labels
 		}
