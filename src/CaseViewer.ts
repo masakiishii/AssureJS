@@ -31,7 +31,7 @@ module AssureIt {
 
 		Render(Viewer: CaseViewer, NodeModel: NodeModel): void {
 			if (this.DocBase != null) {
-				var parent = this.DocBase.parent();
+				//var parent = this.DocBase.parent();
 				//if (parent != null) parent.remove(this.DocBase);
 				this.DocBase.remove();
 			}

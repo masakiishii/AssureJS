@@ -4,6 +4,9 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
+var ExpandedNodeHeight = 200;
+var InplaceEditorHeight = ExpandedNodeHeight - 50;
+
 ;
 
 var EditorPlugIn = (function (_super) {
@@ -26,9 +29,8 @@ var EditorLayoutPlugIn = (function (_super) {
     };
 
     EditorLayoutPlugIn.prototype.Delegate = function (caseViewer, caseModel, element) {
-        console.log(caseModel.IsEditing);
         if (caseModel.IsEditing) {
-            element.height(200);
+            element.height(ExpandedNodeHeight);
         }
         return true;
     };
@@ -45,7 +47,7 @@ var EditorActionPlugIn = (function (_super) {
             lineWrapping: true
         });
         this.editor.setSize("300px", "200px");
-        $('#editor-wrapper').css({ display: 'none', opacity: '0.6' });
+        $('#editor-wrapper').css({ display: 'none', opacity: '1.0' });
     }
     EditorActionPlugIn.prototype.IsEnabled = function (caseViewer, case0) {
         return true;
@@ -55,21 +57,46 @@ var EditorActionPlugIn = (function (_super) {
         var editor = this.editor;
         var self = this;
         $('.node').dblclick(function (ev) {
+            console.log("dblclick");
             ev.stopPropagation();
             self.plugInManager.UseUILayer(self);
             var node = $(this);
             var p = node.position();
             var p_contents = node.children("p").position();
-            editor.setSize($(node.children("p")).width(), 200);
+            var selector = "#" + label;
+            console.log($(selector).height() + ", " + p_contents.top);
+            editor.setSize(node.children("p").width(), InplaceEditorHeight);
+
             var label = node.attr('id');
             var encoder = new AssureIt.CaseEncoder();
             var encoded = encoder.ConvertToASN(case0.ElementMap[label], true);
-            $('#editor-wrapper').css({ position: 'absolute', top: p.top + p_contents.top, left: p.left + p_contents.left, display: 'block' }).appendTo($('#layer2')).focus().one("blur", { node: node }, function (e, node) {
+
+            var orig_model = case0.ElementMap[label];
+            var orig_shape = caseViewer.ViewMap[label];
+
+            orig_model.IsEditing = true;
+            orig_shape.HTMLDoc.Render(caseViewer, orig_model);
+
+            caseViewer.Resize();
+            var backgroundlayer = document.getElementById("background");
+            var shapelayer = document.getElementById("layer0");
+            var contentlayer = document.getElementById("layer1");
+            var controllayer = document.getElementById("layer2");
+            var offset = $("#layer1").offset();
+            var Screen = new AssureIt.ScreenManager(shapelayer, contentlayer, controllayer, backgroundlayer);
+            caseViewer.Draw(Screen);
+            Screen.SetOffset(offset.left, offset.top);
+            var node = $(this);
+
+            $('#editor-wrapper').css({ position: 'absolute', top: p.top + p_contents.top, left: p.left + p_contents.left, display: 'block' }).appendTo($('#layer2')).focus().on("keydown", function (e) {
+                if (e.keyCode == 27) {
+                    e.stopPropagation();
+                    $(this).blur();
+                }
+            }).one("blur", { node: node }, function (e, node) {
                 console.log("blur");
                 e.stopPropagation();
                 var label = e.data.node.attr('id');
-                var orig_model = case0.ElementMap[label];
-                var orig_shape = caseViewer.ViewMap[label];
                 var decoder = new AssureIt.CaseDecoder();
                 var new_model = decoder.ParseASN(case0, editor.getValue().trim(), orig_model);
 
@@ -77,8 +104,6 @@ var EditorActionPlugIn = (function (_super) {
                 orig_model.Statement = new_model.Statement == null ? "" : new_model.Statement;
                 orig_model.Annotations = new_model.Annotations;
                 orig_model.Notes = new_model.Notes;
-                console.log("parsed notes");
-                console.log(new_model.Notes);
                 orig_shape.HTMLDoc.Render(caseViewer, orig_model);
 
                 caseViewer.Resize();
@@ -87,18 +112,13 @@ var EditorActionPlugIn = (function (_super) {
                 var contentlayer = document.getElementById("layer1");
                 var controllayer = document.getElementById("layer2");
                 var offset = $("#layer1").offset();
-
                 var Screen = new AssureIt.ScreenManager(shapelayer, contentlayer, controllayer, backgroundlayer);
                 caseViewer.Draw(Screen);
                 Screen.SetOffset(offset.left, offset.top);
 
                 $(this).css({ display: 'none' });
-            }).on("keydown", function (e) {
-                if (e.keyCode == 27) {
-                    e.stopPropagation();
-                    $('#editor-wrapper').blur();
-                }
             });
+
             editor.setValue(encoded);
             editor.refresh();
         });

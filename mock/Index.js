@@ -104,14 +104,7 @@ $(function () {
                 "NodeType": 3,
                 "Label": "E1",
                 "Annotations": [],
-                "Notes": [
-                    {
-                        "Name": "Monitor",
-                        "Body": {
-                            "nodeID": 51
-                        }
-                    }
-                ]
+                "Notes": []
             },
             {
                 "Children": [],

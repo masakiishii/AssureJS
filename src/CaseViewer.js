@@ -17,8 +17,6 @@ var AssureIt;
         }
         HTMLDoc.prototype.Render = function (Viewer, NodeModel) {
             if (this.DocBase != null) {
-                var parent = this.DocBase.parent();
-
                 this.DocBase.remove();
             }
             this.DocBase = $('<div class="node">').css("position", "absolute").attr('id', NodeModel.Label);
