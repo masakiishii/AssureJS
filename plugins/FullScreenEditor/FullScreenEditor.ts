@@ -6,24 +6,24 @@
 
 /* const */
 
-var ExpandedNodeHeight = 200;
-var InplaceEditorHeight = ExpandedNodeHeight - 50;
+//var ExpandedNodeHeight = 200;
+//var InplaceEditorHeight = ExpandedNodeHeight - 50;
+//
+//declare class CodeMirror {
+//	static fromTextArea(selector: any, option: any): any;
+//};
 
-declare class CodeMirror {
-	static fromTextArea(selector: any, option: any): any;
-};
-
-class EditorPlugIn extends AssureIt.PlugIn {
+class FullScreenEditorPlugIn extends AssureIt.PlugIn {
 
 	constructor(plugInManager: AssureIt.PlugInManager) {
 		super(plugInManager);
-		this.ActionPlugIn = new EditorActionPlugIn(plugInManager);
-		this.HTMLRenderPlugIn = new EditorLayoutPlugIn(plugInManager);
+		this.ActionPlugIn = new FullScreenEditorActionPlugIn(plugInManager);
+		this.HTMLRenderPlugIn = new FullScreenEditorLayoutPlugIn(plugInManager);
 	}
 
 }
 
-class EditorLayoutPlugIn extends AssureIt.HTMLRenderPlugIn {
+class FullScreenEditorLayoutPlugIn extends AssureIt.HTMLRenderPlugIn {
 	constructor(plugInManager: AssureIt.PlugInManager) {
 		super(plugInManager);
 	}
@@ -40,7 +40,7 @@ class EditorLayoutPlugIn extends AssureIt.HTMLRenderPlugIn {
 	}
 }
 
-class EditorActionPlugIn extends AssureIt.ActionPlugIn {
+class FullScreenEditorActionPlugIn extends AssureIt.ActionPlugIn {
 	editor;
 	selector: string;
 	constructor(plugInManager: AssureIt.PlugInManager) {

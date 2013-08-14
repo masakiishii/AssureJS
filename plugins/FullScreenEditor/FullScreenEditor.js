@@ -4,39 +4,34 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-var ExpandedNodeHeight = 200;
-var InplaceEditorHeight = ExpandedNodeHeight - 50;
-
-;
-
-var EditorPlugIn = (function (_super) {
-    __extends(EditorPlugIn, _super);
-    function EditorPlugIn(plugInManager) {
+var FullScreenEditorPlugIn = (function (_super) {
+    __extends(FullScreenEditorPlugIn, _super);
+    function FullScreenEditorPlugIn(plugInManager) {
         _super.call(this, plugInManager);
-        this.ActionPlugIn = new EditorActionPlugIn(plugInManager);
-        this.HTMLRenderPlugIn = new EditorLayoutPlugIn(plugInManager);
+        this.ActionPlugIn = new FullScreenEditorActionPlugIn(plugInManager);
+        this.HTMLRenderPlugIn = new FullScreenEditorLayoutPlugIn(plugInManager);
     }
-    return EditorPlugIn;
+    return FullScreenEditorPlugIn;
 })(AssureIt.PlugIn);
 
-var EditorLayoutPlugIn = (function (_super) {
-    __extends(EditorLayoutPlugIn, _super);
-    function EditorLayoutPlugIn(plugInManager) {
+var FullScreenEditorLayoutPlugIn = (function (_super) {
+    __extends(FullScreenEditorLayoutPlugIn, _super);
+    function FullScreenEditorLayoutPlugIn(plugInManager) {
         _super.call(this, plugInManager);
     }
-    EditorLayoutPlugIn.prototype.IsEnabled = function (caseViewer, caseModel) {
+    FullScreenEditorLayoutPlugIn.prototype.IsEnabled = function (caseViewer, caseModel) {
         return true;
     };
 
-    EditorLayoutPlugIn.prototype.Delegate = function (caseViewer, caseModel, element) {
+    FullScreenEditorLayoutPlugIn.prototype.Delegate = function (caseViewer, caseModel, element) {
         return true;
     };
-    return EditorLayoutPlugIn;
+    return FullScreenEditorLayoutPlugIn;
 })(AssureIt.HTMLRenderPlugIn);
 
-var EditorActionPlugIn = (function (_super) {
-    __extends(EditorActionPlugIn, _super);
-    function EditorActionPlugIn(plugInManager) {
+var FullScreenEditorActionPlugIn = (function (_super) {
+    __extends(FullScreenEditorActionPlugIn, _super);
+    function FullScreenEditorActionPlugIn(plugInManager) {
         _super.call(this, plugInManager);
         this.editor = CodeMirror.fromTextArea(document.getElementById('editor'), {
             lineNumbers: false,
@@ -46,11 +41,11 @@ var EditorActionPlugIn = (function (_super) {
         this.editor.setSize("300px", "200px");
         $('#editor-wrapper').css({ display: 'none', opacity: '1.0' });
     }
-    EditorActionPlugIn.prototype.IsEnabled = function (caseViewer, case0) {
+    FullScreenEditorActionPlugIn.prototype.IsEnabled = function (caseViewer, case0) {
         return true;
     };
 
-    EditorActionPlugIn.prototype.Delegate = function (caseViewer, case0, serverApi) {
+    FullScreenEditorActionPlugIn.prototype.Delegate = function (caseViewer, case0, serverApi) {
         var editor = this.editor;
         var self = this;
         $('.node').unbind('dblclick');
@@ -72,18 +67,6 @@ var EditorActionPlugIn = (function (_super) {
             var orig_model = case0.ElementMap[label];
             var orig_shape = caseViewer.ViewMap[label];
 
-            orig_model.IsEditing = true;
-            orig_shape.HTMLDoc.Render(caseViewer, orig_model);
-
-            caseViewer.Resize();
-            var backgroundlayer = document.getElementById("background");
-            var shapelayer = document.getElementById("layer0");
-            var contentlayer = document.getElementById("layer1");
-            var controllayer = document.getElementById("layer2");
-            var offset = $("#layer1").offset();
-            var Screen = new AssureIt.ScreenManager(shapelayer, contentlayer, controllayer, backgroundlayer);
-            caseViewer.Draw(Screen);
-            Screen.SetOffset(offset.left, offset.top);
             var node = $(this);
 
             $('#editor-wrapper').css({ position: 'absolute', top: p.top + p_contents.top, left: p.left + p_contents.left, display: 'block' }).appendTo($('#layer2')).focus().one("blur", { node: node }, function (e, node) {
@@ -133,8 +116,8 @@ var EditorActionPlugIn = (function (_super) {
         return true;
     };
 
-    EditorActionPlugIn.prototype.DeleteFromDOM = function () {
+    FullScreenEditorActionPlugIn.prototype.DeleteFromDOM = function () {
         $(this.selector).blur();
     };
-    return EditorActionPlugIn;
+    return FullScreenEditorActionPlugIn;
 })(AssureIt.ActionPlugIn);
