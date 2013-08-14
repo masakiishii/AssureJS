@@ -58,17 +58,17 @@ var EditorActionPlugIn = (function (_super) {
         var self = this;
         $('.node').unbind('dblclick');
         $('.node').dblclick(function (ev) {
-            console.log("dblclick");
             ev.stopPropagation();
             self.plugInManager.UseUILayer(self);
             var node = $(this);
             var p = node.position();
             var p_contents = node.children("p").position();
+            var label = node.attr('id');
             var selector = "#" + label;
+            console.log(selector);
             console.log($(selector).height() + ", " + p_contents.top);
             editor.setSize(node.children("p").width(), InplaceEditorHeight);
 
-            var label = node.attr('id');
             var encoder = new AssureIt.CaseEncoder();
             var encoded = encoder.ConvertToASN(case0.ElementMap[label], true);
 
@@ -92,9 +92,10 @@ var EditorActionPlugIn = (function (_super) {
             $('#editor-wrapper').css({ position: 'absolute', top: p.top + p_contents.top, left: p.left + p_contents.left, display: 'block' }).appendTo($('#layer2')).focus().on("keydown", function (e) {
                 if (e.keyCode == 27) {
                     e.stopPropagation();
-                    $(this).blur();
+                    $(selector).blur();
                 }
-            }).one("blur", { node: node }, function (e, node) {
+            });
+            $(selector).on("blur", { node: node }, function (e, node) {
                 console.log("blur");
                 e.stopPropagation();
                 var label = e.data.node.attr('id');
@@ -117,13 +118,15 @@ var EditorActionPlugIn = (function (_super) {
                 caseViewer.Draw(Screen);
                 Screen.SetOffset(offset.left, offset.top);
 
-                $(this).css({ display: 'none' });
+                $('#editor-wrapper').css({ display: 'none' });
             });
             editor.setValue(encoded);
             editor.refresh();
-        });
-        $('#layer1').click(function () {
-            $('#editor-wrapper').blur();
+            editor.focus();
+            $('#CodeMirror').focus();
+            $('#layer1').click(function () {
+                $(selector).blur();
+            });
         });
         return true;
     };

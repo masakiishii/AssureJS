@@ -62,17 +62,17 @@ class EditorActionPlugIn extends AssureIt.ActionPlugIn {
 		var self = this; //FIXME
 		$('.node').unbind('dblclick');
 		$('.node').dblclick(function(ev) { //FIXME
-				console.log("dblclick");
 			ev.stopPropagation();
 			self.plugInManager.UseUILayer(self);
 			var node = $(this);
 			var p = node.position();
 			var p_contents = node.children("p").position();
+			var label : string = node.attr('id');
 			var selector = "#" + label;
+			console.log(selector);
 			console.log($(selector).height() + ", " + p_contents.top);
 			editor.setSize(node.children("p").width(), InplaceEditorHeight);
 
-			var label : string = node.attr('id');
 			var encoder : AssureIt.CaseEncoder = new AssureIt.CaseEncoder();
 			var encoded = encoder.ConvertToASN(case0.ElementMap[label], true/*single node*/);
 
@@ -101,10 +101,11 @@ class EditorActionPlugIn extends AssureIt.ActionPlugIn {
 				.on("keydown", function(e: JQueryEventObject) {
 					if(e.keyCode == 27 /* ESC */){
 						e.stopPropagation();
-						$(this).blur();
+						$(selector).blur();
 					}
 				})
-				.one("blur", {node : node}, function(e: JQueryEventObject, node: JQuery) {
+			$(selector)
+				.on("blur", {node : node}, function(e: JQueryEventObject, node: JQuery) {
 					console.log("blur");
 					e.stopPropagation();
 					var label : string = e.data.node.attr('id');
@@ -149,14 +150,15 @@ class EditorActionPlugIn extends AssureIt.ActionPlugIn {
 					//for (var viewkey in caseViewer.ViewMap) {
 					//	caseViewer.ViewMap[viewkey].Update();
 					//}
-					$(this).css({display: 'none'});
+					$('#editor-wrapper').css({display: 'none'});
 				});
 			editor.setValue(encoded);
 			editor.refresh();
-
-		});
-		$('#layer1').click(function(){
-			$('#editor-wrapper').blur(); 
+			editor.focus();
+			$('#CodeMirror').focus();
+			$('#layer1').click(function(){
+					$(selector).blur(); 
+				});
 		});
 		return true;
 	}
