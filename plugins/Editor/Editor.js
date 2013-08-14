@@ -29,9 +29,6 @@ var EditorLayoutPlugIn = (function (_super) {
     };
 
     EditorLayoutPlugIn.prototype.Delegate = function (caseViewer, caseModel, element) {
-        if (caseModel.IsEditing) {
-            element.height(ExpandedNodeHeight);
-        }
         return true;
     };
     return EditorLayoutPlugIn;

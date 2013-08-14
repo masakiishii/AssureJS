@@ -33,9 +33,9 @@ class EditorLayoutPlugIn extends AssureIt.HTMLRenderPlugIn {
 	}
 
 	Delegate(caseViewer: AssureIt.CaseViewer, caseModel: AssureIt.NodeModel, element: JQuery) : boolean {
-		if (caseModel.IsEditing) {
-			element.height(ExpandedNodeHeight);
-		}
+		//if (caseModel.IsEditing) {
+		//	element.height(ExpandedNodeHeight);
+		//}
 		return true;
 	}
 }
