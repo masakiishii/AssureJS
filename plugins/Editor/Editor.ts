@@ -41,7 +41,7 @@ class EditorLayoutPlugIn extends AssureIt.HTMLRenderPlugIn {
 }
 
 class EditorActionPlugIn extends AssureIt.ActionPlugIn {
-	editor;
+	editor: any;
 	selector: string;
 	constructor(plugInManager: AssureIt.PlugInManager) {
 		super(plugInManager);
@@ -55,7 +55,7 @@ class EditorActionPlugIn extends AssureIt.ActionPlugIn {
 	}
 
 	IsEnabled (caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case) : boolean {
-		return true;
+		return true; //case0.IsLogin(); //TODO use case0.IsEditable
 	}
 
 	Delegate(caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case, serverApi: AssureIt.ServerAPI)  : boolean {
@@ -168,5 +168,9 @@ class EditorActionPlugIn extends AssureIt.ActionPlugIn {
 
 	DeleteFromDOM(): void {
 		$(this.selector).blur();
+	}
+
+	DisableEvent(caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case, serverApi: AssureIt.ServerAPI): void {
+		$('.node').unbind('dblclick');
 	}
 }

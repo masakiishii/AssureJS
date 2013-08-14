@@ -26,7 +26,7 @@ module AssureIt {
 		DeleteFromDOM(): void { //TODO
 		}
 
-		DisableEvent(): void { //TODO
+		DisableEvent(caseViewer: CaseViewer, case0: Case, serverApi: ServerAPI)  : void {
 		}
 
 	}
@@ -143,6 +143,8 @@ module AssureIt {
 			for(var key in this.ActionPlugInMap) {
 				if(this.ActionPlugInMap[key].IsEnabled(CaseViewer, case0)) {
 					this.ActionPlugInMap[key].Delegate(CaseViewer, case0, serverApi);
+				}else {
+					this.ActionPlugInMap[key].DisableEvent(CaseViewer, case0, serverApi);
 				}
 			}
 		}

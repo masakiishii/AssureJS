@@ -47,7 +47,7 @@ var EditorActionPlugIn = (function (_super) {
         $('#editor-wrapper').css({ display: 'none', opacity: '1.0' });
     }
     EditorActionPlugIn.prototype.IsEnabled = function (caseViewer, case0) {
-        return true;
+        return case0.IsLogin();
     };
 
     EditorActionPlugIn.prototype.Delegate = function (caseViewer, case0, serverApi) {
@@ -131,6 +131,10 @@ var EditorActionPlugIn = (function (_super) {
 
     EditorActionPlugIn.prototype.DeleteFromDOM = function () {
         $(this.selector).blur();
+    };
+
+    EditorActionPlugIn.prototype.DisableEvent = function (caseViewer, case0, serverApi) {
+        $('.node').unbind('dblclick');
     };
     return EditorActionPlugIn;
 })(AssureIt.ActionPlugIn);

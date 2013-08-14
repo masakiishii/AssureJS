@@ -25,7 +25,7 @@ var AssureIt;
         AbstractPlugIn.prototype.DeleteFromDOM = function () {
         };
 
-        AbstractPlugIn.prototype.DisableEvent = function () {
+        AbstractPlugIn.prototype.DisableEvent = function (caseViewer, case0, serverApi) {
         };
         return AbstractPlugIn;
     })();
@@ -141,6 +141,8 @@ var AssureIt;
             for (var key in this.ActionPlugInMap) {
                 if (this.ActionPlugInMap[key].IsEnabled(CaseViewer, case0)) {
                     this.ActionPlugInMap[key].Delegate(CaseViewer, case0, serverApi);
+                } else {
+                    this.ActionPlugInMap[key].DisableEvent(CaseViewer, case0, serverApi);
                 }
             }
         };
