@@ -10,7 +10,7 @@ var AssureIt;
         function LayoutEngine(ViewMap) {
             this.ViewMap = ViewMap;
         }
-        LayoutEngine.prototype.Init = function (Element, x, y) {
+        LayoutEngine.prototype.Init = function (Element, x, y, ElementWidth) {
         };
 
         LayoutEngine.prototype.Traverse = function (Element, x, y) {
@@ -80,6 +80,8 @@ var AssureIt;
             if (Element.Type == AssureIt.NodeType.Context) {
                 CaseView.ParentDirection = AssureIt.Direction.Bottom;
                 CaseView.IsArrowReversed = true;
+                CaseView.IsArrowStraight = true;
+                CaseView.IsArrowWhite = true;
             } else {
                 CaseView.ParentDirection = AssureIt.Direction.Left;
             }
@@ -149,8 +151,12 @@ var AssureIt;
         function LayoutPortrait(ViewMap) {
             _super.call(this, ViewMap);
             this.ViewMap = ViewMap;
+            this.ElementWidth = 150;
             this.X_MARGIN = 200;
-            this.Y_MARGIN = 160;
+            this.Y_MARGIN = 150;
+            this.Y_ADJUSTMENT_MARGIN = 50;
+            this.Y_NODE_MARGIN = 205;
+            this.Y_NODE_ADJUSTMENT_MARGIN = 70;
             this.X_CONTEXT_MARGIN = 200;
             this.X_FOOT_MARGIN = 100;
             this.X_MULTI_ELEMENT_MARGIN = 20;
@@ -164,6 +170,8 @@ var AssureIt;
             var h2 = ParentView.HTMLDoc.Height;
             ContextView.ParentDirection = AssureIt.Direction.Left;
             ContextView.IsArrowReversed = true;
+            ContextView.IsArrowStraight = true;
+            ContextView.IsArrowWhite = true;
             ContextView.AbsX = (ParentView.AbsX + this.X_CONTEXT_MARGIN);
             ContextView.AbsY = (ParentView.AbsY - (h1 - h2) / 2);
         };
@@ -265,8 +273,10 @@ var AssureIt;
             return;
         };
 
-        LayoutPortrait.prototype.Init = function (Element, x, y) {
+        LayoutPortrait.prototype.Init = function (Element, x, y, ElementWidth) {
             this.ViewMap[Element.Label].AbsY += y;
+            this.X_MARGIN = ElementWidth + 50;
+            this.X_CONTEXT_MARGIN = ElementWidth + 50;
         };
 
         LayoutPortrait.prototype.Traverse = function (Element, x, y) {
@@ -288,22 +298,44 @@ var AssureIt;
                 ContextView.AbsX += x;
                 ContextView.AbsY += (y - h);
                 ContextView.AbsX += this.X_CONTEXT_MARGIN;
-                this.EmitChildrenElement(Element, ParentView.AbsX, ParentView.AbsY, i);
+                this.EmitChildrenElement(Element, ParentView.AbsX, ParentView.AbsY, i, ((h1 > h2) ? h1 / 2 : h2 / 2));
             } else {
-                this.EmitChildrenElement(Element, x, y, i);
+                var h2 = 0;
+                if (ParentView != null) {
+                    h2 = ParentView.HTMLDoc.Height / 2;
+                }
+                this.EmitChildrenElement(Element, x, y, i, h2);
             }
         };
 
-        LayoutPortrait.prototype.EmitChildrenElement = function (Node, x, y, ContextId) {
+        LayoutPortrait.prototype.EmitChildrenElement = function (Node, x, y, ContextId, h) {
             var n = Node.Children.length;
+            var MaxYPostition = 0;
+            for (var i = 0; i < n; i++) {
+                var ElementView = this.ViewMap[Node.Children[i].Label];
+                var j = this.GetContextIndex(Node.Children[i]);
+                var ContextHeight = 0;
+                if (j != -1) {
+                    ContextHeight = this.ViewMap[Node.Children[i].Children[j].Label].HTMLDoc.Height;
+                }
+                if (ContextId == i) {
+                    continue;
+                } else {
+                    var height = (ContextHeight > ElementView.HTMLDoc.Height) ? ContextHeight : ElementView.HTMLDoc.Height;
+                    var ParentElementView = this.ViewMap[Node.Label];
+                    ElementView.AbsY = y;
+                    ElementView.AbsY += ((height > this.Y_MARGIN) ? height : this.Y_MARGIN) + h;
+                    ElementView.AbsY += (((ElementView.AbsY - ParentElementView.AbsY) < this.Y_NODE_MARGIN) ? this.Y_NODE_ADJUSTMENT_MARGIN : 0);
+                    MaxYPostition = (ElementView.AbsY > MaxYPostition) ? ElementView.AbsY : MaxYPostition;
+                    this.Traverse(Node.Children[i], ElementView.AbsX, ElementView.AbsY);
+                }
+            }
             for (var i = 0; i < n; i++) {
                 var ElementView = this.ViewMap[Node.Children[i].Label];
                 if (ContextId == i) {
                     continue;
                 } else {
-                    ElementView.AbsY = y;
-                    ElementView.AbsY += this.Y_MARGIN;
-                    this.Traverse(Node.Children[i], ElementView.AbsX, ElementView.AbsY);
+                    ElementView.AbsY = MaxYPostition;
                 }
             }
             return;

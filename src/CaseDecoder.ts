@@ -42,16 +42,20 @@ module AssureIt {
 
 			var ChildNodeModel : NodeModel = new NodeModel(this.Case, Parent, Type, childLabel, Statement);
 
-			for(var i : number = 0; i < NoteData.length; i++) {
-				var note : CaseNote =
-								 new CaseNote(NoteData[i].Name, NoteData[i].Body);
-				ChildNodeModel.Notes.push(note);
+			if(NoteData != null) {
+				for(var i : number = 0; i < NoteData.length; i++) {
+					var note : CaseNote =
+									 new CaseNote(NoteData[i].Name, NoteData[i].Body);
+					ChildNodeModel.Notes.push(note);
+				}
 			}
 
-			for(var i : number = 0; i < AnnotationData.length; i++) {
-				var annotation : CaseAnnotation =
-								 new CaseAnnotation(AnnotationData[i].Name, AnnotationData[i].Body);
-				ChildNodeModel.Annotations.push(annotation);
+			if(AnnotationData != null) {
+				for(var i : number = 0; i < AnnotationData.length; i++) {
+					var annotation : CaseAnnotation =
+									 new CaseAnnotation(AnnotationData[i].Name, AnnotationData[i].Body);
+					ChildNodeModel.Annotations.push(annotation);
+				}
 			}
 
 			for(var i : number = 0; i < Children.length; i++) {
@@ -180,10 +184,11 @@ module AssureIt {
 			var Type : NodeType = this.Text2NodeTypeMap[obj["Type"]];
 			var Label : string = obj["Label"];
 			var Statement : string = obj["Statement"];
-	// 		var Notes = (obj["Notes"].length != 0) ? obj["Notes"] : orig.Notes;
+	 		var Notes = (obj["Notes"].length != 0) ? obj["Notes"] : orig.Notes;
 	// 		var X = (obj["x"] != 0) ? obj["x"] : orig.x;
 	// 		var Y = (obj["y"] != 0) ? obj["x"] : orig.y;
 			var Model : NodeModel = new NodeModel(Case, Parent,	Type, Label, Statement);
+			Model.Notes = Notes;
 
 			var Children = obj["Children"];
 	 		if (Children.length != 0) {

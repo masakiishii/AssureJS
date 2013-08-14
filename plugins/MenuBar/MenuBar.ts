@@ -1,30 +1,77 @@
 /// <reference path="../../src/CaseModel.ts" />
 /// <reference path="../../src/PlugInManager.ts" />
 
-class MenuBarAPI {
+class MenuBar {
 
+	reDraw: () => void;
 	caseViewer: AssureIt.CaseViewer;
 	case0: AssureIt.Case;
 	node: JQuery;
 	serverApi: AssureIt.ServerAPI;
 
-	constructor(caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case, node: JQuery, serverApi: AssureIt.ServerAPI) {
+	constructor(caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case, node: JQuery, serverApi: AssureIt.ServerAPI, public plugIn: MenuBarActionPlugIn, reDraw: () => void) {
 		this.caseViewer = caseViewer;
 		this.case0 = case0;
 		this.node = node;
 		this.serverApi = serverApi;
+		this.reDraw = reDraw;
+		this.Init();
 	}
 
-	ReDraw(): void {
-		var backgroundlayer = <HTMLDivElement>document.getElementById("background");
-		var shapelayer = <SVGGElement><any>document.getElementById("layer0");
-		var contentlayer = <HTMLDivElement>document.getElementById("layer1");
-		var controllayer = <HTMLDivElement>document.getElementById("layer2");
-		var offset = $("#layer1").offset();
+	Init(): void {
+		var self = this;
 
-		var Screen = new AssureIt.ScreenManager(shapelayer, contentlayer, controllayer, backgroundlayer);
-		this.caseViewer.Draw(Screen);
-		Screen.SetOffset(offset.left, offset.top);
+		var thisNodeLabel: string = self.node.children('h4').text();
+		var thisNodeModel: AssureIt.NodeModel = self.case0.ElementMap[thisNodeLabel];
+		var thisNodeType: AssureIt.NodeType = thisNodeModel.Type;
+
+		$('#menu').remove();
+		var menu = $('<div id="menu">' +
+			'<a href="#" ><img id="commit"   src="'+this.serverApi.basepath+'images/icon.png" title="Commit" alt="commit" /></a>' +
+			'<a href="#" ><img id="remove"   src="'+this.serverApi.basepath+'images/icon.png" title="Remove" alt="remove" /></a>' +
+			'</div>');
+
+		switch(thisNodeType) {
+			case AssureIt.NodeType.Goal:
+				var hasContext: boolean = false;
+
+				for(var i: number = 0; i < thisNodeModel.Children.length; i++) {
+					if(thisNodeModel.Children[i].Type == AssureIt.NodeType.Context) {
+						hasContext = true;
+					}
+				}
+				if(!hasContext) {
+					menu.append('<a href="#" ><img id="context"  src="'+this.serverApi.basepath+'images/context.png" title="Context" alt="context" /></a>');
+				}
+				menu.append('<a href="#" ><img id="strategy" src="'+this.serverApi.basepath+'images/strategy.png" title="Strategy" alt="strategy" /></a>');
+				menu.append('<a href="#" ><img id="evidence" src="'+this.serverApi.basepath+'images/evidence.png" title="Evidence" alt="evidence" /></a>');
+				break;
+			case AssureIt.NodeType.Strategy:
+				menu.append('<a href="#" ><img id="goal"     src="'+this.serverApi.basepath+'images/goal.png" title="Goal" alt="goal" /></a>');
+				menu.append('<a href="#" ><img id="context"  src="'+this.serverApi.basepath+'images/context.png" title="Context" alt="context" /></a>');
+				break;
+			case AssureIt.NodeType.Evidence:
+				menu.append('<a href="#" ><img id="context"  src="'+this.serverApi.basepath+'images/context.png" title="Context" alt="context" /></a>');
+				break;
+			default:
+				break;
+		}
+
+		menu.css({ position: 'absolute', top: self.node.position().top + self.node.height() + 5 , display: 'block', opacity: 0 });
+		menu.hover(function () {}, function () { $(this).remove(); });
+		(<any>menu).jqDock({
+			align: 'bottom',
+			fadeIn: 200,
+			idle: 1500,
+			size: 45,
+			distance: 60,
+			labels: 'tc',
+			duration: 500,
+			source: function () { return this.src.replace(/(jpg|gif)$/, 'png'); },
+			onReady: function () { menu.css({ left: self.node.position().left + (self.node.outerWidth() - menu.width()) / 2 }); },
+		});
+		menu.appendTo($('#layer2'));
+		this.plugIn.plugInManager.UseUILayer(this.plugIn);
 	}
 
 	AddNode(nodeType: AssureIt.NodeType): void {
@@ -34,47 +81,7 @@ class MenuBarAPI {
 		this.caseViewer.ViewMap[newNodeModel.Label] = new AssureIt.NodeView(this.caseViewer, newNodeModel);
 		this.caseViewer.ViewMap[newNodeModel.Label].ParentShape = this.caseViewer.ViewMap[newNodeModel.Parent.Label];
 		this.caseViewer.Resize();
-		this.ReDraw();
-	}
-
-	ShowSubMenu(): void {
-		var self = this;
-		$('#submenu').remove();
-
-		var submenu = $('<div id="submenu">' +
-			'<a href="#" ><img id="goal" src="images/icon.png" title="Goal" alt="goal" /></a>' +
-			'<a href="#" ><img id="context" src="images/icon.png" title="Context" alt="context" /></a>' +
-			'<a href="#" ><img id="strategy" src="images/icon.png" title="Strategy" alt="strategy" /></a>' +
-			'<a href="#" ><img id="evidence" src="images/icon.png" title="Evidence" alt="evidence" /></a></div>');
-		submenu.css({ position: 'absolute', top: this.node.position().top, left: this.node.position().left, display: 'block', opacity: 0 });
-		submenu.hover(function() {}, function() { $(this).remove(); });
-		(<any>submenu).jqDock({
-			align: 'right',
-			fadeIn: 200,
-			idle: 1500,
-			size: 48,
-			distance: 60,
-			labels: 'tc',
-			duration: 500,
-			source: function () { return this.src.replace(/(jpg|gif)$/, 'png'); },
-		});
-		submenu.appendTo($('#layer2'));
-
-		$('#goal').click(function() {
-			self.AddNode(AssureIt.NodeType.Goal);
-		});
-
-		$('#context').click(function() {
-			self.AddNode(AssureIt.NodeType.Context);
-		});
-
-		$('#strategy').click(function() {
-			self.AddNode(AssureIt.NodeType.Strategy);
-		});
-
-		$('#evidence').click(function() {
-			self.AddNode(AssureIt.NodeType.Evidence);
-		});
+		this.reDraw();
 	}
 
 	GetDescendantLabels(labels: string[], children: AssureIt.NodeModel[]): string[] {
@@ -108,77 +115,139 @@ class MenuBarAPI {
 		}
 
 		this.caseViewer.Resize();
-		this.ReDraw();
+		this.reDraw();
 	}
 
 	Commit(): void {
-		(<any>$('#commit_window')).dialog('open');
+		(<any>$('#modal')).dialog('open');
+	}
 
-		//this.serverApi.Commit(this.case0.ElementTop, "test"/* TODO: input from textarea */, this.case0.CommitId);
+	SetEventHandlers(): void {
+
+		$('#goal').click(() => {
+			this.AddNode(AssureIt.NodeType.Goal);
+		});
+
+		$('#context').click(() => {
+			this.AddNode(AssureIt.NodeType.Context);
+		});
+
+		$('#strategy').click(() => {
+			this.AddNode(AssureIt.NodeType.Strategy);
+		});
+
+		$('#evidence').click(() => {
+			this.AddNode(AssureIt.NodeType.Evidence);
+		});
+
+		$('#remove').click(() => {
+			this.RemoveNode();
+		});
+
+		$('#commit').click(() => {
+			this.Commit();
+		});
 	}
 
 }
 
-class MenuBarPlugIn extends AssureIt.ActionPlugIn {
+class CommitWindow {
+
+	defaultMessage: string = "Type your commit message...";
+
+	constructor() {
+		this.Init();
+	}
+
+	Init(): void {
+		$('#modal').remove();
+		var modal = $('<div id="modal" title="Commit Message" />');
+		(<any>modal).dialog({
+			autoOpen: false,
+			modal: true,
+			resizable: false,
+			draggable: false,
+			show: "clip",
+			hide: "fade"
+		});
+
+		var messageBox = $('<p align="center"><input id="message_box" type="text" size="30" value="' + this.defaultMessage + '" /></p>');
+		messageBox.css('color', 'gray');
+
+		var commitButton  = $('<p align="right"><input id="commit_button" type="button" value="commit"/></p>');
+		modal.append(messageBox);
+		modal.append(commitButton);
+		modal.appendTo($('layer2'));
+	}
+
+	SetEventHandlers(caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case, serverApi: AssureIt.ServerAPI): void {
+		var self = this;
+
+		$('#message_box').focus(function() {
+			if($(this).val() == self.defaultMessage) {
+				$(this).val("");
+				$(this).css('color', 'black');
+			}
+		});
+
+		$('#message_box').blur(function() {
+			if($(this).val() == "") {
+				$(this).val(self.defaultMessage);
+				$(this).css('color', 'gray');
+			}
+		});
+
+		$('#commit_button').click(function() {
+			var encoder   = new AssureIt.CaseEncoderDeprecated();
+			var converter = new AssureIt.Converter();
+			var contents = converter.GenOldJson(encoder.ConvertToOldJson(case0));
+			serverApi.Commit(contents, $(this).val, case0.CommitId);
+			window.location.reload(); //FIXME
+		});
+	}
+
+}
+
+class MenuBarPlugIn extends AssureIt.PlugIn {
+
+	constructor(plugInManager: AssureIt.PlugInManager) {
+		super(plugInManager);
+		this.ActionPlugIn = new MenuBarActionPlugIn(plugInManager);
+	}
+
+}
+
+class MenuBarActionPlugIn extends AssureIt.ActionPlugIn {
+
+	constructor(plugInManager: AssureIt.PlugInManager) {
+		super(plugInManager);
+	}
+
 	IsEnabled(caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case): boolean {
 		return true;
 	}
 
 	Delegate(caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case, serverApi: AssureIt.ServerAPI): boolean {
-		$('.node').unbind('hover');
+		var self = this;
+
+		$('.node').unbind('mouseenter').unbind('mouseleave'); // FIXME: this line may cause other plugin's event handler.
 		$('.node').hover(function () {
 			var node = $(this);
 
-			$('#menu').remove();
-			var menu = $('<div id="menu">' +
-				'<a href="#" ><img id="add" src="images/add.png" title="Add" alt="add" /></a>' +
-				'<a href="#" ><img id="remove" src="images/remove.png" title="Remove" alt="remove" /></a>' +
-				'<a href="#" ><img id="commit" src="images/commit.png" title="Commit" alt="commit" /></a>' +
-				'</div>');
-			menu.css({ position: 'absolute', top: node.position().top + 75, display: 'block', opacity: 0 });
-			menu.hover(function () { }, function () { $(this).remove(); });
-			(<any>menu).jqDock({
-				align: 'bottom',
-				fadeIn: 200,
-				idle: 1500,
-				size: 48,
-				distance: 60,
-				labels: 'tc',
-				duration: 500,
-				source: function () { return this.src.replace(/(jpg|gif)$/, 'png'); },
-				onReady: function () { menu.css({ left: node.position().left + (node.outerWidth() - menu.width()) / 2 }); },
+			var menuBar: MenuBar = new MenuBar(caseViewer, case0, node, serverApi, self , function() {
+				self.ReDraw(caseViewer);
 			});
-			menu.appendTo($('#layer2'));
+			menuBar.SetEventHandlers();
 
-			var menuBarApi: MenuBarAPI = new MenuBarAPI(caseViewer, case0, node, serverApi);
+			var commitWindow: CommitWindow = new CommitWindow();
+			commitWindow.SetEventHandlers(caseViewer, case0, serverApi);
 
-			$('#add').hover(function() {
-				menuBarApi.ShowSubMenu();
-			});
-
-			$('#remove').click(function() {
-				menuBarApi.RemoveNode();
-			});
-
-			$('#commit').click(function() {
-				menuBarApi.Commit();
-			});
-
-			$('#commit_window').remove();
-			var commitWindow = $('<div id="commit_window">' +
-				'<textarea>Type your commit message here...</textarea>' +
-				'</div>');
-			(<any>commitWindow).dialog({
-				autoOpen: false,
-				modal: true,
-				resizable: false,
-				draggable: false,
-				show: "clip",
-				hide: "fade"
-			});
-			commitWindow.appendTo($('layer2'));
-
-		}, function() { /* TODO */ });
+		}, function () { /* TODO */ });
 		return true;
+	}
+
+	DeleteFromDOM(): void {
+		console.log('hi');
+		$('#menu').remove();
 	}
 }

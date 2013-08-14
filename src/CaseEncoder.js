@@ -7,6 +7,40 @@ var AssureIt;
     })();
     AssureIt.JsonNodeModel = JsonNodeModel;
 
+    var CaseEncoderDeprecated = (function () {
+        function CaseEncoderDeprecated() {
+        }
+        CaseEncoderDeprecated.prototype.ConvertToOldJson = function (case0) {
+            var keys = Object.keys(case0.ElementMap);
+            var root = {
+                "NodeList": [],
+                "TopGoalLabel": case0.ElementTop.Label,
+                "NodeCount": keys.length,
+                "DCaseName": case0.CaseName
+            };
+
+            for (var i = 0; i < keys.length; i++) {
+                var node = case0.ElementMap[keys[i]];
+                var json = {
+                    Label: node.Label,
+                    Type: node.Type,
+                    Statement: node.Statement,
+                    Annotations: node.Annotations,
+                    Notes: node.Notes,
+                    Children: []
+                };
+                for (var j = 0; j < node.Children.length; j++) {
+                    json.Children.push(node.Children[j].Label);
+                }
+                root.NodeList.push(json);
+            }
+
+            return root;
+        };
+        return CaseEncoderDeprecated;
+    })();
+    AssureIt.CaseEncoderDeprecated = CaseEncoderDeprecated;
+
     var CaseEncoder = (function () {
         function CaseEncoder() {
         }
@@ -18,7 +52,7 @@ var AssureIt;
             this.JsonRoot.Annotations = root.Annotations;
             this.JsonRoot.Notes = root.Notes;
 
-            var JsonChildNodes = new Array();
+            var JsonChildNodes = [];
             for (var i = 0; i < root.Children.length; i++) {
                 JsonChildNodes[i] = new JsonNodeModel();
                 this.GetChild(root.Children[i], JsonChildNodes[i]);
@@ -30,7 +64,7 @@ var AssureIt;
             return this.JsonRoot;
         };
 
-        CaseEncoder.prototype.ConvertToASN = function (root) {
+        CaseEncoder.prototype.ConvertToASN = function (root, isSingleNode) {
             var encoded = (function (model, prefix) {
                 var ret = "";
                 switch (model.Type) {
@@ -64,8 +98,28 @@ var AssureIt;
                     }
                 }
                 ret += "\n";
+
                 if (model.Statement != "")
                     ret += (model.Statement + "\n");
+
+                var note_num = model.Notes.length;
+                if (note_num != 0) {
+                    for (var i = 0; i < model.Notes.length; i++) {
+                        var Note = model.Notes[i];
+                        ret += Note.Name + "::" + "\n";
+                        var keys = Object.keys(Note.Body);
+                        console.log("keys");
+                        console.log(keys);
+                        for (var j in keys) {
+                            ret += "\t" + keys[j] + ": " + Note.Body[keys[j]] + "\n";
+                        }
+                    }
+                }
+
+                if (isSingleNode) {
+                    return ret;
+                }
+
                 for (var i = 0; i < model.Children.length; i++) {
                     var child_model = model.Children[i];
                     console.log(child_model.Type);

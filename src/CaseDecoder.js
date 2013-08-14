@@ -43,14 +43,18 @@ var AssureIt;
 
             var ChildNodeModel = new AssureIt.NodeModel(this.Case, Parent, Type, childLabel, Statement);
 
-            for (var i = 0; i < NoteData.length; i++) {
-                var note = new AssureIt.CaseNote(NoteData[i].Name, NoteData[i].Body);
-                ChildNodeModel.Notes.push(note);
+            if (NoteData != null) {
+                for (var i = 0; i < NoteData.length; i++) {
+                    var note = new AssureIt.CaseNote(NoteData[i].Name, NoteData[i].Body);
+                    ChildNodeModel.Notes.push(note);
+                }
             }
 
-            for (var i = 0; i < AnnotationData.length; i++) {
-                var annotation = new AssureIt.CaseAnnotation(AnnotationData[i].Name, AnnotationData[i].Body);
-                ChildNodeModel.Annotations.push(annotation);
+            if (AnnotationData != null) {
+                for (var i = 0; i < AnnotationData.length; i++) {
+                    var annotation = new AssureIt.CaseAnnotation(AnnotationData[i].Name, AnnotationData[i].Body);
+                    ChildNodeModel.Annotations.push(annotation);
+                }
             }
 
             for (var i = 0; i < Children.length; i++) {
@@ -181,8 +185,10 @@ var AssureIt;
             var Type = this.Text2NodeTypeMap[obj["Type"]];
             var Label = obj["Label"];
             var Statement = obj["Statement"];
+            var Notes = (obj["Notes"].length != 0) ? obj["Notes"] : orig.Notes;
 
             var Model = new AssureIt.NodeModel(Case, Parent, Type, Label, Statement);
+            Model.Notes = Notes;
 
             var Children = obj["Children"];
             if (Children.length != 0) {

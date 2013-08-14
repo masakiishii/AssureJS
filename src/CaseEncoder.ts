@@ -17,6 +17,40 @@ module AssureIt {
 
 	}
 
+	export class CaseEncoderDeprecated {
+
+		constructor() {
+		}
+
+		ConvertToOldJson(case0: Case): any {
+			var keys = Object.keys(case0.ElementMap);
+			var root = {
+				"NodeList":     [],
+				"TopGoalLabel": case0.ElementTop.Label,
+				"NodeCount":    keys.length,
+				"DCaseName":    case0.CaseName
+			};
+
+			for (var i:number = 0; i < keys.length; i++) {
+				var node = case0.ElementMap[keys[i]];
+				var json = {
+					Label: node.Label,
+					Type: node.Type,
+					Statement: node.Statement,
+					Annotations: node.Annotations,
+					Notes: node.Notes,
+					Children: []
+				};
+				for(var j:number = 0; j < node.Children.length; j++) {
+					json.Children.push(node.Children[j].Label);
+				}
+				root.NodeList.push(json);
+			}
+
+			return root;
+		}
+	}
+
 	export class CaseEncoder {
 		JsonRoot: JsonNodeModel;
 
@@ -31,7 +65,7 @@ module AssureIt {
 			this.JsonRoot.Annotations = root.Annotations;
 			this.JsonRoot.Notes = root.Notes;
 
-			var JsonChildNodes: JsonNodeModel[] = new Array<JsonNodeModel>();
+			var JsonChildNodes: JsonNodeModel[] = [];
 			for (var i: number = 0; i < root.Children.length; i++) {
 				JsonChildNodes[i] = new JsonNodeModel();
 				this.GetChild(root.Children[i], JsonChildNodes[i]);
@@ -43,7 +77,7 @@ module AssureIt {
 			return this.JsonRoot;
 		}
 
-		ConvertToASN(root : NodeModel): string {
+		ConvertToASN(root : NodeModel, isSingleNode: boolean): string {
 			var encoded : string = (function(model : NodeModel, prefix : string) : string {
 				var ret : string = "";
 				switch (model.Type) {
@@ -74,7 +108,27 @@ module AssureIt {
 					}
 				}
 				ret += "\n";
+
 				if (model.Statement != "") ret += (model.Statement + "\n");
+
+				var note_num = model.Notes.length;
+				if (note_num != 0) {
+					for (var i = 0; i < model.Notes.length; i++) {
+						var Note = model.Notes[i];
+						ret += Note.Name + "::" + "\n";
+						var keys = Object.keys(Note.Body);
+						console.log("keys");
+						console.log(keys);
+						for (var j in keys) {
+							ret += "\t" + keys[j] + ": " + Note.Body[keys[j]] + "\n";
+						}
+					}
+				}
+
+				if (isSingleNode) {
+					return ret;
+				}
+
 				for (var i = 0; i < model.Children.length; i++) {
 					var child_model = model.Children[i];
 					console.log(child_model.Type);

@@ -31,13 +31,20 @@ module AssureIt {
 
 		Render(Viewer: CaseViewer, NodeModel: NodeModel): void {
 			if (this.DocBase != null) {
-				var parent = this.DocBase.parent();
-				if (parent != null) parent.remove(this.DocBase);
+				//var parent = this.DocBase.parent();
+				//if (parent != null) parent.remove(this.DocBase);
+				this.DocBase.remove();
 			}
 			this.DocBase = $('<div class="node">').css("position", "absolute")
 				.attr('id', NodeModel.Label);
 			this.DocBase.append($('<h4>' + NodeModel.Label + '</h4>'));
 			this.DocBase.append($('<p>' + NodeModel.Statement + '</p>'));
+
+			/* TODO split into plugin */
+			for (var i in NodeModel.Notes) {
+				this.DocBase.append($('<p style="color: DarkOliveGreen">' + "Note: " + NodeModel.Notes[i].Name + '</p>'));
+			}
+
 			this.InvokePlugInHTMLRender(Viewer, NodeModel, this.DocBase);
 			this.UpdateWidth(Viewer, NodeModel);
 			this.Resize(Viewer, NodeModel);
@@ -140,7 +147,19 @@ module AssureIt {
 			}
 		}
 
+		SetArrowColorWhite(white: boolean) {
+			if (white) {
+				this.ArrowPath.setAttribute("marker-end", "url(#Triangle-white)");
+			} else {
+				this.ArrowPath.setAttribute("marker-end", "url(#Triangle-black)");
+			}
+		}
+
 		SetColor(fill: string, stroke: string) {
+		}
+
+		GetColor(): {[index: string]: string} {
+			return {};
 		}
 
 		GetConnectorPosition(Dir: Direction): Point {
@@ -180,6 +199,10 @@ module AssureIt {
 			this.BodyRect.setAttribute("fill", fill);
 			this.BodyRect.setAttribute("stroke", stroke);
 		}
+
+		GetColor(): {[index: string]: string} {
+			return { "fill": this.BodyRect.getAttribute("fill"), "stroke": this.BodyRect.getAttribute("stroke") };
+		}
 	}
 
 	export class ContextShape extends SVGShape {
@@ -205,6 +228,10 @@ module AssureIt {
 			this.BodyRect.setAttribute("fill", fill);
 			this.BodyRect.setAttribute("stroke", stroke);
 		}
+
+		GetColor(): {[index: string]: string} {
+			return { "fill": this.BodyRect.getAttribute("fill"), "stroke": this.BodyRect.getAttribute("stroke") };
+		}
 	}
 
 	export class StrategyShape extends SVGShape {
@@ -219,12 +246,17 @@ module AssureIt {
 
 		Resize(CaseViewer: CaseViewer, NodeModel: NodeModel, HTMLDoc: HTMLDoc): void {
 			super.Resize(CaseViewer, NodeModel, HTMLDoc);
-			this.BodyPolygon.setAttribute("points", "10,0 " + this.Width + ",0 " + (this.Width - 10) + "," + this.Height + " 0," + this.Height);
+			var delta = 20;
+			this.BodyPolygon.setAttribute("points", ""+delta+",0 " + this.Width + ",0 " + (this.Width - delta) + "," + this.Height + " 0," + this.Height);
 		}
 
 		SetColor(fill: string, stroke: string) {
 			this.BodyPolygon.setAttribute("fill", fill);
 			this.BodyPolygon.setAttribute("stroke", stroke);
+		}
+
+		GetColor(): {[index: string]: string} {
+			return { "fill": this.BodyPolygon.getAttribute("fill"), "stroke": this.BodyPolygon.getAttribute("stroke") };
 		}
 
 		GetConnectorPosition(Dir: Direction): Point {
@@ -263,6 +295,10 @@ module AssureIt {
 			this.BodyEllipse.setAttribute("fill", fill);
 			this.BodyEllipse.setAttribute("stroke", stroke);
 		}
+
+		GetColor(): {[index: string]: string} {
+			return { "fill": this.BodyEllipse.getAttribute("fill"), "stroke": this.BodyEllipse.getAttribute("stroke") };
+		}
 	}
 
 	export class SVGShapeFactory {
@@ -289,6 +325,8 @@ module AssureIt {
 
 		ParentDirection: Direction = Direction.Top;
 		IsArrowReversed: boolean = false;
+		IsArrowStraight: boolean = false;
+		IsArrowWhite: boolean = false;
 
 		AbsX: number = 0;
 		AbsY: number = 0;
@@ -313,16 +351,26 @@ module AssureIt {
 			this.HTMLDoc.SetPosition(this.AbsX, this.AbsY);
 			this.Resize();
 			this.SVGShape.SetPosition(this.AbsX, this.AbsY);
-			this.SVGShape.SetColor("white", "black");
 			if (this.ParentShape != null) {
 				var p1: Point = null;
 				var p2: Point = null;
-				p1 = this.ParentShape.GetAbsoluteConnectorPosition(ReverseDirection(this.ParentDirection));
-				p2 = this.GetAbsoluteConnectorPosition(this.ParentDirection);
 				if (this.IsArrowReversed) {
-					this.SVGShape.SetArrowPosition(p2, p1, this.ParentDirection);
+					p1 = this.GetAbsoluteConnectorPosition(this.ParentDirection);
+					p2 = this.ParentShape.GetAbsoluteConnectorPosition(ReverseDirection(this.ParentDirection));
 				} else {
-					this.SVGShape.SetArrowPosition(p1, p2, this.ParentDirection);
+					p1 = this.ParentShape.GetAbsoluteConnectorPosition(ReverseDirection(this.ParentDirection));
+					p2 = this.GetAbsoluteConnectorPosition(this.ParentDirection);
+				}
+				if (this.IsArrowStraight) {
+					if (this.ParentDirection == Direction.Bottom || this.ParentDirection == Direction.Top) {
+						p1.x = p2.x;
+					} else {
+						p1.y = p2.y;
+					}
+				}
+				this.SVGShape.SetArrowPosition(p1, p2, this.ParentDirection);
+				if (this.IsArrowWhite) {
+					this.SVGShape.SetArrowColorWhite(true);
 				}
 			}
 			return; // TODO
@@ -390,7 +438,7 @@ module AssureIt {
 	export class CaseViewer {
 		ViewMap: { [index: string]: NodeView; };
 		ElementTop : NodeModel;
-		static ElementWidth = 150;
+		static ElementWidth = 250;
 
 		constructor(public Source: Case, public pluginManager : PlugInManager, public serverApi: ServerAPI) {
 			this.ViewMap = <any>[]; // a hack to avoid tsc's problem.
@@ -437,7 +485,7 @@ module AssureIt {
 
 		LayoutElement() : void {
 			var layout : LayoutEngine = new LayoutPortrait(this.ViewMap); //TODO Enable switch Layout engine
-			layout.Init(this.ElementTop, 300, 0);
+			layout.Init(this.ElementTop, 300, 0, CaseViewer.ElementWidth);
 			layout.Traverse(this.ElementTop, 300, 0);
 			layout.SetFootElementPosition();
 			layout.SetAllElementPosition(this.ElementTop);

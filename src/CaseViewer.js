@@ -17,13 +17,16 @@ var AssureIt;
         }
         HTMLDoc.prototype.Render = function (Viewer, NodeModel) {
             if (this.DocBase != null) {
-                var parent = this.DocBase.parent();
-                if (parent != null)
-                    parent.remove(this.DocBase);
+                this.DocBase.remove();
             }
             this.DocBase = $('<div class="node">').css("position", "absolute").attr('id', NodeModel.Label);
             this.DocBase.append($('<h4>' + NodeModel.Label + '</h4>'));
             this.DocBase.append($('<p>' + NodeModel.Statement + '</p>'));
+
+            for (var i in NodeModel.Notes) {
+                this.DocBase.append($('<p style="color: DarkOliveGreen">' + "Note: " + NodeModel.Notes[i].Name + '</p>'));
+            }
+
             this.InvokePlugInHTMLRender(Viewer, NodeModel, this.DocBase);
             this.UpdateWidth(Viewer, NodeModel);
             this.Resize(Viewer, NodeModel);
@@ -134,7 +137,19 @@ var AssureIt;
             }
         };
 
+        SVGShape.prototype.SetArrowColorWhite = function (white) {
+            if (white) {
+                this.ArrowPath.setAttribute("marker-end", "url(#Triangle-white)");
+            } else {
+                this.ArrowPath.setAttribute("marker-end", "url(#Triangle-black)");
+            }
+        };
+
         SVGShape.prototype.SetColor = function (fill, stroke) {
+        };
+
+        SVGShape.prototype.GetColor = function () {
+            return {};
         };
 
         SVGShape.prototype.GetConnectorPosition = function (Dir) {
@@ -178,6 +193,10 @@ var AssureIt;
             this.BodyRect.setAttribute("fill", fill);
             this.BodyRect.setAttribute("stroke", stroke);
         };
+
+        GoalShape.prototype.GetColor = function () {
+            return { "fill": this.BodyRect.getAttribute("fill"), "stroke": this.BodyRect.getAttribute("stroke") };
+        };
         return GoalShape;
     })(SVGShape);
     AssureIt.GoalShape = GoalShape;
@@ -207,6 +226,10 @@ var AssureIt;
             this.BodyRect.setAttribute("fill", fill);
             this.BodyRect.setAttribute("stroke", stroke);
         };
+
+        ContextShape.prototype.GetColor = function () {
+            return { "fill": this.BodyRect.getAttribute("fill"), "stroke": this.BodyRect.getAttribute("stroke") };
+        };
         return ContextShape;
     })(SVGShape);
     AssureIt.ContextShape = ContextShape;
@@ -225,12 +248,17 @@ var AssureIt;
 
         StrategyShape.prototype.Resize = function (CaseViewer, NodeModel, HTMLDoc) {
             _super.prototype.Resize.call(this, CaseViewer, NodeModel, HTMLDoc);
-            this.BodyPolygon.setAttribute("points", "10,0 " + this.Width + ",0 " + (this.Width - 10) + "," + this.Height + " 0," + this.Height);
+            var delta = 20;
+            this.BodyPolygon.setAttribute("points", "" + delta + ",0 " + this.Width + ",0 " + (this.Width - delta) + "," + this.Height + " 0," + this.Height);
         };
 
         StrategyShape.prototype.SetColor = function (fill, stroke) {
             this.BodyPolygon.setAttribute("fill", fill);
             this.BodyPolygon.setAttribute("stroke", stroke);
+        };
+
+        StrategyShape.prototype.GetColor = function () {
+            return { "fill": this.BodyPolygon.getAttribute("fill"), "stroke": this.BodyPolygon.getAttribute("stroke") };
         };
 
         StrategyShape.prototype.GetConnectorPosition = function (Dir) {
@@ -273,6 +301,10 @@ var AssureIt;
             this.BodyEllipse.setAttribute("fill", fill);
             this.BodyEllipse.setAttribute("stroke", stroke);
         };
+
+        EvidenceShape.prototype.GetColor = function () {
+            return { "fill": this.BodyEllipse.getAttribute("fill"), "stroke": this.BodyEllipse.getAttribute("stroke") };
+        };
         return EvidenceShape;
     })(SVGShape);
     AssureIt.EvidenceShape = EvidenceShape;
@@ -300,6 +332,8 @@ var AssureIt;
         function NodeView(CaseViewer, NodeModel) {
             this.ParentDirection = Direction.Top;
             this.IsArrowReversed = false;
+            this.IsArrowStraight = false;
+            this.IsArrowWhite = false;
             this.AbsX = 0;
             this.AbsY = 0;
             this.x = 0;
@@ -320,16 +354,26 @@ var AssureIt;
             this.HTMLDoc.SetPosition(this.AbsX, this.AbsY);
             this.Resize();
             this.SVGShape.SetPosition(this.AbsX, this.AbsY);
-            this.SVGShape.SetColor("white", "black");
             if (this.ParentShape != null) {
                 var p1 = null;
                 var p2 = null;
-                p1 = this.ParentShape.GetAbsoluteConnectorPosition(ReverseDirection(this.ParentDirection));
-                p2 = this.GetAbsoluteConnectorPosition(this.ParentDirection);
                 if (this.IsArrowReversed) {
-                    this.SVGShape.SetArrowPosition(p2, p1, this.ParentDirection);
+                    p1 = this.GetAbsoluteConnectorPosition(this.ParentDirection);
+                    p2 = this.ParentShape.GetAbsoluteConnectorPosition(ReverseDirection(this.ParentDirection));
                 } else {
-                    this.SVGShape.SetArrowPosition(p1, p2, this.ParentDirection);
+                    p1 = this.ParentShape.GetAbsoluteConnectorPosition(ReverseDirection(this.ParentDirection));
+                    p2 = this.GetAbsoluteConnectorPosition(this.ParentDirection);
+                }
+                if (this.IsArrowStraight) {
+                    if (this.ParentDirection == Direction.Bottom || this.ParentDirection == Direction.Top) {
+                        p1.x = p2.x;
+                    } else {
+                        p1.y = p2.y;
+                    }
+                }
+                this.SVGShape.SetArrowPosition(p1, p2, this.ParentDirection);
+                if (this.IsArrowWhite) {
+                    this.SVGShape.SetArrowColorWhite(true);
                 }
             }
             return;
@@ -449,7 +493,7 @@ var AssureIt;
 
         CaseViewer.prototype.LayoutElement = function () {
             var layout = new AssureIt.LayoutPortrait(this.ViewMap);
-            layout.Init(this.ElementTop, 300, 0);
+            layout.Init(this.ElementTop, 300, 0, CaseViewer.ElementWidth);
             layout.Traverse(this.ElementTop, 300, 0);
             layout.SetFootElementPosition();
             layout.SetAllElementPosition(this.ElementTop);
@@ -464,7 +508,7 @@ var AssureIt;
             this.pluginManager.RegisterActionEventListeners(this, this.Source, this.serverApi);
             this.Resize();
         };
-        CaseViewer.ElementWidth = 150;
+        CaseViewer.ElementWidth = 250;
         return CaseViewer;
     })();
     AssureIt.CaseViewer = CaseViewer;

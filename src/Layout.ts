@@ -6,11 +6,12 @@ module AssureIt {
 	export class LayoutEngine {
 		X_MARGIN: number;
 		Y_MARGIN: number;
+		ElementWidth: number;
 
 		constructor(public ViewMap: { [index: string]: NodeView; }) {
 		}
 
-		Init(Element: NodeModel, x: number, y: number): void {
+		Init(Element: NodeModel, x: number, y: number, ElementWidth: number): void {
 		}
 
 		Traverse(Element: NodeModel, x: number, y: number): void {
@@ -81,6 +82,8 @@ module AssureIt {
 			if (Element.Type == NodeType.Context) {
 				CaseView.ParentDirection = Direction.Bottom;
 				CaseView.IsArrowReversed = true;
+				CaseView.IsArrowStraight = true;
+				CaseView.IsArrowWhite = true;
 			} else {
 				CaseView.ParentDirection = Direction.Left;
 			}
@@ -155,13 +158,18 @@ module AssureIt {
 	}
 
 	export class LayoutPortrait extends LayoutEngine {
+		ElementWidth: number = 150;
 		X_MARGIN = 200;
-		Y_MARGIN = 160;
+		Y_MARGIN = 150;
+		Y_ADJUSTMENT_MARGIN: number = 50;
+		Y_NODE_MARGIN: number = 205;
+		Y_NODE_ADJUSTMENT_MARGIN: number = 70;
 		X_CONTEXT_MARGIN: number = 200;
 		X_FOOT_MARGIN: number = 100;
 		X_MULTI_ELEMENT_MARGIN: number = 20;
 		footelement: string[] = new Array();
 		contextId: number = -1;
+
 
 		constructor(public ViewMap: { [index: string]: NodeView; }) {
 			super(ViewMap);
@@ -174,6 +182,8 @@ module AssureIt {
 			var h2: number = ParentView.HTMLDoc.Height;
 			ContextView.ParentDirection = Direction.Left;
 			ContextView.IsArrowReversed = true;
+			ContextView.IsArrowStraight = true;
+			ContextView.IsArrowWhite = true;
 			ContextView.AbsX = (ParentView.AbsX + this.X_CONTEXT_MARGIN);
 			ContextView.AbsY = (ParentView.AbsY - (h1 - h2) / 2);
 		}
@@ -280,8 +290,10 @@ module AssureIt {
 			return;
 		}
 
-		Init(Element: NodeModel, x: number, y: number): void {
+		Init(Element: NodeModel, x: number, y: number, ElementWidth: number): void {
 			this.ViewMap[Element.Label].AbsY += y;
+			this.X_MARGIN = ElementWidth + 50;
+			this.X_CONTEXT_MARGIN = ElementWidth + 50;
 		}
 
 		Traverse(Element: NodeModel, x: number, y: number) {
@@ -303,23 +315,46 @@ module AssureIt {
 				ContextView.AbsX += x;
 				ContextView.AbsY += (y - h);
 				ContextView.AbsX += this.X_CONTEXT_MARGIN;
-				this.EmitChildrenElement(Element, ParentView.AbsX, ParentView.AbsY, i);
+				this.EmitChildrenElement(Element, ParentView.AbsX, ParentView.AbsY, i, ((h1>h2)?h1/2:h2/2));
 			} else {  //emit element data except context
-				this.EmitChildrenElement(Element, x, y, i);
+				var h2 = 0;
+				if(ParentView != null) {
+					h2 = ParentView.HTMLDoc.Height/2;
+				}
+				this.EmitChildrenElement(Element, x, y, i, h2);
 			}
 		}
 
-		EmitChildrenElement(Node: NodeModel, x: number, y: number, ContextId: number): void {
+		EmitChildrenElement(Node: NodeModel, x: number, y: number, ContextId: number, h: number): void {
 			var n: number = Node.Children.length;
+			var MaxYPostition: number  = 0;
+			for (var i: number = 0; i < n; i++) {
+				var ElementView: NodeView = this.ViewMap[Node.Children[i].Label];
+				var j = this.GetContextIndex(Node.Children[i]);
+				var ContextHeight = 0;
+				if(j != -1) {
+					ContextHeight = this.ViewMap[Node.Children[i].Children[j].Label].HTMLDoc.Height;
+				}
+				if (ContextId == i) {
+					continue;
+				}
+				else {
+					var height = (ContextHeight > ElementView.HTMLDoc.Height)?ContextHeight: ElementView.HTMLDoc.Height;
+					var ParentElementView: NodeView = this.ViewMap[Node.Label];
+					ElementView.AbsY = y;
+					ElementView.AbsY += ((height>this.Y_MARGIN) ? height : this.Y_MARGIN) + h;
+					ElementView.AbsY += (((ElementView.AbsY - ParentElementView.AbsY) < this.Y_NODE_MARGIN) ? this.Y_NODE_ADJUSTMENT_MARGIN : 0);
+					MaxYPostition = (ElementView.AbsY > MaxYPostition) ? ElementView.AbsY : MaxYPostition;
+					this.Traverse(Node.Children[i], ElementView.AbsX, ElementView.AbsY);
+				}
+			}
 			for (var i: number = 0; i < n; i++) {
 				var ElementView: NodeView = this.ViewMap[Node.Children[i].Label];
 				if (ContextId == i) {
 					continue;
 				}
 				else {
-					ElementView.AbsY = y;
-					ElementView.AbsY += this.Y_MARGIN;
-					this.Traverse(Node.Children[i], ElementView.AbsX, ElementView.AbsY);
+					ElementView.AbsY = MaxYPostition;
 				}
 			}
 			return;

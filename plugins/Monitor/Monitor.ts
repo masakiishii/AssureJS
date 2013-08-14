@@ -2,6 +2,16 @@
 /// <reference path="../../src/CaseViewer.ts" />
 /// <reference path="../../src/PlugInManager.ts" />
 
+class MonitorPlugIn extends AssureIt.PlugIn {
+
+	constructor(public plugInManager: AssureIt.PlugInManager) {
+		super(plugInManager);
+		this.HTMLRenderPlugIn = new MonitorHTMLRenderPlugIn(plugInManager);
+		this.SVGRenderPlugIn = new MonitorSVGRenderPlugIn(plugInManager);
+	}
+
+}
+
 class MonitorHTMLRenderPlugIn extends AssureIt.HTMLRenderPlugIn {
 	IsEnabled(caseViewer: AssureIt.CaseViewer, caseModel: AssureIt.NodeModel) : boolean {
 		return true;

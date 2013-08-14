@@ -4,6 +4,17 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
+var MonitorPlugIn = (function (_super) {
+    __extends(MonitorPlugIn, _super);
+    function MonitorPlugIn(plugInManager) {
+        _super.call(this, plugInManager);
+        this.plugInManager = plugInManager;
+        this.HTMLRenderPlugIn = new MonitorHTMLRenderPlugIn(plugInManager);
+        this.SVGRenderPlugIn = new MonitorSVGRenderPlugIn(plugInManager);
+    }
+    return MonitorPlugIn;
+})(AssureIt.PlugIn);
+
 var MonitorHTMLRenderPlugIn = (function (_super) {
     __extends(MonitorHTMLRenderPlugIn, _super);
     function MonitorHTMLRenderPlugIn() {

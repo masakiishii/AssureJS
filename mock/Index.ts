@@ -2,24 +2,32 @@
 /// <reference path="../src/CaseDecoder.ts" />
 /// <reference path="../src/CaseEncoder.ts" />
 /// <reference path="../src/CaseViewer.ts" />
+/// <reference path="../src/Converter.ts" />
 /// <reference path="../src/ServerApi.ts" />
 /// <reference path="../plugins/MenuBar/MenuBar.ts" />
 /// <reference path="../plugins/Editor/Editor.ts" />
 /// <reference path="../plugins/Annotation/Annotation.ts" />
 /// <reference path="../plugins/Monitor/Monitor.ts" />
 /// <reference path="../plugins/Note/Note.ts" />
+/// <reference path="../plugins/ColorTheme/ColorTheme.ts" />
 /// <reference path="../d.ts/jquery.d.ts" />
 
 $(function () {
 
-	var serverApi = new AssureIt.ServerAPI('http://localhost/ait'); //TODO config for Path
+	var serverApi = new AssureIt.ServerAPI('',true); //TODO config for Path
 	var pluginManager = new AssureIt.PlugInManager();
-	pluginManager.AddActionPlugIn("menu", new MenuBarPlugIn());
-	pluginManager.AddActionPlugIn("editor", new EditorPlugIn());
-	pluginManager.AddHTMLRenderPlugIn("annotation", new AnnotationHTMLRenderPlugIn());
-	pluginManager.AddHTMLRenderPlugIn("monitor", new MonitorHTMLRenderPlugIn());
-	pluginManager.AddHTMLRenderPlugIn("note", new NoteHTMLRenderPlugIn());
-	pluginManager.AddSVGRenderPlugIn("monitor", new MonitorSVGRenderPlugIn());
+	pluginManager.SetPlugIn("menu", new MenuBarPlugIn(pluginManager));
+	pluginManager.SetPlugIn("editor", new EditorPlugIn(pluginManager));
+	pluginManager.SetPlugIn("colortheme", new TiffanyBlueThemePlugIn(pluginManager));
+	pluginManager.SetPlugIn("annotation", new AnnotationPlugIn(pluginManager));
+	pluginManager.SetPlugIn("note", new NotePlugIn(pluginManager));
+	pluginManager.SetPlugIn("monitor", new MonitorPlugIn(pluginManager));
+
+	/*
+	var oldJsonData = serverApi.GetCase("",96);
+	var converter = new AssureIt.Converter();
+	var JsonData = converter.GenNewJson(oldJsonData);
+	*/
 
 	var JsonData = {
 		"DCaseName": "test",
@@ -123,7 +131,7 @@ $(function () {
 				{
 					"Name": "Monitor",
 					"Body": {
-						"nodeID": 51
+						"Script": "\"int f() {return 1;}\""
 					}
 				}
 					]

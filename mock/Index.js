@@ -1,12 +1,12 @@
 $(function () {
-    var serverApi = new AssureIt.ServerAPI('http://localhost/ait');
+    var serverApi = new AssureIt.ServerAPI('', true);
     var pluginManager = new AssureIt.PlugInManager();
-    pluginManager.AddActionPlugIn("menu", new MenuBarPlugIn());
-    pluginManager.AddActionPlugIn("editor", new EditorPlugIn());
-    pluginManager.AddHTMLRenderPlugIn("annotation", new AnnotationHTMLRenderPlugIn());
-    pluginManager.AddHTMLRenderPlugIn("monitor", new MonitorHTMLRenderPlugIn());
-    pluginManager.AddHTMLRenderPlugIn("note", new NoteHTMLRenderPlugIn());
-    pluginManager.AddSVGRenderPlugIn("monitor", new MonitorSVGRenderPlugIn());
+    pluginManager.SetPlugIn("menu", new MenuBarPlugIn(pluginManager));
+    pluginManager.SetPlugIn("editor", new EditorPlugIn(pluginManager));
+    pluginManager.SetPlugIn("colortheme", new TiffanyBlueThemePlugIn(pluginManager));
+    pluginManager.SetPlugIn("annotation", new AnnotationPlugIn(pluginManager));
+    pluginManager.SetPlugIn("note", new NotePlugIn(pluginManager));
+    pluginManager.SetPlugIn("monitor", new MonitorPlugIn(pluginManager));
 
     var JsonData = {
         "DCaseName": "test",
@@ -108,7 +108,7 @@ $(function () {
                     {
                         "Name": "Monitor",
                         "Body": {
-                            "nodeID": 51
+                            "Script": "\"int f() {return 1;}\""
                         }
                     }
                 ]
