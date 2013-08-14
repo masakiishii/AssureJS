@@ -42,6 +42,7 @@ class EditorLayoutPlugIn extends AssureIt.HTMLRenderPlugIn {
 
 class EditorActionPlugIn extends AssureIt.ActionPlugIn {
 	editor;
+	selector: string;
 	constructor(plugInManager: AssureIt.PlugInManager) {
 		super(plugInManager);
 		this.editor = CodeMirror.fromTextArea(document.getElementById('editor'), {
@@ -104,6 +105,7 @@ class EditorActionPlugIn extends AssureIt.ActionPlugIn {
 						$(selector).blur();
 					}
 				})
+			self.selector = selector;
 			$(selector)
 				.unbind('hover')
 				.on("blur", {node : node}, function(e: JQueryEventObject, node: JQuery) {
@@ -165,6 +167,6 @@ class EditorActionPlugIn extends AssureIt.ActionPlugIn {
 	}
 
 	DeleteFromDOM(): void {
-		$('#editor-wrapper').blur();
+		$(this.selector).blur();
 	}
 }

@@ -95,6 +95,7 @@ var EditorActionPlugIn = (function (_super) {
                     $(selector).blur();
                 }
             });
+            self.selector = selector;
             $(selector).unbind('hover').on("blur", { node: node }, function (e, node) {
                 console.log("blur");
                 e.stopPropagation();
@@ -132,7 +133,7 @@ var EditorActionPlugIn = (function (_super) {
     };
 
     EditorActionPlugIn.prototype.DeleteFromDOM = function () {
-        $('#editor-wrapper').blur();
+        $(this.selector).blur();
     };
     return EditorActionPlugIn;
 })(AssureIt.ActionPlugIn);
