@@ -355,11 +355,11 @@ module AssureIt {
 				var p1: Point = null;
 				var p2: Point = null;
 				if (this.IsArrowReversed) {
-					p1 = this.ParentShape.GetAbsoluteConnectorPosition(ReverseDirection(this.ParentDirection));
-					p2 = this.GetAbsoluteConnectorPosition(this.ParentDirection);
-				} else {
 					p1 = this.GetAbsoluteConnectorPosition(this.ParentDirection);
 					p2 = this.ParentShape.GetAbsoluteConnectorPosition(ReverseDirection(this.ParentDirection));
+				} else {
+					p1 = this.ParentShape.GetAbsoluteConnectorPosition(ReverseDirection(this.ParentDirection));
+					p2 = this.GetAbsoluteConnectorPosition(this.ParentDirection);
 				}
 				if (this.IsArrowStraight) {
 					if (this.ParentDirection == Direction.Bottom || this.ParentDirection == Direction.Top) {
