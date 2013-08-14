@@ -29,6 +29,7 @@ class MenuBar {
 		var menu = $('<div id="menu">' +
 			'<a href="#" ><img id="commit"   src="'+this.serverApi.basepath+'images/icon.png" title="Commit" alt="commit" /></a>' +
 			'<a href="#" ><img id="remove"   src="'+this.serverApi.basepath+'images/icon.png" title="Remove" alt="remove" /></a>' +
+			'<a href="#" ><img id="scale"   src="'+this.serverApi.basepath+'images/icon.png" title="Scale" alt="scale" /></a>' +
 			'</div>');
 
 		switch(thisNodeType) {
@@ -122,6 +123,32 @@ class MenuBar {
 		(<any>$('#modal')).dialog('open');
 	}
 
+	Scale(): void {
+		var $svg = $('#layer0');
+		var $layer1 = $('#layer1');
+		var scale = 1.0;
+		var top = Number($layer1.css('top').replace("px",""));
+		var left = Number($layer1.css('left').replace("px",""));
+		var offset = 10;
+		if(this.plugIn.isLargeScale) {
+			this.plugIn.isLargeScale = false;
+			top = top - offset * (0.1 / 1.0);
+			left = left - offset *(0.1 / 1.0);
+		} else {
+			scale = 0.1;
+			top = top - offset * (1.0 / 0.1);
+			left = left - offset * (1.0 / 0.1);
+			this.plugIn.isLargeScale = true;
+		}
+		console.log(top+":"+left);
+		$svg.attr("transform", "scale(" + scale + ")");
+		$layer1.css("transform", "scale(" + scale + ")");
+		$layer1.css("-moz-transform", "scale(" + scale + ")");
+		$layer1.css("-webkit-transform", "scale(" + scale + ")");
+		$layer1.css({top: 0+"px", left: 0+"px"});
+		this.reDraw();
+	}
+
 	SetEventHandlers(): void {
 
 		$('#goal').click(() => {
@@ -146,6 +173,10 @@ class MenuBar {
 
 		$('#commit').click(() => {
 			this.Commit();
+		});
+
+		$('#scale').click(() => {
+			this.Scale();
 		});
 	}
 
@@ -218,6 +249,7 @@ class MenuBarPlugIn extends AssureIt.PlugIn {
 }
 
 class MenuBarActionPlugIn extends AssureIt.ActionPlugIn {
+	isLargeScale: boolean = false;
 
 	constructor(plugInManager: AssureIt.PlugInManager) {
 		super(plugInManager);
@@ -247,7 +279,6 @@ class MenuBarActionPlugIn extends AssureIt.ActionPlugIn {
 	}
 
 	DeleteFromDOM(): void {
-		console.log('hi');
 		$('#menu').remove();
 	}
 }
