@@ -178,7 +178,7 @@ var AssureIt;
         ASNParser.prototype.Object2NodeModel = function (obj, orig) {
             var Case = this.Case;
             var Parent = obj["Parent"];
-            var Type = AssureIt.NodeType[obj["Type"]];
+            var Type = this.Text2NodeTypeMap[obj["Type"]];
             var Label = obj["Label"];
             var Statement = obj["Statement"];
 

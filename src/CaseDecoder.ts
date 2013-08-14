@@ -177,7 +177,7 @@ module AssureIt {
 		Object2NodeModel(obj : any, orig : NodeModel) : NodeModel {
 			var Case : Case = this.Case;
 			var Parent : NodeModel = obj["Parent"];
-			var Type : NodeType = NodeType[obj["Type"]];
+			var Type : NodeType = this.Text2NodeTypeMap[obj["Type"]];
 			var Label : string = obj["Label"];
 			var Statement : string = obj["Statement"];
 	// 		var Notes = (obj["Notes"].length != 0) ? obj["Notes"] : orig.Notes;
