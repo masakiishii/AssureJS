@@ -150,8 +150,7 @@ class EditorActionPlugIn extends AssureIt.ActionPlugIn {
 					//	caseViewer.ViewMap[viewkey].Update();
 					//}
 					$(this).css({display: 'none'});
-				})
-
+				});
 			editor.setValue(encoded);
 			editor.refresh();
 

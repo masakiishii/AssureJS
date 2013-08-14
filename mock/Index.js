@@ -104,7 +104,14 @@ $(function () {
                 "NodeType": 3,
                 "Label": "E1",
                 "Annotations": [],
-                "Notes": []
+                "Notes": [
+                    {
+                        "Name": "Monitor",
+                        "Body": {
+                            "Script": "\"int f() {return 1;}\""
+                        }
+                    }
+                ]
             },
             {
                 "Children": [],

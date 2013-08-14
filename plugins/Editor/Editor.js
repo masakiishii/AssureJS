@@ -119,7 +119,6 @@ var EditorActionPlugIn = (function (_super) {
 
                 $(this).css({ display: 'none' });
             });
-
             editor.setValue(encoded);
             editor.refresh();
         });

@@ -128,12 +128,12 @@ $(function () {
 				"Label": "E1",
 				"Annotations": [],
 				"Notes": [
-				//{
-				//	"Name": "Monitor",
-				//	"Body": {
-				//		"nodeID": 51
-				//	}
-				//}
+				{
+					"Name": "Monitor",
+					"Body": {
+						"Script": "\"int f() {return 1;}\""
+					}
+				}
 					]
 			},
 			{
