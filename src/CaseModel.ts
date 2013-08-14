@@ -112,7 +112,7 @@ module AssureIt {
 		ElementMap : { [index: string]: NodeModel};
 
 		IsModified : boolean;
-		//TopGoalLabel : string;
+		IsEditable: boolean;
 
 		constructor() {
 			this.IdCounters = [0, 0, 0, 0, 0];
@@ -161,6 +161,21 @@ module AssureIt {
 
 		GetPlugInModifier(key : string) : (Case, NodeModel, string, any) => boolean {
 			return CaseModifierConfig.PlugInMap[key];
+		}
+
+		IsLogin(): boolean {
+			var matchResult = document.cookie.match(/userId=(\w+);?/);
+			var userId = matchResult ? parseInt(matchResult[1]) : null;
+			return userId != null;
+		}
+
+		SetEditable(flag?: boolean): void {
+			if(flag == null) {
+				this.IsEditable = this.IsLogin();
+				return;
+			}
+			this.IsEditable = flag;
+			return;
 		}
 	}
 }

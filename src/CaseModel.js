@@ -154,6 +154,21 @@ var AssureIt;
         Case.prototype.GetPlugInModifier = function (key) {
             return CaseModifierConfig.PlugInMap[key];
         };
+
+        Case.prototype.IsLogin = function () {
+            var matchResult = document.cookie.match(/userId=(\w+);?/);
+            var userId = matchResult ? parseInt(matchResult[1]) : null;
+            return userId != null;
+        };
+
+        Case.prototype.SetEditable = function (flag) {
+            if (flag == null) {
+                this.IsEditable = this.IsLogin();
+                return;
+            }
+            this.IsEditable = flag;
+            return;
+        };
         return Case;
     })();
     AssureIt.Case = Case;
