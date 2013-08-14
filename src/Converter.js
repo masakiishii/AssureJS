@@ -59,6 +59,15 @@ var AssureIt;
             }
         };
 
+        Converter.prototype.GetPrefix = function (id, list) {
+            for (var i = 0; i < list.length; i++) {
+                if (list[i].ThisNodeId == id) {
+                    return list[i].NodeType.slice(0, 1);
+                }
+            }
+            return "G";
+        };
+
         Converter.prototype.GenNewJson = function (oldJsonData) {
             oldJsonData.contents = JSON.parse(oldJsonData.contents);
             this.SetOldNodeMap(oldJsonData);
@@ -71,7 +80,7 @@ var AssureIt;
 
             newJsonData["DCaseName"] = oldJsonData.contents.DCaseName;
             newJsonData["NodeCount"] = oldJsonData.contents.NodeCount;
-            newJsonData["TopGoalLabel"] = String(oldJsonData.contents.TopGoalId);
+            newJsonData["TopGoalLabel"] = this.GetPrefix(oldJsonData.contents.TopGoalId, oldJsonData.contents.NodeList) + String(oldJsonData.contents.TopGoalId);
             var n = oldJsonData.contents.NodeList.length;
             for (var i = 0; i < n; i++) {
                 var NodeListData = {

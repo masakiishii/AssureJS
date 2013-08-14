@@ -69,6 +69,15 @@ module AssureIt {
 			}
 		}
 
+		GetPrefix(id: number, list: any): string {
+			for(var i : number = 0; i < list.length; i++) {
+				if(list[i].ThisNodeId == id) {
+					return list[i].NodeType.slice(0,1);
+				}
+			}
+			return "G";
+		}
+
 		GenNewJson (oldJsonData : any) : any {
 			oldJsonData.contents = JSON.parse(oldJsonData.contents);
 			this.SetOldNodeMap(oldJsonData);
@@ -81,7 +90,7 @@ module AssureIt {
 
 			newJsonData["DCaseName"] = oldJsonData.contents.DCaseName;
 			newJsonData["NodeCount"] = oldJsonData.contents.NodeCount;
-			newJsonData["TopGoalLabel"] = String(oldJsonData.contents.TopGoalId);
+			newJsonData["TopGoalLabel"] = this.GetPrefix(oldJsonData.contents.TopGoalId, oldJsonData.contents.NodeList) + String(oldJsonData.contents.TopGoalId);
 			var n : number = oldJsonData.contents.NodeList.length;
 			for(var i : number = 0; i < n; i++) {
 				var NodeListData : any = {

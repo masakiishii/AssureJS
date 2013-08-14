@@ -75,8 +75,7 @@ var AssureIt;
             var NodeList = JsonData["NodeList"];
 
             this.InitNodeModelMap(NodeList);
-
-            var root = this.ParseChild("G" + TopGoalLabel, null);
+            var root = this.ParseChild(TopGoalLabel, null);
 
             return root;
         };
