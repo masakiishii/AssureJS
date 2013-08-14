@@ -105,6 +105,7 @@ class EditorActionPlugIn extends AssureIt.ActionPlugIn {
 					}
 				})
 			$(selector)
+				.unbind('hover')
 				.on("blur", {node : node}, function(e: JQueryEventObject, node: JQuery) {
 					console.log("blur");
 					e.stopPropagation();

@@ -95,7 +95,7 @@ var EditorActionPlugIn = (function (_super) {
                     $(selector).blur();
                 }
             });
-            $(selector).on("blur", { node: node }, function (e, node) {
+            $(selector).unbind('hover').on("blur", { node: node }, function (e, node) {
                 console.log("blur");
                 e.stopPropagation();
                 var label = e.data.node.attr('id');
