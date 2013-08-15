@@ -178,21 +178,20 @@ var AssureIt;
             _super.apply(this, arguments);
             this.Text2NodeTypeMap = { "Goal": AssureIt.NodeType.Goal, "Strategy": AssureIt.NodeType.Strategy, "Context": AssureIt.NodeType.Context, "Evidence": AssureIt.NodeType.Evidence };
         }
-        ASNParser.prototype.Object2NodeModel = function (obj, orig) {
+        ASNParser.prototype.Object2NodeModel = function (obj) {
             var Case = this.Case;
             var Parent = obj["Parent"];
             var Type = this.Text2NodeTypeMap[obj["Type"]];
             var Label = obj["Label"];
             var Statement = obj["Statement"];
             var Notes = (obj["Notes"] && obj["Notes"].length != 0) ? obj["Notes"] : [];
-
             var Model = new AssureIt.NodeModel(Case, Parent, Type, Label, Statement);
             Model.Notes = Notes;
 
             var Children = obj["Children"];
             if (Children.length != 0) {
                 for (var i = 0; i < Children.length; i++) {
-                    var Child = this.Object2NodeModel(Children[i], orig);
+                    var Child = this.Object2NodeModel(Children[i]);
                     Child.Parent = Model;
                     Model.Children.push(Child);
                 }
@@ -209,7 +208,7 @@ var AssureIt;
         };
         ASNParser.prototype.Parse = function (ASNData, orig) {
             var obj = Peg.parse(ASNData)[1];
-            var root = this.Object2NodeModel(obj, orig);
+            var root = this.Object2NodeModel(obj);
             if (orig != null) {
                 root.Parent = orig.Parent;
             }

@@ -64,15 +64,16 @@ var FullScreenEditorActionPlugIn = (function (_super) {
                 var label = case0.ElementTop.Label;
                 var orig_model = case0.ElementMap[label];
                 var orig_view = caseViewer.ViewMap[label];
+                case0.DeleteNodesRecursive(orig_model);
+                orig_view.DeleteHTMLElementRecursive($("#layer0"), $("#layer1"));
+                caseViewer.DeleteViewsRecursive(orig_view);
+                case0.ResetIdConters();
                 var decoder = new AssureIt.CaseDecoder();
-                var new_model = decoder.ParseASN(case0, editor.getValue(), orig_model);
+                var new_model = decoder.ParseASN(case0, editor.getValue(), null);
                 var new_view = new AssureIt.NodeView(caseViewer, new_model);
 
                 caseViewer.ElementTop = new_model;
                 case0.ElementTop = new_model;
-                case0.DeleteNodesRecursive(orig_model);
-                orig_view.DeleteHTMLElementRecursive($("#layer0"), $("#layer1"));
-                caseViewer.DeleteViewsRecursive(orig_view);
                 (function (model, view) {
                     caseViewer.ViewMap[model.Label] = view;
                     for (var i = 0; i < model.Children.length; i++) {

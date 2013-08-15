@@ -180,6 +180,9 @@ module AssureIt {
 			this.IdCounters[Type] += 1;
 			return NodeType[Type].charAt(0) + this.IdCounters[Type];
 		}
+		ResetIdConters() : void {
+			this.IdCounters = [0, 0, 0, 0, 0];
+		}
 
 		GetPlugInModifier(key : string) : (Case, NodeModel, string, any) => boolean {
 			return CaseModifierConfig.PlugInMap[key];

@@ -177,22 +177,20 @@ module AssureIt {
 
 	export class ASNParser extends Parser {
 		Text2NodeTypeMap : any = {"Goal" : NodeType.Goal, "Strategy" : NodeType.Strategy , "Context" : NodeType.Context, "Evidence" : NodeType.Evidence};
-		Object2NodeModel(obj : any, orig : NodeModel) : NodeModel {
+		Object2NodeModel(obj : any) : NodeModel {
 			var Case : Case = this.Case;
 			var Parent : NodeModel = obj["Parent"];
 			var Type : NodeType = this.Text2NodeTypeMap[obj["Type"]];
 			var Label : string = obj["Label"];
 			var Statement : string = obj["Statement"];
 	 		var Notes = (obj["Notes"] && obj["Notes"].length != 0) ? obj["Notes"] : [];
-	// 		var X = (obj["x"] != 0) ? obj["x"] : orig.x;
-	// 		var Y = (obj["y"] != 0) ? obj["x"] : orig.y;
 			var Model : NodeModel = new NodeModel(Case, Parent,	Type, Label, Statement);
 			Model.Notes = Notes;
 
 			var Children = obj["Children"];
 	 		if (Children.length != 0) {
 				for (var i : number = 0; i < Children.length; i++) {
-					var Child = this.Object2NodeModel(Children[i], orig);
+					var Child = this.Object2NodeModel(Children[i]);
 					Child.Parent = Model;
 					Model.Children.push(Child);
 				}
@@ -212,7 +210,7 @@ module AssureIt {
 		}
 		Parse(ASNData : string, orig : NodeModel) : NodeModel {
 			var obj : any = Peg.parse(ASNData)[1];
-			var root : NodeModel = this.Object2NodeModel(obj, orig);
+			var root : NodeModel = this.Object2NodeModel(obj);
 			if (orig != null) {
 				root.Parent = orig.Parent;
 			}
