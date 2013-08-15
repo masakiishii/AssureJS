@@ -47,7 +47,7 @@ var EditorActionPlugIn = (function (_super) {
         $('#editor-wrapper').css({ display: 'none', opacity: '1.0' });
     }
     EditorActionPlugIn.prototype.IsEnabled = function (caseViewer, case0) {
-        return case0.IsLogin();
+        return true;
     };
 
     EditorActionPlugIn.prototype.Delegate = function (caseViewer, case0, serverApi) {
