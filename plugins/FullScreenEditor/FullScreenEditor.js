@@ -41,7 +41,7 @@ var FullScreenEditorActionPlugIn = (function (_super) {
         $(this.editor.getWrapperElement()).css({
             height: "100%",
             width: "100%",
-            background: "rgba(255, 255, 255, 0.5)"
+            background: "rgba(255, 255, 255, 0.85)"
         });
         $('#fullscreen-editor-wrapper').css({
             position: "absolute",
