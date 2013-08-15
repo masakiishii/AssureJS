@@ -41,7 +41,7 @@ var FullScreenEditorActionPlugIn = (function (_super) {
         $(this.editor.getWrapperElement()).css({
             height: "100%",
             width: "100%",
-            background: "rgba(255, 255, 255, 0.5)"
+            background: "rgba(255, 255, 255, 0.85)"
         });
         $('#fullscreen-editor-wrapper').css({
             position: "absolute",
@@ -71,45 +71,47 @@ var FullScreenEditorActionPlugIn = (function (_super) {
 
             $('#fullscreen-editor-wrapper').css({ display: 'block' }).addClass("animated fadeInDown").focus().one("blur", { node: node }, function (e, node) {
                 e.stopPropagation();
-                var label = case0.ElementTop.Label;
-                var orig_model = case0.ElementMap[label];
-                var orig_view = caseViewer.ViewMap[label];
-                case0.DeleteNodesRecursive(orig_model);
-                orig_view.DeleteHTMLElementRecursive($("#layer0"), $("#layer1"));
-                caseViewer.DeleteViewsRecursive(orig_view);
-                case0.ResetIdConters();
                 var decoder = new AssureIt.CaseDecoder();
                 var new_model = decoder.ParseASN(case0, editor.getValue(), null);
-                var new_view = new AssureIt.NodeView(caseViewer, new_model);
+                if (new_model != null) {
+                    var label = case0.ElementTop.Label;
+                    var orig_model = case0.ElementMap[label];
+                    var orig_view = caseViewer.ViewMap[label];
+                    case0.DeleteNodesRecursive(orig_model);
+                    orig_view.DeleteHTMLElementRecursive($("#layer0"), $("#layer1"));
+                    caseViewer.DeleteViewsRecursive(orig_view);
+                    case0.ResetIdConters();
+                    var new_view = new AssureIt.NodeView(caseViewer, new_model);
 
-                caseViewer.ElementTop = new_model;
-                case0.ElementTop = new_model;
-                (function (model, view) {
-                    caseViewer.ViewMap[model.Label] = view;
-                    for (var i = 0; i < model.Children.length; i++) {
-                        var child_model = model.Children[i];
-                        var child_view = new AssureIt.NodeView(caseViewer, child_model);
-                        arguments.callee(child_model, child_view);
+                    caseViewer.ElementTop = new_model;
+                    case0.ElementTop = new_model;
+                    (function (model, view) {
+                        caseViewer.ViewMap[model.Label] = view;
+                        for (var i = 0; i < model.Children.length; i++) {
+                            var child_model = model.Children[i];
+                            var child_view = new AssureIt.NodeView(caseViewer, child_model);
+                            arguments.callee(child_model, child_view);
+                        }
+                        if (model.Parent != null)
+                            view.ParentShape = caseViewer.ViewMap[model.Parent.Label];
+                    })(new_model, new_view);
+                    new_view.AppendHTMLElementRecursive($("#layer0"), $("#layer1"), caseViewer);
+                    caseViewer.Resize();
+                    caseViewer.LayoutElement();
+                    for (var viewkey in caseViewer.ViewMap) {
+                        caseViewer.ViewMap[viewkey].Update();
                     }
-                    if (model.Parent != null)
-                        view.ParentShape = caseViewer.ViewMap[model.Parent.Label];
-                })(new_model, new_view);
-                new_view.AppendHTMLElementRecursive($("#layer0"), $("#layer1"), caseViewer);
-                caseViewer.Resize();
-                caseViewer.LayoutElement();
-                for (var viewkey in caseViewer.ViewMap) {
-                    caseViewer.ViewMap[viewkey].Update();
-                }
 
-                caseViewer.Resize();
-                var backgroundlayer = document.getElementById("background");
-                var shapelayer = document.getElementById("layer0");
-                var contentlayer = document.getElementById("layer1");
-                var controllayer = document.getElementById("layer2");
-                var offset = $("#layer1").offset();
-                var Screen = new AssureIt.ScreenManager(shapelayer, contentlayer, controllayer, backgroundlayer);
-                caseViewer.Draw(Screen);
-                Screen.SetOffset(offset.left, offset.top);
+                    caseViewer.Resize();
+                    var backgroundlayer = document.getElementById("background");
+                    var shapelayer = document.getElementById("layer0");
+                    var contentlayer = document.getElementById("layer1");
+                    var controllayer = document.getElementById("layer2");
+                    var offset = $("#layer1").offset();
+                    var Screen = new AssureIt.ScreenManager(shapelayer, contentlayer, controllayer, backgroundlayer);
+                    caseViewer.Draw(Screen);
+                    Screen.SetOffset(offset.left, offset.top);
+                }
 
                 var $this = $(this);
                 $this.addClass("animated fadeOutUp");

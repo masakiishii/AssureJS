@@ -231,7 +231,6 @@ module AssureIt {
 //			var xPosition: number = this.ViewMap[ElementList[0].Label].AbsX;
 			var n: number = ElementList.length;
 			for (var i: number = 0; i < n; i++) {
-				//console.log(this.ViewMap[ElementList[i].Label].AbsX);
 				if (ElementList[i].Type == NodeType.Context) {
 					continue;
 				}
@@ -300,7 +299,6 @@ module AssureIt {
 		Traverse(Element: NodeModel, x: number, y: number) {
 			if ((Element.Children.length == 0 && Element.Type != NodeType.Context) || (Element.Children.length == 1 && Element.Children[0].Type == NodeType.Context)) {
 				this.footelement.push(Element.Label);
-				//console.log(this.footelement);
 				return;
 			}
 
@@ -316,7 +314,7 @@ module AssureIt {
 				ContextView.AbsX += x;
 				ContextView.AbsY += (y - h);
 				ContextView.AbsX += this.X_CONTEXT_MARGIN;
-				this.EmitChildrenElement(Element, ParentView.AbsX, ParentView.AbsY, i, ((h1>h2)?h1/2:h2/2));
+				this.EmitChildrenElement(Element, ParentView.AbsX, ParentView.AbsY, i, ((this.Y_MARGIN > (h1 - h2)) ? 0 : (h1 - h2)));
 			} else {  //emit element data except context
 				var h2 = 0;
 				if(ParentView != null) {
@@ -340,10 +338,11 @@ module AssureIt {
 					continue;
 				}
 				else {
-					var height = (ContextHeight > ElementView.HTMLDoc.Height)?ContextHeight: ElementView.HTMLDoc.Height;
+					var height = (ContextHeight > ElementView.HTMLDoc.Height) ? ContextHeight : ElementView.HTMLDoc.Height;
 					var ParentElementView: NodeView = this.ViewMap[Node.Label];
 					ElementView.AbsY = y;
-					ElementView.AbsY += ((height>this.Y_MARGIN) ? height : this.Y_MARGIN) + h;
+//					ElementView.AbsY += ((height > this.Y_MARGIN) ? height : this.Y_MARGIN) + h;
+					ElementView.AbsY += this.Y_MARGIN + h;
 					ElementView.AbsY += (((ElementView.AbsY - ParentElementView.AbsY) < this.Y_NODE_MARGIN) ? this.Y_NODE_ADJUSTMENT_MARGIN : 0);
 					MaxYPostition = (ElementView.AbsY > MaxYPostition) ? ElementView.AbsY : MaxYPostition;
 					this.Traverse(Node.Children[i], ElementView.AbsX, ElementView.AbsY);
