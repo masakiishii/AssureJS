@@ -89,6 +89,17 @@ var FullScreenEditorActionPlugIn = (function (_super) {
                 for (var viewkey in caseViewer.ViewMap) {
                     caseViewer.ViewMap[viewkey].Update();
                 }
+
+                caseViewer.Resize();
+                var backgroundlayer = document.getElementById("background");
+                var shapelayer = document.getElementById("layer0");
+                var contentlayer = document.getElementById("layer1");
+                var controllayer = document.getElementById("layer2");
+                var offset = $("#layer1").offset();
+                var Screen = new AssureIt.ScreenManager(shapelayer, contentlayer, controllayer, backgroundlayer);
+                caseViewer.Draw(Screen);
+                Screen.SetOffset(offset.left, offset.top);
+
                 $(this).css({ display: 'none' });
             }).on("keydown", function (e) {
                 if (e.keyCode == 27) {
