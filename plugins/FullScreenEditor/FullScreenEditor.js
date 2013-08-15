@@ -4,8 +4,6 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-;
-
 var FullScreenEditorPlugIn = (function (_super) {
     __extends(FullScreenEditorPlugIn, _super);
     function FullScreenEditorPlugIn(plugInManager) {
@@ -36,7 +34,7 @@ var FullScreenEditorActionPlugIn = (function (_super) {
     function FullScreenEditorActionPlugIn(plugInManager) {
         _super.call(this, plugInManager);
         this.editor = CodeMirror.fromTextArea(document.getElementById('fullscreen-editor'), {
-            lineNumbers: false,
+            lineNumbers: true,
             mode: "text/x-asn",
             lineWrapping: true
         });
@@ -50,11 +48,10 @@ var FullScreenEditorActionPlugIn = (function (_super) {
     FullScreenEditorActionPlugIn.prototype.Delegate = function (caseViewer, case0, serverApi) {
         var editor = this.editor;
         var self = this;
-        $('.node').unbind('dblclick');
-        $('.node').dblclick(function (ev) {
+        $('#layer1').unbind('dblclick');
+        $('#layer1').dblclick(function (ev) {
             ev.stopPropagation();
             self.plugInManager.UseUILayer(self);
-
             var label = case0.ElementTop.Label;
             editor.setSize(640, 480);
 
@@ -63,10 +60,9 @@ var FullScreenEditorActionPlugIn = (function (_super) {
 
             var orig_model = case0.ElementMap[label];
             var orig_shape = caseViewer.ViewMap[label];
-
             var node = $(this);
 
-            $('#fullscreen-editor-wrapper').css({ position: 'absolute', top: 0, left: 0, display: 'block' }).appendTo($('#layer2')).focus().one("blur", { node: node }, function (e, node) {
+            $('#fullscreen-editor-wrapper').css({ position: 'absolute', top: 100, left: 100, display: 'block' }).appendTo($('#layer2')).focus().one("blur", { node: node }, function (e, node) {
                 e.stopPropagation();
                 var orig_model = case0.ElementMap[label];
                 var orig_view = caseViewer.ViewMap[label];
@@ -74,7 +70,7 @@ var FullScreenEditorActionPlugIn = (function (_super) {
                 var new_model = decoder.ParseASN(case0, editor.getValue(), orig_model);
                 var new_view = new AssureIt.NodeView(caseViewer, new_model);
 
-                orig_model.Parent.UpdateChild(orig_model, new_model);
+                caseViewer.ElementTop = new_model;
                 case0.DeleteNodesRecursive(orig_model);
                 orig_view.DeleteHTMLElementRecursive($("#layer0"), $("#layer1"));
                 caseViewer.DeleteViewsRecursive(orig_view);

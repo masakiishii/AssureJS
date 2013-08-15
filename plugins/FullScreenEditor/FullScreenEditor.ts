@@ -1,17 +1,9 @@
 /// <reference path="../../src/CaseModel.ts" />
 /// <reference path="../../src/ServerApi.ts" />
 /// <reference path="../../src/PlugInManager.ts" />
+/// <reference path="../Editor/Editor.ts" />
 
 //--- CodeMirror
-
-/* const */
-
-//var ExpandedNodeHeight = 200;
-//var InplaceEditorHeight = ExpandedNodeHeight - 50;
-//
-declare class CodeMirror {
-	static fromTextArea(selector: any, option: any): any;
-};
 
 class FullScreenEditorPlugIn extends AssureIt.PlugIn {
 
@@ -46,7 +38,7 @@ class FullScreenEditorActionPlugIn extends AssureIt.ActionPlugIn {
 	constructor(plugInManager: AssureIt.PlugInManager) {
 		super(plugInManager);
 		this.editor = CodeMirror.fromTextArea(document.getElementById('fullscreen-editor'), {
-			lineNumbers: false,
+			lineNumbers: true,
 			mode: "text/x-asn",
 			lineWrapping: true,
 		});
@@ -61,17 +53,10 @@ class FullScreenEditorActionPlugIn extends AssureIt.ActionPlugIn {
 	Delegate(caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case, serverApi: AssureIt.ServerAPI)  : boolean {
 		var editor = this.editor;
 		var self = this; //FIXME
-		$('.node').unbind('dblclick');
-		$('.node').dblclick(function(ev) {
+		$('#layer1').unbind('dblclick');
+		$('#layer1').dblclick(function(ev) {
 			ev.stopPropagation();
 			self.plugInManager.UseUILayer(self);
-			//var node = $(this);
-			//var p = node.position();
-			//var p_contents = node.children("p").position();
-			//var label : string = node.attr('id');
-			//var selector = "#" + label;
-			//console.log(selector);
-			//console.log($(selector).height() + ", " + p_contents.top);
 			var label : string = case0.ElementTop.Label;
 			editor.setSize(640, 480); /* TODO resize */
 
@@ -80,24 +65,10 @@ class FullScreenEditorActionPlugIn extends AssureIt.ActionPlugIn {
 
 			var orig_model : AssureIt.NodeModel = case0.ElementMap[label];
 			var orig_shape : AssureIt.NodeView = caseViewer.ViewMap[label];
-
-			//orig_model.IsEditing = true;
-			//orig_shape.HTMLDoc.Render(caseViewer, orig_model);
-
-			///* TODO use ReDraw() */
-			//caseViewer.Resize();
-			//var backgroundlayer = <HTMLDivElement>document.getElementById("background");
-			//var shapelayer = <SVGGElement><any>document.getElementById("layer0");
-			//var contentlayer = <HTMLDivElement>document.getElementById("layer1");
-			//var controllayer = <HTMLDivElement>document.getElementById("layer2");
-			//var offset = $("#layer1").offset();
-			//var Screen = new AssureIt.ScreenManager(shapelayer, contentlayer, controllayer, backgroundlayer);
-			//caseViewer.Draw(Screen);
-			//Screen.SetOffset(offset.left, offset.top);
 			var node = $(this);
 
 			$('#fullscreen-editor-wrapper')
-				.css({position: 'absolute', top: 0/*p.top + p_contents.top*/, left: 0/*p.left + p_contents.left*/, display: 'block'})
+				.css({position: 'absolute', top: 100/*p.top + p_contents.top*/, left: 100/*p.left + p_contents.left*/, display: 'block'})
 				.appendTo($('#layer2'))
 				.focus()
 				.one("blur", {node : node}, function(e: JQueryEventObject, node: JQuery) {
@@ -107,9 +78,11 @@ class FullScreenEditorActionPlugIn extends AssureIt.ActionPlugIn {
 					var decoder    : AssureIt.CaseDecoder = new AssureIt.CaseDecoder();
 					var new_model  : AssureIt.NodeModel = decoder.ParseASN(case0, editor.getValue(), orig_model);
 					var new_view  : AssureIt.NodeView = new AssureIt.NodeView(caseViewer, new_model);
-//  					orig_model.Parent.AppendChild(new_model);
-//  					orig_model.Parent.RemoveChild(orig_model);
-  					orig_model.Parent.UpdateChild(orig_model, new_model);
+  					//orig_model.Parent.AppendChild(new_model);
+  					//orig_model.Parent.RemoveChild(orig_model);
+  					//orig_model.Parent.UpdateChild(orig_model, new_model);
+  					//orig_model.UpdateChild(orig_model, new_model);
+					caseViewer.ElementTop = new_model;
 					case0.DeleteNodesRecursive(orig_model);
 					orig_view.DeleteHTMLElementRecursive($("#layer0"), $("#layer1"));
 					caseViewer.DeleteViewsRecursive(orig_view);
