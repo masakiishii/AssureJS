@@ -209,12 +209,16 @@ var AssureIt;
             return Model;
         };
         ASNParser.prototype.Parse = function (ASNData, orig) {
-            var obj = Peg.parse(ASNData)[1];
-            var root = this.Object2NodeModel(obj);
-            if (orig != null) {
-                root.Parent = orig.Parent;
+            try  {
+                var obj = Peg.parse(ASNData)[1];
+                var root = this.Object2NodeModel(obj);
+                if (orig != null) {
+                    root.Parent = orig.Parent;
+                }
+                return root;
+            } catch (e) {
+                return null;
             }
-            return root;
         };
         return ASNParser;
     })(Parser);

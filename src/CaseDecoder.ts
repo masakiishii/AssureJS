@@ -212,12 +212,16 @@ module AssureIt {
 			return Model;
 		}
 		Parse(ASNData : string, orig : NodeModel) : NodeModel {
-			var obj : any = Peg.parse(ASNData)[1];
-			var root : NodeModel = this.Object2NodeModel(obj);
-			if (orig != null) {
-				root.Parent = orig.Parent;
+			try {
+				var obj : any = Peg.parse(ASNData)[1];
+				var root : NodeModel = this.Object2NodeModel(obj);
+				if (orig != null) {
+					root.Parent = orig.Parent;
+				}
+				return root;
+			} catch(e) {
+				return null;
 			}
-			return root;
 		}
 	}
 

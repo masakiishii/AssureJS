@@ -81,48 +81,50 @@ class FullScreenEditorActionPlugIn extends AssureIt.ActionPlugIn {
 				.focus()
 				.one("blur", {node : node}, function(e: JQueryEventObject, node: JQuery) {
 					e.stopPropagation();
-					var label : string = case0.ElementTop.Label;
-					var orig_model : AssureIt.NodeModel = case0.ElementMap[label];
-					var orig_view : AssureIt.NodeView = caseViewer.ViewMap[label];
-					case0.DeleteNodesRecursive(orig_model);
-					orig_view.DeleteHTMLElementRecursive($("#layer0"), $("#layer1"));
-					caseViewer.DeleteViewsRecursive(orig_view);
-					case0.ResetIdConters();
 					var decoder    : AssureIt.CaseDecoder = new AssureIt.CaseDecoder();
 					var new_model  : AssureIt.NodeModel = decoder.ParseASN(case0, editor.getValue(), null);
-					var new_view  : AssureIt.NodeView = new AssureIt.NodeView(caseViewer, new_model);
-					//orig_model.Parent.AppendChild(new_model);
-					//orig_model.Parent.RemoveChild(orig_model);
-					//orig_model.Parent.UpdateChild(orig_model, new_model);
-					//orig_model.UpdateChild(orig_model, new_model);
-					caseViewer.ElementTop = new_model;
-					case0.ElementTop = new_model;
-					(function(model : AssureIt.NodeModel, view : AssureIt.NodeView) : void {
-						caseViewer.ViewMap[model.Label] = view;
-						for (var i = 0; i < model.Children.length; i++) {
-							var child_model = model.Children[i];
-							var child_view : AssureIt.NodeView = new AssureIt.NodeView(caseViewer, child_model);
-							arguments.callee(child_model, child_view);
+					if (new_model != null) {
+						var label : string = case0.ElementTop.Label;
+						var orig_model : AssureIt.NodeModel = case0.ElementMap[label];
+						var orig_view : AssureIt.NodeView = caseViewer.ViewMap[label];
+						case0.DeleteNodesRecursive(orig_model);
+						orig_view.DeleteHTMLElementRecursive($("#layer0"), $("#layer1"));
+						caseViewer.DeleteViewsRecursive(orig_view);
+						case0.ResetIdConters();
+						var new_view  : AssureIt.NodeView = new AssureIt.NodeView(caseViewer, new_model);
+						//orig_model.Parent.AppendChild(new_model);
+						//orig_model.Parent.RemoveChild(orig_model);
+						//orig_model.Parent.UpdateChild(orig_model, new_model);
+						//orig_model.UpdateChild(orig_model, new_model);
+						caseViewer.ElementTop = new_model;
+						case0.ElementTop = new_model;
+						(function(model : AssureIt.NodeModel, view : AssureIt.NodeView) : void {
+							caseViewer.ViewMap[model.Label] = view;
+							for (var i = 0; i < model.Children.length; i++) {
+								var child_model = model.Children[i];
+								var child_view : AssureIt.NodeView = new AssureIt.NodeView(caseViewer, child_model);
+								arguments.callee(child_model, child_view);
+							}
+							if (model.Parent != null) view.ParentShape = caseViewer.ViewMap[model.Parent.Label];
+						})(new_model, new_view);
+						new_view.AppendHTMLElementRecursive($("#layer0"), $("#layer1"), caseViewer);
+						caseViewer.Resize();
+						caseViewer.LayoutElement();
+						for (var viewkey in caseViewer.ViewMap) {
+							caseViewer.ViewMap[viewkey].Update();
 						}
-						if (model.Parent != null) view.ParentShape = caseViewer.ViewMap[model.Parent.Label];
-					})(new_model, new_view);
-					new_view.AppendHTMLElementRecursive($("#layer0"), $("#layer1"), caseViewer);
-					caseViewer.Resize();
-					caseViewer.LayoutElement();
-					for (var viewkey in caseViewer.ViewMap) {
-						caseViewer.ViewMap[viewkey].Update();
-					}
 
-					/* TODO use ReDraw() */
-					caseViewer.Resize();
-					var backgroundlayer = <HTMLDivElement>document.getElementById("background");
-					var shapelayer = <SVGGElement><any>document.getElementById("layer0");
-					var contentlayer = <HTMLDivElement>document.getElementById("layer1");
-					var controllayer = <HTMLDivElement>document.getElementById("layer2");
-					var offset = $("#layer1").offset();
-					var Screen = new AssureIt.ScreenManager(shapelayer, contentlayer, controllayer, backgroundlayer);
-					caseViewer.Draw(Screen);
-					Screen.SetOffset(offset.left, offset.top);
+						/* TODO use ReDraw() */
+						caseViewer.Resize();
+						var backgroundlayer = <HTMLDivElement>document.getElementById("background");
+						var shapelayer = <SVGGElement><any>document.getElementById("layer0");
+						var contentlayer = <HTMLDivElement>document.getElementById("layer1");
+						var controllayer = <HTMLDivElement>document.getElementById("layer2");
+						var offset = $("#layer1").offset();
+						var Screen = new AssureIt.ScreenManager(shapelayer, contentlayer, controllayer, backgroundlayer);
+						caseViewer.Draw(Screen);
+						Screen.SetOffset(offset.left, offset.top);
+					}
 
 					var $this = $(this);
 					$this.addClass("animated fadeOutUp");

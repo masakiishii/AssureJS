@@ -99,23 +99,23 @@ var EditorActionPlugIn = (function (_super) {
                 var label = e.data.node.attr('id');
                 var decoder = new AssureIt.CaseDecoder();
                 var new_model = decoder.ParseASN(case0, editor.getValue().trim(), orig_model);
+                if (new_model != null) {
+                    orig_model.IsEditing = false;
+                    orig_model.Statement = new_model.Statement == null ? "" : new_model.Statement;
+                    orig_model.Annotations = new_model.Annotations;
+                    orig_model.Notes = new_model.Notes;
+                    orig_shape.HTMLDoc.Render(caseViewer, orig_model);
 
-                orig_model.IsEditing = false;
-                orig_model.Statement = new_model.Statement == null ? "" : new_model.Statement;
-                orig_model.Annotations = new_model.Annotations;
-                orig_model.Notes = new_model.Notes;
-                orig_shape.HTMLDoc.Render(caseViewer, orig_model);
-
-                caseViewer.Resize();
-                var backgroundlayer = document.getElementById("background");
-                var shapelayer = document.getElementById("layer0");
-                var contentlayer = document.getElementById("layer1");
-                var controllayer = document.getElementById("layer2");
-                var offset = $("#layer1").offset();
-                var Screen = new AssureIt.ScreenManager(shapelayer, contentlayer, controllayer, backgroundlayer);
-                caseViewer.Draw(Screen);
-                Screen.SetOffset(offset.left, offset.top);
-
+                    caseViewer.Resize();
+                    var backgroundlayer = document.getElementById("background");
+                    var shapelayer = document.getElementById("layer0");
+                    var contentlayer = document.getElementById("layer1");
+                    var controllayer = document.getElementById("layer2");
+                    var offset = $("#layer1").offset();
+                    var Screen = new AssureIt.ScreenManager(shapelayer, contentlayer, controllayer, backgroundlayer);
+                    caseViewer.Draw(Screen);
+                    Screen.SetOffset(offset.left, offset.top);
+                }
                 $('#editor-wrapper').css({ display: 'none' });
             });
             editor.setValue(encoded);
