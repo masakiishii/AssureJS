@@ -1,10 +1,12 @@
 module AssureIt {
 
 	export class Converter {
-		NodeMap : { [index: string]: number};
+		NewNodeMap : { [index: string]: number};
+		OldNodeMap : { [index: number]: string};
 		
 		constructor() {
-			this.NodeMap = {};
+			this.NewNodeMap = {};
+			this.OldNodeMap = {};
 		}
 
 		ConvertOldNodeTypetoNewNodeType(newNodeListData : any, oldNodeListData : any) : void {
@@ -25,14 +27,14 @@ module AssureIt {
 		ConvertOldNodeListtoNewNodeList(newNodeListData : any, oldNodeListData : any) : void {
 			var n : number = oldNodeListData.Children.length;
 			for(var i : number = 0; i < n; i++) {
-				newNodeListData.Children.push(String(oldNodeListData.Children[i]));
+				newNodeListData.Children.push(this.OldNodeMap[oldNodeListData.Children[i]]);
 			}
 			if(oldNodeListData.Contexts != null && !(oldNodeListData.Contexts instanceof Array)) {
-				newNodeListData.Children.push(String(oldNodeListData.Contexts));
+				newNodeListData.Children.push(this.OldNodeMap[oldNodeListData.Contexts]);
 			}
 			this.ConvertOldNodeTypetoNewNodeType(newNodeListData, oldNodeListData);
 			newNodeListData.Statement = oldNodeListData.Description;
-			newNodeListData.Label = String(oldNodeListData.ThisNodeId);
+			newNodeListData.Label = this.OldNodeMap[oldNodeListData.ThisNodeId];
 			//newNodeListData.Annotation = oldNodeListData.Contexts; //FIXME
 			if(oldNodeListData.MetaData != null) {
 				n = oldNodeListData.MetaData.length;
@@ -43,14 +45,42 @@ module AssureIt {
 					};
 					json.Name = oldNodeListData.MetaData[i].Type;
 					json.Body = oldNodeListData.MetaData[i];
-//					console.log(oldNodeListData.MetaData[i].Type);
 					newNodeListData.Notes.push(json);
 				}
 			}
 		}
 
+		SetOldNodeMap(oldJsonData : any) : void {
+			var NodeList : any = oldJsonData.contents.NodeList;
+			var n : number = NodeList.length;
+			for(var i : number = 0; i < n; i++) {
+				if(NodeList[i].NodeType == "Goal") {
+					this.OldNodeMap[NodeList[i].ThisNodeId] = "G" + String(NodeList[i].ThisNodeId);
+				}
+				else if(NodeList[i].NodeType == "Context") {
+					this.OldNodeMap[NodeList[i].ThisNodeId] = "C" + String(NodeList[i].ThisNodeId);
+				}
+				else if(NodeList[i].NodeType == "Strategy") {
+					this.OldNodeMap[NodeList[i].ThisNodeId] = "S" + String(NodeList[i].ThisNodeId);
+				}
+				else {
+					this.OldNodeMap[NodeList[i].ThisNodeId] = "E" + String(NodeList[i].ThisNodeId);
+				}
+			}
+		}
+
+		GetPrefix(id: number, list: any): string {
+			for(var i : number = 0; i < list.length; i++) {
+				if(list[i].ThisNodeId == id) {
+					return list[i].NodeType.slice(0,1);
+				}
+			}
+			return "G";
+		}
+
 		GenNewJson (oldJsonData : any) : any {
 			oldJsonData.contents = JSON.parse(oldJsonData.contents);
+			this.SetOldNodeMap(oldJsonData);
 			var newJsonData = {
 				"DCaseName": "",
 				"NodeCount": 0,
@@ -60,7 +90,7 @@ module AssureIt {
 
 			newJsonData["DCaseName"] = oldJsonData.contents.DCaseName;
 			newJsonData["NodeCount"] = oldJsonData.contents.NodeCount;
-			newJsonData["TopGoalLabel"] = String(oldJsonData.contents.TopGoalId);
+			newJsonData["TopGoalLabel"] = this.GetPrefix(oldJsonData.contents.TopGoalId, oldJsonData.contents.NodeList) + String(oldJsonData.contents.TopGoalId);
 			var n : number = oldJsonData.contents.NodeList.length;
 			for(var i : number = 0; i < n; i++) {
 				var NodeListData : any = {
@@ -76,15 +106,14 @@ module AssureIt {
 				var oldNodeListData : any = oldJsonData.contents.NodeList[i];
 				this.ConvertOldNodeListtoNewNodeList(newNodeListData, oldNodeListData);
 			}
-//			console.log(newJsonData.NodeList);
 			return newJsonData;
 		}
 
-		SetNodeMap(newJsonData : any) : void {
+		SetNewNodeMap(newJsonData : any) : void {
 			var NodeList : any = newJsonData.NodeList
 			var n : number = NodeList.length;
 			for(var i : number = 0; i < n; i++) {
-				this.NodeMap[NodeList[i].Label] = i+1;
+				this.NewNodeMap[NodeList[i].Label] = i+1;
 			}
 		}
 
@@ -106,11 +135,11 @@ module AssureIt {
 		ConvertNewNodeListtoOldNodeList(newNodeListData : any, oldNodeListData : any) : void {
 			var n : number = newNodeListData.Children.length;
 			for(var i : number = 0; i < n; i++) {
-				oldNodeListData.Children.push(this.NodeMap[newNodeListData.Children[i]]);
+				oldNodeListData.Children.push(this.NewNodeMap[newNodeListData.Children[i]]);
 			}
 			this.ConvertNewNodeTypetoOldNodeType(newNodeListData, oldNodeListData);
 			oldNodeListData.Description = newNodeListData.Statement;
-			oldNodeListData.ThisNodeId = this.NodeMap[newNodeListData.Label];
+			oldNodeListData.ThisNodeId = this.NewNodeMap[newNodeListData.Label];
 			oldNodeListData.Contexts = newNodeListData.Annotation; //FIXME
 			n = newNodeListData.Notes.length;
 			for(var i : number = 0; i < n; i++) {
@@ -119,7 +148,7 @@ module AssureIt {
 		}
 
 		GenOldJson (newJsonData : any) : any {
-			this.SetNodeMap(newJsonData);
+			this.SetNewNodeMap(newJsonData);
 			var oldJsonData = {
 				"NodeList": [],
 				"TopGoalId":0,
@@ -129,7 +158,7 @@ module AssureIt {
 
 			oldJsonData.DCaseName = newJsonData.DCaseName;
 			oldJsonData.NodeCount = newJsonData.NodeCount;
-			oldJsonData.TopGoalId = this.NodeMap[newJsonData.TopGoalLabel];
+			oldJsonData.TopGoalId = this.NewNodeMap[newJsonData.TopGoalLabel];
 			var n : number = newJsonData.NodeList.length;
 			for(var i : number = 0; i < n; i++) {
 				var NodeListData : any = {
@@ -145,7 +174,6 @@ module AssureIt {
 				var oldNodeListData : any = oldJsonData.NodeList[i];
 				this.ConvertNewNodeListtoOldNodeList(newNodeListData, oldNodeListData);
 			}
-//			console.log(oldJsonData);
 			return oldJsonData;
 		}
 	}

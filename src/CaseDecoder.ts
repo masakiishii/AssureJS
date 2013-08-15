@@ -77,7 +77,6 @@ module AssureIt {
 			var NodeList : any[] = JsonData["NodeList"]; // TODO: remove any type
 
 			this.InitNodeModelMap(NodeList);
-
 			var root : NodeModel = this.ParseChild(TopGoalLabel, null);
 
 			return root;
