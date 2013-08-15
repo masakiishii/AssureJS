@@ -265,12 +265,13 @@ class MenuBarActionPlugIn extends AssureIt.ActionPlugIn {
 
 	Delegate(caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case, serverApi: AssureIt.ServerAPI): boolean {
 		var self = this;
+		var timeoutId: number;
 
 		$('.node').unbind('mouseenter').unbind('mouseleave'); // FIXME: this line may cause other plugin's event handler.
 		$('.node').hover(function () {
 			var node = $(this);
 
-			setTimeout(function () {
+			timeoutId = setTimeout(function () {
 				var menuBar: MenuBar = new MenuBar(caseViewer, case0, node, serverApi, self, function() {
 					self.ReDraw(caseViewer);
 				});
@@ -279,7 +280,7 @@ class MenuBarActionPlugIn extends AssureIt.ActionPlugIn {
 				var commitWindow: CommitWindow = new CommitWindow();
 				commitWindow.SetEventHandlers(caseViewer, case0, serverApi);
 			}, 1000);
-		}, function () { /* TODO */ });
+		}, function () { clearTimeout(timeoutId); /* TODO: add more action */ });
 		return true;
 	}
 
