@@ -9,9 +9,9 @@
 //var ExpandedNodeHeight = 200;
 //var InplaceEditorHeight = ExpandedNodeHeight - 50;
 //
-//declare class CodeMirror {
-//	static fromTextArea(selector: any, option: any): any;
-//};
+declare class CodeMirror {
+	static fromTextArea(selector: any, option: any): any;
+};
 
 class FullScreenEditorPlugIn extends AssureIt.PlugIn {
 
@@ -45,13 +45,13 @@ class FullScreenEditorActionPlugIn extends AssureIt.ActionPlugIn {
 	selector: string;
 	constructor(plugInManager: AssureIt.PlugInManager) {
 		super(plugInManager);
-		this.editor = CodeMirror.fromTextArea(document.getElementById('editor'), {
+		this.editor = CodeMirror.fromTextArea(document.getElementById('fullscreen-editor'), {
 			lineNumbers: false,
 			mode: "text/x-asn",
 			lineWrapping: true,
 		});
-		this.editor.setSize("300px","200px"); //FIXME
-		$('#editor-wrapper').css({display: 'none', opacity: '1.0'});
+		this.editor.setSize("300px","200px"); /* TODO resize */
+		$('#fullscreen-editor-wrapper').css({display: 'none', opacity: '1.0'});
 	}
 
 	IsEnabled (caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case) : boolean {
@@ -62,20 +62,21 @@ class FullScreenEditorActionPlugIn extends AssureIt.ActionPlugIn {
 		var editor = this.editor;
 		var self = this; //FIXME
 		$('.node').unbind('dblclick');
-		$('.node').dblclick(function(ev) { //FIXME
+		$('.node').dblclick(function(ev) {
 			ev.stopPropagation();
 			self.plugInManager.UseUILayer(self);
-			var node = $(this);
-			var p = node.position();
-			var p_contents = node.children("p").position();
-			var label : string = node.attr('id');
-			var selector = "#" + label;
-			console.log(selector);
-			console.log($(selector).height() + ", " + p_contents.top);
-			editor.setSize(node.children("p").width(), InplaceEditorHeight);
+			//var node = $(this);
+			//var p = node.position();
+			//var p_contents = node.children("p").position();
+			//var label : string = node.attr('id');
+			//var selector = "#" + label;
+			//console.log(selector);
+			//console.log($(selector).height() + ", " + p_contents.top);
+			var label : string = case0.ElementTop.Label;
+			editor.setSize(640, 480); /* TODO resize */
 
 			var encoder : AssureIt.CaseEncoder = new AssureIt.CaseEncoder();
-			var encoded = encoder.ConvertToASN(case0.ElementMap[label], true/*single node*/);
+			var encoded = encoder.ConvertToASN(case0.ElementTop, false/* whole node */);
 
 			var orig_model : AssureIt.NodeModel = case0.ElementMap[label];
 			var orig_shape : AssureIt.NodeView = caseViewer.ViewMap[label];
@@ -95,13 +96,12 @@ class FullScreenEditorActionPlugIn extends AssureIt.ActionPlugIn {
 			//Screen.SetOffset(offset.left, offset.top);
 			var node = $(this);
 
-			$('#editor-wrapper')
-				.css({position: 'absolute', top: p.top + p_contents.top, left: p.left + p_contents.left, display: 'block'})
+			$('#fullscreen-editor-wrapper')
+				.css({position: 'absolute', top: 0/*p.top + p_contents.top*/, left: 0/*p.left + p_contents.left*/, display: 'block'})
 				.appendTo($('#layer2'))
 				.focus()
 				.one("blur", {node : node}, function(e: JQueryEventObject, node: JQuery) {
 					e.stopPropagation();
-					var label : string = e.data.node.attr('id');
 					var orig_model : AssureIt.NodeModel = case0.ElementMap[label];
 					var orig_view : AssureIt.NodeView = caseViewer.ViewMap[label];
 					var decoder    : AssureIt.CaseDecoder = new AssureIt.CaseDecoder();
@@ -133,7 +133,7 @@ class FullScreenEditorActionPlugIn extends AssureIt.ActionPlugIn {
 				.on("keydown", function(e: JQueryEventObject) {
 					if(e.keyCode == 27 /* ESC */){
 						e.stopPropagation();
-						$(selector).blur();
+						$('#fullscreen-editor-wrapper').blur();
 					}
 				});
 			editor.setValue(encoded);
@@ -141,13 +141,13 @@ class FullScreenEditorActionPlugIn extends AssureIt.ActionPlugIn {
 			editor.focus();
 			$('#CodeMirror').focus();
 			$('#layer1').click(function(){
-					$(selector).blur(); 
+					$('#fullscreen-editor-wrapper').blur(); 
 				});
 		});
 		return true;
 	}
 
 	DeleteFromDOM(): void {
-		$(this.selector).blur();
+		$('fullscreen-editor-wrapper').blur();
 	}
 }

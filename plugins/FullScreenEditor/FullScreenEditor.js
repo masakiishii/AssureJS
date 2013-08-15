@@ -4,6 +4,8 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
+;
+
 var FullScreenEditorPlugIn = (function (_super) {
     __extends(FullScreenEditorPlugIn, _super);
     function FullScreenEditorPlugIn(plugInManager) {
@@ -33,13 +35,13 @@ var FullScreenEditorActionPlugIn = (function (_super) {
     __extends(FullScreenEditorActionPlugIn, _super);
     function FullScreenEditorActionPlugIn(plugInManager) {
         _super.call(this, plugInManager);
-        this.editor = CodeMirror.fromTextArea(document.getElementById('editor'), {
+        this.editor = CodeMirror.fromTextArea(document.getElementById('fullscreen-editor'), {
             lineNumbers: false,
             mode: "text/x-asn",
             lineWrapping: true
         });
         this.editor.setSize("300px", "200px");
-        $('#editor-wrapper').css({ display: 'none', opacity: '1.0' });
+        $('#fullscreen-editor-wrapper').css({ display: 'none', opacity: '1.0' });
     }
     FullScreenEditorActionPlugIn.prototype.IsEnabled = function (caseViewer, case0) {
         return true;
@@ -52,26 +54,20 @@ var FullScreenEditorActionPlugIn = (function (_super) {
         $('.node').dblclick(function (ev) {
             ev.stopPropagation();
             self.plugInManager.UseUILayer(self);
-            var node = $(this);
-            var p = node.position();
-            var p_contents = node.children("p").position();
-            var label = node.attr('id');
-            var selector = "#" + label;
-            console.log(selector);
-            console.log($(selector).height() + ", " + p_contents.top);
-            editor.setSize(node.children("p").width(), InplaceEditorHeight);
+
+            var label = case0.ElementTop.Label;
+            editor.setSize(640, 480);
 
             var encoder = new AssureIt.CaseEncoder();
-            var encoded = encoder.ConvertToASN(case0.ElementMap[label], true);
+            var encoded = encoder.ConvertToASN(case0.ElementTop, false);
 
             var orig_model = case0.ElementMap[label];
             var orig_shape = caseViewer.ViewMap[label];
 
             var node = $(this);
 
-            $('#editor-wrapper').css({ position: 'absolute', top: p.top + p_contents.top, left: p.left + p_contents.left, display: 'block' }).appendTo($('#layer2')).focus().one("blur", { node: node }, function (e, node) {
+            $('#fullscreen-editor-wrapper').css({ position: 'absolute', top: 0, left: 0, display: 'block' }).appendTo($('#layer2')).focus().one("blur", { node: node }, function (e, node) {
                 e.stopPropagation();
-                var label = e.data.node.attr('id');
                 var orig_model = case0.ElementMap[label];
                 var orig_view = caseViewer.ViewMap[label];
                 var decoder = new AssureIt.CaseDecoder();
@@ -102,7 +98,7 @@ var FullScreenEditorActionPlugIn = (function (_super) {
             }).on("keydown", function (e) {
                 if (e.keyCode == 27) {
                     e.stopPropagation();
-                    $(selector).blur();
+                    $('#fullscreen-editor-wrapper').blur();
                 }
             });
             editor.setValue(encoded);
@@ -110,14 +106,14 @@ var FullScreenEditorActionPlugIn = (function (_super) {
             editor.focus();
             $('#CodeMirror').focus();
             $('#layer1').click(function () {
-                $(selector).blur();
+                $('#fullscreen-editor-wrapper').blur();
             });
         });
         return true;
     };
 
     FullScreenEditorActionPlugIn.prototype.DeleteFromDOM = function () {
-        $(this.selector).blur();
+        $('fullscreen-editor-wrapper').blur();
     };
     return FullScreenEditorActionPlugIn;
 })(AssureIt.ActionPlugIn);
