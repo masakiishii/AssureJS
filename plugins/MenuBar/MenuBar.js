@@ -265,13 +265,15 @@ var MenuBarActionPlugIn = (function (_super) {
         $('.node').hover(function () {
             var node = $(this);
 
-            var menuBar = new MenuBar(caseViewer, case0, node, serverApi, self, function () {
-                self.ReDraw(caseViewer);
-            });
-            menuBar.SetEventHandlers();
+            setTimeout(function () {
+                var menuBar = new MenuBar(caseViewer, case0, node, serverApi, self, function () {
+                    self.ReDraw(caseViewer);
+                });
+                menuBar.SetEventHandlers();
 
-            var commitWindow = new CommitWindow();
-            commitWindow.SetEventHandlers(caseViewer, case0, serverApi);
+                var commitWindow = new CommitWindow();
+                commitWindow.SetEventHandlers(caseViewer, case0, serverApi);
+            }, 1000);
         }, function () {
         });
         return true;

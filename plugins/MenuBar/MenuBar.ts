@@ -270,14 +270,15 @@ class MenuBarActionPlugIn extends AssureIt.ActionPlugIn {
 		$('.node').hover(function () {
 			var node = $(this);
 
-			var menuBar: MenuBar = new MenuBar(caseViewer, case0, node, serverApi, self , function() {
-				self.ReDraw(caseViewer);
-			});
-			menuBar.SetEventHandlers();
+			setTimeout(function () {
+				var menuBar: MenuBar = new MenuBar(caseViewer, case0, node, serverApi, self, function() {
+					self.ReDraw(caseViewer);
+				});
+				menuBar.SetEventHandlers();
 
-			var commitWindow: CommitWindow = new CommitWindow();
-			commitWindow.SetEventHandlers(caseViewer, case0, serverApi);
-
+				var commitWindow: CommitWindow = new CommitWindow();
+				commitWindow.SetEventHandlers(caseViewer, case0, serverApi);
+			}, 1000);
 		}, function () { /* TODO */ });
 		return true;
 	}
