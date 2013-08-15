@@ -80,10 +80,10 @@ class FullScreenEditorActionPlugIn extends AssureIt.ActionPlugIn {
 					var decoder    : AssureIt.CaseDecoder = new AssureIt.CaseDecoder();
 					var new_model  : AssureIt.NodeModel = decoder.ParseASN(case0, editor.getValue(), null);
 					var new_view  : AssureIt.NodeView = new AssureIt.NodeView(caseViewer, new_model);
-  					//orig_model.Parent.AppendChild(new_model);
-  					//orig_model.Parent.RemoveChild(orig_model);
-  					//orig_model.Parent.UpdateChild(orig_model, new_model);
-  					//orig_model.UpdateChild(orig_model, new_model);
+					//orig_model.Parent.AppendChild(new_model);
+					//orig_model.Parent.RemoveChild(orig_model);
+					//orig_model.Parent.UpdateChild(orig_model, new_model);
+					//orig_model.UpdateChild(orig_model, new_model);
 					caseViewer.ElementTop = new_model;
 					case0.ElementTop = new_model;
 					(function(model : AssureIt.NodeModel, view : AssureIt.NodeView) : void {
@@ -126,7 +126,7 @@ class FullScreenEditorActionPlugIn extends AssureIt.ActionPlugIn {
 			editor.focus();
 			$('#CodeMirror').focus();
 			$('#layer1').click(function(){
-					$('#fullscreen-editor-wrapper').blur(); 
+					$('#fullscreen-editor-wrapper').blur();
 				});
 		});
 		return true;
