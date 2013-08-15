@@ -54,7 +54,6 @@ var EditorActionPlugIn = (function (_super) {
         var editor = this.editor;
         var self = this;
         $('.node').unbind('dblclick');
-        $('.node').unbind('hover');
         $('.node').dblclick(function (ev) {
             ev.stopPropagation();
             self.plugInManager.UseUILayer(self);

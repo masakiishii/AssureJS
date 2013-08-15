@@ -62,7 +62,6 @@ class EditorActionPlugIn extends AssureIt.ActionPlugIn {
 		var editor = this.editor;
 		var self = this; //FIXME
 		$('.node').unbind('dblclick');
-		$('.node').unbind('hover');
 		$('.node').dblclick(function(ev) { //FIXME
 			ev.stopPropagation();
 			self.plugInManager.UseUILayer(self);
