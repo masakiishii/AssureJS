@@ -220,6 +220,7 @@ module AssureIt {
 				}
 				return root;
 			} catch(e) {
+				console.log(e);
 				return null;
 			}
 		}
