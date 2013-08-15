@@ -32,15 +32,15 @@ class MenuBar {
 			'<a href="#" ><img id="scale"   src="'+this.serverApi.basepath+'images/icon.png" title="Scale" alt="scale" /></a>' +
 			'</div>');
 
+		var hasContext: boolean = false;
+
+		for(var i: number = 0; i < thisNodeModel.Children.length; i++) {
+			if(thisNodeModel.Children[i].Type == AssureIt.NodeType.Context) {
+				hasContext = true;
+			}
+		}
 		switch(thisNodeType) {
 			case AssureIt.NodeType.Goal:
-				var hasContext: boolean = false;
-
-				for(var i: number = 0; i < thisNodeModel.Children.length; i++) {
-					if(thisNodeModel.Children[i].Type == AssureIt.NodeType.Context) {
-						hasContext = true;
-					}
-				}
 				if(!hasContext) {
 					menu.append('<a href="#" ><img id="context"  src="'+this.serverApi.basepath+'images/context.png" title="Context" alt="context" /></a>');
 				}
@@ -49,10 +49,14 @@ class MenuBar {
 				break;
 			case AssureIt.NodeType.Strategy:
 				menu.append('<a href="#" ><img id="goal"     src="'+this.serverApi.basepath+'images/goal.png" title="Goal" alt="goal" /></a>');
-				menu.append('<a href="#" ><img id="context"  src="'+this.serverApi.basepath+'images/context.png" title="Context" alt="context" /></a>');
+				if (!hasContext) {
+					menu.append('<a href="#" ><img id="context"  src="'+this.serverApi.basepath+'images/context.png" title="Context" alt="context" /></a>');
+				}
 				break;
 			case AssureIt.NodeType.Evidence:
-				menu.append('<a href="#" ><img id="context"  src="'+this.serverApi.basepath+'images/context.png" title="Context" alt="context" /></a>');
+				if (!hasContext) {
+					menu.append('<a href="#" ><img id="context"  src="'+this.serverApi.basepath+'images/context.png" title="Context" alt="context" /></a>');
+				}
 				break;
 			default:
 				break;
@@ -266,14 +270,15 @@ class MenuBarActionPlugIn extends AssureIt.ActionPlugIn {
 		$('.node').hover(function () {
 			var node = $(this);
 
-			var menuBar: MenuBar = new MenuBar(caseViewer, case0, node, serverApi, self , function() {
-				self.ReDraw(caseViewer);
-			});
-			menuBar.SetEventHandlers();
+			setTimeout(function () {
+				var menuBar: MenuBar = new MenuBar(caseViewer, case0, node, serverApi, self, function() {
+					self.ReDraw(caseViewer);
+				});
+				menuBar.SetEventHandlers();
 
-			var commitWindow: CommitWindow = new CommitWindow();
-			commitWindow.SetEventHandlers(caseViewer, case0, serverApi);
-
+				var commitWindow: CommitWindow = new CommitWindow();
+				commitWindow.SetEventHandlers(caseViewer, case0, serverApi);
+			}, 1000);
 		}, function () { /* TODO */ });
 		return true;
 	}

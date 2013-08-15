@@ -191,6 +191,8 @@ var AssureIt;
             var Children = obj["Children"];
             if (Children.length != 0) {
                 for (var i = 0; i < Children.length; i++) {
+                    if (Children[i] == "")
+                        break;
                     var Child = this.Object2NodeModel(Children[i]);
                     Child.Parent = Model;
                     Model.Children.push(Child);

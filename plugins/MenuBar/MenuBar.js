@@ -24,15 +24,15 @@ var MenuBar = (function () {
         $('#menu').remove();
         var menu = $('<div id="menu">' + '<a href="#" ><img id="commit"   src="' + this.serverApi.basepath + 'images/icon.png" title="Commit" alt="commit" /></a>' + '<a href="#" ><img id="remove"   src="' + this.serverApi.basepath + 'images/icon.png" title="Remove" alt="remove" /></a>' + '<a href="#" ><img id="scale"   src="' + this.serverApi.basepath + 'images/icon.png" title="Scale" alt="scale" /></a>' + '</div>');
 
+        var hasContext = false;
+
+        for (var i = 0; i < thisNodeModel.Children.length; i++) {
+            if (thisNodeModel.Children[i].Type == AssureIt.NodeType.Context) {
+                hasContext = true;
+            }
+        }
         switch (thisNodeType) {
             case AssureIt.NodeType.Goal:
-                var hasContext = false;
-
-                for (var i = 0; i < thisNodeModel.Children.length; i++) {
-                    if (thisNodeModel.Children[i].Type == AssureIt.NodeType.Context) {
-                        hasContext = true;
-                    }
-                }
                 if (!hasContext) {
                     menu.append('<a href="#" ><img id="context"  src="' + this.serverApi.basepath + 'images/context.png" title="Context" alt="context" /></a>');
                 }
@@ -41,10 +41,14 @@ var MenuBar = (function () {
                 break;
             case AssureIt.NodeType.Strategy:
                 menu.append('<a href="#" ><img id="goal"     src="' + this.serverApi.basepath + 'images/goal.png" title="Goal" alt="goal" /></a>');
-                menu.append('<a href="#" ><img id="context"  src="' + this.serverApi.basepath + 'images/context.png" title="Context" alt="context" /></a>');
+                if (!hasContext) {
+                    menu.append('<a href="#" ><img id="context"  src="' + this.serverApi.basepath + 'images/context.png" title="Context" alt="context" /></a>');
+                }
                 break;
             case AssureIt.NodeType.Evidence:
-                menu.append('<a href="#" ><img id="context"  src="' + this.serverApi.basepath + 'images/context.png" title="Context" alt="context" /></a>');
+                if (!hasContext) {
+                    menu.append('<a href="#" ><img id="context"  src="' + this.serverApi.basepath + 'images/context.png" title="Context" alt="context" /></a>');
+                }
                 break;
             default:
                 break;
@@ -261,13 +265,15 @@ var MenuBarActionPlugIn = (function (_super) {
         $('.node').hover(function () {
             var node = $(this);
 
-            var menuBar = new MenuBar(caseViewer, case0, node, serverApi, self, function () {
-                self.ReDraw(caseViewer);
-            });
-            menuBar.SetEventHandlers();
+            setTimeout(function () {
+                var menuBar = new MenuBar(caseViewer, case0, node, serverApi, self, function () {
+                    self.ReDraw(caseViewer);
+                });
+                menuBar.SetEventHandlers();
 
-            var commitWindow = new CommitWindow();
-            commitWindow.SetEventHandlers(caseViewer, case0, serverApi);
+                var commitWindow = new CommitWindow();
+                commitWindow.SetEventHandlers(caseViewer, case0, serverApi);
+            }, 1000);
         }, function () {
         });
         return true;

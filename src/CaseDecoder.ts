@@ -190,6 +190,9 @@ module AssureIt {
 			var Children = obj["Children"];
 	 		if (Children.length != 0) {
 				for (var i : number = 0; i < Children.length; i++) {
+
+					/* ASNParser returns [""] when the parsing Children failed at Strategy node. */
+					if (Children[i] == "") break;
 					var Child = this.Object2NodeModel(Children[i]);
 					Child.Parent = Model;
 					Model.Children.push(Child);

@@ -79,6 +79,7 @@ module AssureIt {
 
 		ConvertToASN(root : NodeModel, isSingleNode: boolean): string {
 			var encoded : string = (function(model : NodeModel, prefix : string) : string {
+				var IndentToken: string = "    ";
 				var ret : string = "";
 				switch (model.Type) {
 				case NodeType["Goal"]:
@@ -117,10 +118,16 @@ module AssureIt {
 						var Note = model.Notes[i];
 						ret += Note.Name + "::" + "\n";
 						var keys = Object.keys(Note.Body);
-						console.log("keys");
-						console.log(keys);
 						for (var j in keys) {
+							if (keys[j] == "Description") continue;
 							ret += "\t" + keys[j] + ": " + Note.Body[keys[j]] + "\n";
+						}
+						if (Note.Body["Description"] != null) {
+							var desc: string = Note.Body["Description"];
+							var desclist: any = desc.split("\n");
+							for (var j in desclist) {
+								ret += IndentToken + desclist[j] + "\n";
+							}
 						}
 					}
 				}

@@ -66,6 +66,7 @@ var AssureIt;
 
         CaseEncoder.prototype.ConvertToASN = function (root, isSingleNode) {
             var encoded = (function (model, prefix) {
+                var IndentToken = "    ";
                 var ret = "";
                 switch (model.Type) {
                     case AssureIt.NodeType["Goal"]:
@@ -108,10 +109,17 @@ var AssureIt;
                         var Note = model.Notes[i];
                         ret += Note.Name + "::" + "\n";
                         var keys = Object.keys(Note.Body);
-                        console.log("keys");
-                        console.log(keys);
                         for (var j in keys) {
+                            if (keys[j] == "Description")
+                                continue;
                             ret += "\t" + keys[j] + ": " + Note.Body[keys[j]] + "\n";
+                        }
+                        if (Note.Body["Description"] != null) {
+                            var desc = Note.Body["Description"];
+                            var desclist = desc.split("\n");
+                            for (var j in desclist) {
+                                ret += IndentToken + desclist[j] + "\n";
+                            }
                         }
                     }
                 }
