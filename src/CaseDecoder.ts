@@ -183,7 +183,7 @@ module AssureIt {
 			var Type : NodeType = this.Text2NodeTypeMap[obj["Type"]];
 			var Label : string = obj["Label"];
 			var Statement : string = obj["Statement"];
-	 		var Notes = (obj["Notes"].length != 0) ? obj["Notes"] : orig.Notes;
+	 		var Notes = (obj["Notes"] && obj["Notes"].length != 0) ? obj["Notes"] : [];
 	// 		var X = (obj["x"] != 0) ? obj["x"] : orig.x;
 	// 		var Y = (obj["y"] != 0) ? obj["x"] : orig.y;
 			var Model : NodeModel = new NodeModel(Case, Parent,	Type, Label, Statement);
@@ -202,7 +202,7 @@ module AssureIt {
 			}
 			if (obj["Annotations"].length != 0) {
 				for (var i : number = 0; i < obj["Annotations"].length; i++) {
-					Model.SetAnnotation(obj["Annotations"][i], null); //FIX ME!!
+					Model.SetAnnotation(obj["Annotations"][i].Name, null); //FIX ME!!
 				}
 			}
 			else {

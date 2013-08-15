@@ -57,14 +57,11 @@ class FullScreenEditorActionPlugIn extends AssureIt.ActionPlugIn {
 		$('#layer1').dblclick(function(ev) {
 			ev.stopPropagation();
 			self.plugInManager.UseUILayer(self);
-			var label : string = case0.ElementTop.Label;
 			editor.setSize(640, 480); /* TODO resize */
 
 			var encoder : AssureIt.CaseEncoder = new AssureIt.CaseEncoder();
 			var encoded = encoder.ConvertToASN(case0.ElementTop, false/* whole node */);
 
-			var orig_model : AssureIt.NodeModel = case0.ElementMap[label];
-			var orig_shape : AssureIt.NodeView = caseViewer.ViewMap[label];
 			var node = $(this);
 
 			$('#fullscreen-editor-wrapper')
@@ -73,6 +70,7 @@ class FullScreenEditorActionPlugIn extends AssureIt.ActionPlugIn {
 				.focus()
 				.one("blur", {node : node}, function(e: JQueryEventObject, node: JQuery) {
 					e.stopPropagation();
+					var label : string = case0.ElementTop.Label;
 					var orig_model : AssureIt.NodeModel = case0.ElementMap[label];
 					var orig_view : AssureIt.NodeView = caseViewer.ViewMap[label];
 					var decoder    : AssureIt.CaseDecoder = new AssureIt.CaseDecoder();
@@ -83,6 +81,7 @@ class FullScreenEditorActionPlugIn extends AssureIt.ActionPlugIn {
   					//orig_model.Parent.UpdateChild(orig_model, new_model);
   					//orig_model.UpdateChild(orig_model, new_model);
 					caseViewer.ElementTop = new_model;
+					case0.ElementTop = new_model;
 					case0.DeleteNodesRecursive(orig_model);
 					orig_view.DeleteHTMLElementRecursive($("#layer0"), $("#layer1"));
 					caseViewer.DeleteViewsRecursive(orig_view);

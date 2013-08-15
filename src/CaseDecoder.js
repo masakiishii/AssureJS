@@ -184,7 +184,7 @@ var AssureIt;
             var Type = this.Text2NodeTypeMap[obj["Type"]];
             var Label = obj["Label"];
             var Statement = obj["Statement"];
-            var Notes = (obj["Notes"].length != 0) ? obj["Notes"] : orig.Notes;
+            var Notes = (obj["Notes"] && obj["Notes"].length != 0) ? obj["Notes"] : [];
 
             var Model = new AssureIt.NodeModel(Case, Parent, Type, Label, Statement);
             Model.Notes = Notes;
@@ -201,7 +201,7 @@ var AssureIt;
             }
             if (obj["Annotations"].length != 0) {
                 for (var i = 0; i < obj["Annotations"].length; i++) {
-                    Model.SetAnnotation(obj["Annotations"][i], null);
+                    Model.SetAnnotation(obj["Annotations"][i].Name, null);
                 }
             } else {
             }

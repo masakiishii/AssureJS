@@ -52,18 +52,16 @@ var FullScreenEditorActionPlugIn = (function (_super) {
         $('#layer1').dblclick(function (ev) {
             ev.stopPropagation();
             self.plugInManager.UseUILayer(self);
-            var label = case0.ElementTop.Label;
             editor.setSize(640, 480);
 
             var encoder = new AssureIt.CaseEncoder();
             var encoded = encoder.ConvertToASN(case0.ElementTop, false);
 
-            var orig_model = case0.ElementMap[label];
-            var orig_shape = caseViewer.ViewMap[label];
             var node = $(this);
 
             $('#fullscreen-editor-wrapper').css({ position: 'absolute', top: 100, left: 100, display: 'block' }).appendTo($('#layer2')).focus().one("blur", { node: node }, function (e, node) {
                 e.stopPropagation();
+                var label = case0.ElementTop.Label;
                 var orig_model = case0.ElementMap[label];
                 var orig_view = caseViewer.ViewMap[label];
                 var decoder = new AssureIt.CaseDecoder();
@@ -71,6 +69,7 @@ var FullScreenEditorActionPlugIn = (function (_super) {
                 var new_view = new AssureIt.NodeView(caseViewer, new_model);
 
                 caseViewer.ElementTop = new_model;
+                case0.ElementTop = new_model;
                 case0.DeleteNodesRecursive(orig_model);
                 orig_view.DeleteHTMLElementRecursive($("#layer0"), $("#layer1"));
                 caseViewer.DeleteViewsRecursive(orig_view);
