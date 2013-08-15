@@ -27,9 +27,9 @@ class MenuBar {
 
 		$('#menu').remove();
 		var menu = $('<div id="menu">' +
-			'<a href="#" ><img id="commit"   src="'+this.serverApi.basepath+'images/icon.png" title="Commit" alt="commit" /></a>' +
-			'<a href="#" ><img id="remove"   src="'+this.serverApi.basepath+'images/icon.png" title="Remove" alt="remove" /></a>' +
-			'<a href="#" ><img id="scale"   src="'+this.serverApi.basepath+'images/icon.png" title="Scale" alt="scale" /></a>' +
+			'<a href="#" ><img id="commit" src="'+this.serverApi.basepath+'images/commit.png" title="Commit" alt="commit" /></a>' +
+			'<a href="#" ><img id="remove" src="'+this.serverApi.basepath+'images/icon.png" title="Remove" alt="remove" /></a>' +
+			'<a href="#" ><img id="scale"  src="'+this.serverApi.basepath+'images/scale.png" title="Scale" alt="scale" /></a>' +
 			'</div>');
 
 		var hasContext: boolean = false;
