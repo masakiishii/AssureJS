@@ -75,16 +75,7 @@ var EditorActionPlugIn = (function (_super) {
             orig_model.IsEditing = true;
             orig_shape.HTMLDoc.Render(caseViewer, orig_model);
 
-            caseViewer.Resize();
-            var backgroundlayer = document.getElementById("background");
-            var shapelayer = document.getElementById("layer0");
-            var contentlayer = document.getElementById("layer1");
-            var controllayer = document.getElementById("layer2");
-            var offset = $("#layer1").offset();
-            var Screen = new AssureIt.ScreenManager(shapelayer, contentlayer, controllayer, backgroundlayer);
-            caseViewer.Draw(Screen);
-            Screen.SetOffset(offset.left, offset.top);
-            var node = $(this);
+            self.ReDraw(caseViewer);
 
             $('#editor-wrapper').css({ position: 'absolute', top: p.top + p_contents.top, left: p.left + p_contents.left, display: 'block' }).appendTo($('#layer2')).focus().on("keydown", function (e) {
                 if (e.keyCode == 27) {
@@ -106,15 +97,7 @@ var EditorActionPlugIn = (function (_super) {
                     orig_model.Notes = new_model.Notes;
                     orig_shape.HTMLDoc.Render(caseViewer, orig_model);
 
-                    caseViewer.Resize();
-                    var backgroundlayer = document.getElementById("background");
-                    var shapelayer = document.getElementById("layer0");
-                    var contentlayer = document.getElementById("layer1");
-                    var controllayer = document.getElementById("layer2");
-                    var offset = $("#layer1").offset();
-                    var Screen = new AssureIt.ScreenManager(shapelayer, contentlayer, controllayer, backgroundlayer);
-                    caseViewer.Draw(Screen);
-                    Screen.SetOffset(offset.left, offset.top);
+                    self.ReDraw(caseViewer);
                 }
                 $('#editor-wrapper').css({ display: 'none' });
             });

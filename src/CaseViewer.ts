@@ -440,7 +440,7 @@ module AssureIt {
 		ElementTop : NodeModel;
 		static ElementWidth = 250;
 
-		constructor(public Source: Case, public pluginManager : PlugInManager, public serverApi: ServerAPI) {
+		constructor(public Source: Case, public pluginManager : PlugInManager, public serverApi: ServerAPI, public Screen: ScreenManager) {
 			this.ViewMap = <any>[]; // a hack to avoid tsc's problem.
 			for (var elementkey in Source.ElementMap) {
 				var element = Source.ElementMap[elementkey];
@@ -496,7 +496,10 @@ module AssureIt {
 			//layout.SetAllElementPosition(this.ElementTop);
 		}
 
-		Draw(Screen: ScreenManager): void {
+		Draw(Screen?: ScreenManager): void {
+			if(Screen == null) {
+				Screen = this.Screen;
+			}
 			var shapelayer = $(Screen.ShapeLayer);
 			var screenlayer = $(Screen.ContentLayer);
 			for (var viewkey in this.ViewMap) {

@@ -444,10 +444,11 @@ var AssureIt;
     var ViewerConfig = new CaseViewerConfig();
 
     var CaseViewer = (function () {
-        function CaseViewer(Source, pluginManager, serverApi) {
+        function CaseViewer(Source, pluginManager, serverApi, Screen) {
             this.Source = Source;
             this.pluginManager = pluginManager;
             this.serverApi = serverApi;
+            this.Screen = Screen;
             this.ViewMap = [];
             for (var elementkey in Source.ElementMap) {
                 var element = Source.ElementMap[elementkey];
@@ -500,6 +501,9 @@ var AssureIt;
         };
 
         CaseViewer.prototype.Draw = function (Screen) {
+            if (Screen == null) {
+                Screen = this.Screen;
+            }
             var shapelayer = $(Screen.ShapeLayer);
             var screenlayer = $(Screen.ContentLayer);
             for (var viewkey in this.ViewMap) {

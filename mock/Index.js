@@ -266,12 +266,14 @@ $(function () {
     var root = caseDecoder.ParseJson(Case0, JsonData);
 
     Case0.SetElementTop(root);
-    var Viewer = new AssureIt.CaseViewer(Case0, pluginManager, serverApi);
+
     var backgroundlayer = document.getElementById("background");
     var shapelayer = document.getElementById("layer0");
     var contentlayer = document.getElementById("layer1");
     var controllayer = document.getElementById("layer2");
 
     var Screen = new AssureIt.ScreenManager(shapelayer, contentlayer, controllayer, backgroundlayer);
+
+    var Viewer = new AssureIt.CaseViewer(Case0, pluginManager, serverApi, Screen);
     Viewer.Draw(Screen);
 });
