@@ -260,13 +260,12 @@ var MenuBarActionPlugIn = (function (_super) {
 
     MenuBarActionPlugIn.prototype.Delegate = function (caseViewer, case0, serverApi) {
         var self = this;
-        var timeoutId;
 
         $('.node').unbind('mouseenter').unbind('mouseleave');
         $('.node').hover(function () {
             var node = $(this);
 
-            timeoutId = setTimeout(function () {
+            self.timeoutId = setTimeout(function () {
                 var menuBar = new MenuBar(caseViewer, case0, node, serverApi, self, function () {
                     self.ReDraw(caseViewer);
                 });
@@ -276,13 +275,15 @@ var MenuBarActionPlugIn = (function (_super) {
                 commitWindow.SetEventHandlers(caseViewer, case0, serverApi);
             }, 1000);
         }, function () {
-            clearTimeout(timeoutId);
+            clearTimeout(self.timeoutId);
         });
         return true;
     };
 
     MenuBarActionPlugIn.prototype.DeleteFromDOM = function () {
         $('#menu').remove();
+        console.log(this.timeoutId);
+        clearTimeout(this.timeoutId);
     };
     return MenuBarActionPlugIn;
 })(AssureIt.ActionPlugIn);

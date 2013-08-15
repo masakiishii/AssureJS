@@ -254,6 +254,7 @@ class MenuBarPlugIn extends AssureIt.PlugIn {
 
 class MenuBarActionPlugIn extends AssureIt.ActionPlugIn {
 	isLargeScale: boolean = false;
+	timeoutId: number;
 
 	constructor(plugInManager: AssureIt.PlugInManager) {
 		super(plugInManager);
@@ -265,13 +266,12 @@ class MenuBarActionPlugIn extends AssureIt.ActionPlugIn {
 
 	Delegate(caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case, serverApi: AssureIt.ServerAPI): boolean {
 		var self = this;
-		var timeoutId: number;
 
 		$('.node').unbind('mouseenter').unbind('mouseleave'); // FIXME: this line may cause other plugin's event handler.
 		$('.node').hover(function () {
 			var node = $(this);
 
-			timeoutId = setTimeout(function () {
+			self.timeoutId = setTimeout(function () {
 				var menuBar: MenuBar = new MenuBar(caseViewer, case0, node, serverApi, self, function() {
 					self.ReDraw(caseViewer);
 				});
@@ -280,11 +280,13 @@ class MenuBarActionPlugIn extends AssureIt.ActionPlugIn {
 				var commitWindow: CommitWindow = new CommitWindow();
 				commitWindow.SetEventHandlers(caseViewer, case0, serverApi);
 			}, 1000);
-		}, function () { clearTimeout(timeoutId); /* TODO: add more action */ });
+		}, function () { clearTimeout(self.timeoutId); /* TODO: add more action */ });
 		return true;
 	}
 
 	DeleteFromDOM(): void {
 		$('#menu').remove();
+		console.log(this.timeoutId);
+		clearTimeout(this.timeoutId);
 	}
 }
