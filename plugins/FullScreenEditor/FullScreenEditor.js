@@ -59,8 +59,8 @@ var FullScreenEditorActionPlugIn = (function (_super) {
     FullScreenEditorActionPlugIn.prototype.Delegate = function (caseViewer, case0, serverApi) {
         var editor = this.editor;
         var self = this;
-        $('#layer1').unbind('dblclick');
-        $('#layer1').dblclick(function (ev) {
+        $('#background').unbind('dblclick');
+        $('#background').dblclick(function (ev) {
             ev.stopPropagation();
             self.plugInManager.UseUILayer(self);
 

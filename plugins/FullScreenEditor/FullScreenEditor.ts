@@ -65,8 +65,8 @@ class FullScreenEditorActionPlugIn extends AssureIt.ActionPlugIn {
 	Delegate(caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case, serverApi: AssureIt.ServerAPI)  : boolean {
 		var editor = this.editor;
 		var self = this; //FIXME
-		$('#layer1').unbind('dblclick');
-		$('#layer1').dblclick(function(ev) {
+		$('#background').unbind('dblclick');
+		$('#background').dblclick(function(ev) {
 			ev.stopPropagation();
 			self.plugInManager.UseUILayer(self);
 
