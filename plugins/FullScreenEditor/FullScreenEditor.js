@@ -138,7 +138,7 @@ var FullScreenEditorActionPlugIn = (function (_super) {
     };
 
     FullScreenEditorActionPlugIn.prototype.DeleteFromDOM = function () {
-        $('fullscreen-editor-wrapper').blur();
+        $('#fullscreen-editor-wrapper').blur();
     };
     return FullScreenEditorActionPlugIn;
 })(AssureIt.ActionPlugIn);

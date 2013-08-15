@@ -152,6 +152,6 @@ class FullScreenEditorActionPlugIn extends AssureIt.ActionPlugIn {
 	}
 
 	DeleteFromDOM(): void {
-		$('fullscreen-editor-wrapper').blur();
+		$('#fullscreen-editor-wrapper').blur();
 	}
 }
