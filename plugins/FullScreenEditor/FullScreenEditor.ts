@@ -42,8 +42,20 @@ class FullScreenEditorActionPlugIn extends AssureIt.ActionPlugIn {
 			mode: "text/x-asn",
 			lineWrapping: true,
 		});
-		this.editor.setSize("300px","200px"); /* TODO resize */
-		$('#fullscreen-editor-wrapper').css({display: 'none', opacity: '1.0'});
+		$(this.editor.getWrapperElement()).css({
+			height : "100%",
+			width : "100%",
+			background : "rgba(255, 255, 255, 0.5)"
+		})
+		$('#fullscreen-editor-wrapper').css({
+			position : "absolute",
+			top : "5%",
+			left : "5%",
+			height : "90%",
+			width : "90%",
+			display : 'none',
+			//			background : "rgba(255, 255, 255, 0)"
+		});
 	}
 
 	IsEnabled (caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case) : boolean {
@@ -57,7 +69,6 @@ class FullScreenEditorActionPlugIn extends AssureIt.ActionPlugIn {
 		$('#layer1').dblclick(function(ev) {
 			ev.stopPropagation();
 			self.plugInManager.UseUILayer(self);
-			editor.setSize(640, 480); /* TODO resize */
 
 			var encoder : AssureIt.CaseEncoder = new AssureIt.CaseEncoder();
 			var encoded = encoder.ConvertToASN(case0.ElementTop, false/* whole node */);
@@ -65,8 +76,8 @@ class FullScreenEditorActionPlugIn extends AssureIt.ActionPlugIn {
 			var node = $(this);
 
 			$('#fullscreen-editor-wrapper')
-				.css({position: 'absolute', top: 100/*p.top + p_contents.top*/, left: 100/*p.left + p_contents.left*/, display: 'block'})
-				.appendTo($('#layer2'))
+				.css({display: 'block'})
+				.addClass("animated fadeInDown")
 				.focus()
 				.one("blur", {node : node}, function(e: JQueryEventObject, node: JQuery) {
 					e.stopPropagation();
@@ -113,7 +124,12 @@ class FullScreenEditorActionPlugIn extends AssureIt.ActionPlugIn {
 					caseViewer.Draw(Screen);
 					Screen.SetOffset(offset.left, offset.top);
 
-					$(this).css({display: 'none'});
+					var $this = $(this);
+					$this.addClass("animated fadeOutUp");
+					window.setTimeout(function() {
+						$this.removeClass();
+						$this.css({display: 'none'});
+					}, 1300);
 				})
 				.on("keydown", function(e: JQueryEventObject) {
 					if(e.keyCode == 27 /* ESC */){
@@ -126,8 +142,11 @@ class FullScreenEditorActionPlugIn extends AssureIt.ActionPlugIn {
 			editor.focus();
 			$('#CodeMirror').focus();
 			$('#layer1').click(function(){
-					$('#fullscreen-editor-wrapper').blur(); 
-				});
+				$('#fullscreen-editor-wrapper').blur(); 
+			});
+			window.setTimeout(function() {
+				$('#fullscreen-editor-wrapper').removeClass();
+			}, 1300);
 		});
 		return true;
 	}

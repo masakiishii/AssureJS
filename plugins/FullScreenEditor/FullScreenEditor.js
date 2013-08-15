@@ -38,8 +38,19 @@ var FullScreenEditorActionPlugIn = (function (_super) {
             mode: "text/x-asn",
             lineWrapping: true
         });
-        this.editor.setSize("300px", "200px");
-        $('#fullscreen-editor-wrapper').css({ display: 'none', opacity: '1.0' });
+        $(this.editor.getWrapperElement()).css({
+            height: "100%",
+            width: "100%",
+            background: "rgba(255, 255, 255, 0.5)"
+        });
+        $('#fullscreen-editor-wrapper').css({
+            position: "absolute",
+            top: "5%",
+            left: "5%",
+            height: "90%",
+            width: "90%",
+            display: 'none'
+        });
     }
     FullScreenEditorActionPlugIn.prototype.IsEnabled = function (caseViewer, case0) {
         return true;
@@ -52,14 +63,13 @@ var FullScreenEditorActionPlugIn = (function (_super) {
         $('#layer1').dblclick(function (ev) {
             ev.stopPropagation();
             self.plugInManager.UseUILayer(self);
-            editor.setSize(640, 480);
 
             var encoder = new AssureIt.CaseEncoder();
             var encoded = encoder.ConvertToASN(case0.ElementTop, false);
 
             var node = $(this);
 
-            $('#fullscreen-editor-wrapper').css({ position: 'absolute', top: 100, left: 100, display: 'block' }).appendTo($('#layer2')).focus().one("blur", { node: node }, function (e, node) {
+            $('#fullscreen-editor-wrapper').css({ display: 'block' }).addClass("animated fadeInDown").focus().one("blur", { node: node }, function (e, node) {
                 e.stopPropagation();
                 var label = case0.ElementTop.Label;
                 var orig_model = case0.ElementMap[label];
@@ -101,7 +111,12 @@ var FullScreenEditorActionPlugIn = (function (_super) {
                 caseViewer.Draw(Screen);
                 Screen.SetOffset(offset.left, offset.top);
 
-                $(this).css({ display: 'none' });
+                var $this = $(this);
+                $this.addClass("animated fadeOutUp");
+                window.setTimeout(function () {
+                    $this.removeClass();
+                    $this.css({ display: 'none' });
+                }, 1300);
             }).on("keydown", function (e) {
                 if (e.keyCode == 27) {
                     e.stopPropagation();
@@ -115,6 +130,9 @@ var FullScreenEditorActionPlugIn = (function (_super) {
             $('#layer1').click(function () {
                 $('#fullscreen-editor-wrapper').blur();
             });
+            window.setTimeout(function () {
+                $('#fullscreen-editor-wrapper').removeClass();
+            }, 1300);
         });
         return true;
     };
