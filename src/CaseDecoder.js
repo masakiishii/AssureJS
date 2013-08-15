@@ -180,12 +180,14 @@ var AssureIt;
         }
         ASNParser.prototype.Object2NodeModel = function (obj, orig) {
             var Case = this.Case;
-            var Parent = (obj["Parent"] != null) ? obj["Parent"] : orig.Parent;
-            var Type = (obj["Type"] != null) ? this.Text2NodeTypeMap[obj["Type"]] : orig.Type;
-            var Label = (obj["Label"] != null) ? obj["Label"] : orig.Label;
-            var Statement = (obj["Statement"] != "") ? obj["Statement"] : orig.Statement;
+            var Parent = obj["Parent"];
+            var Type = this.Text2NodeTypeMap[obj["Type"]];
+            var Label = obj["Label"];
+            var Statement = obj["Statement"];
+            var Notes = (obj["Notes"] && obj["Notes"].length != 0) ? obj["Notes"] : [];
 
             var Model = new AssureIt.NodeModel(Case, Parent, Type, Label, Statement);
+            Model.Notes = Notes;
 
             var Children = obj["Children"];
             if (Children.length != 0) {
@@ -199,7 +201,7 @@ var AssureIt;
             }
             if (obj["Annotations"].length != 0) {
                 for (var i = 0; i < obj["Annotations"].length; i++) {
-                    Model.SetAnnotation(obj["Annotations"][i], null);
+                    Model.SetAnnotation(obj["Annotations"][i].Name, null);
                 }
             } else {
             }
@@ -207,8 +209,11 @@ var AssureIt;
         };
         ASNParser.prototype.Parse = function (ASNData, orig) {
             var obj = Peg.parse(ASNData)[1];
-
-            return obj;
+            var root = this.Object2NodeModel(obj, orig);
+            if (orig != null) {
+                root.Parent = orig.Parent;
+            }
+            return root;
         };
         return ASNParser;
     })(Parser);

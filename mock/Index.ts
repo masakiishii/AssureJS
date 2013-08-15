@@ -6,6 +6,7 @@
 /// <reference path="../src/ServerApi.ts" />
 /// <reference path="../plugins/MenuBar/MenuBar.ts" />
 /// <reference path="../plugins/Editor/Editor.ts" />
+/// <reference path="../plugins/FullScreenEditor/FullScreenEditor.ts" />
 /// <reference path="../plugins/Annotation/Annotation.ts" />
 /// <reference path="../plugins/Monitor/Monitor.ts" />
 /// <reference path="../plugins/Note/Note.ts" />
@@ -18,6 +19,7 @@ $(function () {
 	var pluginManager = new AssureIt.PlugInManager();
 	pluginManager.SetPlugIn("menu", new MenuBarPlugIn(pluginManager));
 	pluginManager.SetPlugIn("editor", new EditorPlugIn(pluginManager));
+	pluginManager.SetPlugIn("fullscreeneditor", new FullScreenEditorPlugIn(pluginManager));
 	pluginManager.SetPlugIn("colortheme", new TiffanyBlueThemePlugIn(pluginManager));
 	pluginManager.SetPlugIn("annotation", new AnnotationPlugIn(pluginManager));
 	pluginManager.SetPlugIn("note", new NotePlugIn(pluginManager));

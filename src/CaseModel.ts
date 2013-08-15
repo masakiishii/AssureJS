@@ -46,6 +46,20 @@ module AssureIt {
 		AppendChild(Node : NodeModel) : void {
 			this.Children.push(Node);
 		}
+		RemoveChild(Node : NodeModel) : void {
+			for (var i = 0; i < this.Children.length; i++) {
+				if (this.Children[i].Label == Node.Label) {
+					this.Children.splice(i, 1);
+				}
+			}
+		}
+		UpdateChild(oldNode : NodeModel, newNode : NodeModel) : void {
+			for (var i = 0; i < this.Children.length; i++) {
+				if (this.Children[i].Label == oldNode.Label) {
+					this.Children[i] = newNode;
+				}
+			}
+		}
 	
 		GetAnnotation(Name: string) : CaseAnnotation {
 			for(var a in this.Annotations) {
@@ -118,6 +132,14 @@ module AssureIt {
 			this.IdCounters = [0, 0, 0, 0, 0];
 			this.IsModified = false;
 			this.ElementMap = {};
+		}
+
+		DeleteNodesRecursive(root : NodeModel) : void {
+			var Children = root.Children;
+			delete this.ElementMap[root.Label];
+			for (var i = 0; i < Children.length; i++) {
+				this.DeleteNodesRecursive(Children[i]);
+			}
 		}
 
 		/* Deprecated */
