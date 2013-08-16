@@ -134,7 +134,7 @@ class FullScreenEditorActionPlugIn extends AssureIt.ActionPlugIn {
 			editor.refresh();
 			editor.focus();
 			$('#CodeMirror').focus();
-			$('#layer1').click(function(){
+			$('#background').click(function(){
 				$('#fullscreen-editor-wrapper').blur(); 
 			});
 			window.setTimeout(function() {
