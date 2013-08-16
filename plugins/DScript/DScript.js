@@ -23,9 +23,9 @@ var DScriptMenuPlugIn = (function (_super) {
         return true;
     };
 
-    DScriptMenuPlugIn.prototype.Delegate = function (caseViewer, caseModel, element) {
+    DScriptMenuPlugIn.prototype.Delegate = function (caseViewer, caseModel, element, serverApi) {
         console.log("Hello DScript");
-
+        element.append('<a href="#" ><img id="dscript"  src="' + serverApi.basepath + 'images/icon.png" title="DScript" alt="dscript" /></a>');
         return true;
     };
     return DScriptMenuPlugIn;

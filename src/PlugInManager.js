@@ -93,7 +93,7 @@ var AssureIt;
             return true;
         };
 
-        MenuBarContentsPlugIn.prototype.Delegate = function (caseViewer, caseModel, element) {
+        MenuBarContentsPlugIn.prototype.Delegate = function (caseViewer, caseModel, element, serverApi) {
             return true;
         };
         return MenuBarContentsPlugIn;
@@ -182,11 +182,11 @@ var AssureIt;
             }
         };
 
-        PlugInManager.prototype.InvokePlugInMenuBarContents = function (caseViewer, caseModel, DocBase) {
+        PlugInManager.prototype.InvokePlugInMenuBarContents = function (caseViewer, caseModel, DocBase, serverApi) {
             var pluginMap = caseViewer.pluginManager.MenuBarContentsPlugInMap;
             for (var key in pluginMap) {
                 var contents = this.MenuBarContentsPlugInMap[key];
-                contents.Delegate(caseViewer, caseModel, DocBase);
+                contents.Delegate(caseViewer, caseModel, DocBase, serverApi);
             }
         };
         return PlugInManager;
