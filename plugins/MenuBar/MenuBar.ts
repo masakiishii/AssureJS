@@ -8,9 +8,11 @@ class MenuBar {
 	case0: AssureIt.Case;
 	node: JQuery;
 	serverApi: AssureIt.ServerAPI;
+	model: AssureIt.NodeModel;
 
-	constructor(caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case, node: JQuery, serverApi: AssureIt.ServerAPI, public plugIn: MenuBarActionPlugIn, reDraw: () => void) {
+	constructor(caseViewer: AssureIt.CaseViewer, model: AssureIt.NodeModel, case0: AssureIt.Case, node: JQuery, serverApi: AssureIt.ServerAPI, public plugIn: MenuBarActionPlugIn, reDraw: () => void) {
 		this.caseViewer = caseViewer;
+		this.model = model;
 		this.case0 = case0;
 		this.node = node;
 		this.serverApi = serverApi;
@@ -21,9 +23,7 @@ class MenuBar {
 	Init(): void {
 		var self = this;
 
-		var thisNodeLabel: string = self.node.children('h4').text();
-		var thisNodeModel: AssureIt.NodeModel = self.case0.ElementMap[thisNodeLabel];
-		var thisNodeType: AssureIt.NodeType = thisNodeModel.Type;
+		var thisNodeType: AssureIt.NodeType = self.model.Type;
 
 		$('#menu').remove();
 		var menu = $('<div id="menu">' +
@@ -34,8 +34,8 @@ class MenuBar {
 
 		var hasContext: boolean = false;
 
-		for(var i: number = 0; i < thisNodeModel.Children.length; i++) {
-			if(thisNodeModel.Children[i].Type == AssureIt.NodeType.Context) {
+		for(var i: number = 0; i < self.model.Children.length; i++) {
+			if(self.model.Children[i].Type == AssureIt.NodeType.Context) {
 				hasContext = true;
 			}
 		}
@@ -273,13 +273,16 @@ class MenuBarActionPlugIn extends AssureIt.ActionPlugIn {
 			var node = $(this);
 
 		//	self.timeoutId = setTimeout(function () {
-				var menuBar: MenuBar = new MenuBar(caseViewer, case0, node, serverApi, self, function() {
+				var label: string = node.children('h4').text();
+				var model: AssureIt.NodeModel = case0.ElementMap[label];
+				var menuBar: MenuBar = new MenuBar(caseViewer, model, case0, node, serverApi, self, function() {
 					caseViewer.ReDraw();
 				});
 				menuBar.SetEventHandlers();
 
 				var commitWindow: CommitWindow = new CommitWindow();
 				commitWindow.SetEventHandlers(caseViewer, case0, serverApi);
+				//this.plugInManager.invokePlugInMenuBarContents(caseViewer, caseMod
 			//}, 1000);
 		}, function () { /*clearTimeout(self.timeoutId);*/ /* TODO: add more action */ });
 		return true;

@@ -5,9 +5,10 @@ var __extends = this.__extends || function (d, b) {
     d.prototype = new __();
 };
 var MenuBar = (function () {
-    function MenuBar(caseViewer, case0, node, serverApi, plugIn, reDraw) {
+    function MenuBar(caseViewer, model, case0, node, serverApi, plugIn, reDraw) {
         this.plugIn = plugIn;
         this.caseViewer = caseViewer;
+        this.model = model;
         this.case0 = case0;
         this.node = node;
         this.serverApi = serverApi;
@@ -17,17 +18,15 @@ var MenuBar = (function () {
     MenuBar.prototype.Init = function () {
         var self = this;
 
-        var thisNodeLabel = self.node.children('h4').text();
-        var thisNodeModel = self.case0.ElementMap[thisNodeLabel];
-        var thisNodeType = thisNodeModel.Type;
+        var thisNodeType = self.model.Type;
 
         $('#menu').remove();
         var menu = $('<div id="menu">' + '<a href="#" ><img id="commit" src="' + this.serverApi.basepath + 'images/commit.png" title="Commit" alt="commit" /></a>' + '<a href="#" ><img id="remove" src="' + this.serverApi.basepath + 'images/remove.png" title="Remove" alt="remove" /></a>' + '<a href="#" ><img id="scale"  src="' + this.serverApi.basepath + 'images/scale.png" title="Scale" alt="scale" /></a>' + '</div>');
 
         var hasContext = false;
 
-        for (var i = 0; i < thisNodeModel.Children.length; i++) {
-            if (thisNodeModel.Children[i].Type == AssureIt.NodeType.Context) {
+        for (var i = 0; i < self.model.Children.length; i++) {
+            if (self.model.Children[i].Type == AssureIt.NodeType.Context) {
                 hasContext = true;
             }
         }
@@ -266,7 +265,9 @@ var MenuBarActionPlugIn = (function (_super) {
         $('.node').hover(function () {
             var node = $(this);
 
-            var menuBar = new MenuBar(caseViewer, case0, node, serverApi, self, function () {
+            var label = node.children('h4').text();
+            var model = case0.ElementMap[label];
+            var menuBar = new MenuBar(caseViewer, model, case0, node, serverApi, self, function () {
                 caseViewer.ReDraw();
             });
             menuBar.SetEventHandlers();
