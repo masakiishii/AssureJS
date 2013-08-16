@@ -267,7 +267,7 @@ var MenuBarActionPlugIn = (function (_super) {
 
             self.timeoutId = setTimeout(function () {
                 var menuBar = new MenuBar(caseViewer, case0, node, serverApi, self, function () {
-                    self.ReDraw(caseViewer);
+                    caseViewer.ReDraw();
                 });
                 menuBar.SetEventHandlers();
 

@@ -273,7 +273,7 @@ class MenuBarActionPlugIn extends AssureIt.ActionPlugIn {
 
 			self.timeoutId = setTimeout(function () {
 				var menuBar: MenuBar = new MenuBar(caseViewer, case0, node, serverApi, self, function() {
-					self.ReDraw(caseViewer);
+					caseViewer.ReDraw();
 				});
 				menuBar.SetEventHandlers();
 

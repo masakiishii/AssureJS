@@ -44,15 +44,6 @@ var AssureIt;
         ActionPlugIn.prototype.Delegate = function (caseViewer, case0, serverApi) {
             return true;
         };
-
-        ActionPlugIn.prototype.ReDraw = function (caseViewer) {
-            var offset = $("#layer1").offset();
-
-            caseViewer.Draw();
-            caseViewer.Resize();
-            caseViewer.Draw();
-            caseViewer.Screen.SetOffset(offset.left, offset.top);
-        };
         return ActionPlugIn;
     })(AbstractPlugIn);
     AssureIt.ActionPlugIn = ActionPlugIn;

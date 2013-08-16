@@ -75,7 +75,7 @@ var EditorActionPlugIn = (function (_super) {
             orig_model.IsEditing = true;
             orig_shape.HTMLDoc.Render(caseViewer, orig_model);
 
-            self.ReDraw(caseViewer);
+            caseViewer.ReDraw();
 
             $('#editor-wrapper').css({ position: 'absolute', top: p.top + p_contents.top, left: p.left + p_contents.left, display: 'block' }).appendTo($('#layer2')).focus().on("keydown", function (e) {
                 if (e.keyCode == 27) {
@@ -97,7 +97,7 @@ var EditorActionPlugIn = (function (_super) {
                     orig_model.Notes = new_model.Notes;
                     orig_shape.HTMLDoc.Render(caseViewer, orig_model);
 
-                    self.ReDraw(caseViewer);
+                    caseViewer.ReDraw();
                 }
                 $('#editor-wrapper').css({ display: 'none' });
             });
