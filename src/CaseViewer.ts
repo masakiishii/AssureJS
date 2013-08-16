@@ -681,11 +681,11 @@ module AssureIt {
 		}
 
 		GetWidth(): number {
-			return this.ContentLayer.clientWidth;
+			return document.body.clientWidth;
 		}
 
 		GetHeight(): number {
-			return this.ContentLayer.clientHeight;
+			return document.body.clientHeight;
 		}
 
 	}

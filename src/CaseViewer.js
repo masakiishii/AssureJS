@@ -697,11 +697,11 @@ var AssureIt;
         };
 
         ScreenManager.prototype.GetWidth = function () {
-            return this.ContentLayer.clientWidth;
+            return document.body.clientWidth;
         };
 
         ScreenManager.prototype.GetHeight = function () {
-            return this.ContentLayer.clientHeight;
+            return document.body.clientHeight;
         };
         return ScreenManager;
     })();
