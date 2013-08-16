@@ -115,10 +115,14 @@ class MenuBar {
 		(<any>$('#modal')).dialog('open');
 	}
 
-	Scale(): void {
-		this.plugIn.isLargeScale = !this.plugIn.isLargeScale;
-		this.caseViewer.Screen.SetScale(this.plugIn.isLargeScale ? 1 : 0.1);
-		this.caseViewer.ReDraw();
+	Scale(): void { // TODO: handle click and dblclick exclusive
+		var self = this;
+
+		this.caseViewer.Screen.SetScale(0.1);
+		//$("#background").unbind("click");
+		$("#background").click(function() {
+			self.caseViewer.Screen.SetScale(1);
+		});
 	}
 
 	SetEventHandlers(): void {
@@ -221,7 +225,6 @@ class MenuBarPlugIn extends AssureIt.PlugIn {
 }
 
 class MenuBarActionPlugIn extends AssureIt.ActionPlugIn {
-	isLargeScale: boolean = false;
 	timeoutId: number;
 
 	constructor(plugInManager: AssureIt.PlugInManager) {
@@ -240,7 +243,7 @@ class MenuBarActionPlugIn extends AssureIt.ActionPlugIn {
 			var node = $(this);
 
 			var label: string = node.children('h4').text();
-			console.log(label);
+			//console.log(label);
 			var model: AssureIt.NodeModel = case0.ElementMap[label];
 			var menuBar: MenuBar = new MenuBar(caseViewer, model, case0, node, serverApi, self);
 			menuBar.menu.appendTo($('#layer2'));
