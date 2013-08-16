@@ -282,7 +282,7 @@ class MenuBarActionPlugIn extends AssureIt.ActionPlugIn {
 
 				var commitWindow: CommitWindow = new CommitWindow();
 				commitWindow.SetEventHandlers(caseViewer, case0, serverApi);
-				//this.plugInManager.invokePlugInMenuBarContents(caseViewer, caseMod
+				this.plugInManager.invokePlugInMenuBarContents(caseViewer, model, node);
 			//}, 1000);
 		}, function () { /*clearTimeout(self.timeoutId);*/ /* TODO: add more action */ });
 		return true;
