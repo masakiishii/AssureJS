@@ -274,7 +274,7 @@ var MenuBarActionPlugIn = (function (_super) {
 
             var commitWindow = new CommitWindow();
             commitWindow.SetEventHandlers(caseViewer, case0, serverApi);
-            this.plugInManager.invokePlugInMenuBarContents(caseViewer, model, node);
+            self.plugInManager.InvokePlugInMenuBarContents(caseViewer, model, node);
         }, function () {
         });
         return true;

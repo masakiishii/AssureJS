@@ -24,6 +24,8 @@ var DScriptMenuPlugIn = (function (_super) {
     };
 
     DScriptMenuPlugIn.prototype.Delegate = function (caseViewer, caseModel, element) {
+        console.log("Hello DScript");
+
         return true;
     };
     return DScriptMenuPlugIn;
