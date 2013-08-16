@@ -3,7 +3,6 @@
 
 class MenuBar {
 
-	reDraw: () => void;
 	caseViewer: AssureIt.CaseViewer;
 	case0: AssureIt.Case;
 	node: JQuery;
@@ -11,13 +10,12 @@ class MenuBar {
 	model: AssureIt.NodeModel;
 	menu: JQuery;
 
-	constructor(caseViewer: AssureIt.CaseViewer, model: AssureIt.NodeModel, case0: AssureIt.Case, node: JQuery, serverApi: AssureIt.ServerAPI, public plugIn: MenuBarActionPlugIn, reDraw: () => void) {
+	constructor(caseViewer: AssureIt.CaseViewer, model: AssureIt.NodeModel, case0: AssureIt.Case, node: JQuery, serverApi: AssureIt.ServerAPI, public plugIn: MenuBarActionPlugIn) {
 		this.caseViewer = caseViewer;
 		this.model = model;
 		this.case0 = case0;
 		this.node = node;
 		this.serverApi = serverApi;
-		this.reDraw = reDraw;
 		this.Init();
 	}
 
@@ -71,7 +69,7 @@ class MenuBar {
 		this.caseViewer.ViewMap[newNodeModel.Label] = new AssureIt.NodeView(this.caseViewer, newNodeModel);
 		this.caseViewer.ViewMap[newNodeModel.Label].ParentShape = this.caseViewer.ViewMap[newNodeModel.Parent.Label];
 		this.caseViewer.Resize();
-		this.reDraw();
+		this.caseViewer.ReDraw();
 	}
 
 	GetDescendantLabels(labels: string[], children: AssureIt.NodeModel[]): string[] {
@@ -105,7 +103,7 @@ class MenuBar {
 		}
 
 		this.caseViewer.Resize();
-		this.reDraw();
+		this.caseViewer.ReDraw();
 	}
 
 	Commit(): void {
@@ -115,7 +113,7 @@ class MenuBar {
 	Scale(): void {
 		this.plugIn.isLargeScale = !this.plugIn.isLargeScale;
 		this.caseViewer.Screen.SetScale(this.plugIn.isLargeScale ? 1 : 0.1);
-		this.reDraw();
+		this.caseViewer.ReDraw();
 	}
 
 	SetEventHandlers(): void {
@@ -238,9 +236,7 @@ class MenuBarActionPlugIn extends AssureIt.ActionPlugIn {
 
 			var label: string = node.children('h4').text();
 			var model: AssureIt.NodeModel = case0.ElementMap[label];
-			var menuBar: MenuBar = new MenuBar(caseViewer, model, case0, node, serverApi, self, function() {
-				caseViewer.ReDraw();
-			});
+			var menuBar: MenuBar = new MenuBar(caseViewer, model, case0, node, serverApi, self);
 			menuBar.menu.appendTo($('#layer2'));
 			menuBar.menu.css({ position: 'absolute', top: node.position().top + node.height() + 5 , display: 'block', opacity: 0 });
 			menuBar.menu.hover(function () {}, function () { $(menuBar.menu).remove(); });
@@ -265,13 +261,11 @@ class MenuBarActionPlugIn extends AssureIt.ActionPlugIn {
 						menuBar.menu.css({ left: node.position().left+(node.outerWidth()-menuBar.menu.width()) / 2 });
 					},
 			});
-		}, function () { /*clearTimeout(self.timeoutId);*/ /* TODO: add more action */ });
+		}, function () { /* TODO: add more action */ });
 		return true;
 	}
 
 	DeleteFromDOM(): void {
-		//console.log(this.timeoutId);
-		//clearTimeout(this.timeoutId);
 		$('#menu').remove();
 	}
 }

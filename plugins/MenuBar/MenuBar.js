@@ -5,14 +5,13 @@ var __extends = this.__extends || function (d, b) {
     d.prototype = new __();
 };
 var MenuBar = (function () {
-    function MenuBar(caseViewer, model, case0, node, serverApi, plugIn, reDraw) {
+    function MenuBar(caseViewer, model, case0, node, serverApi, plugIn) {
         this.plugIn = plugIn;
         this.caseViewer = caseViewer;
         this.model = model;
         this.case0 = case0;
         this.node = node;
         this.serverApi = serverApi;
-        this.reDraw = reDraw;
         this.Init();
     }
     MenuBar.prototype.Init = function () {
@@ -61,7 +60,7 @@ var MenuBar = (function () {
         this.caseViewer.ViewMap[newNodeModel.Label] = new AssureIt.NodeView(this.caseViewer, newNodeModel);
         this.caseViewer.ViewMap[newNodeModel.Label].ParentShape = this.caseViewer.ViewMap[newNodeModel.Parent.Label];
         this.caseViewer.Resize();
-        this.reDraw();
+        this.caseViewer.ReDraw();
     };
 
     MenuBar.prototype.GetDescendantLabels = function (labels, children) {
@@ -95,7 +94,7 @@ var MenuBar = (function () {
         }
 
         this.caseViewer.Resize();
-        this.reDraw();
+        this.caseViewer.ReDraw();
     };
 
     MenuBar.prototype.Commit = function () {
@@ -105,7 +104,7 @@ var MenuBar = (function () {
     MenuBar.prototype.Scale = function () {
         this.plugIn.isLargeScale = !this.plugIn.isLargeScale;
         this.caseViewer.Screen.SetScale(this.plugIn.isLargeScale ? 1 : 0.1);
-        this.reDraw();
+        this.caseViewer.ReDraw();
     };
 
     MenuBar.prototype.SetEventHandlers = function () {
@@ -223,9 +222,7 @@ var MenuBarActionPlugIn = (function (_super) {
 
             var label = node.children('h4').text();
             var model = case0.ElementMap[label];
-            var menuBar = new MenuBar(caseViewer, model, case0, node, serverApi, self, function () {
-                caseViewer.ReDraw();
-            });
+            var menuBar = new MenuBar(caseViewer, model, case0, node, serverApi, self);
             menuBar.menu.appendTo($('#layer2'));
             menuBar.menu.css({ position: 'absolute', top: node.position().top + node.height() + 5, display: 'block', opacity: 0 });
             menuBar.menu.hover(function () {
