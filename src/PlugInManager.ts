@@ -91,7 +91,7 @@ module AssureIt {
 			return true;
 		}
 
-		Delegate(caseViewer: CaseViewer, caseModel: NodeModel, element: JQuery) : boolean {
+		Delegate(caseViewer: CaseViewer, caseModel: NodeModel, element: JQuery, serverApi: ServerAPI) : boolean {
 			return true;
 		}
 	}
@@ -185,11 +185,11 @@ module AssureIt {
 			}
 		}
 
-		InvokePlugInMenuBarContents(caseViewer: CaseViewer, caseModel: NodeModel, DocBase: JQuery): void {
+		InvokePlugInMenuBarContents(caseViewer: CaseViewer, caseModel: NodeModel, DocBase: JQuery, serverApi: ServerAPI): void {
 			var pluginMap: { [index: string]: MenuBarContentsPlugIn} = caseViewer.pluginManager.MenuBarContentsPlugInMap;
 			for (var key in pluginMap) {
 				var contents: MenuBarContentsPlugIn = this.MenuBarContentsPlugInMap[key];
-				contents.Delegate(caseViewer, caseModel, DocBase);
+				contents.Delegate(caseViewer, caseModel, DocBase, serverApi);
 			}
 		}
 	}

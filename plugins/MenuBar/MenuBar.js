@@ -21,7 +21,7 @@ var MenuBar = (function () {
         var thisNodeType = self.model.Type;
 
         $('#menu').remove();
-        var menu = $('<div id="menu">' + '<a href="#" ><img id="commit" src="' + this.serverApi.basepath + 'images/commit.png" title="Commit" alt="commit" /></a>' + '<a href="#" ><img id="remove" src="' + this.serverApi.basepath + 'images/remove.png" title="Remove" alt="remove" /></a>' + '<a href="#" ><img id="scale"  src="' + this.serverApi.basepath + 'images/scale.png" title="Scale" alt="scale" /></a>' + '</div>');
+        self.menu = $('<div id="menu">' + '<a href="#" ><img id="commit" src="' + this.serverApi.basepath + 'images/commit.png" title="Commit" alt="commit" /></a>' + '<a href="#" ><img id="remove" src="' + this.serverApi.basepath + 'images/remove.png" title="Remove" alt="remove" /></a>' + '<a href="#" ><img id="scale"  src="' + this.serverApi.basepath + 'images/scale.png" title="Scale" alt="scale" /></a>' + '</div>');
 
         var hasContext = false;
 
@@ -33,49 +33,25 @@ var MenuBar = (function () {
         switch (thisNodeType) {
             case AssureIt.NodeType.Goal:
                 if (!hasContext) {
-                    menu.append('<a href="#" ><img id="context"  src="' + this.serverApi.basepath + 'images/context.png" title="Context" alt="context" /></a>');
+                    self.menu.append('<a href="#" ><img id="context"  src="' + this.serverApi.basepath + 'images/context.png" title="Context" alt="context" /></a>');
                 }
-                menu.append('<a href="#" ><img id="strategy" src="' + this.serverApi.basepath + 'images/strategy.png" title="Strategy" alt="strategy" /></a>');
-                menu.append('<a href="#" ><img id="evidence" src="' + this.serverApi.basepath + 'images/evidence.png" title="Evidence" alt="evidence" /></a>');
+                self.menu.append('<a href="#" ><img id="strategy" src="' + this.serverApi.basepath + 'images/strategy.png" title="Strategy" alt="strategy" /></a>');
+                self.menu.append('<a href="#" ><img id="evidence" src="' + this.serverApi.basepath + 'images/evidence.png" title="Evidence" alt="evidence" /></a>');
                 break;
             case AssureIt.NodeType.Strategy:
-                menu.append('<a href="#" ><img id="goal"     src="' + this.serverApi.basepath + 'images/goal.png" title="Goal" alt="goal" /></a>');
+                self.menu.append('<a href="#" ><img id="goal"     src="' + this.serverApi.basepath + 'images/goal.png" title="Goal" alt="goal" /></a>');
                 if (!hasContext) {
-                    menu.append('<a href="#" ><img id="context"  src="' + this.serverApi.basepath + 'images/context.png" title="Context" alt="context" /></a>');
+                    self.menu.append('<a href="#" ><img id="context"  src="' + this.serverApi.basepath + 'images/context.png" title="Context" alt="context" /></a>');
                 }
                 break;
             case AssureIt.NodeType.Evidence:
                 if (!hasContext) {
-                    menu.append('<a href="#" ><img id="context"  src="' + this.serverApi.basepath + 'images/context.png" title="Context" alt="context" /></a>');
+                    self.menu.append('<a href="#" ><img id="context"  src="' + this.serverApi.basepath + 'images/context.png" title="Context" alt="context" /></a>');
                 }
                 break;
             default:
                 break;
         }
-
-        menu.css({ position: 'absolute', top: self.node.position().top + self.node.height() + 5, display: 'block', opacity: 0 });
-        menu.hover(function () {
-        }, function () {
-            $(this).remove();
-        });
-        (menu).jqDock({
-            align: 'bottom',
-            fadeIn: 200,
-            idle: 1500,
-            size: 45,
-            distance: 60,
-            labels: 'tc',
-            duration: 500,
-            fadeIn: 1200,
-            source: function () {
-                return this.src.replace(/(jpg|gif)$/, 'png');
-            },
-            onReady: function () {
-                menu.css({ left: self.node.position().left + (self.node.outerWidth() - menu.width()) / 2 });
-            }
-        });
-        menu.appendTo($('#layer2'));
-        this.plugIn.plugInManager.UseUILayer(this.plugIn);
     };
 
     MenuBar.prototype.AddNode = function (nodeType) {
@@ -270,11 +246,35 @@ var MenuBarActionPlugIn = (function (_super) {
             var menuBar = new MenuBar(caseViewer, model, case0, node, serverApi, self, function () {
                 caseViewer.ReDraw();
             });
+            menuBar.menu.appendTo($('#layer2'));
+            menuBar.menu.css({ position: 'absolute', top: node.position().top + node.height() + 5, display: 'block', opacity: 0 });
+            menuBar.menu.hover(function () {
+            }, function () {
+                $(menuBar).remove();
+            });
+            self.plugInManager.UseUILayer(self);
             menuBar.SetEventHandlers();
 
             var commitWindow = new CommitWindow();
             commitWindow.SetEventHandlers(caseViewer, case0, serverApi);
-            self.plugInManager.InvokePlugInMenuBarContents(caseViewer, model, node);
+            self.plugInManager.InvokePlugInMenuBarContents(caseViewer, model, menuBar.menu, serverApi);
+
+            (menuBar.menu).jqDock({
+                align: 'bottom',
+                fadeIn: 200,
+                idle: 1500,
+                size: 45,
+                distance: 60,
+                labels: 'tc',
+                duration: 500,
+                fadeIn: 1200,
+                source: function () {
+                    return this.src.replace(/(jpg|gif)$/, 'png');
+                },
+                onReady: function () {
+                    menuBar.menu.css({ left: node.position().left + (node.outerWidth() - menuBar.menu.width()) / 2 });
+                }
+            });
         }, function () {
         });
         return true;

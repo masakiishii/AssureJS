@@ -16,21 +16,9 @@ class DScriptMenuPlugIn extends AssureIt.MenuBarContentsPlugIn {
 		return true;
 	}
 
-	Delegate(caseViewer: AssureIt.CaseViewer, caseModel: AssureIt.NodeModel, element: JQuery) : boolean {
+	Delegate(caseViewer: AssureIt.CaseViewer, caseModel: AssureIt.NodeModel, element: JQuery, serverApi: AssureIt.ServerAPI): boolean {
 		console.log("Hello DScript");
-//		if(caseModel.Annotations.length == 0) return;
-//
-//		var text : string = "";
-//		var p : {top: number; left: number} = element.position();
-//
-//		for(var i : number = 0; i < caseModel.Annotations.length; i++) {
-//			text += "@" + caseModel.Annotations[i].Name + "<br>";
-//		}
-//
-//		$('<div class="anno">' +
-//			'<p>' + text + '</p>' +
-//			'</div>')
-//			.css({position: 'absolute', 'font-size': 25, color: 'gray', top: p.top - 20, left: p.left + 80}).appendTo(element);
+		element.append('<a href="#" ><img id="dscript"  src="'+serverApi.basepath+'images/icon.png" title="DScript" alt="dscript" /></a>');
 		return true;
 	}
 }
