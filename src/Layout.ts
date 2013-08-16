@@ -361,12 +361,14 @@ module AssureIt {
 				ContextView.AbsX += x;
 				ContextView.AbsY += (y - h);
 				ContextView.AbsX += this.X_CONTEXT_MARGIN;
-				this.EmitChildrenElement(Element, ParentView.AbsX, ParentView.AbsY, i, ((this.Y_MARGIN > (h1 - h2)) ? 0 : (h1 - h2)));
+				this.EmitChildrenElement(Element, ParentView.AbsX, ParentView.AbsY, i, ((this.Y_MARGIN > Math.abs(h1 - h2)) ? 0 : Math.abs(h1 - h2)));
 			} else {  //emit element data except context
 				var h2 = 0;
-				if(ParentView != null) {
-					h2 = ParentView.HTMLDoc.Height/2;
-				}
+				var CurrentView: NodeView = this.ViewMap[Element.Label];
+//				if(ParentView != null) {
+//					h2 = ParentView.HTMLDoc.Height/2;
+//				}
+				h2 = CurrentView.HTMLDoc.Height;
 				this.EmitChildrenElement(Element, x, y, i, h2);
 			}
 		}
