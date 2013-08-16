@@ -158,6 +158,7 @@ var AssureIt;
             this.Y_NODE_MARGIN = 205;
             this.Y_NODE_ADJUSTMENT_MARGIN = 70;
             this.X_CONTEXT_MARGIN = 200;
+            this.X_OVER_MARGIN = 700;
             this.X_FOOT_MARGIN = 100;
             this.X_MULTI_ELEMENT_MARGIN = 20;
             this.footelement = new Array();
@@ -246,6 +247,46 @@ var AssureIt;
             return xPosition;
         };
 
+        LayoutPortrait.prototype.GetSameParentLabel = function (PreviousNodeView, CurrentNodeView) {
+            var PreviousParentShape = PreviousNodeView.ParentShape;
+            var CurrentParentShape = CurrentNodeView.ParentShape;
+            var PreviousParentArray = [];
+            var CurrentParentArray = [];
+
+            while (PreviousParentShape != null) {
+                PreviousParentArray.push(PreviousParentShape.Source.Label);
+                PreviousParentShape = PreviousParentShape.ParentShape;
+            }
+            while (CurrentParentShape != null) {
+                CurrentParentArray.push(CurrentParentShape.Source.Label);
+                CurrentParentShape = CurrentParentShape.ParentShape;
+            }
+            var PreviousParentLength = PreviousParentArray.length;
+            var CurrentParentLength = CurrentParentArray.length;
+            for (var i = 0; i < PreviousParentLength; i++) {
+                for (var j = 0; j < CurrentParentLength; j++) {
+                    if (PreviousParentArray[i] == CurrentParentArray[j]) {
+                        return PreviousParentArray[i];
+                    }
+                }
+            }
+            return null;
+        };
+
+        LayoutPortrait.prototype.HasContextinParentNode = function (PreviousNodeView, SameParentLabel) {
+            var PreviousParentShape = PreviousNodeView.ParentShape;
+            while (PreviousParentShape != null) {
+                if (PreviousParentShape.Source.Label == SameParentLabel) {
+                    break;
+                }
+                if (this.GetContextIndex(PreviousParentShape.Source) != -1) {
+                    return true;
+                }
+                PreviousParentShape = PreviousParentShape.ParentShape;
+            }
+            return false;
+        };
+
         LayoutPortrait.prototype.SetFootElementPosition = function () {
             var n = this.footelement.length;
             for (var i = 0; i < n; i++) {
@@ -253,7 +294,9 @@ var AssureIt;
                 var CurrentNodeView = this.ViewMap[this.footelement[i]];
                 CurrentNodeView.AbsX = 0;
                 if (i != 0) {
-                    if ((PreviousNodeView.ParentShape.Source.Label != CurrentNodeView.ParentShape.Source.Label) && (this.GetContextIndex(PreviousNodeView.ParentShape.Source) != -1)) {
+                    var SameParentLabel = this.GetSameParentLabel(PreviousNodeView, CurrentNodeView);
+                    var HasContext = this.HasContextinParentNode(PreviousNodeView, SameParentLabel);
+                    if ((PreviousNodeView.ParentShape.Source.Label != CurrentNodeView.ParentShape.Source.Label) && HasContext) {
                         var PreviousParentChildren = PreviousNodeView.ParentShape.Source.Children;
                         var Min_xPosition = this.CalculateMinPosition(PreviousParentChildren);
                         var Max_xPosition = this.CalculateMaxPosition(PreviousParentChildren);
@@ -264,10 +307,14 @@ var AssureIt;
                             CurrentNodeView.AbsX += this.X_CONTEXT_MARGIN - HalfChildrenWidth;
                         }
                     }
-                    if (this.GetContextIndex(PreviousNodeView.Source) != -1) {
+                    if (this.GetContextIndex(PreviousNodeView.Source) != -1 && (CurrentNodeView.AbsX - PreviousNodeView.AbsX) < this.X_MARGIN) {
                         CurrentNodeView.AbsX += this.X_MARGIN;
                     }
+
                     CurrentNodeView.AbsX += (PreviousNodeView.AbsX + this.X_MARGIN);
+                    if (CurrentNodeView.AbsX - PreviousNodeView.AbsX > this.X_OVER_MARGIN) {
+                        CurrentNodeView.AbsX -= this.X_MARGIN;
+                    }
                 }
             }
             return;

@@ -165,6 +165,7 @@ module AssureIt {
 		Y_NODE_MARGIN: number = 205;
 		Y_NODE_ADJUSTMENT_MARGIN: number = 70;
 		X_CONTEXT_MARGIN: number = 200;
+		X_OVER_MARGIN = 700;
 		X_FOOT_MARGIN: number = 100;
 		X_MULTI_ELEMENT_MARGIN: number = 20;
 		footelement: string[] = new Array();
@@ -262,6 +263,46 @@ module AssureIt {
 			return xPosition;
 		}
 
+		GetSameParentLabel(PreviousNodeView: NodeView, CurrentNodeView: NodeView): string {
+			var PreviousParentShape: NodeView = PreviousNodeView.ParentShape;
+			var CurrentParentShape : NodeView = CurrentNodeView.ParentShape;
+			var PreviousParentArray: string[] = [];
+			var CurrentParentArray: string[] = [];
+
+			while(PreviousParentShape != null) {
+				PreviousParentArray.push(PreviousParentShape.Source.Label);
+				PreviousParentShape = PreviousParentShape.ParentShape;
+			}
+			while(CurrentParentShape != null) {
+				CurrentParentArray.push(CurrentParentShape.Source.Label);
+				CurrentParentShape = CurrentParentShape.ParentShape;
+			}
+			var PreviousParentLength: number = PreviousParentArray.length;
+			var CurrentParentLength : number  = CurrentParentArray.length;
+			for(var i: number = 0; i < PreviousParentLength; i++) {
+				for(var j: number = 0; j < CurrentParentLength; j++) {
+					if(PreviousParentArray[i] == CurrentParentArray[j]) {
+						return PreviousParentArray[i];
+					}
+				}
+			}
+			return null;
+		}
+
+		HasContextinParentNode(PreviousNodeView: NodeView, SameParentLabel: string): boolean {
+			var PreviousParentShape: NodeView = PreviousNodeView.ParentShape;
+			while(PreviousParentShape != null) {
+				if(PreviousParentShape.Source.Label == SameParentLabel) {
+					break;
+				}
+				if(this.GetContextIndex(PreviousParentShape.Source) != -1) {
+					return true;
+				}
+				PreviousParentShape = PreviousParentShape.ParentShape;
+			}
+			return false;
+		}
+
 		SetFootElementPosition(): void {
 			var n: number = this.footelement.length;
 			for (var i: number = 0; i < n; i++) {
@@ -269,7 +310,9 @@ module AssureIt {
 				var CurrentNodeView: NodeView = this.ViewMap[this.footelement[i]];
 				CurrentNodeView.AbsX = 0;
 				if (i != 0) {
-					if ((PreviousNodeView.ParentShape.Source.Label != CurrentNodeView.ParentShape.Source.Label) && (this.GetContextIndex(PreviousNodeView.ParentShape.Source) != -1)) {
+					var SameParentLabel: string = this.GetSameParentLabel(PreviousNodeView, CurrentNodeView);
+					var HasContext: boolean = this.HasContextinParentNode(PreviousNodeView, SameParentLabel);
+					if ((PreviousNodeView.ParentShape.Source.Label != CurrentNodeView.ParentShape.Source.Label) && HasContext) {
 						var PreviousParentChildren: NodeModel[] = PreviousNodeView.ParentShape.Source.Children;
 						var Min_xPosition: number = this.CalculateMinPosition(PreviousParentChildren);
 						var Max_xPosition: number = this.CalculateMaxPosition(PreviousParentChildren);
@@ -281,10 +324,14 @@ module AssureIt {
 							CurrentNodeView.AbsX +=  this.X_CONTEXT_MARGIN - HalfChildrenWidth;
 						}
 					}
-					if (this.GetContextIndex(PreviousNodeView.Source) != -1) {
+					if (this.GetContextIndex(PreviousNodeView.Source) != -1 && (CurrentNodeView.AbsX - PreviousNodeView.AbsX) < this.X_MARGIN) {
 						CurrentNodeView.AbsX += this.X_MARGIN;
 					}
+
 					CurrentNodeView.AbsX += (PreviousNodeView.AbsX + this.X_MARGIN);
+					if(CurrentNodeView.AbsX - PreviousNodeView.AbsX > this.X_OVER_MARGIN) {
+						CurrentNodeView.AbsX -= this.X_MARGIN;
+					}
 				}
 			}
 			return;
