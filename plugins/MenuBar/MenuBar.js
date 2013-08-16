@@ -127,28 +127,8 @@ var MenuBar = (function () {
     };
 
     MenuBar.prototype.Scale = function () {
-        var $svg = $('#layer0');
-        var $layer1 = $('#layer1');
-        var scale = 1.0;
-        var top = Number($layer1.css('top').replace("px", ""));
-        var left = Number($layer1.css('left').replace("px", ""));
-        var offset = 10;
-        if (this.plugIn.isLargeScale) {
-            this.plugIn.isLargeScale = false;
-            top = top - offset * (0.1 / 1.0);
-            left = left - offset * (0.1 / 1.0);
-        } else {
-            scale = 0.1;
-            top = top - offset * (1.0 / 0.1);
-            left = left - offset * (1.0 / 0.1);
-            this.plugIn.isLargeScale = true;
-        }
-        console.log(top + ":" + left);
-        $svg.attr("transform", "scale(" + scale + ")");
-        $layer1.css("transform", "scale(" + scale + ")");
-        $layer1.css("-moz-transform", "scale(" + scale + ")");
-        $layer1.css("-webkit-transform", "scale(" + scale + ")");
-        $layer1.css({ top: 0 + "px", left: 0 + "px" });
+        this.plugIn.isLargeScale = !this.plugIn.isLargeScale;
+        this.caseViewer.Screen.SetScale(this.plugIn.isLargeScale ? 1 : 0.1);
         this.reDraw();
     };
 
@@ -274,7 +254,7 @@ var MenuBarActionPlugIn = (function (_super) {
 
             var commitWindow = new CommitWindow();
             commitWindow.SetEventHandlers(caseViewer, case0, serverApi);
-            this.plugInManager.invokePlugInMenuBarContents(caseViewer, model, node);
+            self.plugInManager.InvokePlugInMenuBarContents(caseViewer, model, node);
         }, function () {
         });
         return true;

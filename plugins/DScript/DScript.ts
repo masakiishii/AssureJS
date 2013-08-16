@@ -17,6 +17,7 @@ class DScriptMenuPlugIn extends AssureIt.MenuBarContentsPlugIn {
 	}
 
 	Delegate(caseViewer: AssureIt.CaseViewer, caseModel: AssureIt.NodeModel, element: JQuery) : boolean {
+		console.log("Hello DScript");
 //		if(caseModel.Annotations.length == 0) return;
 //
 //		var text : string = "";
