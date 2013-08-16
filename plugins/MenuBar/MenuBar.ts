@@ -243,7 +243,7 @@ class MenuBarActionPlugIn extends AssureIt.ActionPlugIn {
 			});
 			menuBar.menu.appendTo($('#layer2'));
 			menuBar.menu.css({ position: 'absolute', top: node.position().top + node.height() + 5 , display: 'block', opacity: 0 });
-			menuBar.menu.hover(function () {}, function () { $(menuBar).remove(); });
+			menuBar.menu.hover(function () {}, function () { $(menuBar.menu).remove(); });
 			self.plugInManager.UseUILayer(self);
 			menuBar.SetEventHandlers();
 
@@ -259,7 +259,7 @@ class MenuBarActionPlugIn extends AssureIt.ActionPlugIn {
 				distance: 60,
 				labels: 'tc',
 				duration: 500,
-				fadeIn: 1200,
+				fadeIn: 1000,
 				source: function () { return this.src.replace(/(jpg|gif)$/, 'png'); },
 				onReady: function () {
 						menuBar.menu.css({ left: node.position().left+(node.outerWidth()-menuBar.menu.width()) / 2 });
