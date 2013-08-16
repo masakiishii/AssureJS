@@ -509,6 +509,13 @@ module AssureIt {
 			this.Resize();
 		}
 
+		ReDraw(Screen?: ScreenManager): void {
+			var offset = $("#layer1").offset();
+			this.Resize();
+			this.Draw();
+			this.Screen.SetOffset(offset.left, offset.top);
+		}
+
 	}
 
 	export class ScrollManager {

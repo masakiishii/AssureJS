@@ -512,6 +512,13 @@ var AssureIt;
             this.pluginManager.RegisterActionEventListeners(this, this.Source, this.serverApi);
             this.Resize();
         };
+
+        CaseViewer.prototype.ReDraw = function (Screen) {
+            var offset = $("#layer1").offset();
+            this.Resize();
+            this.Draw();
+            this.Screen.SetOffset(offset.left, offset.top);
+        };
         CaseViewer.ElementWidth = 250;
         return CaseViewer;
     })();

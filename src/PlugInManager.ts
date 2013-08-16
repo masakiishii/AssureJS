@@ -47,14 +47,6 @@ module AssureIt {
 			return true;
 		}
 
-		ReDraw(caseViewer: AssureIt.CaseViewer): void {
-			var offset = $("#layer1").offset();
-
-			caseViewer.Draw();
-			caseViewer.Resize();
-			caseViewer.Draw();
-			caseViewer.Screen.SetOffset(offset.left, offset.top);
-		}
 	}
 
 	export class CheckerPlugIn extends AbstractPlugIn {
