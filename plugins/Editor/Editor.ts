@@ -85,6 +85,8 @@ class EditorActionPlugIn extends AssureIt.ActionPlugIn {
 
 			caseViewer.ReDraw();
 
+			p = $(selector).position();
+			p_contents = $(selector).children("p").position();
 			$('#editor-wrapper')
 				.css({position: 'absolute', top: p.top + p_contents.top, left: p.left + p_contents.left, display: 'block'})
 				.appendTo($('#layer2'))
