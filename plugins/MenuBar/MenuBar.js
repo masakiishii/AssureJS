@@ -67,6 +67,7 @@ var MenuBar = (function () {
             distance: 60,
             labels: 'tc',
             duration: 500,
+            fadeIn: 1200,
             source: function () {
                 return this.src.replace(/(jpg|gif)$/, 'png');
             },
@@ -265,25 +266,20 @@ var MenuBarActionPlugIn = (function (_super) {
         $('.node').hover(function () {
             var node = $(this);
 
-            self.timeoutId = setTimeout(function () {
-                var menuBar = new MenuBar(caseViewer, case0, node, serverApi, self, function () {
-                    self.ReDraw(caseViewer);
-                });
-                menuBar.SetEventHandlers();
+            var menuBar = new MenuBar(caseViewer, case0, node, serverApi, self, function () {
+                caseViewer.ReDraw();
+            });
+            menuBar.SetEventHandlers();
 
-                var commitWindow = new CommitWindow();
-                commitWindow.SetEventHandlers(caseViewer, case0, serverApi);
-            }, 1000);
+            var commitWindow = new CommitWindow();
+            commitWindow.SetEventHandlers(caseViewer, case0, serverApi);
         }, function () {
-            clearTimeout(self.timeoutId);
         });
         return true;
     };
 
     MenuBarActionPlugIn.prototype.DeleteFromDOM = function () {
         $('#menu').remove();
-        console.log(this.timeoutId);
-        clearTimeout(this.timeoutId);
     };
     return MenuBarActionPlugIn;
 })(AssureIt.ActionPlugIn);

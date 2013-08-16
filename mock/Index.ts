@@ -301,13 +301,15 @@ $(function () {
 	var root: AssureIt.NodeModel = caseDecoder.ParseJson(Case0, JsonData);
 
 	Case0.SetElementTop(root);
-	var Viewer = new AssureIt.CaseViewer(Case0, pluginManager, serverApi);
+
 	var backgroundlayer = <HTMLDivElement>document.getElementById("background");
 	var shapelayer = <SVGGElement><any>document.getElementById("layer0");
 	var contentlayer = <HTMLDivElement>document.getElementById("layer1");
 	var controllayer = <HTMLDivElement>document.getElementById("layer2");
 
 	var Screen = new AssureIt.ScreenManager(shapelayer, contentlayer, controllayer, backgroundlayer);
+
+	var Viewer = new AssureIt.CaseViewer(Case0, pluginManager, serverApi, Screen);
 	Viewer.Draw(Screen);
 });
 

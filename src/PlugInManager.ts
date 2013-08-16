@@ -10,12 +10,14 @@ module AssureIt {
 		CheckerPlugIn: CheckerPlugIn;
 		HTMLRenderPlugIn: HTMLRenderPlugIn;
 		SVGRenderPlugIn: SVGRenderPlugIn;
+		MenuBarContentsPlugIn: MenuBarContentsPlugIn;
 
 		constructor(public plugInManager: PlugInManager) {
 			this.ActionPlugIn = null;
 			this.CheckerPlugIn = null;
 			this.HTMLRenderPlugIn = null;
 			this.SVGRenderPlugIn = null;
+			this.MenuBarContentsPlugIn = null;
 		}
 	}
 
@@ -47,19 +49,6 @@ module AssureIt {
 			return true;
 		}
 
-		ReDraw(caseViewer: AssureIt.CaseViewer): void {
-			var backgroundlayer = <HTMLDivElement>document.getElementById("background");
-			var shapelayer = <SVGGElement><any>document.getElementById("layer0");
-			var contentlayer = <HTMLDivElement>document.getElementById("layer1");
-			var controllayer = <HTMLDivElement>document.getElementById("layer2");
-			var offset = $("#layer1").offset();
-
-			var Screen = new AssureIt.ScreenManager(shapelayer, contentlayer, controllayer, backgroundlayer);
-			caseViewer.Draw(Screen);
-			caseViewer.Resize();
-			caseViewer.Draw(Screen);
-			Screen.SetOffset(offset.left, offset.top);
-		}
 	}
 
 	export class CheckerPlugIn extends AbstractPlugIn {
@@ -78,6 +67,21 @@ module AssureIt {
 	}
 
 	export class HTMLRenderPlugIn extends AbstractPlugIn {
+
+		constructor(public plugInManager: PlugInManager) {
+			super(plugInManager);
+		}
+
+		IsEnabled(caseViewer: CaseViewer, caseModel: NodeModel) : boolean {
+			return true;
+		}
+
+		Delegate(caseViewer: CaseViewer, caseModel: NodeModel, element: JQuery) : boolean {
+			return true;
+		}
+	}
+
+	export class MenuBarContentsPlugIn extends AbstractPlugIn {
 
 		constructor(public plugInManager: PlugInManager) {
 			super(plugInManager);
@@ -113,6 +117,7 @@ module AssureIt {
 		CheckerPlugInMap : { [index: string]: CheckerPlugIn };
 		HTMLRenderPlugInMap : { [index: string]: HTMLRenderPlugIn };
 		SVGRenderPlugInMap  : { [index: string]: SVGRenderPlugIn };
+		MenuBarContentsPlugInMap  : { [index: string]: MenuBarContentsPlugIn };
 		UILayer: AbstractPlugIn[];
 
 		constructor() {
@@ -120,6 +125,7 @@ module AssureIt {
 			this.CheckerPlugInMap = {};
 			this.HTMLRenderPlugInMap = {};
 			this.SVGRenderPlugInMap = {};
+			this.MenuBarContentsPlugInMap = {};
 			this.UILayer = [];
 		}
 
@@ -132,6 +138,9 @@ module AssureIt {
 			}
 			if(plugIn.SVGRenderPlugIn) {
 				this.SetSVGRenderPlugIn(key, plugIn.SVGRenderPlugIn);
+			}
+			if(plugIn.MenuBarContentsPlugIn) {
+				this.SetMenuBarContentsPlugIn(key, plugIn.MenuBarContentsPlugIn);
 			}
 		}
 
@@ -157,6 +166,10 @@ module AssureIt {
 			this.SVGRenderPlugInMap[key] = SVGRenderPlugIn;
 		}
 
+		SetMenuBarContentsPlugIn(key: string, MenuBarContentsPlugIn: MenuBarContentsPlugIn) {
+			this.MenuBarContentsPlugInMap[key] = MenuBarContentsPlugIn;
+		}
+
 		UseUILayer(plugin :AbstractPlugIn): void {
 			var beforePlugin = this.UILayer.pop();
 			if(beforePlugin != plugin && beforePlugin) {
@@ -169,6 +182,14 @@ module AssureIt {
 			var beforePlugin = this.UILayer.pop();
 			if(beforePlugin) {
 				beforePlugin.DeleteFromDOM();
+			}
+		}
+
+		InvokePlugInMenuBarContents(caseViewer: CaseViewer, caseModel: NodeModel, DocBase: JQuery): void {
+			var pluginMap: { [index: string]: MenuBarContentsPlugIn} = caseViewer.pluginManager.MenuBarContentsPlugInMap;
+			for (var key in pluginMap) {
+				var contents: MenuBarContentsPlugIn = this.MenuBarContentsPlugInMap[key];
+				contents.Delegate(caseViewer, caseModel, DocBase);
 			}
 		}
 	}

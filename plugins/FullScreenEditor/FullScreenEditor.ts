@@ -65,8 +65,8 @@ class FullScreenEditorActionPlugIn extends AssureIt.ActionPlugIn {
 	Delegate(caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case, serverApi: AssureIt.ServerAPI)  : boolean {
 		var editor = this.editor;
 		var self = this; //FIXME
-		$('#layer1').unbind('dblclick');
-		$('#layer1').dblclick(function(ev) {
+		$('#background').unbind('dblclick');
+		$('#background').dblclick(function(ev) {
 			ev.stopPropagation();
 			self.plugInManager.UseUILayer(self);
 
@@ -114,16 +114,7 @@ class FullScreenEditorActionPlugIn extends AssureIt.ActionPlugIn {
 							caseViewer.ViewMap[viewkey].Update();
 						}
 
-						/* TODO use ReDraw() */
-						caseViewer.Resize();
-						var backgroundlayer = <HTMLDivElement>document.getElementById("background");
-						var shapelayer = <SVGGElement><any>document.getElementById("layer0");
-						var contentlayer = <HTMLDivElement>document.getElementById("layer1");
-						var controllayer = <HTMLDivElement>document.getElementById("layer2");
-						var offset = $("#layer1").offset();
-						var Screen = new AssureIt.ScreenManager(shapelayer, contentlayer, controllayer, backgroundlayer);
-						caseViewer.Draw(Screen);
-						Screen.SetOffset(offset.left, offset.top);
+						caseViewer.ReDraw();
 					}
 
 					var $this = $(this);

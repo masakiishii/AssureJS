@@ -13,6 +13,7 @@ var AssureIt;
             this.CheckerPlugIn = null;
             this.HTMLRenderPlugIn = null;
             this.SVGRenderPlugIn = null;
+            this.MenuBarContentsPlugIn = null;
         }
         return PlugIn;
     })();
@@ -43,20 +44,6 @@ var AssureIt;
 
         ActionPlugIn.prototype.Delegate = function (caseViewer, case0, serverApi) {
             return true;
-        };
-
-        ActionPlugIn.prototype.ReDraw = function (caseViewer) {
-            var backgroundlayer = document.getElementById("background");
-            var shapelayer = document.getElementById("layer0");
-            var contentlayer = document.getElementById("layer1");
-            var controllayer = document.getElementById("layer2");
-            var offset = $("#layer1").offset();
-
-            var Screen = new AssureIt.ScreenManager(shapelayer, contentlayer, controllayer, backgroundlayer);
-            caseViewer.Draw(Screen);
-            caseViewer.Resize();
-            caseViewer.Draw(Screen);
-            Screen.SetOffset(offset.left, offset.top);
         };
         return ActionPlugIn;
     })(AbstractPlugIn);
@@ -96,6 +83,23 @@ var AssureIt;
     })(AbstractPlugIn);
     AssureIt.HTMLRenderPlugIn = HTMLRenderPlugIn;
 
+    var MenuBarContentsPlugIn = (function (_super) {
+        __extends(MenuBarContentsPlugIn, _super);
+        function MenuBarContentsPlugIn(plugInManager) {
+            _super.call(this, plugInManager);
+            this.plugInManager = plugInManager;
+        }
+        MenuBarContentsPlugIn.prototype.IsEnabled = function (caseViewer, caseModel) {
+            return true;
+        };
+
+        MenuBarContentsPlugIn.prototype.Delegate = function (caseViewer, caseModel, element) {
+            return true;
+        };
+        return MenuBarContentsPlugIn;
+    })(AbstractPlugIn);
+    AssureIt.MenuBarContentsPlugIn = MenuBarContentsPlugIn;
+
     var SVGRenderPlugIn = (function (_super) {
         __extends(SVGRenderPlugIn, _super);
         function SVGRenderPlugIn(plugInManager) {
@@ -119,6 +123,7 @@ var AssureIt;
             this.CheckerPlugInMap = {};
             this.HTMLRenderPlugInMap = {};
             this.SVGRenderPlugInMap = {};
+            this.MenuBarContentsPlugInMap = {};
             this.UILayer = [];
         }
         PlugInManager.prototype.SetPlugIn = function (key, plugIn) {
@@ -130,6 +135,9 @@ var AssureIt;
             }
             if (plugIn.SVGRenderPlugIn) {
                 this.SetSVGRenderPlugIn(key, plugIn.SVGRenderPlugIn);
+            }
+            if (plugIn.MenuBarContentsPlugIn) {
+                this.SetMenuBarContentsPlugIn(key, plugIn.MenuBarContentsPlugIn);
             }
         };
 
@@ -155,6 +163,10 @@ var AssureIt;
             this.SVGRenderPlugInMap[key] = SVGRenderPlugIn;
         };
 
+        PlugInManager.prototype.SetMenuBarContentsPlugIn = function (key, MenuBarContentsPlugIn) {
+            this.MenuBarContentsPlugInMap[key] = MenuBarContentsPlugIn;
+        };
+
         PlugInManager.prototype.UseUILayer = function (plugin) {
             var beforePlugin = this.UILayer.pop();
             if (beforePlugin != plugin && beforePlugin) {
@@ -167,6 +179,14 @@ var AssureIt;
             var beforePlugin = this.UILayer.pop();
             if (beforePlugin) {
                 beforePlugin.DeleteFromDOM();
+            }
+        };
+
+        PlugInManager.prototype.InvokePlugInMenuBarContents = function (caseViewer, caseModel, DocBase) {
+            var pluginMap = caseViewer.pluginManager.MenuBarContentsPlugInMap;
+            for (var key in pluginMap) {
+                var contents = this.MenuBarContentsPlugInMap[key];
+                contents.Delegate(caseViewer, caseModel, DocBase);
             }
         };
         return PlugInManager;
