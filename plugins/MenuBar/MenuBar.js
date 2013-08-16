@@ -230,7 +230,7 @@ var MenuBarActionPlugIn = (function (_super) {
             menuBar.menu.css({ position: 'absolute', top: node.position().top + node.height() + 5, display: 'block', opacity: 0 });
             menuBar.menu.hover(function () {
             }, function () {
-                $(menuBar).remove();
+                $(menuBar.menu).remove();
             });
             self.plugInManager.UseUILayer(self);
             menuBar.SetEventHandlers();
@@ -247,7 +247,7 @@ var MenuBarActionPlugIn = (function (_super) {
                 distance: 60,
                 labels: 'tc',
                 duration: 500,
-                fadeIn: 1200,
+                fadeIn: 1000,
                 source: function () {
                     return this.src.replace(/(jpg|gif)$/, 'png');
                 },
