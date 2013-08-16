@@ -221,6 +221,7 @@ var MenuBarActionPlugIn = (function (_super) {
             var node = $(this);
 
             var label = node.children('h4').text();
+            console.log(label);
             var model = case0.ElementMap[label];
             var menuBar = new MenuBar(caseViewer, model, case0, node, serverApi, self);
             menuBar.menu.appendTo($('#layer2'));

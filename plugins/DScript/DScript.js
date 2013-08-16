@@ -9,8 +9,9 @@ var DScriptPlugIn = (function (_super) {
     function DScriptPlugIn(plugInManager) {
         _super.call(this, plugInManager);
         this.plugInManager = plugInManager;
-        this.ActionPlugIn = new DScriptEditorPlugIn(plugInManager);
-        this.MenuBarContentsPlugIn = new DScriptMenuPlugIn(plugInManager, this.ActionPlugIn);
+        var plugin = new DScriptEditorPlugIn(plugInManager);
+        this.ActionPlugIn = plugin;
+        this.MenuBarContentsPlugIn = new DScriptMenuPlugIn(plugInManager, plugin);
     }
     return DScriptPlugIn;
 })(AssureIt.PlugIn);
@@ -29,6 +30,8 @@ var DScriptMenuPlugIn = (function (_super) {
         console.log("Hello DScript");
         element.append('<a href="#" ><img id="dscript"  src="' + serverApi.basepath + 'images/icon.png" title="DScript" alt="dscript" /></a>');
 
+        $('#dscript').click(function (ev) {
+        });
         return true;
     };
     return DScriptMenuPlugIn;
@@ -38,6 +41,8 @@ var DScriptEditorPlugIn = (function (_super) {
     __extends(DScriptEditorPlugIn, _super);
     function DScriptEditorPlugIn(plugInManager) {
         _super.call(this, plugInManager);
+
+        this.editor = null;
     }
     return DScriptEditorPlugIn;
 })(AssureIt.ActionPlugIn);

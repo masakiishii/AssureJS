@@ -172,10 +172,6 @@ var AssureIt;
             this.IdCounters[Type] += 1;
             return NodeType[Type].charAt(0) + this.IdCounters[Type];
         };
-        Case.prototype.ResetIdConters = function () {
-            this.IdCounters = [0, 0, 0, 0, 0];
-        };
-
         Case.prototype.GetPlugInModifier = function (key) {
             return CaseModifierConfig.PlugInMap[key];
         };

@@ -71,18 +71,21 @@ var FullScreenEditorActionPlugIn = (function (_super) {
 
             $('#fullscreen-editor-wrapper').css({ display: 'block' }).addClass("animated fadeInDown").focus().one("blur", { node: node }, function (e, node) {
                 e.stopPropagation();
+
+                var label = case0.ElementTop.Label;
+                var orig_model = case0.ElementMap[label];
+                var orig_view = caseViewer.ViewMap[label];
+                var orig_idCounters = case0.IdCounters;
+                var orig_ElementMap = case0.ElementMap;
+                case0.IdCounters = [0, 0, 0, 0, 0];
+                case0.ElementMap = {};
                 var decoder = new AssureIt.CaseDecoder();
                 var new_model = decoder.ParseASN(case0, editor.getValue(), null);
+
                 if (new_model != null) {
-                    var label = case0.ElementTop.Label;
-                    var orig_model = case0.ElementMap[label];
-                    var orig_view = caseViewer.ViewMap[label];
-                    case0.DeleteNodesRecursive(orig_model);
                     orig_view.DeleteHTMLElementRecursive($("#layer0"), $("#layer1"));
                     caseViewer.DeleteViewsRecursive(orig_view);
-                    case0.ResetIdConters();
                     var new_view = new AssureIt.NodeView(caseViewer, new_model);
-
                     caseViewer.ElementTop = new_model;
                     case0.ElementTop = new_model;
                     (function (model, view) {
@@ -103,6 +106,9 @@ var FullScreenEditorActionPlugIn = (function (_super) {
                     }
 
                     caseViewer.ReDraw();
+                } else {
+                    case0.ElementMap = orig_ElementMap;
+                    case0.IdCounters = orig_idCounters;
                 }
 
                 var $this = $(this);

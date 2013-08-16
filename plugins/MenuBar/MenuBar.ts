@@ -235,6 +235,7 @@ class MenuBarActionPlugIn extends AssureIt.ActionPlugIn {
 			var node = $(this);
 
 			var label: string = node.children('h4').text();
+			console.log(label);
 			var model: AssureIt.NodeModel = case0.ElementMap[label];
 			var menuBar: MenuBar = new MenuBar(caseViewer, model, case0, node, serverApi, self);
 			menuBar.menu.appendTo($('#layer2'));

@@ -81,21 +81,21 @@ class FullScreenEditorActionPlugIn extends AssureIt.ActionPlugIn {
 				.focus()
 				.one("blur", {node : node}, function(e: JQueryEventObject, node: JQuery) {
 					e.stopPropagation();
+
+					var label : string = case0.ElementTop.Label;
+					var orig_model : AssureIt.NodeModel = case0.ElementMap[label];
+					var orig_view : AssureIt.NodeView = caseViewer.ViewMap[label];
+					var orig_idCounters: number[] = case0.IdCounters;
+					var orig_ElementMap = case0.ElementMap;
+					case0.IdCounters = [0, 0, 0, 0, 0]; /* not a reset, replace it */
+					case0.ElementMap = {};
 					var decoder    : AssureIt.CaseDecoder = new AssureIt.CaseDecoder();
 					var new_model  : AssureIt.NodeModel = decoder.ParseASN(case0, editor.getValue(), null);
+
 					if (new_model != null) {
-						var label : string = case0.ElementTop.Label;
-						var orig_model : AssureIt.NodeModel = case0.ElementMap[label];
-						var orig_view : AssureIt.NodeView = caseViewer.ViewMap[label];
-						case0.DeleteNodesRecursive(orig_model);
 						orig_view.DeleteHTMLElementRecursive($("#layer0"), $("#layer1"));
 						caseViewer.DeleteViewsRecursive(orig_view);
-						case0.ResetIdConters();
 						var new_view  : AssureIt.NodeView = new AssureIt.NodeView(caseViewer, new_model);
-						//orig_model.Parent.AppendChild(new_model);
-						//orig_model.Parent.RemoveChild(orig_model);
-						//orig_model.Parent.UpdateChild(orig_model, new_model);
-						//orig_model.UpdateChild(orig_model, new_model);
 						caseViewer.ElementTop = new_model;
 						case0.ElementTop = new_model;
 						(function(model : AssureIt.NodeModel, view : AssureIt.NodeView) : void {
@@ -115,6 +115,9 @@ class FullScreenEditorActionPlugIn extends AssureIt.ActionPlugIn {
 						}
 
 						caseViewer.ReDraw();
+					} else {
+						case0.ElementMap = orig_ElementMap;
+						case0.IdCounters = orig_idCounters;
 					}
 
 					var $this = $(this);
