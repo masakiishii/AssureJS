@@ -109,7 +109,7 @@ var MenuBar = (function () {
         var self = this;
 
         this.caseViewer.Screen.SetScale(0.1);
-        $("#background").unbind("click");
+
         $("#background").click(function () {
             self.caseViewer.Screen.SetScale(1);
         });

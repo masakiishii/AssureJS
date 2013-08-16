@@ -114,11 +114,11 @@ class MenuBar {
 		(<any>$('#modal')).dialog('open');
 	}
 
-	Scale(): void {
+	Scale(): void { // TODO: handle click and dblclick exclusive
 		var self = this;
 
 		this.caseViewer.Screen.SetScale(0.1);
-		$("#background").unbind("click");
+		//$("#background").unbind("click");
 		$("#background").click(function() {
 			self.caseViewer.Screen.SetScale(1);
 		});
