@@ -122,7 +122,7 @@ class EditorActionPlugIn extends AssureIt.ActionPlugIn {
 			editor.refresh();
 			editor.focus();
 			$('#CodeMirror').focus();
-			$('#layer1').click(function(){
+			$('#background').click(function(){
 					$(selector).blur(); 
 				});
 		});
