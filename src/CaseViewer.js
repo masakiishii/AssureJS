@@ -658,8 +658,8 @@ var AssureIt;
         };
 
         ScreenManager.prototype.UpdateAttr = function () {
-            var attr = ScreenManager.scaleA(this.Scale) + ScreenManager.translateA(this.OffsetX, this.OffsetY);
-            var style = ScreenManager.scaleS(this.Scale) + ScreenManager.translateS(this.OffsetX, this.OffsetY);
+            var attr = ScreenManager.translateA(this.OffsetX, this.OffsetY) + ScreenManager.scaleA(this.Scale);
+            var style = ScreenManager.translateS(this.OffsetX, this.OffsetY) + ScreenManager.scaleS(this.Scale);
             this.ShapeLayer.setAttribute("transform", attr);
             this.ContentLayer.style["transform"] = style;
             this.ContentLayer.style["MozTransform"] = style;

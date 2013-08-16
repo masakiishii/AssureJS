@@ -642,8 +642,8 @@ module AssureIt {
 		}
 
 		private UpdateAttr(): void {
-			var attr: string = ScreenManager.scaleA(this.Scale) + ScreenManager.translateA(this.OffsetX, this.OffsetY);
-			var style: string = ScreenManager.scaleS(this.Scale) + ScreenManager.translateS(this.OffsetX, this.OffsetY);
+			var attr: string = ScreenManager.translateA(this.OffsetX, this.OffsetY) + ScreenManager.scaleA(this.Scale);
+			var style: string = ScreenManager.translateS(this.OffsetX, this.OffsetY) + ScreenManager.scaleS(this.Scale);
 			this.ShapeLayer.setAttribute("transform", attr);
 			this.ContentLayer.style["transform"]       = style;
 			this.ContentLayer.style["MozTransform"]    = style;
