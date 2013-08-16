@@ -151,7 +151,7 @@ var AssureIt;
         function LayoutPortrait(ViewMap) {
             _super.call(this, ViewMap);
             this.ViewMap = ViewMap;
-            this.ElementWidth = 150;
+            this.ElementWidth = 50;
             this.X_MARGIN = 200;
             this.Y_MARGIN = 150;
             this.Y_ADJUSTMENT_MARGIN = 50;
@@ -344,7 +344,8 @@ var AssureIt;
                 ContextView.AbsX += x;
                 ContextView.AbsY += (y - h);
                 ContextView.AbsX += this.X_CONTEXT_MARGIN;
-                this.EmitChildrenElement(Element, ParentView.AbsX, ParentView.AbsY, i, ((this.Y_MARGIN > Math.abs(h1 - h2)) ? 0 : Math.abs(h1 - h2)));
+
+                this.EmitChildrenElement(Element, ParentView.AbsX, ParentView.AbsY, i, ((this.Y_MARGIN > Math.abs(h1 - h2)) ? h2 : Math.abs(h1 - h2)));
             } else {
                 var h2 = 0;
                 var CurrentView = this.ViewMap[Element.Label];
@@ -372,7 +373,7 @@ var AssureIt;
                     ElementView.AbsY = y;
 
                     ElementView.AbsY += this.Y_MARGIN + h;
-                    ElementView.AbsY += (((ElementView.AbsY - ParentElementView.AbsY) < this.Y_NODE_MARGIN) ? this.Y_NODE_ADJUSTMENT_MARGIN : 0);
+
                     MaxYPostition = (ElementView.AbsY > MaxYPostition) ? ElementView.AbsY : MaxYPostition;
                     this.Traverse(Node.Children[i], ElementView.AbsX, ElementView.AbsY);
                 }

@@ -158,7 +158,7 @@ module AssureIt {
 	}
 
 	export class LayoutPortrait extends LayoutEngine {
-		ElementWidth: number = 150;
+		ElementWidth: number = 50;
 		X_MARGIN: number = 200;
 		Y_MARGIN: number = 150;
 		Y_ADJUSTMENT_MARGIN: number = 50;
@@ -360,7 +360,8 @@ module AssureIt {
 				ContextView.AbsX += x;
 				ContextView.AbsY += (y - h);
 				ContextView.AbsX += this.X_CONTEXT_MARGIN;
-				this.EmitChildrenElement(Element, ParentView.AbsX, ParentView.AbsY, i, ((this.Y_MARGIN > Math.abs(h1 - h2)) ? 0 : Math.abs(h1 - h2)));
+//				this.EmitChildrenElement(Element, ParentView.AbsX, ParentView.AbsY, i, ((this.Y_MARGIN > Math.abs(h1 - h2)) ? 0 : Math.abs(h1 - h2)));
+				this.EmitChildrenElement(Element, ParentView.AbsX, ParentView.AbsY, i, ((this.Y_MARGIN > Math.abs(h1 - h2)) ? h2 : Math.abs(h1 - h2)));
 			} else {  //emit element data except context
 				var h2: number = 0;
 				var CurrentView: NodeView = this.ViewMap[Element.Label];
@@ -391,7 +392,7 @@ module AssureIt {
 					ElementView.AbsY = y;
 //					ElementView.AbsY += ((height > this.Y_MARGIN) ? height : this.Y_MARGIN) + h;
 					ElementView.AbsY += this.Y_MARGIN + h;
-					ElementView.AbsY += (((ElementView.AbsY - ParentElementView.AbsY) < this.Y_NODE_MARGIN) ? this.Y_NODE_ADJUSTMENT_MARGIN : 0);
+//					ElementView.AbsY += (((ElementView.AbsY - ParentElementView.AbsY) < this.Y_NODE_MARGIN) ? this.Y_NODE_ADJUSTMENT_MARGIN : 0);
 					MaxYPostition = (ElementView.AbsY > MaxYPostition) ? ElementView.AbsY : MaxYPostition;
 					this.Traverse(Node.Children[i], ElementView.AbsX, ElementView.AbsY);
 				}
