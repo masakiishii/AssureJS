@@ -344,12 +344,12 @@ var AssureIt;
                 ContextView.AbsX += x;
                 ContextView.AbsY += (y - h);
                 ContextView.AbsX += this.X_CONTEXT_MARGIN;
-                this.EmitChildrenElement(Element, ParentView.AbsX, ParentView.AbsY, i, ((this.Y_MARGIN > (h1 - h2)) ? 0 : (h1 - h2)));
+                this.EmitChildrenElement(Element, ParentView.AbsX, ParentView.AbsY, i, ((this.Y_MARGIN > Math.abs(h1 - h2)) ? 0 : Math.abs(h1 - h2)));
             } else {
                 var h2 = 0;
-                if (ParentView != null) {
-                    h2 = ParentView.HTMLDoc.Height / 2;
-                }
+                var CurrentView = this.ViewMap[Element.Label];
+
+                h2 = CurrentView.HTMLDoc.Height;
                 this.EmitChildrenElement(Element, x, y, i, h2);
             }
         };

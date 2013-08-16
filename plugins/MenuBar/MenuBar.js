@@ -231,6 +231,7 @@ var MenuBarActionPlugIn = (function (_super) {
             menuBar.menu.appendTo($('#layer2'));
             menuBar.menu.css({ position: 'absolute', top: node.position().top + node.height() + 5, display: 'block', opacity: 0 });
             menuBar.menu.hover(function () {
+                clearTimeout(self.timeoutId);
             }, function () {
                 $(menuBar.menu).remove();
             });
@@ -258,6 +259,9 @@ var MenuBarActionPlugIn = (function (_super) {
                 }
             });
         }, function () {
+            self.timeoutId = setTimeout(function () {
+                $('#menu').remove();
+            }, 10);
         });
         return true;
     };

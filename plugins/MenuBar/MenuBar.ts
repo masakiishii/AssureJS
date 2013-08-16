@@ -244,7 +244,11 @@ class MenuBarActionPlugIn extends AssureIt.ActionPlugIn {
 			var menuBar: MenuBar = new MenuBar(caseViewer, model, case0, node, serverApi, self);
 			menuBar.menu.appendTo($('#layer2'));
 			menuBar.menu.css({ position: 'absolute', top: node.position().top + node.height() + 5 , display: 'block', opacity: 0 });
-			menuBar.menu.hover(function () {}, function () { $(menuBar.menu).remove(); });
+			menuBar.menu.hover(function () {
+				clearTimeout(self.timeoutId);
+			}, function () {
+				$(menuBar.menu).remove();
+			});
 			self.plugInManager.UseUILayer(self);
 			menuBar.SetEventHandlers();
 
@@ -263,10 +267,14 @@ class MenuBarActionPlugIn extends AssureIt.ActionPlugIn {
 				fadeIn: 1000,
 				source: function () { return this.src.replace(/(jpg|gif)$/, 'png'); },
 				onReady: function () {
-						menuBar.menu.css({ left: node.position().left+(node.outerWidth()-menuBar.menu.width()) / 2 });
-					},
+					menuBar.menu.css({ left: node.position().left+(node.outerWidth()-menuBar.menu.width()) / 2 });
+				},
 			});
-		}, function () { /* TODO: add more action */ });
+		}, function () { /* FIXME: don't use setTimeout() */
+			self.timeoutId = setTimeout(function() {
+				$('#menu').remove();
+			}, 10);
+		});
 		return true;
 	}
 
