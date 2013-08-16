@@ -27,7 +27,6 @@ var DScriptMenuPlugIn = (function (_super) {
     };
 
     DScriptMenuPlugIn.prototype.Delegate = function (caseViewer, caseModel, element, serverApi) {
-        console.log("Hello DScript");
         element.append('<a href="#" ><img id="dscript"  src="' + serverApi.basepath + 'images/icon.png" title="DScript" alt="dscript" /></a>');
 
         $('#dscript').click(function (ev) {

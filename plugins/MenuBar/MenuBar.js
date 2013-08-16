@@ -106,9 +106,13 @@ var MenuBar = (function () {
     };
 
     MenuBar.prototype.Scale = function () {
-        this.plugIn.isLargeScale = !this.plugIn.isLargeScale;
-        this.caseViewer.Screen.SetScale(this.plugIn.isLargeScale ? 1 : 0.1);
-        this.caseViewer.ReDraw();
+        var self = this;
+
+        this.caseViewer.Screen.SetScale(0.1);
+        $("#background").unbind("click");
+        $("#background").click(function () {
+            self.caseViewer.Screen.SetScale(1);
+        });
     };
 
     MenuBar.prototype.SetEventHandlers = function () {
@@ -211,7 +215,6 @@ var MenuBarActionPlugIn = (function (_super) {
     __extends(MenuBarActionPlugIn, _super);
     function MenuBarActionPlugIn(plugInManager) {
         _super.call(this, plugInManager);
-        this.isLargeScale = false;
     }
     MenuBarActionPlugIn.prototype.IsEnabled = function (caseViewer, case0) {
         return true;
@@ -225,7 +228,7 @@ var MenuBarActionPlugIn = (function (_super) {
             var node = $(this);
 
             var label = node.children('h4').text();
-            console.log(label);
+
             var model = case0.ElementMap[label];
             var menuBar = new MenuBar(caseViewer, model, case0, node, serverApi, self);
             menuBar.menu.appendTo($('#layer2'));
