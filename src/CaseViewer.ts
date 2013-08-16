@@ -360,7 +360,11 @@ module AssureIt {
 					if (this.ParentDirection == Direction.Bottom || this.ParentDirection == Direction.Top) {
 						p1.x = p2.x;
 					} else {
-						p1.y = p2.y;
+						if(p1.y > p2.y) {
+							p1.y = p2.y;
+						} else {
+							p2.y = p1.y;
+						}
 					}
 				}
 				this.SVGShape.SetArrowPosition(p1, p2, this.ParentDirection);

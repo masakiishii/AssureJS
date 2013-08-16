@@ -159,18 +159,17 @@ module AssureIt {
 
 	export class LayoutPortrait extends LayoutEngine {
 		ElementWidth: number = 150;
-		X_MARGIN = 200;
-		Y_MARGIN = 150;
+		X_MARGIN: number = 200;
+		Y_MARGIN: number = 150;
 		Y_ADJUSTMENT_MARGIN: number = 50;
 		Y_NODE_MARGIN: number = 205;
 		Y_NODE_ADJUSTMENT_MARGIN: number = 70;
 		X_CONTEXT_MARGIN: number = 200;
-		X_OVER_MARGIN = 700;
+		X_OVER_MARGIN: number = 700;
 		X_FOOT_MARGIN: number = 100;
 		X_MULTI_ELEMENT_MARGIN: number = 20;
 		footelement: string[] = new Array();
 		contextId: number = -1;
-
 
 		constructor(public ViewMap: { [index: string]: NodeView; }) {
 			super(ViewMap);
@@ -363,7 +362,7 @@ module AssureIt {
 				ContextView.AbsX += this.X_CONTEXT_MARGIN;
 				this.EmitChildrenElement(Element, ParentView.AbsX, ParentView.AbsY, i, ((this.Y_MARGIN > Math.abs(h1 - h2)) ? 0 : Math.abs(h1 - h2)));
 			} else {  //emit element data except context
-				var h2 = 0;
+				var h2: number = 0;
 				var CurrentView: NodeView = this.ViewMap[Element.Label];
 //				if(ParentView != null) {
 //					h2 = ParentView.HTMLDoc.Height/2;
@@ -378,8 +377,8 @@ module AssureIt {
 			var MaxYPostition: number  = 0;
 			for (var i: number = 0; i < n; i++) {
 				var ElementView: NodeView = this.ViewMap[Node.Children[i].Label];
-				var j = this.GetContextIndex(Node.Children[i]);
-				var ContextHeight = 0;
+				var j: number = this.GetContextIndex(Node.Children[i]);
+				var ContextHeight: number = 0;
 				if(j != -1) {
 					ContextHeight = this.ViewMap[Node.Children[i].Children[j].Label].HTMLDoc.Height;
 				}
@@ -387,7 +386,7 @@ module AssureIt {
 					continue;
 				}
 				else {
-					var height = (ContextHeight > ElementView.HTMLDoc.Height) ? ContextHeight : ElementView.HTMLDoc.Height;
+					var height: number = (ContextHeight > ElementView.HTMLDoc.Height) ? ContextHeight : ElementView.HTMLDoc.Height;
 					var ParentElementView: NodeView = this.ViewMap[Node.Label];
 					ElementView.AbsY = y;
 //					ElementView.AbsY += ((height > this.Y_MARGIN) ? height : this.Y_MARGIN) + h;
