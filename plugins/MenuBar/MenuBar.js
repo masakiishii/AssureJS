@@ -97,8 +97,9 @@ var MenuBar = (function () {
 
         this.caseViewer.Resize();
         this.caseViewer.ReDraw();
+        this.caseViewer.Screen.SetOffset(0, 0);
         var CurrentParentView = this.caseViewer.ViewMap[parentLabel];
-        this.caseViewer.Screen.SetOffset(CurrentParentView.AbsX + parentOffSet.left, CurrentParentView.AbsY + parentOffSet.top);
+        this.caseViewer.Screen.SetOffset(parentOffSet.left - CurrentParentView.AbsX, parentOffSet.top - CurrentParentView.AbsY);
     };
 
     MenuBar.prototype.Commit = function () {
