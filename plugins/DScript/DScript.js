@@ -9,15 +9,17 @@ var DScriptPlugIn = (function (_super) {
     function DScriptPlugIn(plugInManager) {
         _super.call(this, plugInManager);
         this.plugInManager = plugInManager;
-        this.MenuBarContentsPlugIn = new DScriptMenuPlugIn(plugInManager);
+        this.ActionPlugIn = new DScriptEditorPlugIn(plugInManager);
+        this.MenuBarContentsPlugIn = new DScriptMenuPlugIn(plugInManager, this.ActionPlugIn);
     }
     return DScriptPlugIn;
 })(AssureIt.PlugIn);
 
 var DScriptMenuPlugIn = (function (_super) {
     __extends(DScriptMenuPlugIn, _super);
-    function DScriptMenuPlugIn() {
-        _super.apply(this, arguments);
+    function DScriptMenuPlugIn(plugInManager, editorPlugIn) {
+        _super.call(this, plugInManager);
+        this.editorPlugIn = editorPlugIn;
     }
     DScriptMenuPlugIn.prototype.IsEnabled = function (caseViewer, caseModel) {
         return true;
@@ -26,7 +28,16 @@ var DScriptMenuPlugIn = (function (_super) {
     DScriptMenuPlugIn.prototype.Delegate = function (caseViewer, caseModel, element, serverApi) {
         console.log("Hello DScript");
         element.append('<a href="#" ><img id="dscript"  src="' + serverApi.basepath + 'images/icon.png" title="DScript" alt="dscript" /></a>');
+
         return true;
     };
     return DScriptMenuPlugIn;
 })(AssureIt.MenuBarContentsPlugIn);
+
+var DScriptEditorPlugIn = (function (_super) {
+    __extends(DScriptEditorPlugIn, _super);
+    function DScriptEditorPlugIn(plugInManager) {
+        _super.call(this, plugInManager);
+    }
+    return DScriptEditorPlugIn;
+})(AssureIt.ActionPlugIn);
