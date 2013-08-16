@@ -76,6 +76,8 @@ var MenuBar = (function () {
         var thisNodeView = this.caseViewer.ViewMap[thisLabel];
         var thisNodeModel = thisNodeView.Source;
         var brotherNodeModels = thisNodeModel.Parent.Children;
+        var parentLabel = thisNodeModel.Parent.Label;
+        var parentOffSet = $("#" + parentLabel).offset();
 
         for (var i = 0; i < brotherNodeModels.length; i++) {
             if (brotherNodeModels[i].Label == thisLabel) {
@@ -95,6 +97,8 @@ var MenuBar = (function () {
 
         this.caseViewer.Resize();
         this.caseViewer.ReDraw();
+        var CurrentParentView = this.caseViewer.ViewMap[parentLabel];
+        this.caseViewer.Screen.SetOffset(CurrentParentView.AbsX + parentOffSet.left, CurrentParentView.AbsY + parentOffSet.top);
     };
 
     MenuBar.prototype.Commit = function () {

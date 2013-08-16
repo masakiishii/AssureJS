@@ -85,6 +85,8 @@ class MenuBar {
 		var thisNodeView: AssureIt.NodeView = this.caseViewer.ViewMap[thisLabel];
 		var thisNodeModel: AssureIt.NodeModel = thisNodeView.Source;
 		var brotherNodeModels: AssureIt.NodeModel[] = thisNodeModel.Parent.Children;
+		var parentLabel: string = thisNodeModel.Parent.Label;
+		var parentOffSet = $("#"+parentLabel).offset();
 
 		for(var i: number = 0; i < brotherNodeModels.length; i++) {
 			if(brotherNodeModels[i].Label == thisLabel) {
@@ -104,6 +106,8 @@ class MenuBar {
 
 		this.caseViewer.Resize();
 		this.caseViewer.ReDraw();
+		var CurrentParentView = this.caseViewer.ViewMap[parentLabel];
+		this.caseViewer.Screen.SetOffset(CurrentParentView.AbsX + parentOffSet.left, CurrentParentView.AbsY + parentOffSet.top);
 	}
 
 	Commit(): void {
