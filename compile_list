@@ -3,6 +3,7 @@ mock/Select.ts
 plugins/Annotation/Annotation.ts
 plugins/ColorTheme/ColorTheme.ts
 plugins/Editor/Editor.ts
+plugins/DScript/DScript.ts
 plugins/FullScreenEditor/FullScreenEditor.ts
 plugins/MenuBar/MenuBar.ts
 plugins/Monitor/Monitor.ts
