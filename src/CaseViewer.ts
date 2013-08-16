@@ -587,11 +587,22 @@ module AssureIt {
 	export class ScreenManager {
 
 		ScrollManager: ScrollManager = new ScrollManager();
-		private OffsetX: number;
-		private OffsetY: number;
+		private OffsetX: number = 0;
+		private OffsetY: number = 0;
+		private Scale: number = 1;
 
 		constructor(public ShapeLayer: SVGGElement, public ContentLayer: HTMLDivElement, public ControlLayer: HTMLDivElement, public BackGroundLayer: HTMLDivElement) {
-			this.SetOffset(0, 0);
+			this.ContentLayer.style["transformOrigin"]       = "left top";
+			this.ContentLayer.style["MozTransformOrigin"]    = "left top";
+			this.ContentLayer.style["msTransformOrigin"]     = "left top";
+			this.ContentLayer.style["OTransformOrigin"]      = "left top";
+			this.ContentLayer.style["webkitTransformOrigin"] = "left top";
+			this.ControlLayer.style["transformOrigin"]       = "left top";
+			this.ControlLayer.style["MozTransformOrigin"]    = "left top";
+			this.ControlLayer.style["msTransformOrigin"]     = "left top";
+			this.ControlLayer.style["OTransformOrigin"]      = "left top";
+			this.ControlLayer.style["webkitTransformOrigin"] = "left top";
+			this.UpdateAttr();
 			var OnPointer = (e: PointerEvent) => { this.ScrollManager.OnPointerEvent(e, this); };
 			BackGroundLayer.addEventListener("pointerdown", OnPointer, false);
 			BackGroundLayer.addEventListener("pointermove", OnPointer, false);
@@ -604,28 +615,51 @@ module AssureIt {
 			//BackGroundLayer.addEventListener("gesturescale", OnPointer, false);
 		}
 
-		//onScale(e: GestureScaleEvent): void {
-		//	e.preventDefault();
-		//	e.stopPropagation();
-		//	//if (this.viewer.moving) return;
-		//	//var b = e.scale * this.scale0 / this.viewer.scale;
-		//	//this.setScale(e.centerX, e.centerY, b);
-		//}
+		private static translateA(x: number, y: number): string {
+			return "translate(" + x + " " + y + ") ";
+		}
 
-		SetOffset(x: number, y: number) {
+		private static scaleA(scale: number): string {
+			return "scale(" + scale + ") ";
+		}
+
+		private static translateS(x: number, y: number): string {
+			return "translate(" + x + "px, " + y + "px) ";
+		}
+
+		private static scaleS(scale: number): string {
+			return "scale(" + scale + ") ";
+		}
+
+		private UpdateAttr(): void {
+			var attr: string = ScreenManager.scaleA(this.Scale) + ScreenManager.translateA(this.OffsetX, this.OffsetY);
+			var style: string = ScreenManager.scaleS(this.Scale) + ScreenManager.translateS(this.OffsetX, this.OffsetY);
+			this.ShapeLayer.setAttribute("transform", attr);
+			this.ContentLayer.style["transform"]       = style;
+			this.ContentLayer.style["MozTransform"]    = style;
+			this.ContentLayer.style["webkitTransform"] = style;
+			this.ContentLayer.style["msTransform"]     = style;
+			this.ContentLayer.style["OTransform"]      = style;
+			this.ControlLayer.style["transform"]       = style;
+			this.ControlLayer.style["MozTransform"]    = style;
+			this.ControlLayer.style["webkitTransform"] = style;
+			this.ControlLayer.style["msTransform"]     = style;
+			this.ControlLayer.style["OTransform"]      = style;
+		}
+
+		SetScale(scale: number): void {
+			this.Scale = scale;
+			var cx = this.GetWidth() / 2;
+			var cy = this.GetHeight() / 2;
+			this.OffsetX = (this.OffsetX - cx) * scale + cx;
+			this.OffsetY = (this.OffsetY - cy) * scale + cy;
+			this.UpdateAttr();
+		}
+
+		SetOffset(x: number, y: number): void {
 			this.OffsetX = x;
 			this.OffsetY = y;
-
-			var TranslationMatrix = this.ShapeLayer.transform.baseVal.getItem(0).matrix;
-			TranslationMatrix.e = x;
-			TranslationMatrix.f = y;
-
-			var xpx = x + "px";
-			var ypx = y + "px";
-			this.ContentLayer.style.left = xpx;
-			this.ContentLayer.style.top  = ypx;
-			this.ControlLayer.style.marginLeft = xpx;
-			this.ControlLayer.style.marginTop  = ypx;
+			this.UpdateAttr();
 		}
 
 		GetOffsetX(): number {
@@ -634,6 +668,14 @@ module AssureIt {
 
 		GetOffsetY(): number {
 			return this.OffsetY;
+		}
+
+		GetWidth(): number {
+			return this.ContentLayer.clientWidth;
+		}
+
+		GetHeight(): number {
+			return this.ContentLayer.clientHeight;
 		}
 
 	}

@@ -600,7 +600,20 @@ var AssureIt;
             this.ControlLayer = ControlLayer;
             this.BackGroundLayer = BackGroundLayer;
             this.ScrollManager = new ScrollManager();
-            this.SetOffset(0, 0);
+            this.OffsetX = 0;
+            this.OffsetY = 0;
+            this.Scale = 1;
+            this.ContentLayer.style["transformOrigin"] = "left top";
+            this.ContentLayer.style["MozTransformOrigin"] = "left top";
+            this.ContentLayer.style["msTransformOrigin"] = "left top";
+            this.ContentLayer.style["OTransformOrigin"] = "left top";
+            this.ContentLayer.style["webkitTransformOrigin"] = "left top";
+            this.ControlLayer.style["transformOrigin"] = "left top";
+            this.ControlLayer.style["MozTransformOrigin"] = "left top";
+            this.ControlLayer.style["msTransformOrigin"] = "left top";
+            this.ControlLayer.style["OTransformOrigin"] = "left top";
+            this.ControlLayer.style["webkitTransformOrigin"] = "left top";
+            this.UpdateAttr();
             var OnPointer = function (e) {
                 _this.ScrollManager.OnPointerEvent(e, _this);
             };
@@ -617,20 +630,51 @@ var AssureIt;
                 _this.ScrollManager.OnDoubleTap(e, _this);
             }, false);
         }
+        ScreenManager.translateA = function (x, y) {
+            return "translate(" + x + " " + y + ") ";
+        };
+
+        ScreenManager.scaleA = function (scale) {
+            return "scale(" + scale + ") ";
+        };
+
+        ScreenManager.translateS = function (x, y) {
+            return "translate(" + x + "px, " + y + "px) ";
+        };
+
+        ScreenManager.scaleS = function (scale) {
+            return "scale(" + scale + ") ";
+        };
+
+        ScreenManager.prototype.UpdateAttr = function () {
+            var attr = ScreenManager.scaleA(this.Scale) + ScreenManager.translateA(this.OffsetX, this.OffsetY);
+            var style = ScreenManager.scaleS(this.Scale) + ScreenManager.translateS(this.OffsetX, this.OffsetY);
+            this.ShapeLayer.setAttribute("transform", attr);
+            this.ContentLayer.style["transform"] = style;
+            this.ContentLayer.style["MozTransform"] = style;
+            this.ContentLayer.style["webkitTransform"] = style;
+            this.ContentLayer.style["msTransform"] = style;
+            this.ContentLayer.style["OTransform"] = style;
+            this.ControlLayer.style["transform"] = style;
+            this.ControlLayer.style["MozTransform"] = style;
+            this.ControlLayer.style["webkitTransform"] = style;
+            this.ControlLayer.style["msTransform"] = style;
+            this.ControlLayer.style["OTransform"] = style;
+        };
+
+        ScreenManager.prototype.SetScale = function (scale) {
+            this.Scale = scale;
+            var cx = this.GetWidth() / 2;
+            var cy = this.GetHeight() / 2;
+            this.OffsetX = (this.OffsetX - cx) * scale + cx;
+            this.OffsetY = (this.OffsetY - cy) * scale + cy;
+            this.UpdateAttr();
+        };
+
         ScreenManager.prototype.SetOffset = function (x, y) {
             this.OffsetX = x;
             this.OffsetY = y;
-
-            var TranslationMatrix = this.ShapeLayer.transform.baseVal.getItem(0).matrix;
-            TranslationMatrix.e = x;
-            TranslationMatrix.f = y;
-
-            var xpx = x + "px";
-            var ypx = y + "px";
-            this.ContentLayer.style.left = xpx;
-            this.ContentLayer.style.top = ypx;
-            this.ControlLayer.style.marginLeft = xpx;
-            this.ControlLayer.style.marginTop = ypx;
+            this.UpdateAttr();
         };
 
         ScreenManager.prototype.GetOffsetX = function () {
@@ -639,6 +683,14 @@ var AssureIt;
 
         ScreenManager.prototype.GetOffsetY = function () {
             return this.OffsetY;
+        };
+
+        ScreenManager.prototype.GetWidth = function () {
+            return this.ContentLayer.clientWidth;
+        };
+
+        ScreenManager.prototype.GetHeight = function () {
+            return this.ContentLayer.clientHeight;
         };
         return ScreenManager;
     })();
