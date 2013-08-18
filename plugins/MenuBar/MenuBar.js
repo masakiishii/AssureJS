@@ -108,12 +108,29 @@ var MenuBar = (function () {
 
     MenuBar.prototype.Scale = function () {
         var self = this;
+        var timers = [];
 
         this.caseViewer.Screen.SetScale(0.1);
 
-        $("#background").click(function () {
-            self.caseViewer.Screen.SetScale(1);
-        });
+        var CancelClickEvent = function () {
+            var timer = timers.pop();
+
+            while (timer) {
+                clearTimeout(timer);
+                timer = timers.pop();
+            }
+        };
+
+        var ScaleDown = function () {
+            timers.push(setTimeout(function () {
+                self.caseViewer.Screen.SetScale(1);
+                $("#background").unbind("click", ScaleDown);
+                $("#background").unbind("dblclick", CancelClickEvent);
+            }, 500));
+        };
+
+        $("#background").click(ScaleDown);
+        $("#background").dblclick(CancelClickEvent);
     };
 
     MenuBar.prototype.SetEventHandlers = function () {

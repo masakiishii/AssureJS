@@ -117,12 +117,30 @@ class MenuBar {
 
 	Scale(): void { // TODO: handle click and dblclick exclusive
 		var self = this;
+		var timers: number[] = [];
 
 		this.caseViewer.Screen.SetScale(0.1);
-		//$("#background").unbind("click");
-		$("#background").click(function() {
-			self.caseViewer.Screen.SetScale(1);
-		});
+
+		var CancelClickEvent: () => void = function(): void {
+			var timer: number = timers.pop();
+
+			while(timer) {
+				clearTimeout(timer);
+				timer = timers.pop();
+			}
+		}
+
+		var ScaleDown: () => void = function(): void {
+			timers.push(setTimeout(function() {
+				self.caseViewer.Screen.SetScale(1);
+				$("#background").unbind("click", ScaleDown);
+				$("#background").unbind("dblclick", CancelClickEvent);
+			}, 500));
+		}
+
+		// TODO: exclude drag event
+		$("#background").click(ScaleDown);
+		$("#background").dblclick(CancelClickEvent);
 	}
 
 	SetEventHandlers(): void {
