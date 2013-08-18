@@ -1,6 +1,7 @@
 /// <reference path="../../src/CaseModel.ts" />
 /// <reference path="../../src/CaseViewer.ts" />
 /// <reference path="../../src/PlugInManager.ts" />
+/// <reference path="./DScriptGenerator.ts" />
 /* For codemirror */
 /// <reference path="../Editor/Editor.ts" />
 
