@@ -133,6 +133,7 @@ var ColorThemeActionPlugIn = (function (_super) {
     __extends(ColorThemeActionPlugIn, _super);
     function ColorThemeActionPlugIn() {
         _super.apply(this, arguments);
+        this.currentNodeColor = {};
     }
     ColorThemeActionPlugIn.prototype.IsEnabled = function (caseViewer, case0) {
         return true;
@@ -140,16 +141,14 @@ var ColorThemeActionPlugIn = (function (_super) {
 
     ColorThemeActionPlugIn.prototype.Delegate = function (caseViewer, case0, serverApi) {
         var self = this;
-        var color = {};
 
-        color = caseViewer.ViewMap[case0.ElementTop.Label].SVGShape.GetColor();
         $('.node').hover(function () {
             var thisNodeLabel = $(this).children('h4').text();
-            color = caseViewer.ViewMap[thisNodeLabel].SVGShape.GetColor();
-            caseViewer.ViewMap[thisNodeLabel].SVGShape.SetColor(color["fill"], "orange");
+            self.currentNodeColor = caseViewer.ViewMap[thisNodeLabel].SVGShape.GetColor();
+            caseViewer.ViewMap[thisNodeLabel].SVGShape.SetColor(self.currentNodeColor["fill"], "orange");
         }, function () {
             var thisNodeLabel = $(this).children('h4').text();
-            caseViewer.ViewMap[thisNodeLabel].SVGShape.SetColor(color["fill"], color["stroke"]);
+            caseViewer.ViewMap[thisNodeLabel].SVGShape.SetColor(self.currentNodeColor["fill"], self.currentNodeColor["stroke"]);
         });
 
         return true;

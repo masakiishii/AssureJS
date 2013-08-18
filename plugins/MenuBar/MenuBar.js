@@ -107,13 +107,33 @@ var MenuBar = (function () {
     };
 
     MenuBar.prototype.Scale = function () {
-        var self = this;
+        var timers = [];
+        var screenManager = this.caseViewer.Screen;
+        var offsetX = screenManager.GetOffsetX();
+        var offsetY = screenManager.GetOffsetY();
 
-        this.caseViewer.Screen.SetScale(0.1);
+        screenManager.SetScale(0.1);
 
-        $("#background").click(function () {
-            self.caseViewer.Screen.SetScale(1);
-        });
+        var CancelClickEvent = function () {
+            var timer = timers.pop();
+
+            while (timer) {
+                clearTimeout(timer);
+                timer = timers.pop();
+            }
+        };
+
+        var ScaleDown = function () {
+            timers.push(setTimeout(function () {
+                screenManager.SetScale(1);
+                screenManager.SetOffset(offsetX, offsetY);
+                $("#background").unbind("click", ScaleDown);
+                $("#background").unbind("dblclick", CancelClickEvent);
+            }, 500));
+        };
+
+        $("#background").click(ScaleDown);
+        $("#background").dblclick(CancelClickEvent);
     };
 
     MenuBar.prototype.SetEventHandlers = function () {

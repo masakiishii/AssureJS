@@ -117,13 +117,34 @@ class MenuBar {
 	}
 
 	Scale(): void { // TODO: handle click and dblclick exclusive
-		var self = this;
+		var timers: number[] = [];
+		var screenManager = this.caseViewer.Screen;
+		var offsetX: number = screenManager.GetOffsetX();
+		var offsetY: number = screenManager.GetOffsetY();
 
-		this.caseViewer.Screen.SetScale(0.1);
-		//$("#background").unbind("click");
-		$("#background").click(function() {
-			self.caseViewer.Screen.SetScale(1);
-		});
+		screenManager.SetScale(0.1);
+
+		var CancelClickEvent: () => void = function(): void {
+			var timer: number = timers.pop();
+
+			while(timer) {
+				clearTimeout(timer);
+				timer = timers.pop();
+			}
+		}
+
+		var ScaleDown: () => void = function(): void {
+			timers.push(setTimeout(function() {
+				screenManager.SetScale(1);
+				screenManager.SetOffset(offsetX, offsetY);
+				$("#background").unbind("click", ScaleDown);
+				$("#background").unbind("dblclick", CancelClickEvent);
+			}, 500));
+		}
+
+		// TODO: exclude drag event
+		$("#background").click(ScaleDown);
+		$("#background").dblclick(CancelClickEvent);
 	}
 
 	SetEventHandlers(): void {
