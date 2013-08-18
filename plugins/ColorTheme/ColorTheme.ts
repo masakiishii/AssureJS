@@ -126,22 +126,22 @@ class SimpleColorThemeSVGRenderPlugIn extends ColorThemeSVGRenderPlugIn {
 
 class ColorThemeActionPlugIn extends AssureIt.ActionPlugIn {
 
+	currentNodeColor: {[index: string]: string} = {};
+
 	IsEnabled(caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case): boolean {
 		return true;
 	}
 
 	Delegate(caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case, serverApi: AssureIt.ServerAPI): boolean {
 		var self = this;
-		var color: {[index: string]: string} = {};
 
-		color = caseViewer.ViewMap[case0.ElementTop.Label].SVGShape.GetColor();
 		$('.node').hover(function () {
 			var thisNodeLabel: string = $(this).children('h4').text();
-			color = caseViewer.ViewMap[thisNodeLabel].SVGShape.GetColor();
-			caseViewer.ViewMap[thisNodeLabel].SVGShape.SetColor(color["fill"], "orange");
+			self.currentNodeColor = caseViewer.ViewMap[thisNodeLabel].SVGShape.GetColor();
+			caseViewer.ViewMap[thisNodeLabel].SVGShape.SetColor(self.currentNodeColor["fill"], "orange");
 		}, function() {
 			var thisNodeLabel: string = $(this).children('h4').text();
-			caseViewer.ViewMap[thisNodeLabel].SVGShape.SetColor(color["fill"], color["stroke"]);
+			caseViewer.ViewMap[thisNodeLabel].SVGShape.SetColor(self.currentNodeColor["fill"], self.currentNodeColor["stroke"]);
 		});
 
 		return true;
