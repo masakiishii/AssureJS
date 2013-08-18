@@ -30,6 +30,9 @@ var DScriptMenuPlugIn = (function (_super) {
         element.append('<a href="#" ><img id="dscript"  src="' + serverApi.basepath + 'images/icon.png" title="DScript" alt="dscript" /></a>');
 
         $('#dscript').click(function (ev) {
+            var Generator = new DScriptGenerator(caseModel);
+            var script = Generator.codegen();
+            console.log(script);
         });
         return true;
     };

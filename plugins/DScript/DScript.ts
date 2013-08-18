@@ -33,7 +33,9 @@ class DScriptMenuPlugIn extends AssureIt.MenuBarContentsPlugIn {
 
 		/*TODO add event handler */
 		$('#dscript').click((ev) => {
-
+				var Generator: DScriptGenerator = new DScriptGenerator(caseModel);
+				var script: string = Generator.codegen();
+				console.log(script);
 		});
 		return true;
 	}
