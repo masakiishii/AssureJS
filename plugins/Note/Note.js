@@ -27,7 +27,6 @@ var NoteHTMLRenderPlugIn = (function (_super) {
         for (var i = 0; i < nodeModel.Notes.length; i++) {
             $('<p style="color: DarkOliveGreen">' + "Note: " + nodeModel.Notes[i].Name + '</p>').appendTo(element);
         }
-
         return true;
     };
     return NoteHTMLRenderPlugIn;

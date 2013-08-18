@@ -118,7 +118,8 @@ var AssureIt;
     AssureIt.SVGRenderPlugIn = SVGRenderPlugIn;
 
     var PlugInManager = (function () {
-        function PlugInManager() {
+        function PlugInManager(basepath) {
+            this.basepath = basepath;
             this.ActionPlugInMap = {};
             this.CheckerPlugInMap = {};
             this.HTMLRenderPlugInMap = {};

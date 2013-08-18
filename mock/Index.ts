@@ -17,7 +17,7 @@
 $(function () {
 
 	var serverApi = new AssureIt.ServerAPI('',true); //TODO config for Path
-	var pluginManager = new AssureIt.PlugInManager();
+	var pluginManager = new AssureIt.PlugInManager('');
 	pluginManager.SetPlugIn("menu", new MenuBarPlugIn(pluginManager));
 	pluginManager.SetPlugIn("editor", new EditorPlugIn(pluginManager));
 	pluginManager.SetPlugIn("dscript", new DScriptPlugIn(pluginManager));

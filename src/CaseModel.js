@@ -62,22 +62,41 @@ var AssureIt;
         };
 
         NodeModel.prototype.GetAnnotation = function (Name) {
-            for (var a in this.Annotations) {
-                if (a.Name == Name) {
-                    return a;
+            for (var i = 0; i < this.Annotations.length; i++) {
+                if (this.Annotations[i].Name == Name) {
+                    return this.Annotations[i];
                 }
             }
-            return a;
+            return null;
         };
 
         NodeModel.prototype.SetAnnotation = function (Name, Body) {
-            for (var a in this.Annotations) {
-                if (a.Name == Name) {
-                    a.Body = Body;
-                    return a;
+            for (var i = 0; i < this.Annotations.length; i++) {
+                if (this.Annotations[i].Name == Name) {
+                    this.Annotations[i].Body = Body;
+                    return;
                 }
             }
             this.Annotations.push(new CaseAnnotation(Name, Body));
+        };
+
+        NodeModel.prototype.SetNote = function (Name, Body) {
+            for (var i = 0; i < this.Notes.length; i++) {
+                if (this.Notes[i].Name == Name) {
+                    this.Notes[i].Body = Body;
+                    return;
+                }
+            }
+            this.Notes.push(new CaseNote(Name, Body));
+        };
+
+        NodeModel.prototype.GetNote = function (Name) {
+            for (var i = 0; i < this.Notes.length; i++) {
+                if (this.Notes[i].Name == Name) {
+                    return this.Notes[i];
+                }
+            }
+            return null;
         };
 
         NodeModel.prototype.InvokePlugInModifier = function (EventType, EventBody) {

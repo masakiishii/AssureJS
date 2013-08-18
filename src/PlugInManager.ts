@@ -120,7 +120,7 @@ module AssureIt {
 		MenuBarContentsPlugInMap  : { [index: string]: MenuBarContentsPlugIn };
 		UILayer: AbstractPlugIn[];
 
-		constructor() {
+		constructor(public basepath: string) {
 			this.ActionPlugInMap = {};
 			this.CheckerPlugInMap = {};
 			this.HTMLRenderPlugInMap = {};

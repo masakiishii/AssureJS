@@ -62,24 +62,43 @@ module AssureIt {
 		}
 	
 		GetAnnotation(Name: string) : CaseAnnotation {
-			for(var a in this.Annotations) {
-				if(a.Name == Name) {
-					return a;
+			for(var i: number = 0; i < this.Annotations.length; i++ ) {
+				if(this.Annotations[i].Name == Name) {
+					return this.Annotations[i];
 				}
 			}
-			return a;
+			return null;
 		}
 
-		SetAnnotation(Name: string, Body : any) : CaseAnnotation {
-			for(var a in this.Annotations) {
-				if(a.Name == Name) {
-					a.Body = Body;
-					return a;
+		SetAnnotation(Name: string, Body : any) : void {
+			for(var i: number = 0; i < this.Annotations.length; i++ ) {
+				if(this.Annotations[i].Name == Name) {
+					this.Annotations[i].Body = Body;
+					return;
 				}
 			}
 			this.Annotations.push(new CaseAnnotation(Name, Body));
 		}
-	
+
+		SetNote(Name: string, Body : any) : void {
+			for(var i: number = 0; i < this.Notes.length; i++ ) {
+				if(this.Notes[i].Name == Name) {
+					this.Notes[i].Body = Body;
+					return;
+				}
+			}
+			this.Notes.push(new CaseNote(Name, Body));
+		}
+
+		GetNote(Name: string) : CaseNote {
+			for(var i: number = 0; i < this.Notes.length; i++ ) {
+				if(this.Notes[i].Name == Name) {
+					return this.Notes[i];
+				}
+			}
+			return null;
+		}
+
 		/* plug-In */
 		InvokePlugInModifier(EventType : string, EventBody : any) : boolean {
 			var recall = false;
