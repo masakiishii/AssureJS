@@ -234,6 +234,7 @@ var AssureIt;
         __extends(StrategyShape, _super);
         function StrategyShape() {
             _super.apply(this, arguments);
+            this.delta = 20;
         }
         StrategyShape.prototype.Render = function (CaseViewer, NodeModel, HTMLDoc) {
             _super.prototype.Render.call(this, CaseViewer, NodeModel, HTMLDoc);
@@ -244,8 +245,7 @@ var AssureIt;
 
         StrategyShape.prototype.Resize = function (CaseViewer, NodeModel, HTMLDoc) {
             _super.prototype.Resize.call(this, CaseViewer, NodeModel, HTMLDoc);
-            var delta = 20;
-            this.BodyPolygon.setAttribute("points", "" + delta + ",0 " + this.Width + ",0 " + (this.Width - delta) + "," + this.Height + " 0," + this.Height);
+            this.BodyPolygon.setAttribute("points", "" + this.delta + ",0 " + this.Width + ",0 " + (this.Width - this.delta) + "," + this.Height + " 0," + this.Height);
         };
 
         StrategyShape.prototype.SetColor = function (fill, stroke) {
@@ -260,9 +260,9 @@ var AssureIt;
         StrategyShape.prototype.GetConnectorPosition = function (Dir) {
             switch (Dir) {
                 case Direction.Right:
-                    return new Point(this.Width - 10 / 2, this.Height / 2);
+                    return new Point(this.Width - this.delta / 2, this.Height / 2);
                 case Direction.Left:
-                    return new Point(10 / 2, this.Height / 2);
+                    return new Point(this.delta / 2, this.Height / 2);
                 case Direction.Top:
                     return new Point(this.Width / 2, 0);
                 case Direction.Bottom:

@@ -231,6 +231,7 @@ module AssureIt {
 
 	export class StrategyShape extends SVGShape {
 		BodyPolygon: SVGPolygonElement;
+		delta: number =20;
 
 		Render(CaseViewer: CaseViewer, NodeModel: NodeModel, HTMLDoc: HTMLDoc): void {
 			super.Render(CaseViewer, NodeModel, HTMLDoc);
@@ -241,8 +242,7 @@ module AssureIt {
 
 		Resize(CaseViewer: CaseViewer, NodeModel: NodeModel, HTMLDoc: HTMLDoc): void {
 			super.Resize(CaseViewer, NodeModel, HTMLDoc);
-			var delta = 20;
-			this.BodyPolygon.setAttribute("points", ""+delta+",0 " + this.Width + ",0 " + (this.Width - delta) + "," + this.Height + " 0," + this.Height);
+			this.BodyPolygon.setAttribute("points", ""+this.delta+",0 " + this.Width + ",0 " + (this.Width - this.delta) + "," + this.Height + " 0," + this.Height);
 		}
 
 		SetColor(fill: string, stroke: string) {
@@ -257,9 +257,9 @@ module AssureIt {
 		GetConnectorPosition(Dir: Direction): Point {
 			switch (Dir) {
 				case Direction.Right:
-					return new Point(this.Width - 10 / 2, this.Height / 2);
+					return new Point(this.Width - this.delta / 2, this.Height / 2);
 				case Direction.Left:
-					return new Point(10 / 2, this.Height / 2);
+					return new Point(this.delta / 2, this.Height / 2);
 				case Direction.Top:
 					return new Point(this.Width / 2, 0);
 				case Direction.Bottom:
