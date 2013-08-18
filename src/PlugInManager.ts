@@ -189,7 +189,9 @@ module AssureIt {
 			var pluginMap: { [index: string]: MenuBarContentsPlugIn} = caseViewer.pluginManager.MenuBarContentsPlugInMap;
 			for (var key in pluginMap) {
 				var contents: MenuBarContentsPlugIn = this.MenuBarContentsPlugInMap[key];
-				contents.Delegate(caseViewer, caseModel, DocBase, serverApi);
+				if(contents.IsEnabled(caseViewer, caseModel)) {
+					contents.Delegate(caseViewer, caseModel, DocBase, serverApi);
+				}
 			}
 		}
 	}

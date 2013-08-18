@@ -60,7 +60,6 @@ var AssureIt;
 
             this.JsonRoot.Children = JsonChildNodes;
 
-            console.log(this.JsonRoot);
             return this.JsonRoot;
         };
 
@@ -89,7 +88,6 @@ var AssureIt;
                         ret += (prefix + "Evidence");
                         break;
                     default:
-                        console.log(model.Type);
                 }
 
                 var anno_num = model.Annotations.length;
@@ -130,7 +128,7 @@ var AssureIt;
 
                 for (var i = 0; i < model.Children.length; i++) {
                     var child_model = model.Children[i];
-                    console.log(child_model.Type);
+
                     if (child_model.Type == AssureIt.NodeType["Context"]) {
                         ret += arguments.callee(child_model, prefix);
                         break;
@@ -144,7 +142,7 @@ var AssureIt;
                 }
                 return ret;
             })(root, "");
-            console.log(encoded);
+
             return encoded;
         };
 

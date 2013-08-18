@@ -186,7 +186,9 @@ var AssureIt;
             var pluginMap = caseViewer.pluginManager.MenuBarContentsPlugInMap;
             for (var key in pluginMap) {
                 var contents = this.MenuBarContentsPlugInMap[key];
-                contents.Delegate(caseViewer, caseModel, DocBase, serverApi);
+                if (contents.IsEnabled(caseViewer, caseModel)) {
+                    contents.Delegate(caseViewer, caseModel, DocBase, serverApi);
+                }
             }
         };
         return PlugInManager;

@@ -20,46 +20,47 @@ class MenuBar {
 	}
 
 	Init(): void {
-		var self = this;
 
-		var thisNodeType: AssureIt.NodeType = self.model.Type;
+		var thisNodeType: AssureIt.NodeType = this.model.Type;
 
 		$('#menu').remove();
-		self.menu = $('<div id="menu">' +
-			'<a href="#" ><img id="commit" src="'+this.serverApi.basepath+'images/commit.png" title="Commit" alt="commit" /></a>' +
-			'<a href="#" ><img id="remove" src="'+this.serverApi.basepath+'images/remove.png" title="Remove" alt="remove" /></a>' +
+		this.menu = $('<div id="menu">' +
 			'<a href="#" ><img id="scale"  src="'+this.serverApi.basepath+'images/scale.png" title="Scale" alt="scale" /></a>' +
 			'</div>');
 
+		//if(this.case0.IsLogin()) { //TODO login
+		this.menu.append('<a href="#" ><img id="commit" src="'+this.serverApi.basepath+'images/commit.png" title="Commit" alt="commit" /></a>');
+		this.menu.append('<a href="#" ><img id="remove" src="'+this.serverApi.basepath+'images/remove.png" title="Remove" alt="remove" /></a>');
 		var hasContext: boolean = false;
 
-		for(var i: number = 0; i < self.model.Children.length; i++) {
-			if(self.model.Children[i].Type == AssureIt.NodeType.Context) {
+		for(var i: number = 0; i < this.model.Children.length; i++) {
+			if(this.model.Children[i].Type == AssureIt.NodeType.Context) {
 				hasContext = true;
 			}
 		}
 		switch(thisNodeType) {
 			case AssureIt.NodeType.Goal:
 				if(!hasContext) {
-					self.menu.append('<a href="#" ><img id="context"  src="'+this.serverApi.basepath+'images/context.png" title="Context" alt="context" /></a>');
+					this.menu.append('<a href="#" ><img id="context"  src="'+this.serverApi.basepath+'images/context.png" title="Context" alt="context" /></a>');
 				}
-				self.menu.append('<a href="#" ><img id="strategy" src="'+this.serverApi.basepath+'images/strategy.png" title="Strategy" alt="strategy" /></a>');
-				self.menu.append('<a href="#" ><img id="evidence" src="'+this.serverApi.basepath+'images/evidence.png" title="Evidence" alt="evidence" /></a>');
+				this.menu.append('<a href="#" ><img id="strategy" src="'+this.serverApi.basepath+'images/strategy.png" title="Strategy" alt="strategy" /></a>');
+				this.menu.append('<a href="#" ><img id="evidence" src="'+this.serverApi.basepath+'images/evidence.png" title="Evidence" alt="evidence" /></a>');
 				break;
 			case AssureIt.NodeType.Strategy:
-				self.menu.append('<a href="#" ><img id="goal"     src="'+this.serverApi.basepath+'images/goal.png" title="Goal" alt="goal" /></a>');
+				this.menu.append('<a href="#" ><img id="goal"     src="'+this.serverApi.basepath+'images/goal.png" title="Goal" alt="goal" /></a>');
 				if (!hasContext) {
-					self.menu.append('<a href="#" ><img id="context"  src="'+this.serverApi.basepath+'images/context.png" title="Context" alt="context" /></a>');
+					this.menu.append('<a href="#" ><img id="context"  src="'+this.serverApi.basepath+'images/context.png" title="Context" alt="context" /></a>');
 				}
 				break;
 			case AssureIt.NodeType.Evidence:
 				if (!hasContext) {
-					self.menu.append('<a href="#" ><img id="context"  src="'+this.serverApi.basepath+'images/context.png" title="Context" alt="context" /></a>');
+					this.menu.append('<a href="#" ><img id="context"  src="'+this.serverApi.basepath+'images/context.png" title="Context" alt="context" /></a>');
 				}
 				break;
 			default:
 				break;
 		}
+		//}
 	}
 
 	AddNode(nodeType: AssureIt.NodeType): void {
@@ -116,13 +117,34 @@ class MenuBar {
 	}
 
 	Scale(): void { // TODO: handle click and dblclick exclusive
-		var self = this;
+		var timers: number[] = [];
+		var screenManager = this.caseViewer.Screen;
+		var offsetX: number = screenManager.GetOffsetX();
+		var offsetY: number = screenManager.GetOffsetY();
 
-		this.caseViewer.Screen.SetScale(0.1);
-		//$("#background").unbind("click");
-		$("#background").click(function() {
-			self.caseViewer.Screen.SetScale(1);
-		});
+		screenManager.SetScale(0.1);
+
+		var CancelClickEvent: () => void = function(): void {
+			var timer: number = timers.pop();
+
+			while(timer) {
+				clearTimeout(timer);
+				timer = timers.pop();
+			}
+		}
+
+		var ScaleDown: () => void = function(): void {
+			timers.push(setTimeout(function() {
+				screenManager.SetScale(1);
+				screenManager.SetOffset(offsetX, offsetY);
+				$("#background").unbind("click", ScaleDown);
+				$("#background").unbind("dblclick", CancelClickEvent);
+			}, 500));
+		}
+
+		// TODO: exclude drag event
+		$("#background").click(ScaleDown);
+		$("#background").dblclick(CancelClickEvent);
 	}
 
 	SetEventHandlers(): void {
