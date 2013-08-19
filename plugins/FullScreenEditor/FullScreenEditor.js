@@ -59,8 +59,8 @@ var FullScreenEditorActionPlugIn = (function (_super) {
     FullScreenEditorActionPlugIn.prototype.Delegate = function (caseViewer, case0, serverApi) {
         var editor = this.editor;
         var self = this;
-        $('#background').unbind('dblclick');
-        $('#background').dblclick(function (ev) {
+
+        var ShowFullScreenEditor = function (ev) {
             ev.stopPropagation();
             self.plugInManager.UseUILayer(self);
 
@@ -133,7 +133,11 @@ var FullScreenEditorActionPlugIn = (function (_super) {
             window.setTimeout(function () {
                 $('#fullscreen-editor-wrapper').removeClass();
             }, 1300);
-        });
+        };
+
+        $('#background').unbind('dblclick', ShowFullScreenEditor);
+        $('#background').dblclick(ShowFullScreenEditor);
+
         return true;
     };
 

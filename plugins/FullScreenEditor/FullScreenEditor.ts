@@ -65,8 +65,8 @@ class FullScreenEditorActionPlugIn extends AssureIt.ActionPlugIn {
 	Delegate(caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case, serverApi: AssureIt.ServerAPI)  : boolean {
 		var editor = this.editor;
 		var self = this; //FIXME
-		$('#background').unbind('dblclick');
-		$('#background').dblclick(function(ev) {
+
+		var ShowFullScreenEditor: (ev: Event) => void = function (ev: Event) {
 			ev.stopPropagation();
 			self.plugInManager.UseUILayer(self);
 
@@ -143,7 +143,10 @@ class FullScreenEditorActionPlugIn extends AssureIt.ActionPlugIn {
 			window.setTimeout(function() {
 				$('#fullscreen-editor-wrapper').removeClass();
 			}, 1300);
-		});
+		}
+
+		$('#background').unbind('dblclick', ShowFullScreenEditor);
+		$('#background').dblclick(ShowFullScreenEditor);
 		return true;
 	}
 
