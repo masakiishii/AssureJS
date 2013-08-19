@@ -63,7 +63,6 @@ class DragFilePlugIn extends AssureIt.PlugIn {
 		this.ActionPlugIn = new DragFileActionPlugIn(plugInManager);
 		this.HTMLRenderPlugIn = new ImageFileHTMLPlugIn(plugInManager);
 	}
-
 }
 
 class DragFileActionPlugIn extends AssureIt.ActionPlugIn {
@@ -105,7 +104,20 @@ class ImageFileHTMLPlugIn extends AssureIt.HTMLRenderPlugIn {
 		for (var i: number = 0; i < nodeModel.Notes.length; i++) {
 			if(nodeModel.Notes[i].Name == "ImageFile") {
 				var body = nodeModel.Notes[i].Body;
-				$('<a href="' + basepath + '/' + body.URL+'"><img id="img-'+ nodeModel.Label + '-' + i + '" src="'+basepath+'/'+body.URL+'" /></a>').appendTo(element);
+				var img = $(new Image());
+				img.bind('load', function(){
+					$('<a href="' + basepath + '/' + body.URL+'"></a>').append(img).appendTo(element);
+					caseViewer.ReDraw();
+				});
+				img.attr('src',basepath+'/'+body.URL);
+				//$('<a href="' + basepath + '/' + body.URL+'"><img id="img-'+ nodeModel.Label + '-' + i + '" src="'+basepath+'/'+body.URL+'" /></a>')
+				//.appendTo(element);
+
+				//$('#img-'+ nodeModel.Label + '-' + i + '')
+				//.bind('load', function(){
+				//	console.log("redraw");
+				//	caseViewer.ReDraw();
+				//})
 			}
 		}
 		return true;

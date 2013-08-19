@@ -119,33 +119,67 @@ class MenuBar {
 	Scale(): void {
 		var timers: number[] = [];
 		var screenManager = this.caseViewer.Screen;
-		var offsetX: number = screenManager.GetOffsetX();
-		var offsetY: number = screenManager.GetOffsetY();
+		var caseViewer = this.caseViewer;
+		var editorIsActive: boolean = false;
+		
+		var startZoom = (start: number, target: number, duration: number) => {
+			var delta = (target - start) / (30 * duration / 1000);
+			var current = start;
+			var zoom = ()=>{
+				if(Math.abs(current - target) > Math.abs(delta)){
+					current += delta;
+					screenManager.SetScale(current);
+					setTimeout(zoom, 1000/30);
+				}else{
+					screenManager.SetScale(target);
+				}
+			}
+			zoom();
+		}
 
-		screenManager.SetScale(0.1);
+		startZoom(1.0, 0.1, 500);
 
-		var CancelClickEvent: () => void = function(): void {
+		$(".node").unbind();
+
+		var CancelClickEvent: (ev: JQueryEventObject) => void = function(ev: JQueryEventObject): void {
 			var timer: number = timers.pop();
 
 			while(timer) {
 				clearTimeout(timer);
 				timer = timers.pop();
 			}
+
+			if(ev.type == "dblclick") {
+				editorIsActive = true;
+			}
+		}
+
+		var EscapeFromEditor: (ev: JQueryEventObject) => void = function(ev: JQueryEventObject): void {
+			if(ev.keyCode = 27 /* ESC */) {
+				editorIsActive = false;
+			}
 		}
 
 		var ScaleDown: () => void = function(): void {
-			timers.push(setTimeout(function() {
-				screenManager.SetScale(1);
-				screenManager.SetOffset(offsetX, offsetY);
-				$("#background").unbind("click", ScaleDown);
-				$("#background").unbind("dblclick", CancelClickEvent);
-				$("#background").unbind("mousemove", CancelClickEvent);
-			}, 500));
+			if(!editorIsActive) {
+				timers.push(setTimeout(function() {
+					startZoom(0.1, 1.0, 500);
+					$("#background").unbind("click", ScaleDown);
+					$("#background").unbind("dblclick", CancelClickEvent);
+					$("#background").unbind("mousemove", CancelClickEvent);
+					$("#background").unbind("keydown", EscapeFromEditor);
+					caseViewer.ReDraw();
+				}, 500));
+			}
+			else {
+				editorIsActive = false;
+			}
 		}
 
 		$("#background").click(ScaleDown);
 		$("#background").dblclick(CancelClickEvent);
 		$("#background").mousemove(CancelClickEvent);
+		$("#background").keydown(EscapeFromEditor);
 	}
 
 	SetEventHandlers(): void {
