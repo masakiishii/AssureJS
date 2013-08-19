@@ -119,10 +119,23 @@ class MenuBar {
 	Scale(): void { // TODO: handle click and dblclick exclusive
 		var timers: number[] = [];
 		var screenManager = this.caseViewer.Screen;
-		var offsetX: number = screenManager.GetOffsetX();
-		var offsetY: number = screenManager.GetOffsetY();
 
-		screenManager.SetScale(0.1);
+		var startZoom = (start: number, target: number, duration: number) => {
+			var delta = (target - start) / (30 * duration / 1000);
+			var current = start;
+			var zoom = ()=>{
+				if(Math.abs(current - target) > Math.abs(delta)){
+					current += delta;
+					screenManager.SetScale(current);
+					setTimeout(zoom, 1000/30);
+				}else{
+					screenManager.SetScale(target);
+				}
+			}
+			zoom();
+		}
+
+		startZoom(1.0, 0.1, 500);
 
 		var CancelClickEvent: () => void = function(): void {
 			var timer: number = timers.pop();
@@ -135,8 +148,7 @@ class MenuBar {
 
 		var ScaleDown: () => void = function(): void {
 			timers.push(setTimeout(function() {
-				screenManager.SetScale(1);
-				screenManager.SetOffset(offsetX, offsetY);
+				startZoom(0.1, 1.0, 500);
 				$("#background").unbind("click", ScaleDown);
 				$("#background").unbind("dblclick", CancelClickEvent);
 			}, 500));

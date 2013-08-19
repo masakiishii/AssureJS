@@ -109,10 +109,23 @@ var MenuBar = (function () {
     MenuBar.prototype.Scale = function () {
         var timers = [];
         var screenManager = this.caseViewer.Screen;
-        var offsetX = screenManager.GetOffsetX();
-        var offsetY = screenManager.GetOffsetY();
 
-        screenManager.SetScale(0.1);
+        var startZoom = function (start, target, duration) {
+            var delta = (target - start) / (30 * duration / 1000);
+            var current = start;
+            var zoom = function () {
+                if (Math.abs(current - target) > Math.abs(delta)) {
+                    current += delta;
+                    screenManager.SetScale(current);
+                    setTimeout(zoom, 1000 / 30);
+                } else {
+                    screenManager.SetScale(target);
+                }
+            };
+            zoom();
+        };
+
+        startZoom(1.0, 0.1, 500);
 
         var CancelClickEvent = function () {
             var timer = timers.pop();
@@ -125,8 +138,7 @@ var MenuBar = (function () {
 
         var ScaleDown = function () {
             timers.push(setTimeout(function () {
-                screenManager.SetScale(1);
-                screenManager.SetOffset(offsetX, offsetY);
+                startZoom(0.1, 1.0, 500);
                 $("#background").unbind("click", ScaleDown);
                 $("#background").unbind("dblclick", CancelClickEvent);
             }, 500));

@@ -653,11 +653,12 @@ module AssureIt {
 		}
 
 		SetScale(scale: number): void {
+			var oldScale = this.Scale;
 			this.Scale = scale;
 			var cx = this.GetWidth() / 2;
 			var cy = this.GetHeight() / 2;
-			this.OffsetX = (this.OffsetX - cx) * scale + cx;
-			this.OffsetY = (this.OffsetY - cy) * scale + cy;
+			this.OffsetX = (this.OffsetX - cx) * scale / oldScale + cx;
+			this.OffsetY = (this.OffsetY - cy) * scale / oldScale + cy;
 			this.UpdateAttr();
 		}
 
