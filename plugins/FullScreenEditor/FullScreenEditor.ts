@@ -35,6 +35,7 @@ class FullScreenEditorLayoutPlugIn extends AssureIt.HTMLRenderPlugIn {
 class FullScreenEditorActionPlugIn extends AssureIt.ActionPlugIn {
 	editor;
 	selector: string;
+	isDisplayed: boolean;
 	constructor(plugInManager: AssureIt.PlugInManager) {
 		super(plugInManager);
 		this.editor = CodeMirror.fromTextArea(document.getElementById('fullscreen-editor'), {
@@ -69,6 +70,7 @@ class FullScreenEditorActionPlugIn extends AssureIt.ActionPlugIn {
 		var ShowFullScreenEditor: (ev: Event) => void = function (ev: Event) {
 			ev.stopPropagation();
 			self.plugInManager.UseUILayer(self);
+			self.isDisplayed = true;
 
 			var encoder : AssureIt.CaseEncoder = new AssureIt.CaseEncoder();
 			var encoded = encoder.ConvertToASN(case0.ElementTop, false/* whole node */);
@@ -121,6 +123,7 @@ class FullScreenEditorActionPlugIn extends AssureIt.ActionPlugIn {
 					}
 
 					var $this = $(this);
+					self.isDisplayed = false;
 					$this.addClass("animated fadeOutUp");
 					window.setTimeout(function() {
 						$this.removeClass();
@@ -141,6 +144,9 @@ class FullScreenEditorActionPlugIn extends AssureIt.ActionPlugIn {
 				$('#fullscreen-editor-wrapper').blur(); 
 			});
 			window.setTimeout(function() {
+				if (!self.isDisplayed) {
+					$('#fullscreen-editor-wrapper').css({display: 'none'});
+				}
 				$('#fullscreen-editor-wrapper').removeClass();
 			}, 1300);
 		}
