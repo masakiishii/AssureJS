@@ -108,34 +108,54 @@ var MenuBar = (function () {
 
     MenuBar.prototype.Scale = function () {
         var timers = [];
-        var screenManager = this.caseViewer.Screen;
+        var caseViewer = this.caseViewer;
+        var screenManager = caseViewer.Screen;
         var offsetX = screenManager.GetOffsetX();
         var offsetY = screenManager.GetOffsetY();
+        var editorIsActive = false;
 
         screenManager.SetScale(0.1);
+        $(".node").unbind();
 
-        var CancelClickEvent = function () {
+        var CancelClickEvent = function (ev) {
             var timer = timers.pop();
 
             while (timer) {
                 clearTimeout(timer);
                 timer = timers.pop();
             }
+
+            if (ev.type == "dblclick") {
+                editorIsActive = true;
+            }
+        };
+
+        var EscapeFromEditor = function (ev) {
+            if (ev.keyCode = 27) {
+                editorIsActive = false;
+            }
         };
 
         var ScaleDown = function () {
-            timers.push(setTimeout(function () {
-                screenManager.SetScale(1);
-                screenManager.SetOffset(offsetX, offsetY);
-                $("#background").unbind("click", ScaleDown);
-                $("#background").unbind("dblclick", CancelClickEvent);
-                $("#background").unbind("mousemove", CancelClickEvent);
-            }, 500));
+            if (!editorIsActive) {
+                timers.push(setTimeout(function () {
+                    screenManager.SetScale(1);
+                    screenManager.SetOffset(offsetX, offsetY);
+                    $("#background").unbind("click", ScaleDown);
+                    $("#background").unbind("dblclick", CancelClickEvent);
+                    $("#background").unbind("mousemove", CancelClickEvent);
+                    $("#background").unbind("keydown", EscapeFromEditor);
+                    caseViewer.ReDraw();
+                }, 500));
+            } else {
+                editorIsActive = false;
+            }
         };
 
         $("#background").click(ScaleDown);
         $("#background").dblclick(CancelClickEvent);
         $("#background").mousemove(CancelClickEvent);
+        $("#background").keydown(EscapeFromEditor);
     };
 
     MenuBar.prototype.SetEventHandlers = function () {

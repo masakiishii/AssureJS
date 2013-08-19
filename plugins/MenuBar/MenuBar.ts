@@ -118,34 +118,55 @@ class MenuBar {
 
 	Scale(): void {
 		var timers: number[] = [];
-		var screenManager = this.caseViewer.Screen;
+		var caseViewer = this.caseViewer;
+		var screenManager = caseViewer.Screen;
 		var offsetX: number = screenManager.GetOffsetX();
 		var offsetY: number = screenManager.GetOffsetY();
+		var editorIsActive: boolean = false;
 
 		screenManager.SetScale(0.1);
+		$(".node").unbind();
 
-		var CancelClickEvent: () => void = function(): void {
+		var CancelClickEvent: (ev: JQueryEventObject) => void = function(ev: JQueryEventObject): void {
 			var timer: number = timers.pop();
 
 			while(timer) {
 				clearTimeout(timer);
 				timer = timers.pop();
 			}
+
+			if(ev.type == "dblclick") {
+				editorIsActive = true;
+			}
+		}
+
+		var EscapeFromEditor: (ev: JQueryEventObject) => void = function(ev: JQueryEventObject): void {
+			if(ev.keyCode = 27 /* ESC */) {
+				editorIsActive = false;
+			}
 		}
 
 		var ScaleDown: () => void = function(): void {
-			timers.push(setTimeout(function() {
-				screenManager.SetScale(1);
-				screenManager.SetOffset(offsetX, offsetY);
-				$("#background").unbind("click", ScaleDown);
-				$("#background").unbind("dblclick", CancelClickEvent);
-				$("#background").unbind("mousemove", CancelClickEvent);
-			}, 500));
+			if(!editorIsActive) {
+				timers.push(setTimeout(function() {
+					screenManager.SetScale(1);
+					screenManager.SetOffset(offsetX, offsetY);
+					$("#background").unbind("click", ScaleDown);
+					$("#background").unbind("dblclick", CancelClickEvent);
+					$("#background").unbind("mousemove", CancelClickEvent);
+					$("#background").unbind("keydown", EscapeFromEditor);
+					caseViewer.ReDraw();
+				}, 500));
+			}
+			else {
+				editorIsActive = false;
+			}
 		}
 
 		$("#background").click(ScaleDown);
 		$("#background").dblclick(CancelClickEvent);
 		$("#background").mousemove(CancelClickEvent);
+		$("#background").keydown(EscapeFromEditor);
 	}
 
 	SetEventHandlers(): void {

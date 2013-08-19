@@ -142,7 +142,6 @@ var FullScreenEditorActionPlugIn = (function (_super) {
 
         $('#background').unbind('dblclick', ShowFullScreenEditor);
         $('#background').dblclick(ShowFullScreenEditor);
-
         return true;
     };
 
