@@ -118,13 +118,27 @@ class MenuBar {
 
 	Scale(): void {
 		var timers: number[] = [];
+		var screenManager = this.caseViewer.Screen;
 		var caseViewer = this.caseViewer;
-		var screenManager = caseViewer.Screen;
-		var offsetX: number = screenManager.GetOffsetX();
-		var offsetY: number = screenManager.GetOffsetY();
 		var editorIsActive: boolean = false;
+		
+		var startZoom = (start: number, target: number, duration: number) => {
+			var delta = (target - start) / (30 * duration / 1000);
+			var current = start;
+			var zoom = ()=>{
+				if(Math.abs(current - target) > Math.abs(delta)){
+					current += delta;
+					screenManager.SetScale(current);
+					setTimeout(zoom, 1000/30);
+				}else{
+					screenManager.SetScale(target);
+				}
+			}
+			zoom();
+		}
 
-		screenManager.SetScale(0.1);
+		startZoom(1.0, 0.1, 500);
+
 		$(".node").unbind();
 
 		var CancelClickEvent: (ev: JQueryEventObject) => void = function(ev: JQueryEventObject): void {
@@ -149,8 +163,7 @@ class MenuBar {
 		var ScaleDown: () => void = function(): void {
 			if(!editorIsActive) {
 				timers.push(setTimeout(function() {
-					screenManager.SetScale(1);
-					screenManager.SetOffset(offsetX, offsetY);
+					startZoom(0.1, 1.0, 500);
 					$("#background").unbind("click", ScaleDown);
 					$("#background").unbind("dblclick", CancelClickEvent);
 					$("#background").unbind("mousemove", CancelClickEvent);
