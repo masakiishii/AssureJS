@@ -8,11 +8,32 @@ var FullScreenEditorPlugIn = (function (_super) {
     __extends(FullScreenEditorPlugIn, _super);
     function FullScreenEditorPlugIn(plugInManager) {
         _super.call(this, plugInManager);
-        this.ActionPlugIn = new FullScreenEditorActionPlugIn(plugInManager);
+        var plugin = new FullScreenEditorActionPlugIn(plugInManager);
+        this.ActionPlugIn = plugin;
+        this.MenuBarContentsPlugIn = new FullScreenMenuPlugIn(plugInManager, plugin);
         this.HTMLRenderPlugIn = new FullScreenEditorLayoutPlugIn(plugInManager);
     }
     return FullScreenEditorPlugIn;
 })(AssureIt.PlugIn);
+
+var FullScreenMenuPlugIn = (function (_super) {
+    __extends(FullScreenMenuPlugIn, _super);
+    function FullScreenMenuPlugIn(plugInManager, editorPlugIn) {
+        _super.call(this, plugInManager);
+        this.editorPlugIn = editorPlugIn;
+    }
+    FullScreenMenuPlugIn.prototype.IsEnabled = function (caseViewer, caseModel) {
+        return true;
+    };
+
+    FullScreenMenuPlugIn.prototype.Delegate = function (caseViewer, caseModel, element, serverApi) {
+        element.append('<a href="#" ><img id="fullscreen-menu" src="' + serverApi.basepath + 'images/icon.png" title="FullScreen" alt="fullscreen" /></a>');
+        $('#fullscreen-menu').unbind('click');
+        $('#fullscreen-menu').click(this.editorPlugIn.ShowFullScreenEditor);
+        return true;
+    };
+    return FullScreenMenuPlugIn;
+})(AssureIt.MenuBarContentsPlugIn);
 
 var FullScreenEditorLayoutPlugIn = (function (_super) {
     __extends(FullScreenEditorLayoutPlugIn, _super);
@@ -60,7 +81,7 @@ var FullScreenEditorActionPlugIn = (function (_super) {
         var editor = this.editor;
         var self = this;
 
-        var ShowFullScreenEditor = function (ev) {
+        this.ShowFullScreenEditor = function (ev) {
             ev.stopPropagation();
             self.plugInManager.UseUILayer(self);
 
@@ -135,9 +156,8 @@ var FullScreenEditorActionPlugIn = (function (_super) {
             }, 1300);
         };
 
-        $('#background').unbind('dblclick', ShowFullScreenEditor);
-        $('#background').dblclick(ShowFullScreenEditor);
-
+        $('#background').unbind('dblclick', this.ShowFullScreenEditor);
+        $('#background').dblclick(this.ShowFullScreenEditor);
         return true;
     };
 

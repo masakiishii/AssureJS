@@ -9,10 +9,31 @@ class FullScreenEditorPlugIn extends AssureIt.PlugIn {
 
 	constructor(plugInManager: AssureIt.PlugInManager) {
 		super(plugInManager);
-		this.ActionPlugIn = new FullScreenEditorActionPlugIn(plugInManager);
+		var plugin: FullScreenEditorActionPlugIn = new FullScreenEditorActionPlugIn(plugInManager);
+		this.ActionPlugIn = plugin;
+		this.MenuBarContentsPlugIn = new FullScreenMenuPlugIn(plugInManager, plugin);
 		this.HTMLRenderPlugIn = new FullScreenEditorLayoutPlugIn(plugInManager);
 	}
 
+}
+
+class FullScreenMenuPlugIn extends AssureIt.MenuBarContentsPlugIn {
+	editorPlugIn: FullScreenEditorActionPlugIn;
+	constructor(plugInManager: AssureIt.PlugInManager, editorPlugIn: FullScreenEditorActionPlugIn) {
+		super(plugInManager);
+		this.editorPlugIn = editorPlugIn;
+	}
+
+	IsEnabled(caseViewer: AssureIt.CaseViewer, caseModel: AssureIt.NodeModel): boolean {
+		return true;
+	}
+
+	Delegate(caseViewer: AssureIt.CaseViewer, caseModel: AssureIt.NodeModel, element: JQuery, serverApi: AssureIt.ServerAPI): boolean {
+		element.append('<a href="#" ><img id="fullscreen-menu" src="' + serverApi.basepath + 'images/icon.png" title="FullScreen" alt="fullscreen" /></a>');
+		$('#fullscreen-menu').unbind('click');
+		$('#fullscreen-menu').click(this.editorPlugIn.ShowFullScreenEditor);
+		return true;
+	}
 }
 
 class FullScreenEditorLayoutPlugIn extends AssureIt.HTMLRenderPlugIn {
@@ -35,6 +56,7 @@ class FullScreenEditorLayoutPlugIn extends AssureIt.HTMLRenderPlugIn {
 class FullScreenEditorActionPlugIn extends AssureIt.ActionPlugIn {
 	editor;
 	selector: string;
+	ShowFullScreenEditor: (ev: Event) => void;
 	constructor(plugInManager: AssureIt.PlugInManager) {
 		super(plugInManager);
 		this.editor = CodeMirror.fromTextArea(document.getElementById('fullscreen-editor'), {
@@ -66,7 +88,7 @@ class FullScreenEditorActionPlugIn extends AssureIt.ActionPlugIn {
 		var editor = this.editor;
 		var self = this; //FIXME
 
-		var ShowFullScreenEditor: (ev: Event) => void = function (ev: Event) {
+		this.ShowFullScreenEditor = function (ev: Event) {
 			ev.stopPropagation();
 			self.plugInManager.UseUILayer(self);
 
@@ -145,8 +167,8 @@ class FullScreenEditorActionPlugIn extends AssureIt.ActionPlugIn {
 			}, 1300);
 		}
 
-		$('#background').unbind('dblclick', ShowFullScreenEditor);
-		$('#background').dblclick(ShowFullScreenEditor);
+		$('#background').unbind('dblclick', this.ShowFullScreenEditor);
+		$('#background').dblclick(this.ShowFullScreenEditor);
 		return true;
 	}
 
