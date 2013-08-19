@@ -57,9 +57,7 @@ var DScriptGenerator = (function () {
             default:
                 console.log("There's something wrong with NodeModel.");
         }
-        for (var i in model.Children) {
-            res += this.codegen_(model.Children[i]);
-        }
+
         return res;
     };
 
