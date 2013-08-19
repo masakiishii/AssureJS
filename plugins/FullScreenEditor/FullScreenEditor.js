@@ -27,7 +27,7 @@ var FullScreenMenuPlugIn = (function (_super) {
     };
 
     FullScreenMenuPlugIn.prototype.Delegate = function (caseViewer, caseModel, element, serverApi) {
-        element.append('<a href="#" ><img id="fullscreen-menu" src="' + serverApi.basepath + 'images/icon.png" title="FullScreen" alt="fullscreen" /></a>');
+        element.append('<a href="#" ><img id="fullscreen-menu" src="' + serverApi.basepath + 'images/max.png" title="FullScreen" alt="fullscreen" /></a>');
         $('#fullscreen-menu').unbind('click');
         $('#fullscreen-menu').click(this.editorPlugIn.ShowFullScreenEditor);
         return true;

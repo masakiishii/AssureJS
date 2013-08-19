@@ -29,7 +29,7 @@ class FullScreenMenuPlugIn extends AssureIt.MenuBarContentsPlugIn {
 	}
 
 	Delegate(caseViewer: AssureIt.CaseViewer, caseModel: AssureIt.NodeModel, element: JQuery, serverApi: AssureIt.ServerAPI): boolean {
-		element.append('<a href="#" ><img id="fullscreen-menu" src="' + serverApi.basepath + 'images/icon.png" title="FullScreen" alt="fullscreen" /></a>');
+		element.append('<a href="#" ><img id="fullscreen-menu" src="' + serverApi.basepath + 'images/max.png" title="FullScreen" alt="fullscreen" /></a>');
 		$('#fullscreen-menu').unbind('click');
 		$('#fullscreen-menu').click(this.editorPlugIn.ShowFullScreenEditor);
 		return true;
