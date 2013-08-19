@@ -129,11 +129,13 @@ var MenuBar = (function () {
                 screenManager.SetOffset(offsetX, offsetY);
                 $("#background").unbind("click", ScaleDown);
                 $("#background").unbind("dblclick", CancelClickEvent);
+                $("#background").unbind("mousemove", CancelClickEvent);
             }, 500));
         };
 
         $("#background").click(ScaleDown);
         $("#background").dblclick(CancelClickEvent);
+        $("#background").mousemove(CancelClickEvent);
     };
 
     MenuBar.prototype.SetEventHandlers = function () {

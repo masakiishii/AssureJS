@@ -116,7 +116,7 @@ class MenuBar {
 		(<any>$('#modal')).dialog('open');
 	}
 
-	Scale(): void { // TODO: handle click and dblclick exclusive
+	Scale(): void {
 		var timers: number[] = [];
 		var screenManager = this.caseViewer.Screen;
 		var offsetX: number = screenManager.GetOffsetX();
@@ -139,12 +139,13 @@ class MenuBar {
 				screenManager.SetOffset(offsetX, offsetY);
 				$("#background").unbind("click", ScaleDown);
 				$("#background").unbind("dblclick", CancelClickEvent);
+				$("#background").unbind("mousemove", CancelClickEvent);
 			}, 500));
 		}
 
-		// TODO: exclude drag event
 		$("#background").click(ScaleDown);
 		$("#background").dblclick(CancelClickEvent);
+		$("#background").mousemove(CancelClickEvent);
 	}
 
 	SetEventHandlers(): void {
