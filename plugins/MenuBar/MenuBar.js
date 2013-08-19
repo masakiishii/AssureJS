@@ -127,7 +127,9 @@ var MenuBar = (function () {
             zoom();
         };
 
-        startZoom(1.0, 0.1, 500);
+        var svgwidth = $("#layer0")[0].getBoundingClientRect().width;
+        var bodywidth = $("body").width();
+        startZoom(1.0, bodywidth / svgwidth, 500);
 
         $(".node").unbind();
 
@@ -153,7 +155,7 @@ var MenuBar = (function () {
         var ScaleDown = function () {
             if (!editorIsActive) {
                 timers.push(setTimeout(function () {
-                    startZoom(0.1, 1.0, 500);
+                    startZoom(bodywidth / svgwidth, 1.0, 500);
                     $("#background").unbind("click", ScaleDown);
                     $("#background").unbind("dblclick", CancelClickEvent);
                     $("#background").unbind("mousemove", CancelClickEvent);

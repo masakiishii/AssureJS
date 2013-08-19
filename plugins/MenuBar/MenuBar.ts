@@ -121,7 +121,7 @@ class MenuBar {
 		var screenManager = this.caseViewer.Screen;
 		var caseViewer = this.caseViewer;
 		var editorIsActive: boolean = false;
-		
+
 		var startZoom = (start: number, target: number, duration: number) => {
 			var delta = (target - start) / (30 * duration / 1000);
 			var current = start;
@@ -137,7 +137,9 @@ class MenuBar {
 			zoom();
 		}
 
-		startZoom(1.0, 0.1, 500);
+		var svgwidth = $("#layer0")[0].getBoundingClientRect().width;
+		var bodywidth = $("body").width();
+		startZoom(1.0, bodywidth / svgwidth, 500);
 
 		$(".node").unbind();
 
@@ -163,7 +165,7 @@ class MenuBar {
 		var ScaleDown: () => void = function(): void {
 			if(!editorIsActive) {
 				timers.push(setTimeout(function() {
-					startZoom(0.1, 1.0, 500);
+					startZoom(bodywidth/svgwidth, 1.0, 500);
 					$("#background").unbind("click", ScaleDown);
 					$("#background").unbind("dblclick", CancelClickEvent);
 					$("#background").unbind("mousemove", CancelClickEvent);
