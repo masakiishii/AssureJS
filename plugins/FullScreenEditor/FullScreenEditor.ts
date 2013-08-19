@@ -79,6 +79,7 @@ class FullScreenEditorActionPlugIn extends AssureIt.ActionPlugIn {
 			display : 'none',
 			//			background : "rgba(255, 255, 255, 0)"
 		});
+		this.ShowFullScreenEditor = null;
 	}
 
 	IsEnabled (caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case) : boolean {
@@ -89,88 +90,90 @@ class FullScreenEditorActionPlugIn extends AssureIt.ActionPlugIn {
 		var editor = this.editor;
 		var self = this; //FIXME
 
-		this.ShowFullScreenEditor = function (ev: Event) {
-			ev.stopPropagation();
-			self.plugInManager.UseUILayer(self);
-			self.isDisplayed = true;
+		if(!this.ShowFullScreenEditor) {
+			this.ShowFullScreenEditor = function (ev: Event) {
+				ev.stopPropagation();
+				self.plugInManager.UseUILayer(self);
+				self.isDisplayed = true;
 
-			var encoder : AssureIt.CaseEncoder = new AssureIt.CaseEncoder();
-			var encoded = encoder.ConvertToASN(case0.ElementTop, false/* whole node */);
+				var encoder : AssureIt.CaseEncoder = new AssureIt.CaseEncoder();
+				var encoded = encoder.ConvertToASN(case0.ElementTop, false/* whole node */);
 
-			var node = $(this);
+				var node = $(this);
 
-			$('#fullscreen-editor-wrapper')
-				.css({display: 'block'})
-				.addClass("animated fadeInDown")
-				.focus()
-				.one("blur", {node : node}, function(e: JQueryEventObject, node: JQuery) {
-					e.stopPropagation();
+				$('#fullscreen-editor-wrapper')
+					.css({display: 'block'})
+					.addClass("animated fadeInDown")
+					.focus()
+					.one("blur", {node : node}, function(e: JQueryEventObject, node: JQuery) {
+						e.stopPropagation();
 
-					var label : string = case0.ElementTop.Label;
-					var orig_model : AssureIt.NodeModel = case0.ElementMap[label];
-					var orig_view : AssureIt.NodeView = caseViewer.ViewMap[label];
-					var orig_idCounters: number[] = case0.IdCounters;
-					var orig_ElementMap = case0.ElementMap;
-					case0.IdCounters = [0, 0, 0, 0, 0]; /* not a reset, replace it */
-					case0.ElementMap = {};
-					var decoder    : AssureIt.CaseDecoder = new AssureIt.CaseDecoder();
-					var new_model  : AssureIt.NodeModel = decoder.ParseASN(case0, editor.getValue(), null);
+						var label : string = case0.ElementTop.Label;
+						var orig_model : AssureIt.NodeModel = case0.ElementMap[label];
+						var orig_view : AssureIt.NodeView = caseViewer.ViewMap[label];
+						var orig_idCounters: number[] = case0.IdCounters;
+						var orig_ElementMap = case0.ElementMap;
+						case0.IdCounters = [0, 0, 0, 0, 0]; /* not a reset, replace it */
+						case0.ElementMap = {};
+						var decoder    : AssureIt.CaseDecoder = new AssureIt.CaseDecoder();
+						var new_model  : AssureIt.NodeModel = decoder.ParseASN(case0, editor.getValue(), null);
 
-					if (new_model != null) {
-						orig_view.DeleteHTMLElementRecursive($("#layer0"), $("#layer1"));
-						caseViewer.DeleteViewsRecursive(orig_view);
-						var new_view  : AssureIt.NodeView = new AssureIt.NodeView(caseViewer, new_model);
-						caseViewer.ElementTop = new_model;
-						case0.ElementTop = new_model;
-						(function(model : AssureIt.NodeModel, view : AssureIt.NodeView) : void {
-							caseViewer.ViewMap[model.Label] = view;
-							for (var i = 0; i < model.Children.length; i++) {
-								var child_model = model.Children[i];
-								var child_view : AssureIt.NodeView = new AssureIt.NodeView(caseViewer, child_model);
-								arguments.callee(child_model, child_view);
+						if (new_model != null) {
+							orig_view.DeleteHTMLElementRecursive($("#layer0"), $("#layer1"));
+							caseViewer.DeleteViewsRecursive(orig_view);
+							var new_view  : AssureIt.NodeView = new AssureIt.NodeView(caseViewer, new_model);
+							caseViewer.ElementTop = new_model;
+							case0.ElementTop = new_model;
+							(function(model : AssureIt.NodeModel, view : AssureIt.NodeView) : void {
+								caseViewer.ViewMap[model.Label] = view;
+								for (var i = 0; i < model.Children.length; i++) {
+									var child_model = model.Children[i];
+									var child_view : AssureIt.NodeView = new AssureIt.NodeView(caseViewer, child_model);
+									arguments.callee(child_model, child_view);
+								}
+								if (model.Parent != null) view.ParentShape = caseViewer.ViewMap[model.Parent.Label];
+							})(new_model, new_view);
+							new_view.AppendHTMLElementRecursive($("#layer0"), $("#layer1"), caseViewer);
+							caseViewer.Resize();
+							caseViewer.LayoutElement();
+							for (var viewkey in caseViewer.ViewMap) {
+								caseViewer.ViewMap[viewkey].Update();
 							}
-							if (model.Parent != null) view.ParentShape = caseViewer.ViewMap[model.Parent.Label];
-						})(new_model, new_view);
-						new_view.AppendHTMLElementRecursive($("#layer0"), $("#layer1"), caseViewer);
-						caseViewer.Resize();
-						caseViewer.LayoutElement();
-						for (var viewkey in caseViewer.ViewMap) {
-							caseViewer.ViewMap[viewkey].Update();
+
+							caseViewer.ReDraw();
+						} else {
+							case0.ElementMap = orig_ElementMap;
+							case0.IdCounters = orig_idCounters;
 						}
 
-						caseViewer.ReDraw();
-					} else {
-						case0.ElementMap = orig_ElementMap;
-						case0.IdCounters = orig_idCounters;
-					}
-
-					var $this = $(this);
-					self.isDisplayed = false;
-					$this.addClass("animated fadeOutUp");
-					window.setTimeout(function() {
-						$this.removeClass();
-						$this.css({display: 'none'});
-					}, 1300);
-				})
-				.on("keydown", function(e: JQueryEventObject) {
-					if(e.keyCode == 27 /* ESC */){
-						e.stopPropagation();
-						$('#fullscreen-editor-wrapper').blur();
-					}
+						var $this = $(this);
+						self.isDisplayed = false;
+						$this.addClass("animated fadeOutUp");
+						window.setTimeout(function() {
+							$this.removeClass();
+							$this.css({display: 'none'});
+						}, 1300);
+					})
+					.on("keydown", function(e: JQueryEventObject) {
+						if(e.keyCode == 27 /* ESC */){
+							e.stopPropagation();
+							$('#fullscreen-editor-wrapper').blur();
+						}
+					});
+				editor.setValue(encoded);
+				editor.refresh();
+				editor.focus();
+				$('#CodeMirror').focus();
+				$('#background').click(function(){
+					$('#fullscreen-editor-wrapper').blur(); 
 				});
-			editor.setValue(encoded);
-			editor.refresh();
-			editor.focus();
-			$('#CodeMirror').focus();
-			$('#background').click(function(){
-				$('#fullscreen-editor-wrapper').blur(); 
-			});
-			window.setTimeout(function() {
-				if (!self.isDisplayed) {
-					$('#fullscreen-editor-wrapper').css({display: 'none'});
-				}
-				$('#fullscreen-editor-wrapper').removeClass();
-			}, 1300);
+				window.setTimeout(function() {
+					if (!self.isDisplayed) {
+						$('#fullscreen-editor-wrapper').css({display: 'none'});
+					}
+					$('#fullscreen-editor-wrapper').removeClass();
+				}, 1300);
+			}
 		}
 
 		$('#background').unbind('dblclick', this.ShowFullScreenEditor);
