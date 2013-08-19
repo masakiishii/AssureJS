@@ -111,7 +111,12 @@ var ImageFileHTMLPlugIn = (function (_super) {
         for (var i = 0; i < nodeModel.Notes.length; i++) {
             if (nodeModel.Notes[i].Name == "ImageFile") {
                 var body = nodeModel.Notes[i].Body;
-                $('<a href="' + basepath + '/' + body.URL + '"><img id="img-' + nodeModel.Label + '-' + i + '" src="' + basepath + '/' + body.URL + '" /></a>').appendTo(element);
+                var img = $(new Image());
+                img.bind('load', function () {
+                    $('<a href="' + basepath + '/' + body.URL + '"></a>').append(img).appendTo(element);
+                    caseViewer.ReDraw();
+                });
+                img.attr('src', basepath + '/' + body.URL);
             }
         }
         return true;
