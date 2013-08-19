@@ -9,7 +9,7 @@ var DScriptGenerator = (function () {
 
     DScriptGenerator.prototype.goal = function (model) {
         var res = "";
-        res = "int " + this.getMethodName(model) + "(Context c) {\n";
+        res = "int " + this.getMethodName(model) + "() {\n";
         res += this.indentToken + "return 1;\n";
         res += "}\n\n";
         return res;
@@ -17,19 +17,25 @@ var DScriptGenerator = (function () {
 
     DScriptGenerator.prototype.context = function (model) {
         var res = "";
-
+        res = "int " + this.getMethodName(model) + "() {\n";
+        res += this.indentToken + "return 1;\n";
+        res += "}\n\n";
         return res;
     };
 
     DScriptGenerator.prototype.strategy = function (model) {
         var res = "";
-
+        res = "int " + this.getMethodName(model) + "() {\n";
+        res += this.indentToken + "return 1;\n";
+        res += "}\n\n";
         return res;
     };
 
     DScriptGenerator.prototype.evidence = function (model) {
         var res = "";
-
+        res = "int " + this.getMethodName(model) + "() {\n";
+        res += this.indentToken + "return 1;\n";
+        res += "}\n\n";
         return res;
     };
 

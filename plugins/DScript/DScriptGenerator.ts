@@ -13,7 +13,7 @@ class DScriptGenerator {
 
 	goal(model: AssureIt.NodeModel): string {
 		var res = "";
-		res = "int " + this.getMethodName(model) + "(Context c) {\n";
+		res = "int " + this.getMethodName(model) + "() {\n";
 		res += this.indentToken + "return 1;\n";
 		res += "}\n\n";
 		return res;
@@ -21,19 +21,25 @@ class DScriptGenerator {
 
 	context(model: AssureIt.NodeModel): string {
 		var res = "";
-		/* TODO write something */
+		res = "int " + this.getMethodName(model) + "() {\n";
+		res += this.indentToken + "return 1;\n";
+		res += "}\n\n";
 		return res;
 	}
 
 	strategy(model: AssureIt.NodeModel): string {
 		var res = "";
-		/* TODO write something */
+		res = "int " + this.getMethodName(model) + "() {\n";
+		res += this.indentToken + "return 1;\n";
+		res += "}\n\n";
 		return res;
 	}
 
 	evidence(model: AssureIt.NodeModel): string {
 		var res = "";
-		/* TODO write something */
+		res = "int " + this.getMethodName(model) + "() {\n";
+		res += this.indentToken + "return 1;\n";
+		res += "}\n\n";
 		return res;
 	}
 
