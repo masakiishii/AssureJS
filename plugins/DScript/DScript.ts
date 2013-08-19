@@ -29,7 +29,7 @@ class DScriptMenuPlugIn extends AssureIt.MenuBarContentsPlugIn {
 
 	Delegate(caseViewer: AssureIt.CaseViewer, caseModel: AssureIt.NodeModel, element: JQuery, serverApi: AssureIt.ServerAPI): boolean {
 		//console.log("Hello DScript");
-		element.append('<a href="#" ><img id="dscript"  src="'+serverApi.basepath+'images/icon.png" title="DScript" alt="dscript" /></a>');
+		element.append('<a href="#" ><img id="dscript"  src="'+serverApi.basepath+'images/dse.png" title="DScript" alt="dscript" /></a>');
 
 		$('#dscript').unbind('dblclick');
 		$('#dscript').click((ev) => {

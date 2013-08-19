@@ -28,7 +28,7 @@ var DScriptMenuPlugIn = (function (_super) {
 
     DScriptMenuPlugIn.prototype.Delegate = function (caseViewer, caseModel, element, serverApi) {
         var _this = this;
-        element.append('<a href="#" ><img id="dscript"  src="' + serverApi.basepath + 'images/icon.png" title="DScript" alt="dscript" /></a>');
+        element.append('<a href="#" ><img id="dscript"  src="' + serverApi.basepath + 'images/dse.png" title="DScript" alt="dscript" /></a>');
 
         $('#dscript').unbind('dblclick');
         $('#dscript').click(function (ev) {
