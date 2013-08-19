@@ -59,10 +59,11 @@ var FullScreenEditorActionPlugIn = (function (_super) {
     FullScreenEditorActionPlugIn.prototype.Delegate = function (caseViewer, case0, serverApi) {
         var editor = this.editor;
         var self = this;
-        $('#background').unbind('dblclick');
-        $('#background').dblclick(function (ev) {
+
+        var ShowFullScreenEditor = function (ev) {
             ev.stopPropagation();
             self.plugInManager.UseUILayer(self);
+            self.isDisplayed = true;
 
             var encoder = new AssureIt.CaseEncoder();
             var encoded = encoder.ConvertToASN(case0.ElementTop, false);
@@ -112,6 +113,7 @@ var FullScreenEditorActionPlugIn = (function (_super) {
                 }
 
                 var $this = $(this);
+                self.isDisplayed = false;
                 $this.addClass("animated fadeOutUp");
                 window.setTimeout(function () {
                     $this.removeClass();
@@ -131,9 +133,15 @@ var FullScreenEditorActionPlugIn = (function (_super) {
                 $('#fullscreen-editor-wrapper').blur();
             });
             window.setTimeout(function () {
+                if (!self.isDisplayed) {
+                    $('#fullscreen-editor-wrapper').css({ display: 'none' });
+                }
                 $('#fullscreen-editor-wrapper').removeClass();
             }, 1300);
-        });
+        };
+
+        $('#background').unbind('dblclick', ShowFullScreenEditor);
+        $('#background').dblclick(ShowFullScreenEditor);
         return true;
     };
 
