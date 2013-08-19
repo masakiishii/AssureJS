@@ -167,7 +167,7 @@ class MenuBar {
 					$("#background").unbind("click", ScaleDown);
 					$("#background").unbind("dblclick", CancelClickEvent);
 					$("#background").unbind("mousemove", CancelClickEvent);
-					$("#background").unbind("keydown", EscapeFromEditor);
+					$("#fullscreen-editor-wrapper").unbind("keydown", EscapeFromEditor);
 					caseViewer.ReDraw();
 				}, 500));
 			}
@@ -179,7 +179,7 @@ class MenuBar {
 		$("#background").click(ScaleDown);
 		$("#background").dblclick(CancelClickEvent);
 		$("#background").mousemove(CancelClickEvent);
-		$("#background").keydown(EscapeFromEditor);
+		$("#fullscreen-editor-wrapper").keydown(EscapeFromEditor);
 	}
 
 	SetEventHandlers(): void {
