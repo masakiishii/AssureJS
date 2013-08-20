@@ -36,8 +36,15 @@ var AssureIt;
                         "Name": "",
                         "Body": {}
                     };
-                    json.Name = oldNodeListData.MetaData[i].Type;
-                    json.Body = oldNodeListData.MetaData[i];
+
+                    var MetaDataKeys = Object.keys(oldNodeListData.MetaData[i]);
+                    for (var j = 0; j < MetaDataKeys.length; j++) {
+                        if (MetaDataKeys[j] == "Type") {
+                            json.Name = oldNodeListData.MetaData[i][MetaDataKeys[j]];
+                            continue;
+                        }
+                        json.Body[MetaDataKeys[j]] = oldNodeListData.MetaData[i][MetaDataKeys[j]];
+                    }
                     newNodeListData.Notes.push(json);
                 }
             }
@@ -130,7 +137,15 @@ var AssureIt;
             oldNodeListData.Contexts = newNodeListData.Annotation;
             n = newNodeListData.Notes.length;
             for (var i = 0; i < n; i++) {
-                oldNodeListData.MetaData.push(newNodeListData.Notes[i].Body);
+                var json = {
+                    "Type": ""
+                };
+                json.Type = newNodeListData.Notes[i].Name;
+                var bodyKeys = Object.keys(newNodeListData.Notes[i].Body);
+                for (var j = 0; j < bodyKeys.length; j++) {
+                    json[bodyKeys[j]] = newNodeListData.Notes[i].Body[bodyKeys[j]];
+                }
+                oldNodeListData.MetaData.push(json);
             }
         };
 
