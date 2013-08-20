@@ -93,6 +93,7 @@ class DScriptEditorPlugIn extends AssureIt.ActionPlugIn {
 			lineNumbers: true,
 			mode: "text/x-csrc",
 			readOnly: true,
+			placeholder: "Generated code goes here.",
 			lineWrapping: true,
 		});
 		$('#dscript-editor-wrapper').css({
