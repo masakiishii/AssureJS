@@ -135,7 +135,7 @@ $(function () {
 				{
 					"Name": "Monitor",
 					"Body": {
-						"Script": "\"int f() {return 1;}\""
+						"Description": "rec(1)"
 					}
 				}
 					]

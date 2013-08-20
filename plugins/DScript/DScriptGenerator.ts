@@ -11,60 +11,24 @@ class DScriptGenerator {
 		return model.Label;
 	}
 
-	goal(model: AssureIt.NodeModel): string {
-		var res = "";
-		res = "int " + this.getMethodName(model) + "() {\n";
-		res += this.indentToken + "return 1;\n";
-		res += "}\n\n";
-		return res;
-	}
-
-	context(model: AssureIt.NodeModel): string {
-		var res = "";
-		res = "int " + this.getMethodName(model) + "() {\n";
-		res += this.indentToken + "return 1;\n";
-		res += "}\n\n";
-		return res;
-	}
-
-	strategy(model: AssureIt.NodeModel): string {
-		var res = "";
-		res = "int " + this.getMethodName(model) + "() {\n";
-		res += this.indentToken + "return 1;\n";
-		res += "}\n\n";
-		return res;
-	}
-
-	evidence(model: AssureIt.NodeModel): string {
-		var res = "";
-		res = "int " + this.getMethodName(model) + "() {\n";
-		res += this.indentToken + "return 1;\n";
-		res += "}\n\n";
-		return res;
-	}
-
 	codegen_(model: AssureIt.NodeModel): string {
 		var res: string = "";
-		switch(model.Type) {
-		case AssureIt.NodeType.Goal     :   
-			res += this.goal(model);
-			break;
-		case AssureIt.NodeType.Context  :
-			res += this.context(model);
-			break;
-		case AssureIt.NodeType.Strategy :
-			res += this.strategy(model);
-			break;
-		case AssureIt.NodeType.Evidence :
-			res += this.evidence(model);
-			break;
-		default:
-			  console.log("There's something wrong with NodeModel.");
+		var notes: AssureIt.CaseNote[] = model.Notes;
+		for (var i in notes) {
+			var note = notes[i];
+			if (note.Name == 'Monitor' || note.Name == 'Recovery' || note.Name == 'Condition') {
+				if (note.Body.Description) {
+					res += '// ' + note.Name + '\n';
+					res += "void " + this.getMethodName(model) + '_' + note.Name + ' {\n';
+					res += '    ' + note.Body.Description.replace(/\n/g, '\n    ');
+					res += '\n}\n\n';
+				}
+			}
 		}
 
-		//for (var i in model.Children) {
-		//	res += this.codegen_(model.Children[i]);
-		//}
+		//res = "int " + this.getMethodName(model) + "() {\n";
+		//res += this.indentToken + "return 1;\n";
+		//res += "}\n\n";
 		return res;
 	}
 	

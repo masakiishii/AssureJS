@@ -7,55 +7,19 @@ var DScriptGenerator = (function () {
         return model.Label;
     };
 
-    DScriptGenerator.prototype.goal = function (model) {
-        var res = "";
-        res = "int " + this.getMethodName(model) + "() {\n";
-        res += this.indentToken + "return 1;\n";
-        res += "}\n\n";
-        return res;
-    };
-
-    DScriptGenerator.prototype.context = function (model) {
-        var res = "";
-        res = "int " + this.getMethodName(model) + "() {\n";
-        res += this.indentToken + "return 1;\n";
-        res += "}\n\n";
-        return res;
-    };
-
-    DScriptGenerator.prototype.strategy = function (model) {
-        var res = "";
-        res = "int " + this.getMethodName(model) + "() {\n";
-        res += this.indentToken + "return 1;\n";
-        res += "}\n\n";
-        return res;
-    };
-
-    DScriptGenerator.prototype.evidence = function (model) {
-        var res = "";
-        res = "int " + this.getMethodName(model) + "() {\n";
-        res += this.indentToken + "return 1;\n";
-        res += "}\n\n";
-        return res;
-    };
-
     DScriptGenerator.prototype.codegen_ = function (model) {
         var res = "";
-        switch (model.Type) {
-            case AssureIt.NodeType.Goal:
-                res += this.goal(model);
-                break;
-            case AssureIt.NodeType.Context:
-                res += this.context(model);
-                break;
-            case AssureIt.NodeType.Strategy:
-                res += this.strategy(model);
-                break;
-            case AssureIt.NodeType.Evidence:
-                res += this.evidence(model);
-                break;
-            default:
-                console.log("There's something wrong with NodeModel.");
+        var notes = model.Notes;
+        for (var i in notes) {
+            var note = notes[i];
+            if (note.Name == 'Monitor' || note.Name == 'Recovery' || note.Name == 'Condition') {
+                if (note.Body.Description) {
+                    res += '// ' + note.Name + '\n';
+                    res += "void " + this.getMethodName(model) + '_' + note.Name + ' {\n';
+                    res += '    ' + note.Body.Description.replace(/\n/g, '\n    ');
+                    res += '\n}\n\n';
+                }
+            }
         }
 
         return res;
