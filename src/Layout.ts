@@ -80,12 +80,7 @@ module AssureIt {
 		SetVector(Element: NodeModel): void {
 			var CaseView = this.ViewMap[Element.Label];
 			if (Element.Type == NodeType.Context) {
-				CaseView.ParentDirection = Direction.Bottom;
-				CaseView.IsArrowReversed = true;
-				CaseView.IsArrowStraight = true;
 				CaseView.IsArrowWhite = true;
-			} else {
-				CaseView.ParentDirection = Direction.Left;
 			}
 			return;
 		}
@@ -93,11 +88,9 @@ module AssureIt {
 		SetLeafYpos(Element: NodeModel): void {
 			for (var i: number = 1; i < this.LeafNodeNames.length; i++) {
 				if (this.ViewMap[this.LeafNodeNames[i]].Source.Children.length == 1 && this.ViewMap[this.LeafNodeNames[i]].Source.Type != NodeType.Context) {
-					this.ViewMap[this.LeafNodeNames[i]].AbsY += this.ViewMap[this.LeafNodeNames[i - 1]].AbsY +
-					this.Y_MARGIN * 2;
+					this.ViewMap[this.LeafNodeNames[i]].AbsY += this.ViewMap[this.LeafNodeNames[i - 1]].AbsY + this.Y_MARGIN * 2;
 				} else {
-					this.ViewMap[this.LeafNodeNames[i]].AbsY += this.ViewMap[this.LeafNodeNames[i - 1]].AbsY +
-					this.Y_MARGIN;
+					this.ViewMap[this.LeafNodeNames[i]].AbsY += this.ViewMap[this.LeafNodeNames[i - 1]].AbsY + this.Y_MARGIN;
 				}
 			}
 		}
@@ -178,14 +171,8 @@ module AssureIt {
 		UpdateContextElementPosition(ContextElement: NodeModel): void {
 			var ContextView: NodeView = this.ViewMap[ContextElement.Label];
 			var ParentView: NodeView = ContextView.ParentShape;
-//			var h1: number = ContextView.HTMLDoc.Height;
-//			var h2: number = ParentView.HTMLDoc.Height;
-			ContextView.ParentDirection = Direction.Left;
-			ContextView.IsArrowReversed = true;
-			ContextView.IsArrowStraight = true;
 			ContextView.IsArrowWhite = true;
 			ContextView.AbsX = (ParentView.AbsX + this.X_CONTEXT_MARGIN);
-//			ContextView.AbsY = (ParentView.AbsY - (h1 - h2) / 2);
 			ContextView.AbsY = ParentView.AbsY;
 		}
 
@@ -201,17 +188,16 @@ module AssureIt {
 				return;
 			}
 
-			for (var i: number = 0; i < n; i++) {
-				this.SetAllElementPosition(Element.Children[i]);
-			}
-
 			var ContextIndex: number = this.GetContextIndex(Element);
 			var xPositionSum: number = 0;
+
 			for (var i: number = 0; i < n; i++) {
+				this.SetAllElementPosition(Element.Children[i]);
 				if (ContextIndex != i) {
 					xPositionSum += this.ViewMap[Element.Children[i].Label].AbsX;
 				}
 			}
+
 			if (ContextIndex == -1) {
 				ParentView.AbsX = xPositionSum / n;
 			}
@@ -219,6 +205,27 @@ module AssureIt {
 				ParentView.AbsX = xPositionSum / (n - 1);
 				this.UpdateContextElementPosition(Element.Children[ContextIndex]);
 			}
+
+			for (var i: number = 0; i < n; i++) {
+				var ChildView = this.ViewMap[Element.Children[i].Label];
+				if (ContextIndex == i) {
+					var p1 = ChildView.GetAbsoluteConnectorPosition(Direction.Left);
+					var p2 = ParentView.GetAbsoluteConnectorPosition(Direction.Right);
+					var y = Math.min(p1.y, p2.y);
+					p1.y = y;
+					p2.y = y;
+					ChildView.SetArrowPosition(p1, p2, Direction.Left);
+					ChildView.IsArrowWhite = true;
+				}else{
+					var p1 = ParentView.GetAbsoluteConnectorPosition(Direction.Bottom);
+					var p2 = ChildView.GetAbsoluteConnectorPosition(Direction.Top);
+					ChildView.SetArrowPosition(p1, p2, Direction.Bottom);
+				}
+			}
+			if(n == 0 && Element.Type == NodeType.Goal){
+				(<GoalShape>ParentView.SVGShape).SetUndevelolpedSymbolPosition(ParentView.GetAbsoluteConnectorPosition(Direction.Bottom));
+			}
+
 		}
 
 		CalculateMinPosition(ElementList: NodeModel[]): number {
@@ -356,7 +363,7 @@ module AssureIt {
 				var h1: number = ContextView.HTMLDoc.Height;
 				var h2: number = ParentView.HTMLDoc.Height;
 				var h: number = (h1 - h2) / 2;
-				ContextView.ParentDirection = Direction.Left;
+				//ContextView.ParentDirection = Direction.Left;
 				ContextView.AbsX += x;
 				ContextView.AbsY += (y - h);
 				ContextView.AbsX += this.X_CONTEXT_MARGIN;

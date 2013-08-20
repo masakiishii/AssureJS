@@ -174,6 +174,8 @@ var AssureIt;
         GoalShape.prototype.Render = function (CaseViewer, NodeModel, HTMLDoc) {
             _super.prototype.Render.call(this, CaseViewer, NodeModel, HTMLDoc);
             this.BodyRect = document.createSVGElement("rect");
+            this.UndevelopedSymbol = document.createSVGElement("use");
+            this.UndevelopedSymbol.setAttribute("xlink:href", "#UndevelopdSymbol");
 
             this.ShapeGroup.appendChild(this.BodyRect);
             this.Resize(CaseViewer, NodeModel, HTMLDoc);
@@ -192,6 +194,11 @@ var AssureIt;
 
         GoalShape.prototype.GetColor = function () {
             return { "fill": this.BodyRect.getAttribute("fill"), "stroke": this.BodyRect.getAttribute("stroke") };
+        };
+
+        GoalShape.prototype.SetUndevelolpedSymbolPosition = function (point) {
+            this.UndevelopedSymbol.setAttribute("x", point.x.toString());
+            this.UndevelopedSymbol.setAttribute("y", point.y.toString());
         };
         return GoalShape;
     })(SVGShape);
@@ -326,9 +333,6 @@ var AssureIt;
 
     var NodeView = (function () {
         function NodeView(CaseViewer, NodeModel) {
-            this.ParentDirection = Direction.Top;
-            this.IsArrowReversed = false;
-            this.IsArrowStraight = false;
             this.IsArrowWhite = false;
             this.AbsX = 0;
             this.AbsY = 0;
@@ -351,26 +355,7 @@ var AssureIt;
             this.Resize();
             this.SVGShape.SetPosition(this.AbsX, this.AbsY);
             if (this.ParentShape != null) {
-                var p1 = null;
-                var p2 = null;
-                if (this.IsArrowReversed) {
-                    p1 = this.GetAbsoluteConnectorPosition(this.ParentDirection);
-                    p2 = this.ParentShape.GetAbsoluteConnectorPosition(ReverseDirection(this.ParentDirection));
-                } else {
-                    p1 = this.ParentShape.GetAbsoluteConnectorPosition(ReverseDirection(this.ParentDirection));
-                    p2 = this.GetAbsoluteConnectorPosition(this.ParentDirection);
-                }
-                if (this.IsArrowStraight) {
-                    if (this.ParentDirection == Direction.Bottom || this.ParentDirection == Direction.Top) {
-                        p1.x = p2.x;
-                    } else {
-                        p1.y = p2.y;
-                    }
-                }
-                this.SVGShape.SetArrowPosition(p1, p2, this.ParentDirection);
-                if (this.IsArrowWhite) {
-                    this.SVGShape.SetArrowColorWhite(true);
-                }
+                this.SVGShape.SetArrowColorWhite(this.IsArrowWhite);
             }
             return;
         };
@@ -382,6 +367,9 @@ var AssureIt;
 
             if (this.ParentShape != null) {
                 svgroot.append(this.SVGShape.ArrowPath);
+            }
+            if (this.Source.Type == AssureIt.NodeType.Goal && this.Source.Children.length == 0) {
+                svgroot.append((this.SVGShape).UndevelopedSymbol);
             }
             this.Update();
             return;
@@ -425,6 +413,10 @@ var AssureIt;
                 var render = caseViewer.GetPlugInSVGRender(key);
                 render(caseViewer, this);
             }
+        };
+
+        NodeView.prototype.SetArrowPosition = function (p1, p2, dir) {
+            this.SVGShape.SetArrowPosition(p1, p2, Direction);
         };
         return NodeView;
     })();

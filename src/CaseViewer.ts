@@ -175,10 +175,13 @@ module AssureIt {
 
 	export class GoalShape extends SVGShape {
 		BodyRect: SVGRectElement;
+		UndevelopedSymbol: SVGUseElement;
 
 		Render(CaseViewer: CaseViewer, NodeModel: NodeModel, HTMLDoc: HTMLDoc): void {
 			super.Render(CaseViewer, NodeModel, HTMLDoc);
 			this.BodyRect = <SVGRectElement>document.createSVGElement("rect");
+			this.UndevelopedSymbol = <SVGUseElement>document.createSVGElement("use");
+			this.UndevelopedSymbol.setAttribute("xlink:href", "#UndevelopdSymbol");
 
 			this.ShapeGroup.appendChild(this.BodyRect);
 			this.Resize(CaseViewer, NodeModel, HTMLDoc);
@@ -197,6 +200,11 @@ module AssureIt {
 
 		GetColor(): {[index: string]: string} {
 			return { "fill": this.BodyRect.getAttribute("fill"), "stroke": this.BodyRect.getAttribute("stroke") };
+		}
+
+		SetUndevelolpedSymbolPosition(point: Point){
+			this.UndevelopedSymbol.setAttribute("x", point.x.toString());
+			this.UndevelopedSymbol.setAttribute("y", point.y.toString());
 		}
 	}
 
@@ -318,9 +326,6 @@ module AssureIt {
 		SVGShape: SVGShape;
 		ParentShape: NodeView;
 
-		ParentDirection: Direction = Direction.Top;
-		IsArrowReversed: boolean = false;
-		IsArrowStraight: boolean = false;
 		IsArrowWhite: boolean = false;
 
 		AbsX: number = 0;
@@ -347,26 +352,7 @@ module AssureIt {
 			this.Resize();
 			this.SVGShape.SetPosition(this.AbsX, this.AbsY);
 			if (this.ParentShape != null) {
-				var p1: Point = null;
-				var p2: Point = null;
-				if (this.IsArrowReversed) {
-					p1 = this.GetAbsoluteConnectorPosition(this.ParentDirection);
-					p2 = this.ParentShape.GetAbsoluteConnectorPosition(ReverseDirection(this.ParentDirection));
-				} else {
-					p1 = this.ParentShape.GetAbsoluteConnectorPosition(ReverseDirection(this.ParentDirection));
-					p2 = this.GetAbsoluteConnectorPosition(this.ParentDirection);
-				}
-				if (this.IsArrowStraight) {
-					if (this.ParentDirection == Direction.Bottom || this.ParentDirection == Direction.Top) {
-						p1.x = p2.x;
-					} else {
-						p1.y = p2.y;
-					}
-				}
-				this.SVGShape.SetArrowPosition(p1, p2, this.ParentDirection);
-				if (this.IsArrowWhite) {
-					this.SVGShape.SetArrowColorWhite(true);
-				}
+				this.SVGShape.SetArrowColorWhite(this.IsArrowWhite);
 			}
 			return; // TODO
 		}
@@ -379,6 +365,9 @@ module AssureIt {
 			// if it has an parent, add an arrow element.
 			if (this.ParentShape != null) {
 				svgroot.append(this.SVGShape.ArrowPath);
+			}
+			if (this.Source.Type == NodeType.Goal && this.Source.Children.length == 0){
+				svgroot.append((<GoalShape>this.SVGShape).UndevelopedSymbol);
 			}
 			this.Update();
 			return; // TODO
@@ -421,6 +410,10 @@ module AssureIt {
 				var render = caseViewer.GetPlugInSVGRender(key);
 				render(caseViewer, this);
 			}
+		}
+
+		SetArrowPosition(p1: Point, p2: Point, dir: Direction) {
+			this.SVGShape.SetArrowPosition(p1, p2, Direction);
 		}
 	}
 
