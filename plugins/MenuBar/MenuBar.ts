@@ -139,7 +139,8 @@ class MenuBar {
 
 		var svgwidth = $("#layer0")[0].getBoundingClientRect().width;
 		var bodywidth = $("body").width();
-		startZoom(1.0, bodywidth / svgwidth, 500);
+		var scaleRate = (bodywidth / svgwidth < 1.0)? bodywidth / svgwidth : 1.0;
+		startZoom(1.0, scaleRate, 500);
 
 		$(".node").unbind();
 
@@ -165,7 +166,7 @@ class MenuBar {
 		var ScaleDown: () => void = function(): void {
 			if(!editorIsActive) {
 				timers.push(setTimeout(function() {
-					startZoom(bodywidth/svgwidth, 1.0, 500);
+					startZoom(scaleRate, 1.0, 500);
 					$("#background").unbind("click", ScaleDown);
 					$("#background").unbind("dblclick", CancelClickEvent);
 					$("#background").unbind("mousemove", CancelClickEvent);
