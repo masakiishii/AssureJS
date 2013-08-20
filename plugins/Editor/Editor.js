@@ -72,7 +72,6 @@ var EditorActionPlugIn = (function (_super) {
             var orig_model = case0.ElementMap[label];
             var orig_shape = caseViewer.ViewMap[label];
 
-            orig_model.IsEditing = true;
             orig_shape.HTMLDoc.Render(caseViewer, orig_model);
 
             caseViewer.ReDraw();
@@ -93,11 +92,11 @@ var EditorActionPlugIn = (function (_super) {
                 var decoder = new AssureIt.CaseDecoder();
                 var new_model = decoder.ParseASN(case0, editor.getValue().trim(), orig_model);
                 if (new_model != null) {
-                    orig_model.IsEditing = false;
                     orig_model.Statement = new_model.Statement == null ? "" : new_model.Statement;
                     orig_model.Annotations = new_model.Annotations;
                     orig_model.Notes = new_model.Notes;
                     orig_shape.HTMLDoc.Render(caseViewer, orig_model);
+                    new_model.EnableEditFlag();
 
                     caseViewer.ReDraw();
                 }

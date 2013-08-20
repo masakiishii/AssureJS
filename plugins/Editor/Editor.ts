@@ -80,7 +80,7 @@ class EditorActionPlugIn extends AssureIt.ActionPlugIn {
 			var orig_model : AssureIt.NodeModel = case0.ElementMap[label];
 			var orig_shape : AssureIt.NodeView = caseViewer.ViewMap[label];
 
-			orig_model.IsEditing = true;
+			//orig_model.EnableEditFlag();
 			orig_shape.HTMLDoc.Render(caseViewer, orig_model);
 
 			caseViewer.ReDraw();
@@ -108,11 +108,12 @@ class EditorActionPlugIn extends AssureIt.ActionPlugIn {
 					var new_model  : AssureIt.NodeModel = decoder.ParseASN(case0, editor.getValue().trim(), orig_model);
 					if (new_model != null) {
 						/*update orig_model and redraw html*/
-						orig_model.IsEditing = false;
+						//orig_model.IsEditing = false;
 						orig_model.Statement = new_model.Statement == null ? "" : new_model.Statement;
 						orig_model.Annotations = new_model.Annotations;
 						orig_model.Notes = new_model.Notes;
 						orig_shape.HTMLDoc.Render(caseViewer, orig_model);
+						new_model.EnableEditFlag();
 
 						caseViewer.ReDraw();
 					}

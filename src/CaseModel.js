@@ -39,7 +39,6 @@ var AssureIt;
             this.Children = [];
             this.Annotations = [];
             this.Notes = [];
-            this.IsEditing = false;
 
             Case.ElementMap[this.Label] = this;
         }
