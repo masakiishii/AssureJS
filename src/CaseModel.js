@@ -161,7 +161,7 @@ var AssureIt;
             for (var i = 0; i < Children.length; i++) {
                 this.DeleteNodesRecursive(Children[i]);
             }
-            this.isModified = true;
+            this.SetModified(true);
         };
 
         Case.prototype.SetElementTop = function (ElementTop) {
