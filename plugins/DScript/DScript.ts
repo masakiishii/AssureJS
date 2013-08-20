@@ -24,7 +24,13 @@ class DScriptMenuPlugIn extends AssureIt.MenuBarContentsPlugIn {
 	}
 
 	IsEnabled(caseViewer: AssureIt.CaseViewer, caseModel: AssureIt.NodeModel) : boolean {
-		return true;
+		for (var i in caseModel.Notes) {
+			var note = caseModel.Notes[i];
+			if (note.Name == 'Monitor' || note.Name == 'Recovery' || note.Name == 'Condition') {
+				return true;
+			}
+		}
+		return false;
 	}
 
 	Delegate(caseViewer: AssureIt.CaseViewer, caseModel: AssureIt.NodeModel, element: JQuery, serverApi: AssureIt.ServerAPI): boolean {

@@ -23,7 +23,13 @@ var DScriptMenuPlugIn = (function (_super) {
         this.editorPlugIn = editorPlugIn;
     }
     DScriptMenuPlugIn.prototype.IsEnabled = function (caseViewer, caseModel) {
-        return true;
+        for (var i in caseModel.Notes) {
+            var note = caseModel.Notes[i];
+            if (note.Name == 'Monitor' || note.Name == 'Recovery' || note.Name == 'Condition') {
+                return true;
+            }
+        }
+        return false;
     };
 
     DScriptMenuPlugIn.prototype.Delegate = function (caseViewer, caseModel, element, serverApi) {
