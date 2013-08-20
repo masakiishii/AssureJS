@@ -122,6 +122,12 @@ class MenuBar {
 		var caseViewer = this.caseViewer;
 		var editorIsActive: boolean = false;
 
+		var svgwidth = $("#layer0")[0].getBoundingClientRect().width;
+		var bodywidth = $("body").width();
+		if((bodywidth / svgwidth) >= 1.0) {
+			return;
+		}
+
 		var startZoom = (start: number, target: number, duration: number) => {
 			var delta = (target - start) / (30 * duration / 1000);
 			var current = start;
@@ -137,8 +143,6 @@ class MenuBar {
 			zoom();
 		}
 
-		var svgwidth = $("#layer0")[0].getBoundingClientRect().width;
-		var bodywidth = $("body").width();
 		var scaleRate = (bodywidth / svgwidth < 1.0)? bodywidth / svgwidth : 1.0;
 		startZoom(1.0, scaleRate, 500);
 
