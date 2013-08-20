@@ -43,22 +43,31 @@ var AssureIt;
 
             Case.ElementMap[this.Label] = this;
         }
+        NodeModel.prototype.EnableEditFlag = function () {
+            this.Case.isModified = true;
+        };
+
         NodeModel.prototype.AppendChild = function (Node) {
             this.Children.push(Node);
+            this.EnableEditFlag();
         };
+
         NodeModel.prototype.RemoveChild = function (Node) {
             for (var i = 0; i < this.Children.length; i++) {
                 if (this.Children[i].Label == Node.Label) {
                     this.Children.splice(i, 1);
                 }
             }
+            this.EnableEditFlag();
         };
+
         NodeModel.prototype.UpdateChild = function (oldNode, newNode) {
             for (var i = 0; i < this.Children.length; i++) {
                 if (this.Children[i].Label == oldNode.Label) {
                     this.Children[i] = newNode;
                 }
             }
+            this.EnableEditFlag();
         };
 
         NodeModel.prototype.GetAnnotation = function (Name) {
@@ -78,6 +87,7 @@ var AssureIt;
                 }
             }
             this.Annotations.push(new CaseAnnotation(Name, Body));
+            this.EnableEditFlag();
         };
 
         NodeModel.prototype.SetNote = function (Name, Body) {
@@ -88,6 +98,7 @@ var AssureIt;
                 }
             }
             this.Notes.push(new CaseNote(Name, Body));
+            this.EnableEditFlag();
         };
 
         NodeModel.prototype.GetNote = function (Name) {
@@ -138,8 +149,10 @@ var AssureIt;
 
     var Case = (function () {
         function Case() {
+            this.isModified = false;
+            this.isEditable = false;
+            this.isLatest = true;
             this.IdCounters = [0, 0, 0, 0, 0];
-            this.IsModified = false;
             this.ElementMap = {};
         }
         Case.prototype.DeleteNodesRecursive = function (root) {
@@ -148,6 +161,7 @@ var AssureIt;
             for (var i = 0; i < Children.length; i++) {
                 this.DeleteNodesRecursive(Children[i]);
             }
+            this.isModified = true;
         };
 
         Case.prototype.SetElementTop = function (ElementTop) {
@@ -203,11 +217,29 @@ var AssureIt;
 
         Case.prototype.SetEditable = function (flag) {
             if (flag == null) {
-                this.IsEditable = this.IsLogin();
+                this.isEditable = this.IsLogin();
                 return;
             }
-            this.IsEditable = flag;
+            this.isEditable = flag;
+            if (!this.IsLogin()) {
+                this.isEditable = false;
+            }
             return;
+        };
+
+        Case.prototype.IsEditable = function () {
+            if (!this.IsLogin()) {
+                this.isEditable = false;
+            }
+            return this.isEditable;
+        };
+
+        Case.prototype.IsModified = function () {
+            return this.isModified;
+        };
+
+        Case.prototype.IsLatest = function () {
+            return this.isLatest;
         };
         return Case;
     })();

@@ -10,6 +10,7 @@ plugins/MenuBar/MenuBar.ts
 plugins/Monitor/Monitor.ts
 plugins/Note/Note.ts
 plugins/DragFile/DragFile.ts
+plugins/BeforeUnload/BeforeUnload.ts
 src/CaseDecoder.ts
 src/CaseEncoder.ts
 src/CaseModel.ts

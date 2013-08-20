@@ -43,22 +43,31 @@ module AssureIt {
 			Case.ElementMap[this.Label] = this; // TODO: ensure consistensy of labels
 		}
 
+		EnableEditFlag(): void {
+			this.Case.isModified = true;
+		}
+
 		AppendChild(Node : NodeModel) : void {
 			this.Children.push(Node);
+			this.EnableEditFlag();
 		}
+
 		RemoveChild(Node : NodeModel) : void {
 			for (var i = 0; i < this.Children.length; i++) {
 				if (this.Children[i].Label == Node.Label) {
 					this.Children.splice(i, 1);
 				}
 			}
+			this.EnableEditFlag();
 		}
+
 		UpdateChild(oldNode : NodeModel, newNode : NodeModel) : void {
 			for (var i = 0; i < this.Children.length; i++) {
 				if (this.Children[i].Label == oldNode.Label) {
 					this.Children[i] = newNode;
 				}
 			}
+			this.EnableEditFlag();
 		}
 	
 		GetAnnotation(Name: string) : CaseAnnotation {
@@ -78,6 +87,7 @@ module AssureIt {
 				}
 			}
 			this.Annotations.push(new CaseAnnotation(Name, Body));
+			this.EnableEditFlag();
 		}
 
 		SetNote(Name: string, Body : any) : void {
@@ -88,6 +98,7 @@ module AssureIt {
 				}
 			}
 			this.Notes.push(new CaseNote(Name, Body));
+			this.EnableEditFlag();
 		}
 
 		GetNote(Name: string) : CaseNote {
@@ -124,11 +135,11 @@ module AssureIt {
 		constructor() {
 			this.PlugInMap = {};
 		}
-	
+
 		AddPlugInModifier(key: string, f : (Case, NodeModel, string, any) => boolean) {
 			this.PlugInMap[key] = f;
 		}
-	
+
 		GetPlugInModifier(key : string) : (Case, NodeModel, string, any) => boolean {
 			return this.PlugInMap[key];
 		}
@@ -144,12 +155,12 @@ module AssureIt {
 		ElementTop : NodeModel;
 		ElementMap : { [index: string]: NodeModel};
 
-		IsModified : boolean;
-		IsEditable: boolean;
+		isModified : boolean = false;
+		isEditable : boolean = false;
+		isLatest   : boolean = true;
 
 		constructor() {
 			this.IdCounters = [0, 0, 0, 0, 0];
-			this.IsModified = false;
 			this.ElementMap = {};
 		}
 
@@ -159,6 +170,7 @@ module AssureIt {
 			for (var i = 0; i < Children.length; i++) {
 				this.DeleteNodesRecursive(Children[i]);
 			}
+			this.isModified = true;
 		}
 
 		/* Deprecated */
@@ -211,11 +223,29 @@ module AssureIt {
 
 		SetEditable(flag?: boolean): void {
 			if(flag == null) {
-				this.IsEditable = this.IsLogin();
+				this.isEditable = this.IsLogin();
 				return;
 			}
-			this.IsEditable = flag;
+			this.isEditable = flag;
+			if(!this.IsLogin()) {
+				this.isEditable = false;
+			}
 			return;
+		}
+
+		IsEditable(): boolean {
+			if(!this.IsLogin()) {
+				this.isEditable = false;
+			}
+			return this.isEditable;
+		}
+
+		IsModified(): boolean {
+			return this.isModified;
+		}
+
+		IsLatest(): boolean {
+			return this.isLatest;
 		}
 	}
 }
