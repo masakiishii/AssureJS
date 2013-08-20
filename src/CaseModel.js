@@ -44,7 +44,7 @@ var AssureIt;
             Case.ElementMap[this.Label] = this;
         }
         NodeModel.prototype.EnableEditFlag = function () {
-            this.Case.isModified = true;
+            this.Case.SetModified(true);
         };
 
         NodeModel.prototype.AppendChild = function (Node) {
@@ -236,6 +236,10 @@ var AssureIt;
 
         Case.prototype.IsModified = function () {
             return this.isModified;
+        };
+
+        Case.prototype.SetModified = function (s) {
+            this.isModified = s;
         };
 
         Case.prototype.IsLatest = function () {

@@ -44,7 +44,7 @@ module AssureIt {
 		}
 
 		EnableEditFlag(): void {
-			this.Case.isModified = true;
+			this.Case.SetModified(true);
 		}
 
 		AppendChild(Node : NodeModel) : void {
@@ -155,7 +155,7 @@ module AssureIt {
 		ElementTop : NodeModel;
 		ElementMap : { [index: string]: NodeModel};
 
-		isModified : boolean = false;
+		private isModified : boolean = false;
 		isEditable : boolean = false;
 		isLatest   : boolean = true;
 
@@ -242,6 +242,10 @@ module AssureIt {
 
 		IsModified(): boolean {
 			return this.isModified;
+		}
+
+		SetModified(s: boolean): void {
+			this.isModified = s;
 		}
 
 		IsLatest(): boolean {

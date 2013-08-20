@@ -254,6 +254,7 @@ var CommitWindow = (function () {
             var converter = new AssureIt.Converter();
             var contents = converter.GenOldJson(encoder.ConvertToOldJson(case0));
             serverApi.Commit(contents, $(this).val, case0.CommitId);
+            case0.SetModified(false);
             window.location.reload();
         });
     };
