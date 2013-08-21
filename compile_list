@@ -11,6 +11,7 @@ plugins/Monitor/Monitor.ts
 plugins/Note/Note.ts
 plugins/DragFile/DragFile.ts
 plugins/BeforeUnload/BeforeUnload.ts
+plugins/DefaultStatementRender/DefaultStatementRender.ts
 src/CaseDecoder.ts
 src/CaseEncoder.ts
 src/CaseModel.ts

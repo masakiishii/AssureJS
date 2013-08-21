@@ -21,7 +21,6 @@ var AssureIt;
             }
             this.DocBase = $('<div class="node">').css("position", "absolute").attr('id', NodeModel.Label);
             this.DocBase.append($('<h4>' + NodeModel.Label + '</h4>'));
-            this.DocBase.append($('<p>' + NodeModel.Statement + '</p>'));
 
             this.InvokePlugInHTMLRender(Viewer, NodeModel, this.DocBase);
             this.UpdateWidth(Viewer, NodeModel);

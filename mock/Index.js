@@ -6,6 +6,7 @@ $(function () {
     pluginManager.SetPlugIn("dscript", new DScriptPlugIn(pluginManager));
     pluginManager.SetPlugIn("fullscreeneditor", new FullScreenEditorPlugIn(pluginManager));
     pluginManager.SetPlugIn("colortheme", new TiffanyBlueThemePlugIn(pluginManager));
+    pluginManager.SetPlugIn("statements", new DefaultStatementRenderPlugIn(pluginManager));
     pluginManager.SetPlugIn("annotation", new AnnotationPlugIn(pluginManager));
     pluginManager.SetPlugIn("note", new NotePlugIn(pluginManager));
     pluginManager.SetPlugIn("monitor", new MonitorPlugIn(pluginManager));
