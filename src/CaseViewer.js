@@ -429,15 +429,6 @@ var AssureIt;
     })();
     AssureIt.NodeView = NodeView;
 
-    var CaseViewerConfig = (function () {
-        function CaseViewerConfig() {
-        }
-        return CaseViewerConfig;
-    })();
-    AssureIt.CaseViewerConfig = CaseViewerConfig;
-
-    var ViewerConfig = new CaseViewerConfig();
-
     var CaseViewer = (function () {
         function CaseViewer(Source, pluginManager, serverApi, Screen) {
             this.Source = Source;

@@ -424,12 +424,6 @@ module AssureIt {
 		}
 	}
 
-	export class CaseViewerConfig {
-
-	}
-
-	var ViewerConfig = new CaseViewerConfig();
-
 	export class CaseViewer {
 		ViewMap: { [index: string]: NodeView; };
 		ElementTop : NodeModel;
