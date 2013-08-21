@@ -5,7 +5,7 @@
 /* For codemirror */
 /// <reference path="../Editor/Editor.ts" />
 
-class DScriptPlugIn extends AssureIt.PlugIn {
+class DScriptPlugIn extends AssureIt.PlugInSet {
 
 	constructor(public plugInManager: AssureIt.PlugInManager) {
 		super(plugInManager);

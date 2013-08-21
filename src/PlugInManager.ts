@@ -4,13 +4,14 @@
 
 module AssureIt {
 
-	export class PlugIn {
+	export class PlugInSet {
 
 		ActionPlugIn: ActionPlugIn;
 		CheckerPlugIn: CheckerPlugIn;
 		HTMLRenderPlugIn: HTMLRenderPlugIn;
 		SVGRenderPlugIn: SVGRenderPlugIn;
 		MenuBarContentsPlugIn: MenuBarContentsPlugIn;
+		LayoutEnginePlugIn: LayoutEnginePlugIn;
 
 		constructor(public plugInManager: PlugInManager) {
 			this.ActionPlugIn = null;
@@ -18,6 +19,7 @@ module AssureIt {
 			this.HTMLRenderPlugIn = null;
 			this.SVGRenderPlugIn = null;
 			this.MenuBarContentsPlugIn = null;
+			this.LayoutEnginePlugIn = null;
 		}
 	}
 
@@ -111,14 +113,40 @@ module AssureIt {
 		}
 	}
 
+	export class LayoutEnginePlugIn extends AbstractPlugIn {
+
+		constructor(public plugInManager: PlugInManager) {
+			super(plugInManager);
+		}
+
+		Init(ViewMap: {[index:string]: NodeView}, Element: NodeModel, x: number, y: number, ElementWidth: number): void {
+		}
+
+		LayoutAllView(ElementTop: NodeModel, x: number, y: number): void {
+		}
+
+		GetContextIndex(Node: NodeModel): number {
+			for (var i: number = 0; i < Node.Children.length; i++) {
+				if (Node.Children[i].Type == NodeType.Context) {
+					return i;
+				}
+			}
+			return -1; 
+		}
+
+	}
+
 	export class PlugInManager {
 
-		ActionPlugInMap : { [index: string]: ActionPlugIn };
-		CheckerPlugInMap : { [index: string]: CheckerPlugIn };
-		HTMLRenderPlugInMap : { [index: string]: HTMLRenderPlugIn };
-		SVGRenderPlugInMap  : { [index: string]: SVGRenderPlugIn };
+		ActionPlugInMap           : { [index: string]: ActionPlugIn };
+		CheckerPlugInMap          : { [index: string]: CheckerPlugIn };
+		HTMLRenderPlugInMap       : { [index: string]: HTMLRenderPlugIn };
+		SVGRenderPlugInMap        : { [index: string]: SVGRenderPlugIn };
 		MenuBarContentsPlugInMap  : { [index: string]: MenuBarContentsPlugIn };
+		LayoutEnginePlugInMap     : { [index: string]: LayoutEnginePlugIn };
+
 		UILayer: AbstractPlugIn[];
+		UsingLayoutEngine: string;
 
 		constructor(public basepath: string) {
 			this.ActionPlugInMap = {};
@@ -126,10 +154,11 @@ module AssureIt {
 			this.HTMLRenderPlugInMap = {};
 			this.SVGRenderPlugInMap = {};
 			this.MenuBarContentsPlugInMap = {};
+			this.LayoutEnginePlugInMap = {};
 			this.UILayer = [];
 		}
 
-		SetPlugIn(key: string, plugIn: PlugIn) {
+		SetPlugIn(key: string, plugIn: PlugInSet) {
 			if(plugIn.ActionPlugIn) {
 				this.SetActionPlugIn(key, plugIn.ActionPlugIn);
 			}
@@ -141,6 +170,9 @@ module AssureIt {
 			}
 			if(plugIn.MenuBarContentsPlugIn) {
 				this.SetMenuBarContentsPlugIn(key, plugIn.MenuBarContentsPlugIn);
+			}
+			if(plugIn.LayoutEnginePlugIn) {
+				this.SetLayoutEnginePlugIn(key, plugIn.LayoutEnginePlugIn);
 			}
 		}
 
@@ -168,6 +200,18 @@ module AssureIt {
 
 		SetMenuBarContentsPlugIn(key: string, MenuBarContentsPlugIn: MenuBarContentsPlugIn) {
 			this.MenuBarContentsPlugInMap[key] = MenuBarContentsPlugIn;
+		}
+
+		SetUseLayoutEngine(key: string) {
+			this.UsingLayoutEngine = key;
+		}
+
+		SetLayoutEnginePlugIn(key: string, LayoutEnginePlugIn: LayoutEnginePlugIn) {
+			this.LayoutEnginePlugInMap[key] = LayoutEnginePlugIn;
+		}
+
+		GetLayoutEngine(): LayoutEnginePlugIn {
+			return this.LayoutEnginePlugInMap[this.UsingLayoutEngine];
 		}
 
 		UseUILayer(plugin :AbstractPlugIn): void {

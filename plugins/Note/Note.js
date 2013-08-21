@@ -12,7 +12,7 @@ var NotePlugIn = (function (_super) {
         this.HTMLRenderPlugIn = new NoteHTMLRenderPlugIn(plugInManager);
     }
     return NotePlugIn;
-})(AssureIt.PlugIn);
+})(AssureIt.PlugInSet);
 
 var NoteHTMLRenderPlugIn = (function (_super) {
     __extends(NoteHTMLRenderPlugIn, _super);

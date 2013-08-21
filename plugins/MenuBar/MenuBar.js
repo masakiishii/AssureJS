@@ -273,7 +273,7 @@ var MenuBarPlugIn = (function (_super) {
         this.ActionPlugIn = new MenuBarActionPlugIn(plugInManager);
     }
     return MenuBarPlugIn;
-})(AssureIt.PlugIn);
+})(AssureIt.PlugInSet);
 
 var MenuBarActionPlugIn = (function (_super) {
     __extends(MenuBarActionPlugIn, _super);

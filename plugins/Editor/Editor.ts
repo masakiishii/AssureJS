@@ -13,7 +13,7 @@ declare class CodeMirror {
 	static fromTextArea(selector: any, option: any): any;
 };
 
-class EditorPlugIn extends AssureIt.PlugIn {
+class EditorPlugIn extends AssureIt.PlugInSet {
 
 	constructor(plugInManager: AssureIt.PlugInManager) {
 		super(plugInManager);

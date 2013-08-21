@@ -479,11 +479,9 @@ var AssureIt;
         };
 
         CaseViewer.prototype.LayoutElement = function () {
-            var layout = new AssureIt.LayoutPortrait(this.ViewMap);
-            layout.Init(this.ElementTop, 300, 0, CaseViewer.ElementWidth);
-            layout.Traverse(this.ElementTop, 300, 0);
-            layout.SetFootElementPosition();
-            layout.SetAllElementPosition(this.ElementTop);
+            var layout = this.pluginManager.GetLayoutEngine();
+            layout.Init(this.ViewMap, this.ElementTop, 0, 0, CaseViewer.ElementWidth);
+            layout.LayoutAllView(this.ElementTop, 0, 0);
         };
 
         CaseViewer.prototype.Draw = function (Screen) {

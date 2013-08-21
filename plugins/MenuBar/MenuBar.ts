@@ -280,7 +280,7 @@ class CommitWindow {
 
 }
 
-class MenuBarPlugIn extends AssureIt.PlugIn {
+class MenuBarPlugIn extends AssureIt.PlugInSet {
 
 	constructor(plugInManager: AssureIt.PlugInManager) {
 		super(plugInManager);

@@ -13,7 +13,7 @@ var DefaultColorThemePlugIn = (function (_super) {
         this.SVGRenderPlugIn = new DefaultColorThemeSVGRenderPlugIn(plugInManager);
     }
     return DefaultColorThemePlugIn;
-})(AssureIt.PlugIn);
+})(AssureIt.PlugInSet);
 
 var TiffanyBlueThemePlugIn = (function (_super) {
     __extends(TiffanyBlueThemePlugIn, _super);
@@ -24,7 +24,7 @@ var TiffanyBlueThemePlugIn = (function (_super) {
         this.SVGRenderPlugIn = new TiffanyBlueThemeSVGRenderPlugIn(plugInManager);
     }
     return TiffanyBlueThemePlugIn;
-})(AssureIt.PlugIn);
+})(AssureIt.PlugInSet);
 
 var SimpleColorThemePlugIn = (function (_super) {
     __extends(SimpleColorThemePlugIn, _super);
@@ -35,7 +35,7 @@ var SimpleColorThemePlugIn = (function (_super) {
         this.SVGRenderPlugIn = new SimpleColorThemeSVGRenderPlugIn(plugInManager);
     }
     return SimpleColorThemePlugIn;
-})(AssureIt.PlugIn);
+})(AssureIt.PlugInSet);
 
 var ColorThemeSVGRenderPlugIn = (function (_super) {
     __extends(ColorThemeSVGRenderPlugIn, _super);

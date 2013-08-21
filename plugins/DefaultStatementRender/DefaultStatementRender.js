@@ -12,7 +12,7 @@ var DefaultStatementRenderPlugIn = (function (_super) {
         this.HTMLRenderPlugIn = new DefaultStatementHTMLRenderPlugIn(plugInManager);
     }
     return DefaultStatementRenderPlugIn;
-})(AssureIt.PlugIn);
+})(AssureIt.PlugInSet);
 
 var DefaultStatementHTMLRenderPlugIn = (function (_super) {
     __extends(DefaultStatementHTMLRenderPlugIn, _super);

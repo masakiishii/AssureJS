@@ -14,7 +14,7 @@ var FullScreenEditorPlugIn = (function (_super) {
         this.HTMLRenderPlugIn = new FullScreenEditorLayoutPlugIn(plugInManager);
     }
     return FullScreenEditorPlugIn;
-})(AssureIt.PlugIn);
+})(AssureIt.PlugInSet);
 
 var FullScreenMenuPlugIn = (function (_super) {
     __extends(FullScreenMenuPlugIn, _super);

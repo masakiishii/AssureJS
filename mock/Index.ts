@@ -8,6 +8,8 @@
 /// <reference path="../plugins/Editor/Editor.ts" />
 /// <reference path="../plugins/DScript/DScript.ts" />
 /// <reference path="../plugins/FullScreenEditor/FullScreenEditor.ts" />
+/// <reference path="../plugins/DefaultStatementRender/DefaultStatementRender.ts" />
+/// <reference path="../plugins/LayoutPortrait/LayoutPortrait.ts" />
 /// <reference path="../plugins/Annotation/Annotation.ts" />
 /// <reference path="../plugins/Monitor/Monitor.ts" />
 /// <reference path="../plugins/Note/Note.ts" />
@@ -27,6 +29,8 @@ $(function () {
 	pluginManager.SetPlugIn("annotation", new AnnotationPlugIn(pluginManager));
 	pluginManager.SetPlugIn("note", new NotePlugIn(pluginManager));
 	pluginManager.SetPlugIn("monitor", new MonitorPlugIn(pluginManager));
+	pluginManager.SetPlugIn("portraitlayout", new LayoutPortraitPlugIn(pluginManager));
+	pluginManager.SetUseLayoutEngine("portraitlayout");
 
 	/*
 	var oldJsonData = serverApi.GetCase("",96);

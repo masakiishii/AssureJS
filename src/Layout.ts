@@ -14,14 +14,16 @@ module AssureIt {
 		Init(Element: NodeModel, x: number, y: number, ElementWidth: number): void {
 		}
 
-		Traverse(Element: NodeModel, x: number, y: number): void {
-		}
+//		Traverse(Element: NodeModel, x: number, y: number): void {
+//		}
 
-		SetFootElementPosition(): void {
+		LayoutAllView(ElementTop: AssureIt.NodeModel, Element: AssureIt.NodeModel, x: number, y: number) {
 		}
-
-		SetAllElementPosition(Element: NodeModel): void {
-		}
+//		SetFootElementPosition(): void {
+//		}
+//
+//		SetAllElementPosition(Element: NodeModel): void {
+//		}
 
 		GetContextIndex(Node: NodeModel): number {
 			for (var i: number = 0; i < Node.Children.length; i++) {
@@ -33,129 +35,129 @@ module AssureIt {
 		}
 	}
 
-	export class LayoutLandscape extends LayoutEngine {
-		//	var CaseArray : any[];
-		//	footelement : string[] = new Array();
-		//	contextId : number = -1;
-		LeafNodeNames: string[] = new Array();
-		CONTEXT_MARGIN: number = 140;
-
-		constructor(public ViewMap: { [index: string]: NodeView; }) {
-			super(ViewMap);
-			this.X_MARGIN = 200;
-			this.Y_MARGIN = 180;
-		}
-
-		Traverse(Element: NodeModel, Depth: number, x: number): void {
-			this.SetXpos(Element, Depth);
-			this.SetLeafYpos(Element);
-			this.SetOtherYpos(Element);
-		}
-
-		SetXpos(Element: NodeModel, Depth: number): void {
-			if (Element.Type == NodeType.Context) {
-				Depth -= 1;
-			}
-
-			this.SetVector(Element);
-
-			this.ViewMap[Element.Label].AbsX = Depth * this.X_MARGIN;
-
-			if (Element.Children.length == 0) {
-				if (Element.Type != NodeType.Context) {//
-					this.LeafNodeNames.push(Element.Label);
-				}
-			} else if (Element.Children.length == 1) {
-				if (Element.Children[0].Type == NodeType.Context) {
-					this.LeafNodeNames.push(Element.Label);//if not Context
-				}
-			}
-
-			for (var i: number = 0; i < Element.Children.length; i++) {
-				this.SetXpos(Element.Children[i], Depth + 1);
-			}
-			return;
-		}
-
-		SetVector(Element: NodeModel): void {
-			var CaseView = this.ViewMap[Element.Label];
-			if (Element.Type == NodeType.Context) {
-				CaseView.ParentDirection = Direction.Bottom;
-				CaseView.IsArrowReversed = true;
-				CaseView.IsArrowStraight = true;
-				CaseView.IsArrowWhite = true;
-			} else {
-				CaseView.ParentDirection = Direction.Left;
-			}
-			return;
-		}
-
-		SetLeafYpos(Element: NodeModel): void {
-			for (var i: number = 1; i < this.LeafNodeNames.length; i++) {
-				if (this.ViewMap[this.LeafNodeNames[i]].Source.Children.length == 1 && this.ViewMap[this.LeafNodeNames[i]].Source.Type != NodeType.Context) {
-					this.ViewMap[this.LeafNodeNames[i]].AbsY += this.ViewMap[this.LeafNodeNames[i - 1]].AbsY +
-					this.Y_MARGIN * 2;
-				} else {
-					this.ViewMap[this.LeafNodeNames[i]].AbsY += this.ViewMap[this.LeafNodeNames[i - 1]].AbsY +
-					this.Y_MARGIN;
-				}
-			}
-		}
-
-		SetOtherYpos(Element: NodeModel): void {
-			if (Element.Children.length == 0) {
-				return;
-			}
-
-			if (Element.Children.length == 1 && Element.Children[0].Type == NodeType.Context) {
-				this.ViewMap[Element.Children[0].Label].AbsY = (this.ViewMap[Element.Label].AbsY - this.CONTEXT_MARGIN);
-				return;
-			}
-
-			for (var i: number = 0; i < Element.Children.length; i++) {
-				this.SetOtherYpos(Element.Children[i]);
-			}
-
-			var IntermediatePos: number = 0;
-
-			var ContextIndex: number = this.GetContextIndex(Element);
-
-			IntermediatePos = this.CalcIntermediatePos(Element, ContextIndex);
-
-			if (ContextIndex == -1) {
-				if (Element.Children.length == 1 && Element.Children[0].Type == NodeType.Evidence) {
-					this.ViewMap[Element.Label].AbsY = this.ViewMap[Element.Children[0].Label].AbsY + 15;
-				}
-				else {
-					this.ViewMap[Element.Label].AbsY = IntermediatePos;
-				}
-			} else {
-				this.ViewMap[Element.Label].AbsY = IntermediatePos;
-				this.ViewMap[Element.Children[ContextIndex].Label].AbsY = this.ViewMap[Element.Label].AbsY - this.CONTEXT_MARGIN;
-			}
-			return;
-		}
-
-		CalcIntermediatePos(Element: NodeModel, ContextIndex: number): number {
-			var ChildLen = Element.Children.length;
-
-			if (ContextIndex == ChildLen - 1) {
-				return (this.ViewMap[Element.Children[0].Label].AbsY
-					+ (this.ViewMap[Element.Children[ChildLen - 2].Label].AbsY
-					- this.ViewMap[Element.Children[0].Label].AbsY) / 2);
-			}
-			else if (ContextIndex == 0) {
-				return (this.ViewMap[Element.Children[1].Label].AbsY
-					+ (this.ViewMap[Element.Children[ChildLen - 1].Label].AbsY
-					- this.ViewMap[Element.Children[1].Label].AbsY) / 2);
-			}
-			else {
-				return (this.ViewMap[Element.Children[0].Label].AbsY
-					+ (this.ViewMap[Element.Children[ChildLen - 1].Label].AbsY
-					- this.ViewMap[Element.Children[0].Label].AbsY) / 2);
-			}
-		}
-	}
+//	export class LayoutLandscape extends LayoutEngine {
+//		//	var CaseArray : any[];
+//		//	footelement : string[] = new Array();
+//		//	contextId : number = -1;
+//		LeafNodeNames: string[] = new Array();
+//		CONTEXT_MARGIN: number = 140;
+//
+//		constructor(public ViewMap: { [index: string]: NodeView; }) {
+//			super(ViewMap);
+//			this.X_MARGIN = 200;
+//			this.Y_MARGIN = 180;
+//		}
+//
+//		Traverse(Element: NodeModel, Depth: number, x: number): void {
+//			this.SetXpos(Element, Depth);
+//			this.SetLeafYpos(Element);
+//			this.SetOtherYpos(Element);
+//		}
+//
+//		SetXpos(Element: NodeModel, Depth: number): void {
+//			if (Element.Type == NodeType.Context) {
+//				Depth -= 1;
+//			}
+//
+//			this.SetVector(Element);
+//
+//			this.ViewMap[Element.Label].AbsX = Depth * this.X_MARGIN;
+//
+//			if (Element.Children.length == 0) {
+//				if (Element.Type != NodeType.Context) {//
+//					this.LeafNodeNames.push(Element.Label);
+//				}
+//			} else if (Element.Children.length == 1) {
+//				if (Element.Children[0].Type == NodeType.Context) {
+//					this.LeafNodeNames.push(Element.Label);//if not Context
+//				}
+//			}
+//
+//			for (var i: number = 0; i < Element.Children.length; i++) {
+//				this.SetXpos(Element.Children[i], Depth + 1);
+//			}
+//			return;
+//		}
+//
+//		SetVector(Element: NodeModel): void {
+//			var CaseView = this.ViewMap[Element.Label];
+//			if (Element.Type == NodeType.Context) {
+//				CaseView.ParentDirection = Direction.Bottom;
+//				CaseView.IsArrowReversed = true;
+//				CaseView.IsArrowStraight = true;
+//				CaseView.IsArrowWhite = true;
+//			} else {
+//				CaseView.ParentDirection = Direction.Left;
+//			}
+//			return;
+//		}
+//
+//		SetLeafYpos(Element: NodeModel): void {
+//			for (var i: number = 1; i < this.LeafNodeNames.length; i++) {
+//				if (this.ViewMap[this.LeafNodeNames[i]].Source.Children.length == 1 && this.ViewMap[this.LeafNodeNames[i]].Source.Type != NodeType.Context) {
+//					this.ViewMap[this.LeafNodeNames[i]].AbsY += this.ViewMap[this.LeafNodeNames[i - 1]].AbsY +
+//					this.Y_MARGIN * 2;
+//				} else {
+//					this.ViewMap[this.LeafNodeNames[i]].AbsY += this.ViewMap[this.LeafNodeNames[i - 1]].AbsY +
+//					this.Y_MARGIN;
+//				}
+//			}
+//		}
+//
+//		SetOtherYpos(Element: NodeModel): void {
+//			if (Element.Children.length == 0) {
+//				return;
+//			}
+//
+//			if (Element.Children.length == 1 && Element.Children[0].Type == NodeType.Context) {
+//				this.ViewMap[Element.Children[0].Label].AbsY = (this.ViewMap[Element.Label].AbsY - this.CONTEXT_MARGIN);
+//				return;
+//			}
+//
+//			for (var i: number = 0; i < Element.Children.length; i++) {
+//				this.SetOtherYpos(Element.Children[i]);
+//			}
+//
+//			var IntermediatePos: number = 0;
+//
+//			var ContextIndex: number = this.GetContextIndex(Element);
+//
+//			IntermediatePos = this.CalcIntermediatePos(Element, ContextIndex);
+//
+//			if (ContextIndex == -1) {
+//				if (Element.Children.length == 1 && Element.Children[0].Type == NodeType.Evidence) {
+//					this.ViewMap[Element.Label].AbsY = this.ViewMap[Element.Children[0].Label].AbsY + 15;
+//				}
+//				else {
+//					this.ViewMap[Element.Label].AbsY = IntermediatePos;
+//				}
+//			} else {
+//				this.ViewMap[Element.Label].AbsY = IntermediatePos;
+//				this.ViewMap[Element.Children[ContextIndex].Label].AbsY = this.ViewMap[Element.Label].AbsY - this.CONTEXT_MARGIN;
+//			}
+//			return;
+//		}
+//
+//		CalcIntermediatePos(Element: NodeModel, ContextIndex: number): number {
+//			var ChildLen = Element.Children.length;
+//
+//			if (ContextIndex == ChildLen - 1) {
+//				return (this.ViewMap[Element.Children[0].Label].AbsY
+//					+ (this.ViewMap[Element.Children[ChildLen - 2].Label].AbsY
+//					- this.ViewMap[Element.Children[0].Label].AbsY) / 2);
+//			}
+//			else if (ContextIndex == 0) {
+//				return (this.ViewMap[Element.Children[1].Label].AbsY
+//					+ (this.ViewMap[Element.Children[ChildLen - 1].Label].AbsY
+//					- this.ViewMap[Element.Children[1].Label].AbsY) / 2);
+//			}
+//			else {
+//				return (this.ViewMap[Element.Children[0].Label].AbsY
+//					+ (this.ViewMap[Element.Children[ChildLen - 1].Label].AbsY
+//					- this.ViewMap[Element.Children[0].Label].AbsY) / 2);
+//			}
+//		}
+//	}
 
 	export class LayoutPortrait extends LayoutEngine {
 		ElementWidth: number = 50;

@@ -17,7 +17,7 @@ var EditorPlugIn = (function (_super) {
         this.HTMLRenderPlugIn = new EditorLayoutPlugIn(plugInManager);
     }
     return EditorPlugIn;
-})(AssureIt.PlugIn);
+})(AssureIt.PlugInSet);
 
 var EditorLayoutPlugIn = (function (_super) {
     __extends(EditorLayoutPlugIn, _super);

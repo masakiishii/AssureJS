@@ -2,7 +2,7 @@
 /// <reference path="../../src/CaseViewer.ts" />
 /// <reference path="../../src/PlugInManager.ts" />
 
-class MonitorPlugIn extends AssureIt.PlugIn {
+class MonitorPlugIn extends AssureIt.PlugInSet {
 
 	constructor(public plugInManager: AssureIt.PlugInManager) {
 		super(plugInManager);

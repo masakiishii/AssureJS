@@ -6,18 +6,19 @@ var __extends = this.__extends || function (d, b) {
 };
 var AssureIt;
 (function (AssureIt) {
-    var PlugIn = (function () {
-        function PlugIn(plugInManager) {
+    var PlugInSet = (function () {
+        function PlugInSet(plugInManager) {
             this.plugInManager = plugInManager;
             this.ActionPlugIn = null;
             this.CheckerPlugIn = null;
             this.HTMLRenderPlugIn = null;
             this.SVGRenderPlugIn = null;
             this.MenuBarContentsPlugIn = null;
+            this.LayoutEnginePlugIn = null;
         }
-        return PlugIn;
+        return PlugInSet;
     })();
-    AssureIt.PlugIn = PlugIn;
+    AssureIt.PlugInSet = PlugInSet;
 
     var AbstractPlugIn = (function () {
         function AbstractPlugIn(plugInManager) {
@@ -117,6 +118,30 @@ var AssureIt;
     })(AbstractPlugIn);
     AssureIt.SVGRenderPlugIn = SVGRenderPlugIn;
 
+    var LayoutEnginePlugIn = (function (_super) {
+        __extends(LayoutEnginePlugIn, _super);
+        function LayoutEnginePlugIn(plugInManager) {
+            _super.call(this, plugInManager);
+            this.plugInManager = plugInManager;
+        }
+        LayoutEnginePlugIn.prototype.Init = function (ViewMap, Element, x, y, ElementWidth) {
+        };
+
+        LayoutEnginePlugIn.prototype.LayoutAllView = function (ElementTop, x, y) {
+        };
+
+        LayoutEnginePlugIn.prototype.GetContextIndex = function (Node) {
+            for (var i = 0; i < Node.Children.length; i++) {
+                if (Node.Children[i].Type == AssureIt.NodeType.Context) {
+                    return i;
+                }
+            }
+            return -1;
+        };
+        return LayoutEnginePlugIn;
+    })(AbstractPlugIn);
+    AssureIt.LayoutEnginePlugIn = LayoutEnginePlugIn;
+
     var PlugInManager = (function () {
         function PlugInManager(basepath) {
             this.basepath = basepath;
@@ -125,6 +150,7 @@ var AssureIt;
             this.HTMLRenderPlugInMap = {};
             this.SVGRenderPlugInMap = {};
             this.MenuBarContentsPlugInMap = {};
+            this.LayoutEnginePlugInMap = {};
             this.UILayer = [];
         }
         PlugInManager.prototype.SetPlugIn = function (key, plugIn) {
@@ -139,6 +165,9 @@ var AssureIt;
             }
             if (plugIn.MenuBarContentsPlugIn) {
                 this.SetMenuBarContentsPlugIn(key, plugIn.MenuBarContentsPlugIn);
+            }
+            if (plugIn.LayoutEnginePlugIn) {
+                this.SetLayoutEnginePlugIn(key, plugIn.LayoutEnginePlugIn);
             }
         };
 
@@ -166,6 +195,18 @@ var AssureIt;
 
         PlugInManager.prototype.SetMenuBarContentsPlugIn = function (key, MenuBarContentsPlugIn) {
             this.MenuBarContentsPlugInMap[key] = MenuBarContentsPlugIn;
+        };
+
+        PlugInManager.prototype.SetUseLayoutEngine = function (key) {
+            this.UsingLayoutEngine = key;
+        };
+
+        PlugInManager.prototype.SetLayoutEnginePlugIn = function (key, LayoutEnginePlugIn) {
+            this.LayoutEnginePlugInMap[key] = LayoutEnginePlugIn;
+        };
+
+        PlugInManager.prototype.GetLayoutEngine = function () {
+            return this.LayoutEnginePlugInMap[this.UsingLayoutEngine];
         };
 
         PlugInManager.prototype.UseUILayer = function (plugin) {

@@ -14,7 +14,7 @@ var DScriptPlugIn = (function (_super) {
         this.MenuBarContentsPlugIn = new DScriptMenuPlugIn(plugInManager, plugin);
     }
     return DScriptPlugIn;
-})(AssureIt.PlugIn);
+})(AssureIt.PlugInSet);
 
 var DScriptMenuPlugIn = (function (_super) {
     __extends(DScriptMenuPlugIn, _super);

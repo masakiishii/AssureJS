@@ -56,7 +56,7 @@ class ImportFile {
 	}
 }
 
-class DragFilePlugIn extends AssureIt.PlugIn {
+class DragFilePlugIn extends AssureIt.PlugInSet {
 
 	constructor(plugInManager: AssureIt.PlugInManager) {
 		super(plugInManager);

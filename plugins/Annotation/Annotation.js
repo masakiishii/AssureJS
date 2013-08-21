@@ -12,7 +12,7 @@ var AnnotationPlugIn = (function (_super) {
         this.HTMLRenderPlugIn = new AnnotationHTMLRenderPlugIn(plugInManager);
     }
     return AnnotationPlugIn;
-})(AssureIt.PlugIn);
+})(AssureIt.PlugInSet);
 
 var AnnotationHTMLRenderPlugIn = (function (_super) {
     __extends(AnnotationHTMLRenderPlugIn, _super);

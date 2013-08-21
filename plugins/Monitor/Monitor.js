@@ -13,7 +13,7 @@ var MonitorPlugIn = (function (_super) {
         this.SVGRenderPlugIn = new MonitorSVGRenderPlugIn(plugInManager);
     }
     return MonitorPlugIn;
-})(AssureIt.PlugIn);
+})(AssureIt.PlugInSet);
 
 var MonitorHTMLRenderPlugIn = (function (_super) {
     __extends(MonitorHTMLRenderPlugIn, _super);

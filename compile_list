@@ -12,6 +12,7 @@ plugins/Note/Note.ts
 plugins/DragFile/DragFile.ts
 plugins/BeforeUnload/BeforeUnload.ts
 plugins/DefaultStatementRender/DefaultStatementRender.ts
+plugins/LayoutPortrait/LayoutPortrait.ts
 src/CaseDecoder.ts
 src/CaseEncoder.ts
 src/CaseModel.ts

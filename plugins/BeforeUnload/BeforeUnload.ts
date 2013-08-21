@@ -2,7 +2,7 @@
 ///<reference path='../../src/CaseModel.ts'/>
 ///<reference path='../../src/CaseViewer.ts'/>
 
-class BeforeUnloadPlugIn extends AssureIt.PlugIn {
+class BeforeUnloadPlugIn extends AssureIt.PlugInSet {
 
 	constructor(plugInManager: AssureIt.PlugInManager) {
 		super(plugInManager);

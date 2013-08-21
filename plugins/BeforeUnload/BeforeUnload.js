@@ -12,7 +12,7 @@ var BeforeUnloadPlugIn = (function (_super) {
         this.HTMLRenderPlugIn = new BeforeUnloadHTMLPlugIn(plugInManager);
     }
     return BeforeUnloadPlugIn;
-})(AssureIt.PlugIn);
+})(AssureIt.PlugInSet);
 
 var BeforeUnloadActionPlugIn = (function (_super) {
     __extends(BeforeUnloadActionPlugIn, _super);

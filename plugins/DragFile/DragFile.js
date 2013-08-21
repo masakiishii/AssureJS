@@ -71,7 +71,7 @@ var DragFilePlugIn = (function (_super) {
         this.HTMLRenderPlugIn = new ImageFileHTMLPlugIn(plugInManager);
     }
     return DragFilePlugIn;
-})(AssureIt.PlugIn);
+})(AssureIt.PlugInSet);
 
 var DragFileActionPlugIn = (function (_super) {
     __extends(DragFileActionPlugIn, _super);

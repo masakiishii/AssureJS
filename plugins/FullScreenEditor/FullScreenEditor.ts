@@ -5,7 +5,7 @@
 
 //--- CodeMirror
 
-class FullScreenEditorPlugIn extends AssureIt.PlugIn {
+class FullScreenEditorPlugIn extends AssureIt.PlugInSet {
 
 	constructor(plugInManager: AssureIt.PlugInManager) {
 		super(plugInManager);

@@ -2,7 +2,7 @@
 /// <reference path="../../src/CaseViewer.ts" />
 /// <reference path="../../src/PlugInManager.ts" />
 
-class DefaultColorThemePlugIn extends AssureIt.PlugIn {
+class DefaultColorThemePlugIn extends AssureIt.PlugInSet {
 
 	constructor(public plugInManager: AssureIt.PlugInManager) {
 		super(plugInManager);
@@ -12,7 +12,7 @@ class DefaultColorThemePlugIn extends AssureIt.PlugIn {
 
 }
 
-class TiffanyBlueThemePlugIn extends AssureIt.PlugIn {
+class TiffanyBlueThemePlugIn extends AssureIt.PlugInSet {
 
 	constructor(public plugInManager: AssureIt.PlugInManager) {
 		super(plugInManager);
@@ -22,7 +22,7 @@ class TiffanyBlueThemePlugIn extends AssureIt.PlugIn {
 
 }
 
-class SimpleColorThemePlugIn extends AssureIt.PlugIn {
+class SimpleColorThemePlugIn extends AssureIt.PlugInSet {
 
 	constructor(public plugInManager: AssureIt.PlugInManager) {
 		super(plugInManager);

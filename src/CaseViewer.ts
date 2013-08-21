@@ -473,16 +473,9 @@ module AssureIt {
 		}
 
 		LayoutElement() : void {
-			var layout : LayoutEngine = new LayoutPortrait(this.ViewMap); //TODO Enable switch Layout engine
-			layout.Init(this.ElementTop, 300, 0, CaseViewer.ElementWidth);
-			layout.Traverse(this.ElementTop, 300, 0);
-			layout.SetFootElementPosition();
-			layout.SetAllElementPosition(this.ElementTop);
-			//var layout : LayoutEngine = new LayoutLandscape(this.ViewMap);
-			//layout.Init(this.ElementTop, 0, 200);
-			//layout.Traverse(this.ElementTop, 0, 0);
-			//layout.SetFootElementPosition();
-			//layout.SetAllElementPosition(this.ElementTop);
+			var layout: LayoutEnginePlugIn = this.pluginManager.GetLayoutEngine();
+			layout.Init(this.ViewMap, this.ElementTop, 0, 0, CaseViewer.ElementWidth);
+			layout.LayoutAllView(this.ElementTop, 0, 0);
 		}
 
 		Draw(Screen?: ScreenManager): void {
