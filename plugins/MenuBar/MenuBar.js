@@ -21,7 +21,9 @@ var MenuBar = (function () {
         this.menu = $('<div id="menu">' + '<a href="#" ><img id="scale"  src="' + this.serverApi.basepath + 'images/scale.png" title="Scale" alt="scale" /></a>' + '</div>');
 
         this.menu.append('<a href="#" ><img id="commit" src="' + this.serverApi.basepath + 'images/commit.png" title="Commit" alt="commit" /></a>');
-        this.menu.append('<a href="#" ><img id="remove" src="' + this.serverApi.basepath + 'images/remove.png" title="Remove" alt="remove" /></a>');
+        if (this.node.children("h4").text() != this.case0.ElementTop.Label) {
+            this.menu.append('<a href="#" ><img id="remove" src="' + this.serverApi.basepath + 'images/remove.png" title="Remove" alt="remove" /></a>');
+        }
         var hasContext = false;
 
         for (var i = 0; i < this.model.Children.length; i++) {

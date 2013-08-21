@@ -30,7 +30,9 @@ class MenuBar {
 
 		//if(this.case0.IsLogin()) { //TODO login
 		this.menu.append('<a href="#" ><img id="commit" src="'+this.serverApi.basepath+'images/commit.png" title="Commit" alt="commit" /></a>');
-		this.menu.append('<a href="#" ><img id="remove" src="'+this.serverApi.basepath+'images/remove.png" title="Remove" alt="remove" /></a>');
+		if(this.node.children("h4").text() != this.case0.ElementTop.Label) {
+			this.menu.append('<a href="#" ><img id="remove" src="'+this.serverApi.basepath+'images/remove.png" title="Remove" alt="remove" /></a>');
+		}
 		var hasContext: boolean = false;
 
 		for(var i: number = 0; i < this.model.Children.length; i++) {
