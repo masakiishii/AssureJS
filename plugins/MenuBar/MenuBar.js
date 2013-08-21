@@ -200,6 +200,7 @@ var MenuBar = (function () {
 
         $('#remove').click(function () {
             _this.RemoveNode();
+            $('#menu').remove();
         });
 
         $('#commit').click(function () {

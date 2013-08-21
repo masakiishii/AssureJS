@@ -211,6 +211,7 @@ class MenuBar {
 
 		$('#remove').click(() => {
 			this.RemoveNode();
+			$('#menu').remove();
 		});
 
 		$('#commit').click(() => {
