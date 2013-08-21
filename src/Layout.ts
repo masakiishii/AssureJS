@@ -14,7 +14,7 @@ module AssureIt {
 		Init(Element: NodeModel, x: number, y: number, ElementWidth: number): void {
 		}
 
-		Traverse(Element: NodeModel, x: number, y: number): void {
+		LayoutAllView(Element: NodeModel, x: number, y: number): void {
 		}
 
 		SetFootElementPosition(): void {
@@ -50,6 +50,12 @@ module AssureIt {
 			this.SetXpos(Element, Depth);
 			this.SetLeafYpos(Element);
 			this.SetOtherYpos(Element);
+		}
+
+		LayoutAllView(Element: NodeModel, x: number, y: number) {
+			this.Traverse(Element, x, y);
+			this.SetFootElementPosition();
+			this.SetAllElementPosition(Element);
 		}
 
 		SetXpos(Element: NodeModel, Depth: number): void {
@@ -380,6 +386,12 @@ module AssureIt {
 			}
 		}
 
+		LayoutAllView(Element: NodeModel, x: number, y: number) {
+			this.Traverse(Element, x, y);
+			this.SetFootElementPosition();
+			this.SetAllElementPosition(Element);
+		}
+
 		EmitChildrenElement(Node: NodeModel, x: number, y: number, ContextId: number, h: number): void {
 			var n: number = Node.Children.length;
 			var MaxYPostition: number  = 0;
@@ -398,7 +410,7 @@ module AssureIt {
 					var ParentElementView: NodeView = this.ViewMap[Node.Label];
 					ElementView.AbsY = y;
 //					ElementView.AbsY += ((height > this.Y_MARGIN) ? height : this.Y_MARGIN) + h;
-					ElementView.AbsY += this.Y_MARGIN + h;
+					ElementView.AbsY = y + this.Y_MARGIN + h;
 //					ElementView.AbsY += (((ElementView.AbsY - ParentElementView.AbsY) < this.Y_NODE_MARGIN) ? this.Y_NODE_ADJUSTMENT_MARGIN : 0);
 					MaxYPostition = (ElementView.AbsY > MaxYPostition) ? ElementView.AbsY : MaxYPostition;
 					this.Traverse(Node.Children[i], ElementView.AbsX, ElementView.AbsY);

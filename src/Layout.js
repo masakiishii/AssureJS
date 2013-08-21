@@ -13,7 +13,7 @@ var AssureIt;
         LayoutEngine.prototype.Init = function (Element, x, y, ElementWidth) {
         };
 
-        LayoutEngine.prototype.Traverse = function (Element, x, y) {
+        LayoutEngine.prototype.LayoutAllView = function (Element, x, y) {
         };
 
         LayoutEngine.prototype.SetFootElementPosition = function () {
@@ -48,6 +48,12 @@ var AssureIt;
             this.SetXpos(Element, Depth);
             this.SetLeafYpos(Element);
             this.SetOtherYpos(Element);
+        };
+
+        LayoutLandscape.prototype.LayoutAllView = function (Element, x, y) {
+            this.Traverse(Element, x, y);
+            this.SetFootElementPosition();
+            this.SetAllElementPosition(Element);
         };
 
         LayoutLandscape.prototype.SetXpos = function (Element, Depth) {
@@ -209,7 +215,7 @@ var AssureIt;
                 } else {
                     var p1 = ParentView.GetAbsoluteConnectorPosition(AssureIt.Direction.Bottom);
                     var p2 = ChildView.GetAbsoluteConnectorPosition(AssureIt.Direction.Top);
-                    ChildView.SetArrowPosition(p1, p2, AssureIt.Direction.Left);
+                    ChildView.SetArrowPosition(p1, p2, AssureIt.Direction.Bottom);
                 }
             }
             if (n == 0 && Element.Type == AssureIt.NodeType.Goal) {
@@ -364,6 +370,12 @@ var AssureIt;
             }
         };
 
+        LayoutPortrait.prototype.LayoutAllView = function (Element, x, y) {
+            this.Traverse(Element, x, y);
+            this.SetFootElementPosition();
+            this.SetAllElementPosition(Element);
+        };
+
         LayoutPortrait.prototype.EmitChildrenElement = function (Node, x, y, ContextId, h) {
             var n = Node.Children.length;
             var MaxYPostition = 0;
@@ -381,7 +393,7 @@ var AssureIt;
                     var ParentElementView = this.ViewMap[Node.Label];
                     ElementView.AbsY = y;
 
-                    ElementView.AbsY += this.Y_MARGIN + h;
+                    ElementView.AbsY = y + this.Y_MARGIN + h;
 
                     MaxYPostition = (ElementView.AbsY > MaxYPostition) ? ElementView.AbsY : MaxYPostition;
                     this.Traverse(Node.Children[i], ElementView.AbsX, ElementView.AbsY);
