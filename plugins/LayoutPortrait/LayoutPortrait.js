@@ -31,47 +31,76 @@ var LayoutPortraitEnginePlugIn = (function (_super) {
         this.footelement = new Array();
         this.contextId = -1;
     }
+    LayoutPortraitEnginePlugIn.prototype.Init = function (ViewMap, Element, x, y, ElementWidth) {
+        this.footelement = [];
+        this.contextId = -1;
+        this.ElementWidth = ElementWidth;
+        this.ViewMap = ViewMap;
+        this.ViewMap[Element.Label].AbsY += y;
+        this.X_MARGIN = ElementWidth + 50;
+        this.X_CONTEXT_MARGIN = ElementWidth + 50;
+    };
+
+    LayoutPortraitEnginePlugIn.prototype.LayoutAllView = function (ElementTop, x, y) {
+        this.Traverse(ElementTop, x, y);
+        this.SetFootElementPosition();
+        this.SetAllElementPosition(ElementTop);
+    };
+
     LayoutPortraitEnginePlugIn.prototype.UpdateContextElementPosition = function (ContextElement) {
         var ContextView = this.ViewMap[ContextElement.Label];
         var ParentView = ContextView.ParentShape;
-
-        ContextView.ParentDirection = AssureIt.Direction.Left;
-
-        ContextView.IsArrowStraight = true;
         ContextView.IsArrowWhite = true;
         ContextView.AbsX = (ParentView.AbsX + this.X_CONTEXT_MARGIN);
-
         ContextView.AbsY = ParentView.AbsY;
     };
 
     LayoutPortraitEnginePlugIn.prototype.SetAllElementPosition = function (Element) {
         var n = Element.Children.length;
-        if (n == 0) {
-            return;
-        }
         var ParentView = this.ViewMap[Element.Label];
-
-        if (n == 1 && Element.Children[0].Type == AssureIt.NodeType.Context) {
-            this.UpdateContextElementPosition(Element.Children[0]);
+        var ContextIndex = this.GetContextIndex(Element);
+        if (n == 0) {
+            if (Element.Type == AssureIt.NodeType.Goal) {
+                (ParentView.SVGShape).SetUndevelolpedSymbolPosition(ParentView.GetAbsoluteConnectorPosition(AssureIt.Direction.Bottom));
+            }
             return;
         }
 
-        for (var i = 0; i < n; i++) {
-            this.SetAllElementPosition(Element.Children[i]);
-        }
+        if (n == 1 && ContextIndex == 0) {
+            this.UpdateContextElementPosition(Element.Children[0]);
+        } else {
+            var xPositionSum = 0;
 
-        var ContextIndex = this.GetContextIndex(Element);
-        var xPositionSum = 0;
-        for (var i = 0; i < n; i++) {
-            if (ContextIndex != i) {
-                xPositionSum += this.ViewMap[Element.Children[i].Label].AbsX;
+            for (var i = 0; i < n; i++) {
+                this.SetAllElementPosition(Element.Children[i]);
+                if (ContextIndex != i) {
+                    xPositionSum += this.ViewMap[Element.Children[i].Label].AbsX;
+                }
+            }
+
+            if (ContextIndex == -1) {
+                ParentView.AbsX = xPositionSum / n;
+            } else {
+                ParentView.AbsX = xPositionSum / (n - 1);
+                this.UpdateContextElementPosition(Element.Children[ContextIndex]);
             }
         }
-        if (ContextIndex == -1) {
-            ParentView.AbsX = xPositionSum / n;
-        } else {
-            ParentView.AbsX = xPositionSum / (n - 1);
-            this.UpdateContextElementPosition(Element.Children[ContextIndex]);
+
+        for (var i = 0; i < n; i++) {
+            var ChildView = this.ViewMap[Element.Children[i].Label];
+            if (ContextIndex == i) {
+                var p1 = ParentView.GetAbsoluteConnectorPosition(AssureIt.Direction.Right);
+                var p2 = ChildView.GetAbsoluteConnectorPosition(AssureIt.Direction.Left);
+                var y = Math.min(p1.y, p2.y);
+                p1.y = y;
+                p2.y = y;
+                ChildView.SetArrowPosition(p1, p2, AssureIt.Direction.Left);
+                ChildView.IsArrowWhite = true;
+            } else {
+                var p1 = ParentView.GetAbsoluteConnectorPosition(AssureIt.Direction.Bottom);
+                var p2 = ChildView.GetAbsoluteConnectorPosition(AssureIt.Direction.Top);
+                ChildView.SetArrowPosition(p1, p2, AssureIt.Direction.Bottom);
+            }
         }
     };
 
@@ -81,7 +110,7 @@ var LayoutPortraitEnginePlugIn = (function (_super) {
         } else {
             var xPosition = this.ViewMap[ElementList[0].Label].AbsX;
         }
-
+        var xPosition = this.ViewMap[ElementList[0].Label].AbsX;
         var n = ElementList.length;
         for (var i = 0; i < n; i++) {
             if (ElementList[i].Type == AssureIt.NodeType.Context) {
@@ -187,22 +216,6 @@ var LayoutPortraitEnginePlugIn = (function (_super) {
         return;
     };
 
-    LayoutPortraitEnginePlugIn.prototype.Init = function (ViewMap, Element, x, y, ElementWidth) {
-        this.footelement = [];
-        this.contextId = -1;
-        this.ElementWidth = ElementWidth;
-        this.ViewMap = ViewMap;
-        this.ViewMap[Element.Label].AbsY += y;
-        this.X_MARGIN = ElementWidth + 50;
-        this.X_CONTEXT_MARGIN = ElementWidth + 50;
-    };
-
-    LayoutPortraitEnginePlugIn.prototype.LayoutAllView = function (ElementTop, x, y) {
-        this.Traverse(ElementTop, x, y);
-        this.SetFootElementPosition();
-        this.SetAllElementPosition(ElementTop);
-    };
-
     LayoutPortraitEnginePlugIn.prototype.Traverse = function (Element, x, y) {
         if ((Element.Children.length == 0 && Element.Type != AssureIt.NodeType.Context) || (Element.Children.length == 1 && Element.Children[0].Type == AssureIt.NodeType.Context)) {
             this.footelement.push(Element.Label);
@@ -217,16 +230,18 @@ var LayoutPortraitEnginePlugIn = (function (_super) {
             var h1 = ContextView.HTMLDoc.Height;
             var h2 = ParentView.HTMLDoc.Height;
             var h = (h1 - h2) / 2;
-            ContextView.ParentDirection = AssureIt.Direction.Left;
+
             ContextView.AbsX += x;
             ContextView.AbsY += (y - h);
             ContextView.AbsX += this.X_CONTEXT_MARGIN;
-
+            this.EmitChildrenElement(Element, ParentView.AbsX, ParentView.AbsY, i, ((this.Y_MARGIN > Math.abs(h1 - h2)) ? 0 : Math.abs(h1 - h2)));
             this.EmitChildrenElement(Element, ParentView.AbsX, ParentView.AbsY, i, ((this.Y_MARGIN > Math.abs(h1 - h2)) ? h2 : Math.abs(h1 - h2)));
         } else {
             var h2 = 0;
             var CurrentView = this.ViewMap[Element.Label];
-
+            if (ParentView != null) {
+                h2 = ParentView.HTMLDoc.Height / 2;
+            }
             h2 = CurrentView.HTMLDoc.Height;
             this.EmitChildrenElement(Element, x, y, i, h2);
         }
@@ -248,9 +263,9 @@ var LayoutPortraitEnginePlugIn = (function (_super) {
                 var height = (ContextHeight > ElementView.HTMLDoc.Height) ? ContextHeight : ElementView.HTMLDoc.Height;
                 var ParentElementView = this.ViewMap[Node.Label];
                 ElementView.AbsY = y;
-
-                ElementView.AbsY += this.Y_MARGIN + h;
-
+                ElementView.AbsY += ((height > this.Y_MARGIN) ? height : this.Y_MARGIN) + h;
+                ElementView.AbsY = y + this.Y_MARGIN + h;
+                ElementView.AbsY += (((ElementView.AbsY - ParentElementView.AbsY) < this.Y_NODE_MARGIN) ? this.Y_NODE_ADJUSTMENT_MARGIN : 0);
                 MaxYPostition = (ElementView.AbsY > MaxYPostition) ? ElementView.AbsY : MaxYPostition;
                 this.Traverse(Node.Children[i], ElementView.AbsX, ElementView.AbsY);
             }
