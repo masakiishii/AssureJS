@@ -21,7 +21,7 @@ class DefaultStatementHTMLRenderPlugIn extends AssureIt.HTMLRenderPlugIn {
 		var statements: string[] = caseModel.Statement.split("\n");
 		var content: string = "";
 		for(var i:number = 0; i < statements.length; i++) {
-			content += statements[i] + "<br>";
+			content += $('<div/>').text(statements[i]).html()+ "<br>";
 		}
 		$('<p>' + content + '</p>').appendTo(element);
 		return true;
