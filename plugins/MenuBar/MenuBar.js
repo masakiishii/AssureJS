@@ -61,7 +61,6 @@ var MenuBar = (function () {
         this.case0.SaveIdCounterMax(this.case0.ElementTop);
         this.caseViewer.ViewMap[newNodeModel.Label] = new AssureIt.NodeView(this.caseViewer, newNodeModel);
         this.caseViewer.ViewMap[newNodeModel.Label].ParentShape = this.caseViewer.ViewMap[newNodeModel.Parent.Label];
-        this.caseViewer.Resize();
         this.caseViewer.ReDraw();
     };
 
@@ -97,7 +96,6 @@ var MenuBar = (function () {
             delete this.caseViewer.ViewMap[labels[i]];
         }
 
-        this.caseViewer.Resize();
         this.caseViewer.ReDraw();
         this.caseViewer.Screen.SetOffset(0, 0);
         var CurrentParentView = this.caseViewer.ViewMap[parentLabel];
