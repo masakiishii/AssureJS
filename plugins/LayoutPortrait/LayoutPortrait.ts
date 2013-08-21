@@ -38,7 +38,7 @@ class LayoutPortraitEnginePlugIn extends AssureIt.LayoutEnginePlugIn {
 //			var h1: number = ContextView.HTMLDoc.Height;
 //			var h2: number = ParentView.HTMLDoc.Height;
 			ContextView.ParentDirection = AssureIt.Direction.Left;
-			ContextView.IsArrowReversed = true;
+			//ContextView.IsArrowReversed = true;
 			ContextView.IsArrowStraight = true;
 			ContextView.IsArrowWhite = true;
 			ContextView.AbsX = (ParentView.AbsX + this.X_CONTEXT_MARGIN);

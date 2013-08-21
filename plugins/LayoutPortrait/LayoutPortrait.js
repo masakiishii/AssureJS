@@ -36,7 +36,7 @@ var LayoutPortraitEnginePlugIn = (function (_super) {
         var ParentView = ContextView.ParentShape;
 
         ContextView.ParentDirection = AssureIt.Direction.Left;
-        ContextView.IsArrowReversed = true;
+
         ContextView.IsArrowStraight = true;
         ContextView.IsArrowWhite = true;
         ContextView.AbsX = (ParentView.AbsX + this.X_CONTEXT_MARGIN);
