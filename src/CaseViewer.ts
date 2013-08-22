@@ -348,16 +348,15 @@ module AssureIt {
 		}
 
 		Update(): void {
-			this.HTMLDoc.SetPosition(this.AbsX, this.AbsY);
 			this.Resize();
+			this.HTMLDoc.SetPosition(this.AbsX, this.AbsY);
 			this.SVGShape.SetPosition(this.AbsX, this.AbsY);
 			if (this.ParentShape != null) {
 				this.SVGShape.SetArrowColorWhite(this.IsArrowWhite);
 			}
-			return; // TODO
 		}
 
-		AppendHTMLElement(svgroot: JQuery, divroot: JQuery, caseViewer : CaseViewer): void {
+		private AppendHTMLElement(svgroot: JQuery, divroot: JQuery, caseViewer : CaseViewer): void {
 			divroot.append(this.HTMLDoc.DocBase);
 			svgroot.append(this.SVGShape.ShapeGroup);
 			this.InvokePlugInSVGRender(caseViewer);
@@ -370,31 +369,28 @@ module AssureIt {
 				svgroot.append((<GoalShape>this.SVGShape).UndevelopedSymbol);
 			}
 			this.Update();
-			return; // TODO
 		}
 		AppendHTMLElementRecursive(svgroot: JQuery, divroot: JQuery, caseViewer : CaseViewer): void {
-			this.AppendHTMLElement(svgroot, divroot, caseViewer);
 			var Children = this.Source.Children;
 			var ViewMap = this.CaseViewer.ViewMap;
 			for (var i = 0; i < Children.length; i++) {
 				ViewMap[Children[i].Label].AppendHTMLElementRecursive(svgroot, divroot, caseViewer);
 			}
-			return;
+			this.AppendHTMLElement(svgroot, divroot, caseViewer);
 		}
-	 	DeleteHTMLElement(svgroot: JQuery, divroot: JQuery): void {
+	 	private DeleteHTMLElement(svgroot: JQuery, divroot: JQuery): void {
 			this.HTMLDoc.DocBase.remove();
 			$(this.SVGShape.ShapeGroup).remove();
 			if (this.ParentShape != null) $(this.SVGShape.ArrowPath).remove();
-			return;
+			this.Update();
 	 	}
 	 	DeleteHTMLElementRecursive(svgroot: JQuery, divroot: JQuery): void {
-			this.DeleteHTMLElement(svgroot, divroot);
 			var Children = this.Source.Children;
 			var ViewMap = this.CaseViewer.ViewMap;
 			for (var i = 0; i < Children.length; i++) {
 				ViewMap[Children[i].Label].DeleteHTMLElementRecursive(svgroot, divroot);
 			}
-			return;
+			this.DeleteHTMLElement(svgroot, divroot);
 	 	}
 
 		GetAbsoluteConnectorPosition(Dir: Direction): Point {
@@ -456,11 +452,18 @@ module AssureIt {
 			};
 		}
 
-		Resize(): void {
+		private Resize(): void {
 			for (var shapekey in this.ViewMap) {
 				this.ViewMap[shapekey].Resize();
 			}
 			this.LayoutElement();
+		}
+
+		Update(): void {
+			this.Resize();
+			for (var shapekey in this.ViewMap) {
+				this.ViewMap[shapekey].Update();
+			}
 		}
 
 		DeleteViewsRecursive(root : NodeView) : void {
@@ -471,7 +474,7 @@ module AssureIt {
 			}
 		}
 
-		LayoutElement() : void {
+		private LayoutElement() : void {
 			var layout : LayoutEngine = new LayoutPortrait(this.ViewMap); //TODO Enable switch Layout engine
 			layout.Init(this.ElementTop, 300, 0, CaseViewer.ElementWidth);
 			layout.LayoutAllView(this.ElementTop, 300, 0);
@@ -483,16 +486,13 @@ module AssureIt {
 			}
 			var shapelayer = $(Screen.ShapeLayer);
 			var screenlayer = $(Screen.ContentLayer);
-			for (var viewkey in this.ViewMap) {
-				this.ViewMap[viewkey].AppendHTMLElement(shapelayer, screenlayer, this);
-			}
+			this.ViewMap[this.ElementTop.Label].AppendHTMLElementRecursive(shapelayer, screenlayer, this);
 			this.pluginManager.RegisterActionEventListeners(this, this.Source, this.serverApi);
-			this.Resize();
+			this.Update();
 		}
 
 		ReDraw(Screen?: ScreenManager): void {
 			var offset = $("#layer1").offset();
-			this.Resize();
 			this.Draw();
 			this.Screen.SetOffset(offset.left, offset.top);
 		}
@@ -509,30 +509,30 @@ module AssureIt {
 		MainPointerID: number = 0;
 		Pointers: Pointer[] = [];
 
-		SetInitialOffset(InitialOffsetX: number, InitialOffsetY: number) {
+		private SetInitialOffset(InitialOffsetX: number, InitialOffsetY: number) {
 			this.InitialOffsetX = InitialOffsetX;
 			this.InitialOffsetY = InitialOffsetY;
 		}
 
-		StartDrag(InitialX: number, InitialY: number) {
+		private StartDrag(InitialX: number, InitialY: number) {
 			this.InitialX = InitialX;
 			this.InitialY = InitialY;
 		}
 
-		UpdateDrag(CurrentX: number, CurrentY: number) {
+		private UpdateDrag(CurrentX: number, CurrentY: number) {
 			this.CurrentX = CurrentX;
 			this.CurrentY = CurrentY;
 		}
 
-		CalcOffsetX(): number {
+		private CalcOffsetX(): number {
 			return this.CurrentX - this.InitialX + this.InitialOffsetX;
 		}
 
-		CalcOffsetY(): number {
+		private CalcOffsetY(): number {
 			return this.CurrentY - this.InitialY + this.InitialOffsetY;
 		}
 
-		GetMainPointer(): Pointer {
+		private GetMainPointer(): Pointer {
 			for (var i = 0; i < this.Pointers.length; ++i) {
 				if (this.Pointers[i].identifier === this.MainPointerID) {
 					return this.Pointers[i]
@@ -541,7 +541,7 @@ module AssureIt {
 			return null;
 		}
 
-		IsDragging(): boolean {
+		private IsDragging(): boolean {
 			return this.MainPointerID != null;
 		}
 

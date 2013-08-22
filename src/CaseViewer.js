@@ -351,13 +351,12 @@ var AssureIt;
         };
 
         NodeView.prototype.Update = function () {
-            this.HTMLDoc.SetPosition(this.AbsX, this.AbsY);
             this.Resize();
+            this.HTMLDoc.SetPosition(this.AbsX, this.AbsY);
             this.SVGShape.SetPosition(this.AbsX, this.AbsY);
             if (this.ParentShape != null) {
                 this.SVGShape.SetArrowColorWhite(this.IsArrowWhite);
             }
-            return;
         };
 
         NodeView.prototype.AppendHTMLElement = function (svgroot, divroot, caseViewer) {
@@ -372,32 +371,29 @@ var AssureIt;
                 svgroot.append((this.SVGShape).UndevelopedSymbol);
             }
             this.Update();
-            return;
         };
         NodeView.prototype.AppendHTMLElementRecursive = function (svgroot, divroot, caseViewer) {
-            this.AppendHTMLElement(svgroot, divroot, caseViewer);
             var Children = this.Source.Children;
             var ViewMap = this.CaseViewer.ViewMap;
             for (var i = 0; i < Children.length; i++) {
                 ViewMap[Children[i].Label].AppendHTMLElementRecursive(svgroot, divroot, caseViewer);
             }
-            return;
+            this.AppendHTMLElement(svgroot, divroot, caseViewer);
         };
         NodeView.prototype.DeleteHTMLElement = function (svgroot, divroot) {
             this.HTMLDoc.DocBase.remove();
             $(this.SVGShape.ShapeGroup).remove();
             if (this.ParentShape != null)
                 $(this.SVGShape.ArrowPath).remove();
-            return;
+            this.Update();
         };
         NodeView.prototype.DeleteHTMLElementRecursive = function (svgroot, divroot) {
-            this.DeleteHTMLElement(svgroot, divroot);
             var Children = this.Source.Children;
             var ViewMap = this.CaseViewer.ViewMap;
             for (var i = 0; i < Children.length; i++) {
                 ViewMap[Children[i].Label].DeleteHTMLElementRecursive(svgroot, divroot);
             }
-            return;
+            this.DeleteHTMLElement(svgroot, divroot);
         };
 
         NodeView.prototype.GetAbsoluteConnectorPosition = function (Dir) {
@@ -472,6 +468,13 @@ var AssureIt;
             this.LayoutElement();
         };
 
+        CaseViewer.prototype.Update = function () {
+            this.Resize();
+            for (var shapekey in this.ViewMap) {
+                this.ViewMap[shapekey].Update();
+            }
+        };
+
         CaseViewer.prototype.DeleteViewsRecursive = function (root) {
             var Children = root.Source.Children;
             delete this.ViewMap[root.Source.Label];
@@ -492,16 +495,13 @@ var AssureIt;
             }
             var shapelayer = $(Screen.ShapeLayer);
             var screenlayer = $(Screen.ContentLayer);
-            for (var viewkey in this.ViewMap) {
-                this.ViewMap[viewkey].AppendHTMLElement(shapelayer, screenlayer, this);
-            }
+            this.ViewMap[this.ElementTop.Label].AppendHTMLElementRecursive(shapelayer, screenlayer, this);
             this.pluginManager.RegisterActionEventListeners(this, this.Source, this.serverApi);
-            this.Resize();
+            this.Update();
         };
 
         CaseViewer.prototype.ReDraw = function (Screen) {
             var offset = $("#layer1").offset();
-            this.Resize();
             this.Draw();
             this.Screen.SetOffset(offset.left, offset.top);
         };

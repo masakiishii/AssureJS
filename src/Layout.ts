@@ -184,39 +184,41 @@ module AssureIt {
 
 		SetAllElementPosition(Element: NodeModel): void {
 			var n: number = Element.Children.length;
-			if (n == 0) {
-				return;
-			}
 			var ParentView: NodeView = this.ViewMap[Element.Label];
-
-			if (n == 1 && Element.Children[0].Type == NodeType.Context) {
-				this.UpdateContextElementPosition(Element.Children[0]);
+			var ContextIndex: number = this.GetContextIndex(Element);
+			if (n == 0) {
+				if(Element.Type == NodeType.Goal){
+					(<GoalShape>ParentView.SVGShape).SetUndevelolpedSymbolPosition(ParentView.GetAbsoluteConnectorPosition(Direction.Bottom));
+				}
 				return;
 			}
 
-			var ContextIndex: number = this.GetContextIndex(Element);
-			var xPositionSum: number = 0;
+			if (n == 1 && ContextIndex == 0) {
+				this.UpdateContextElementPosition(Element.Children[0]);
+			}else{
+				var xPositionSum: number = 0;
 
-			for (var i: number = 0; i < n; i++) {
-				this.SetAllElementPosition(Element.Children[i]);
-				if (ContextIndex != i) {
-					xPositionSum += this.ViewMap[Element.Children[i].Label].AbsX;
+				for (var i: number = 0; i < n; i++) {
+					this.SetAllElementPosition(Element.Children[i]);
+					if (ContextIndex != i) {
+						xPositionSum += this.ViewMap[Element.Children[i].Label].AbsX;
+					}
 				}
-			}
 
-			if (ContextIndex == -1) {
-				ParentView.AbsX = xPositionSum / n;
-			}
-			else {//set context (x, y) position
-				ParentView.AbsX = xPositionSum / (n - 1);
-				this.UpdateContextElementPosition(Element.Children[ContextIndex]);
+				if (ContextIndex == -1) {
+					ParentView.AbsX = xPositionSum / n;
+				}
+				else {//set context (x, y) position
+					ParentView.AbsX = xPositionSum / (n - 1);
+					this.UpdateContextElementPosition(Element.Children[ContextIndex]);
+				}
 			}
 
 			for (var i: number = 0; i < n; i++) {
 				var ChildView = this.ViewMap[Element.Children[i].Label];
 				if (ContextIndex == i) {
-					var p1 = ChildView.GetAbsoluteConnectorPosition(Direction.Left);
-					var p2 = ParentView.GetAbsoluteConnectorPosition(Direction.Right);
+					var p1 = ParentView.GetAbsoluteConnectorPosition(Direction.Right);
+					var p2 = ChildView.GetAbsoluteConnectorPosition(Direction.Left);
 					var y = Math.min(p1.y, p2.y);
 					p1.y = y;
 					p2.y = y;
@@ -228,10 +230,6 @@ module AssureIt {
 					ChildView.SetArrowPosition(p1, p2, Direction.Bottom);
 				}
 			}
-			if(n == 0 && Element.Type == NodeType.Goal){
-				(<GoalShape>ParentView.SVGShape).SetUndevelolpedSymbolPosition(ParentView.GetAbsoluteConnectorPosition(Direction.Bottom));
-			}
-
 		}
 
 		CalculateMinPosition(ElementList: NodeModel[]): number {

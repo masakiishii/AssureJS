@@ -175,38 +175,40 @@ var AssureIt;
 
         LayoutPortrait.prototype.SetAllElementPosition = function (Element) {
             var n = Element.Children.length;
-            if (n == 0) {
-                return;
-            }
             var ParentView = this.ViewMap[Element.Label];
-
-            if (n == 1 && Element.Children[0].Type == AssureIt.NodeType.Context) {
-                this.UpdateContextElementPosition(Element.Children[0]);
+            var ContextIndex = this.GetContextIndex(Element);
+            if (n == 0) {
+                if (Element.Type == AssureIt.NodeType.Goal) {
+                    (ParentView.SVGShape).SetUndevelolpedSymbolPosition(ParentView.GetAbsoluteConnectorPosition(AssureIt.Direction.Bottom));
+                }
                 return;
             }
 
-            var ContextIndex = this.GetContextIndex(Element);
-            var xPositionSum = 0;
-
-            for (var i = 0; i < n; i++) {
-                this.SetAllElementPosition(Element.Children[i]);
-                if (ContextIndex != i) {
-                    xPositionSum += this.ViewMap[Element.Children[i].Label].AbsX;
-                }
-            }
-
-            if (ContextIndex == -1) {
-                ParentView.AbsX = xPositionSum / n;
+            if (n == 1 && ContextIndex == 0) {
+                this.UpdateContextElementPosition(Element.Children[0]);
             } else {
-                ParentView.AbsX = xPositionSum / (n - 1);
-                this.UpdateContextElementPosition(Element.Children[ContextIndex]);
+                var xPositionSum = 0;
+
+                for (var i = 0; i < n; i++) {
+                    this.SetAllElementPosition(Element.Children[i]);
+                    if (ContextIndex != i) {
+                        xPositionSum += this.ViewMap[Element.Children[i].Label].AbsX;
+                    }
+                }
+
+                if (ContextIndex == -1) {
+                    ParentView.AbsX = xPositionSum / n;
+                } else {
+                    ParentView.AbsX = xPositionSum / (n - 1);
+                    this.UpdateContextElementPosition(Element.Children[ContextIndex]);
+                }
             }
 
             for (var i = 0; i < n; i++) {
                 var ChildView = this.ViewMap[Element.Children[i].Label];
                 if (ContextIndex == i) {
-                    var p1 = ChildView.GetAbsoluteConnectorPosition(AssureIt.Direction.Left);
-                    var p2 = ParentView.GetAbsoluteConnectorPosition(AssureIt.Direction.Right);
+                    var p1 = ParentView.GetAbsoluteConnectorPosition(AssureIt.Direction.Right);
+                    var p2 = ChildView.GetAbsoluteConnectorPosition(AssureIt.Direction.Left);
                     var y = Math.min(p1.y, p2.y);
                     p1.y = y;
                     p2.y = y;
@@ -217,9 +219,6 @@ var AssureIt;
                     var p2 = ChildView.GetAbsoluteConnectorPosition(AssureIt.Direction.Top);
                     ChildView.SetArrowPosition(p1, p2, AssureIt.Direction.Bottom);
                 }
-            }
-            if (n == 0 && Element.Type == AssureIt.NodeType.Goal) {
-                (ParentView.SVGShape).SetUndevelolpedSymbolPosition(ParentView.GetAbsoluteConnectorPosition(AssureIt.Direction.Bottom));
             }
         };
 
