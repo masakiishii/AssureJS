@@ -22,7 +22,7 @@ class LayoutPortraitEnginePlugIn extends AssureIt.LayoutEnginePlugIn {
 	X_OVER_MARGIN: number = 700;
 	X_FOOT_MARGIN: number = 100;
 	X_MULTI_ELEMENT_MARGIN: number = 20;
-	footelement: string[] = new Array();
+	footelement: string[] = [];
 	contextId: number = -1;
 
 	ViewMap: {[index: string]: AssureIt.NodeView };
@@ -41,10 +41,10 @@ class LayoutPortraitEnginePlugIn extends AssureIt.LayoutEnginePlugIn {
 		this.X_CONTEXT_MARGIN = ElementWidth + 50;
 	}
 
-	LayoutAllView(ElementTop: AssureIt.NodeModel, x: number, y: number) {
-		this.Traverse(ElementTop, x, y);
+	LayoutAllView(Element: AssureIt.NodeModel, x: number, y: number) {
+		this.Traverse(Element, x, y);
 		this.SetFootElementPosition();
-		this.SetAllElementPosition(ElementTop);
+		this.SetAllElementPosition(Element);
 	}
 
 	UpdateContextElementPosition(ContextElement: AssureIt.NodeModel): void {
@@ -238,14 +238,14 @@ class LayoutPortraitEnginePlugIn extends AssureIt.LayoutEnginePlugIn {
 			ContextView.AbsX += x;
 			ContextView.AbsY += (y - h);
 			ContextView.AbsX += this.X_CONTEXT_MARGIN;
-			this.EmitChildrenElement(Element, ParentView.AbsX, ParentView.AbsY, i, ((this.Y_MARGIN > Math.abs(h1 - h2)) ? 0 : Math.abs(h1 - h2)));
+			//this.EmitChildrenElement(Element, ParentView.AbsX, ParentView.AbsY, i, ((this.Y_MARGIN > Math.abs(h1 - h2)) ? 0 : Math.abs(h1 - h2)));
 			this.EmitChildrenElement(Element, ParentView.AbsX, ParentView.AbsY, i, ((this.Y_MARGIN > Math.abs(h1 - h2)) ? h2 : Math.abs(h1 - h2)));
 		} else {  //emit element data except context
 			var h2: number = 0;
 			var CurrentView: AssureIt.NodeView = this.ViewMap[Element.Label];
-			if(ParentView != null) {
-				h2 = ParentView.HTMLDoc.Height/2;
-			}
+			//if(ParentView != null) {
+			//	h2 = ParentView.HTMLDoc.Height/2;
+			//}
 			h2 = CurrentView.HTMLDoc.Height;
 			this.EmitChildrenElement(Element, x, y, i, h2);
 		}
@@ -268,9 +268,9 @@ class LayoutPortraitEnginePlugIn extends AssureIt.LayoutEnginePlugIn {
 				var height: number = (ContextHeight > ElementView.HTMLDoc.Height) ? ContextHeight : ElementView.HTMLDoc.Height;
 				var ParentElementView: AssureIt.NodeView = this.ViewMap[Node.Label];
 				ElementView.AbsY = y;
-				ElementView.AbsY += ((height > this.Y_MARGIN) ? height : this.Y_MARGIN) + h;
+//				ElementView.AbsY += ((height > this.Y_MARGIN) ? height : this.Y_MARGIN) + h;
 				ElementView.AbsY = y + this.Y_MARGIN + h;
-				ElementView.AbsY += (((ElementView.AbsY - ParentElementView.AbsY) < this.Y_NODE_MARGIN) ? this.Y_NODE_ADJUSTMENT_MARGIN : 0);
+//				ElementView.AbsY += (((ElementView.AbsY - ParentElementView.AbsY) < this.Y_NODE_MARGIN) ? this.Y_NODE_ADJUSTMENT_MARGIN : 0);
 				MaxYPostition = (ElementView.AbsY > MaxYPostition) ? ElementView.AbsY : MaxYPostition;
 				this.Traverse(Node.Children[i], ElementView.AbsX, ElementView.AbsY);
 			}

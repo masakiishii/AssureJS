@@ -28,7 +28,7 @@ var LayoutPortraitEnginePlugIn = (function (_super) {
         this.X_OVER_MARGIN = 700;
         this.X_FOOT_MARGIN = 100;
         this.X_MULTI_ELEMENT_MARGIN = 20;
-        this.footelement = new Array();
+        this.footelement = [];
         this.contextId = -1;
     }
     LayoutPortraitEnginePlugIn.prototype.Init = function (ViewMap, Element, x, y, ElementWidth) {
@@ -41,10 +41,10 @@ var LayoutPortraitEnginePlugIn = (function (_super) {
         this.X_CONTEXT_MARGIN = ElementWidth + 50;
     };
 
-    LayoutPortraitEnginePlugIn.prototype.LayoutAllView = function (ElementTop, x, y) {
-        this.Traverse(ElementTop, x, y);
+    LayoutPortraitEnginePlugIn.prototype.LayoutAllView = function (Element, x, y) {
+        this.Traverse(Element, x, y);
         this.SetFootElementPosition();
-        this.SetAllElementPosition(ElementTop);
+        this.SetAllElementPosition(Element);
     };
 
     LayoutPortraitEnginePlugIn.prototype.UpdateContextElementPosition = function (ContextElement) {
@@ -234,14 +234,12 @@ var LayoutPortraitEnginePlugIn = (function (_super) {
             ContextView.AbsX += x;
             ContextView.AbsY += (y - h);
             ContextView.AbsX += this.X_CONTEXT_MARGIN;
-            this.EmitChildrenElement(Element, ParentView.AbsX, ParentView.AbsY, i, ((this.Y_MARGIN > Math.abs(h1 - h2)) ? 0 : Math.abs(h1 - h2)));
+
             this.EmitChildrenElement(Element, ParentView.AbsX, ParentView.AbsY, i, ((this.Y_MARGIN > Math.abs(h1 - h2)) ? h2 : Math.abs(h1 - h2)));
         } else {
             var h2 = 0;
             var CurrentView = this.ViewMap[Element.Label];
-            if (ParentView != null) {
-                h2 = ParentView.HTMLDoc.Height / 2;
-            }
+
             h2 = CurrentView.HTMLDoc.Height;
             this.EmitChildrenElement(Element, x, y, i, h2);
         }
@@ -263,9 +261,9 @@ var LayoutPortraitEnginePlugIn = (function (_super) {
                 var height = (ContextHeight > ElementView.HTMLDoc.Height) ? ContextHeight : ElementView.HTMLDoc.Height;
                 var ParentElementView = this.ViewMap[Node.Label];
                 ElementView.AbsY = y;
-                ElementView.AbsY += ((height > this.Y_MARGIN) ? height : this.Y_MARGIN) + h;
+
                 ElementView.AbsY = y + this.Y_MARGIN + h;
-                ElementView.AbsY += (((ElementView.AbsY - ParentElementView.AbsY) < this.Y_NODE_MARGIN) ? this.Y_NODE_ADJUSTMENT_MARGIN : 0);
+
                 MaxYPostition = (ElementView.AbsY > MaxYPostition) ? ElementView.AbsY : MaxYPostition;
                 this.Traverse(Node.Children[i], ElementView.AbsX, ElementView.AbsY);
             }
