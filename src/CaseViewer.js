@@ -580,6 +580,8 @@ var AssureIt;
             this.ScrollManager = new ScrollManager();
             this.OffsetX = 0;
             this.OffsetY = 0;
+            this.LogicalOffsetX = 0;
+            this.LogicalOffsetY = 0;
             this.Scale = 1;
             this.ContentLayer.style["transformOrigin"] = "left top";
             this.ContentLayer.style["MozTransformOrigin"] = "left top";
@@ -641,19 +643,36 @@ var AssureIt;
         };
 
         ScreenManager.prototype.SetScale = function (scale) {
-            var oldScale = this.Scale;
             this.Scale = scale;
             var cx = this.GetWidth() / 2;
             var cy = this.GetHeight() / 2;
-            this.OffsetX = (this.OffsetX - cx) * scale / oldScale + cx;
-            this.OffsetY = (this.OffsetY - cy) * scale / oldScale + cy;
+            this.OffsetX = (this.LogicalOffsetX - cx) * scale + cx;
+            this.OffsetY = (this.LogicalOffsetY - cy) * scale + cy;
             this.UpdateAttr();
         };
 
         ScreenManager.prototype.SetOffset = function (x, y) {
+            var cx = this.GetWidth() / 2;
+            var cy = this.GetHeight() / 2;
             this.OffsetX = x;
             this.OffsetY = y;
+            this.LogicalOffsetX = (x - cx) / this.Scale + cx;
+            this.LogicalOffsetY = (y - cy) / this.Scale + cy;
             this.UpdateAttr();
+        };
+
+        ScreenManager.prototype.SetLogicalOffset = function (x, y, scale) {
+            this.LogicalOffsetX = x;
+            this.LogicalOffsetY = y;
+            this.SetScale(scale || this.Scale);
+        };
+
+        ScreenManager.prototype.GetLogicalOffsetX = function () {
+            return this.LogicalOffsetX;
+        };
+
+        ScreenManager.prototype.GetLogicalOffsetY = function () {
+            return this.LogicalOffsetY;
         };
 
         ScreenManager.prototype.GetOffsetX = function () {

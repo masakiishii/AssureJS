@@ -564,6 +564,8 @@ module AssureIt {
 		ScrollManager: ScrollManager = new ScrollManager();
 		private OffsetX: number = 0;
 		private OffsetY: number = 0;
+		private LogicalOffsetX: number = 0;
+		private LogicalOffsetY: number = 0;
 		private Scale: number = 1;
 
 		constructor(public ShapeLayer: SVGGElement, public ContentLayer: HTMLDivElement, public ControlLayer: HTMLDivElement, public BackGroundLayer: HTMLDivElement) {
@@ -623,19 +625,36 @@ module AssureIt {
 		}
 
 		SetScale(scale: number): void {
-			var oldScale = this.Scale;
 			this.Scale = scale;
 			var cx = this.GetWidth() / 2;
 			var cy = this.GetHeight() / 2;
-			this.OffsetX = (this.OffsetX - cx) * scale / oldScale + cx;
-			this.OffsetY = (this.OffsetY - cy) * scale / oldScale + cy;
+			this.OffsetX = (this.LogicalOffsetX - cx) * scale + cx;
+			this.OffsetY = (this.LogicalOffsetY - cy) * scale + cy;
 			this.UpdateAttr();
 		}
 
 		SetOffset(x: number, y: number): void {
+			var cx = this.GetWidth() / 2;
+			var cy = this.GetHeight() / 2;
 			this.OffsetX = x;
 			this.OffsetY = y;
+			this.LogicalOffsetX = (x - cx) / this.Scale + cx;
+			this.LogicalOffsetY = (y - cy) / this.Scale + cy;
 			this.UpdateAttr();
+		}
+
+		SetLogicalOffset(x: number, y: number, scale?: number): void {
+			this.LogicalOffsetX = x;
+			this.LogicalOffsetY = y;
+			this.SetScale(scale || this.Scale);
+		}
+
+		GetLogicalOffsetX(): number {
+			return this.LogicalOffsetX;
+		}
+
+		GetLogicalOffsetY(): number {
+			return this.LogicalOffsetY;
 		}
 
 		GetOffsetX(): number {
