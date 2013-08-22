@@ -83,7 +83,7 @@ class EditorActionPlugIn extends AssureIt.ActionPlugIn {
 			//orig_model.EnableEditFlag();
 			orig_shape.HTMLDoc.Render(caseViewer, orig_model);
 
-			caseViewer.ReDraw();
+			caseViewer.Draw();
 
 			p = $(selector).position();
 			p_contents = $(selector).children("p").position();
@@ -115,7 +115,7 @@ class EditorActionPlugIn extends AssureIt.ActionPlugIn {
 						orig_shape.HTMLDoc.Render(caseViewer, orig_model);
 						new_model.EnableEditFlag();
 
-						caseViewer.ReDraw();
+						caseViewer.Draw();
 					}
 					$('#editor-wrapper').css({display: 'none'});
 				});

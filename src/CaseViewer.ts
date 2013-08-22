@@ -474,23 +474,13 @@ module AssureIt {
 			layout.LayoutAllView(this.ElementTop, 0, 0);
 		}
 
-		Draw(Screen?: ScreenManager): void {
-			if(Screen == null) {
-				Screen = this.Screen;
-			}
-			var shapelayer = $(Screen.ShapeLayer);
-			var screenlayer = $(Screen.ContentLayer);
+		Draw(): void {
+			var shapelayer = $(this.Screen.ShapeLayer);
+			var screenlayer = $(this.Screen.ContentLayer);
 			this.ViewMap[this.ElementTop.Label].AppendHTMLElementRecursive(shapelayer, screenlayer, this);
 			this.pluginManager.RegisterActionEventListeners(this, this.Source, this.serverApi);
 			this.Update();
 		}
-
-		ReDraw(Screen?: ScreenManager): void {
-			var offset = $("#layer1").offset();
-			this.Draw();
-			this.Screen.SetOffset(offset.left, offset.top);
-		}
-
 	}
 
 	export class ScrollManager {

@@ -479,21 +479,12 @@ var AssureIt;
             layout.LayoutAllView(this.ElementTop, 0, 0);
         };
 
-        CaseViewer.prototype.Draw = function (Screen) {
-            if (Screen == null) {
-                Screen = this.Screen;
-            }
-            var shapelayer = $(Screen.ShapeLayer);
-            var screenlayer = $(Screen.ContentLayer);
+        CaseViewer.prototype.Draw = function () {
+            var shapelayer = $(this.Screen.ShapeLayer);
+            var screenlayer = $(this.Screen.ContentLayer);
             this.ViewMap[this.ElementTop.Label].AppendHTMLElementRecursive(shapelayer, screenlayer, this);
             this.pluginManager.RegisterActionEventListeners(this, this.Source, this.serverApi);
             this.Update();
-        };
-
-        CaseViewer.prototype.ReDraw = function (Screen) {
-            var offset = $("#layer1").offset();
-            this.Draw();
-            this.Screen.SetOffset(offset.left, offset.top);
         };
         CaseViewer.ElementWidth = 250;
         return CaseViewer;

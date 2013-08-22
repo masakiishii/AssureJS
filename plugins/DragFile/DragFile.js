@@ -90,7 +90,7 @@ var DragFileActionPlugIn = (function (_super) {
             var body = { Type: "ImageFile", URL: data.split('=')[1] };
             nodeModel.SetNote("ImageFile", body);
             nodeView.HTMLDoc.Render(caseViewer, nodeModel);
-            caseViewer.ReDraw();
+            caseViewer.Draw();
         });
         return true;
     };
@@ -114,7 +114,7 @@ var ImageFileHTMLPlugIn = (function (_super) {
                 var img = $(new Image());
                 img.bind('load', function () {
                     $('<a href="' + basepath + '/' + body.URL + '"></a>').append(img).appendTo(element);
-                    caseViewer.ReDraw();
+                    caseViewer.Draw();
                 });
                 img.attr('src', basepath + '/' + body.URL);
             }

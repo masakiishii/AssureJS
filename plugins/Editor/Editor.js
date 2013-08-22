@@ -74,7 +74,7 @@ var EditorActionPlugIn = (function (_super) {
 
             orig_shape.HTMLDoc.Render(caseViewer, orig_model);
 
-            caseViewer.ReDraw();
+            caseViewer.Draw();
 
             p = $(selector).position();
             p_contents = $(selector).children("p").position();
@@ -98,7 +98,7 @@ var EditorActionPlugIn = (function (_super) {
                     orig_shape.HTMLDoc.Render(caseViewer, orig_model);
                     new_model.EnableEditFlag();
 
-                    caseViewer.ReDraw();
+                    caseViewer.Draw();
                 }
                 $('#editor-wrapper').css({ display: 'none' });
             });

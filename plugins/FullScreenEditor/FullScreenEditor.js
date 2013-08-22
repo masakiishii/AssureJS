@@ -123,7 +123,7 @@ var FullScreenEditorActionPlugIn = (function (_super) {
                                 view.ParentShape = caseViewer.ViewMap[model.Parent.Label];
                         })(new_model, new_view);
                         new_view.AppendHTMLElementRecursive($("#layer0"), $("#layer1"), caseViewer);
-                        caseViewer.ReDraw();
+                        caseViewer.Draw();
                     } else {
                         case0.ElementMap = orig_ElementMap;
                         case0.IdCounters = orig_idCounters;

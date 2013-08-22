@@ -61,7 +61,7 @@ var MenuBar = (function () {
         this.case0.SaveIdCounterMax(this.case0.ElementTop);
         this.caseViewer.ViewMap[newNodeModel.Label] = new AssureIt.NodeView(this.caseViewer, newNodeModel);
         this.caseViewer.ViewMap[newNodeModel.Label].ParentShape = this.caseViewer.ViewMap[newNodeModel.Parent.Label];
-        this.caseViewer.ReDraw();
+        this.caseViewer.Draw();
     };
 
     MenuBar.prototype.GetDescendantLabels = function (labels, children) {
@@ -96,7 +96,7 @@ var MenuBar = (function () {
             delete this.caseViewer.ViewMap[labels[i]];
         }
 
-        this.caseViewer.ReDraw();
+        this.caseViewer.Draw();
         this.caseViewer.Screen.SetOffset(0, 0);
         var CurrentParentView = this.caseViewer.ViewMap[parentLabel];
         this.caseViewer.Screen.SetOffset(parentOffSet.left - CurrentParentView.AbsX, parentOffSet.top - CurrentParentView.AbsY);
@@ -165,7 +165,7 @@ var MenuBar = (function () {
                     $("#background").unbind("dblclick", CancelClickEvent);
                     $("#background").unbind("mousemove", CancelClickEvent);
                     $("#fullscreen-editor-wrapper").unbind("keydown", EscapeFromEditor);
-                    caseViewer.ReDraw();
+                    caseViewer.Draw();
                 }, 500));
             } else {
                 editorIsActive = false;

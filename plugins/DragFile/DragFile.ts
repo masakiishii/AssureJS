@@ -83,7 +83,7 @@ class DragFileActionPlugIn extends AssureIt.ActionPlugIn {
 				var body = {Type: "ImageFile",URL: data.split('=')[1]};
 				nodeModel.SetNote("ImageFile", body);
 				nodeView.HTMLDoc.Render(caseViewer, nodeModel);
-				caseViewer.ReDraw();
+				caseViewer.Draw();
 		});
 		return true;
 	}
@@ -107,7 +107,7 @@ class ImageFileHTMLPlugIn extends AssureIt.HTMLRenderPlugIn {
 				var img = $(new Image());
 				img.bind('load', function(){
 					$('<a href="' + basepath + '/' + body.URL+'"></a>').append(img).appendTo(element);
-					caseViewer.ReDraw();
+					caseViewer.Draw();
 				});
 				img.attr('src',basepath+'/'+body.URL);
 				//$('<a href="' + basepath + '/' + body.URL+'"><img id="img-'+ nodeModel.Label + '-' + i + '" src="'+basepath+'/'+body.URL+'" /></a>')
@@ -116,7 +116,7 @@ class ImageFileHTMLPlugIn extends AssureIt.HTMLRenderPlugIn {
 				//$('#img-'+ nodeModel.Label + '-' + i + '')
 				//.bind('load', function(){
 				//	console.log("redraw");
-				//	caseViewer.ReDraw();
+				//	caseViewer.Draw();
 				//})
 			}
 		}
