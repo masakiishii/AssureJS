@@ -61,7 +61,13 @@ var MenuBar = (function () {
         this.case0.SaveIdCounterMax(this.case0.ElementTop);
         this.caseViewer.ViewMap[newNodeModel.Label] = new AssureIt.NodeView(this.caseViewer, newNodeModel);
         this.caseViewer.ViewMap[newNodeModel.Label].ParentShape = this.caseViewer.ViewMap[newNodeModel.Parent.Label];
+
+        var parentLabel = newNodeModel.Parent.Label;
+        var parentOffSet = $("#" + parentLabel).offset();
         this.caseViewer.Draw();
+
+        var CurrentParentView = this.caseViewer.ViewMap[parentLabel];
+        this.caseViewer.Screen.SetOffset(parentOffSet.left - CurrentParentView.AbsX, parentOffSet.top - CurrentParentView.AbsY);
     };
 
     MenuBar.prototype.GetDescendantLabels = function (labels, children) {
@@ -97,7 +103,6 @@ var MenuBar = (function () {
         }
 
         this.caseViewer.Draw();
-        this.caseViewer.Screen.SetOffset(0, 0);
         var CurrentParentView = this.caseViewer.ViewMap[parentLabel];
         this.caseViewer.Screen.SetOffset(parentOffSet.left - CurrentParentView.AbsX, parentOffSet.top - CurrentParentView.AbsY);
     };
@@ -113,8 +118,15 @@ var MenuBar = (function () {
         var editorIsActive = false;
 
         var svgwidth = $("#layer0")[0].getBoundingClientRect().width;
+        var svgheight = $("#layer0")[0].getBoundingClientRect().height;
         var bodywidth = $("body").width();
-        if ((bodywidth / svgwidth) >= 1.0) {
+        var bodyheight = $("body").height();
+
+        var scaleWidth = bodywidth / svgwidth;
+        var scaleHeight = bodyheight / svgheight;
+
+        var scaleRate = Math.min(scaleWidth, scaleHeight);
+        if (scaleRate >= 1.0) {
             return;
         }
 
@@ -133,7 +145,6 @@ var MenuBar = (function () {
             zoom();
         };
 
-        var scaleRate = (bodywidth / svgwidth < 1.0) ? bodywidth / svgwidth : 1.0;
         startZoom(1.0, scaleRate, 500);
 
         $(".node").unbind();
