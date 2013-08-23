@@ -644,8 +644,8 @@ var AssureIt;
 
         ScreenManager.prototype.SetScale = function (scale) {
             this.Scale = scale;
-            var cx = this.GetWidth() / 2;
-            var cy = this.GetHeight() / 2;
+            var cx = this.GetPageCenterX();
+            var cy = this.GetPageCenterY();
             this.OffsetX = (this.LogicalOffsetX - cx) * scale + cx;
             this.OffsetY = (this.LogicalOffsetY - cy) * scale + cy;
             this.UpdateAttr();
@@ -674,13 +674,21 @@ var AssureIt;
         };
 
         ScreenManager.prototype.CalcLogicalOffsetX = function (OffsetX) {
-            var cx = this.GetWidth() / 2;
+            var cx = this.GetPageCenterX();
             return (OffsetX - cx) / this.Scale + cx;
         };
 
         ScreenManager.prototype.CalcLogicalOffsetY = function (OffsetY) {
-            var cy = this.GetHeight() / 2;
+            var cy = this.GetPageCenterY();
             return (OffsetY - cy) / this.Scale + cy;
+        };
+
+        ScreenManager.prototype.CalcLogicalOffsetXFromPageX = function (PageX) {
+            return this.GetLogicalOffsetX() - (PageX - this.GetPageCenterX()) / this.Scale;
+        };
+
+        ScreenManager.prototype.CalcLogicalOffsetYFromPageY = function (PageY) {
+            return this.GetLogicalOffsetY() - (PageY - this.GetPageCenterY()) / this.Scale;
         };
 
         ScreenManager.prototype.GetOffsetX = function () {
@@ -697,6 +705,22 @@ var AssureIt;
 
         ScreenManager.prototype.GetHeight = function () {
             return document.body.clientHeight;
+        };
+
+        ScreenManager.prototype.GetPageCenterX = function () {
+            return this.GetWidth() / 2;
+        };
+
+        ScreenManager.prototype.GetPageCenterY = function () {
+            return this.GetHeight() / 2;
+        };
+
+        ScreenManager.prototype.GetCaseWidth = function () {
+            return $("#layer0")[0].getBoundingClientRect().width;
+        };
+
+        ScreenManager.prototype.GetCaseHeight = function () {
+            return $("#layer0")[0].getBoundingClientRect().height;
         };
         return ScreenManager;
     })();

@@ -127,10 +127,10 @@ class MenuBar {
 		var caseViewer = this.caseViewer;
 		var editorIsActive: boolean = false;
 
-		var svgwidth = $("#layer0")[0].getBoundingClientRect().width;
-		var svgheight = $("#layer0")[0].getBoundingClientRect().height;
-		var bodywidth = $("body").width();
-		var bodyheight = $("body").height();
+		var svgwidth = screenManager.GetCaseWidth();
+		var svgheight = screenManager.GetCaseHeight();
+		var bodywidth = screenManager.GetWidth();
+		var bodyheight = screenManager.GetHeight();
 
 		var scaleWidth = bodywidth / svgwidth;
 		var scaleHeight = bodyheight / svgheight;
@@ -194,8 +194,8 @@ class MenuBar {
 		var ScaleDown: (e:any) => void = function(e): void {
 			if(!editorIsActive) {
 				timers.push(setTimeout(function() {
-					var x = screenManager.CalcLogicalOffsetX(e.pageX);
-					var y = screenManager.CalcLogicalOffsetY(e.pageY);
+					var x = screenManager.CalcLogicalOffsetXFromPageX(e.pageX);
+					var y = screenManager.CalcLogicalOffsetYFromPageY(e.pageY);
 					startZoom(x, y, scaleRate, 1.0, 500);
 					$("#background").unbind("click", ScaleDown);
 					$("#background").unbind("dblclick", CancelClickEvent);

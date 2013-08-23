@@ -626,8 +626,8 @@ module AssureIt {
 
 		SetScale(scale: number): void {
 			this.Scale = scale;
-			var cx = this.GetWidth() / 2;
-			var cy = this.GetHeight() / 2;
+			var cx = this.GetPageCenterX();
+			var cy = this.GetPageCenterY();
 			this.OffsetX = (this.LogicalOffsetX - cx) * scale + cx;
 			this.OffsetY = (this.LogicalOffsetY - cy) * scale + cy;
 			this.UpdateAttr();
@@ -655,14 +655,22 @@ module AssureIt {
 			return this.LogicalOffsetY;
 		}
 
-		CalcLogicalOffsetX(OffsetX: number): number {
-			var cx = this.GetWidth() / 2;
+		private CalcLogicalOffsetX(OffsetX: number): number {
+			var cx = this.GetPageCenterX();
 			return (OffsetX - cx) / this.Scale + cx;
 		}
 
-		CalcLogicalOffsetY(OffsetY: number): number {
-			var cy = this.GetHeight() / 2;
+		private CalcLogicalOffsetY(OffsetY: number): number {
+			var cy = this.GetPageCenterY();
 			return (OffsetY - cy) / this.Scale + cy;
+		}
+
+		CalcLogicalOffsetXFromPageX(PageX: number): number {
+			return this.GetLogicalOffsetX() - (PageX - this.GetPageCenterX()) / this.Scale;
+		}
+
+		CalcLogicalOffsetYFromPageY(PageY: number): number {
+			return this.GetLogicalOffsetY() - (PageY - this.GetPageCenterY()) / this.Scale;
 		}
 
 		GetOffsetX(): number {
@@ -679,6 +687,22 @@ module AssureIt {
 
 		GetHeight(): number {
 			return document.body.clientHeight;
+		}
+
+		GetPageCenterX(): number {
+			return this.GetWidth() / 2;
+		}
+
+		GetPageCenterY(): number {
+			return this.GetHeight() / 2;
+		}
+
+		GetCaseWidth(): number {
+			return $("#layer0")[0].getBoundingClientRect().width;
+		}
+
+		GetCaseHeight(): number {
+			return $("#layer0")[0].getBoundingClientRect().height;
 		}
 
 	}
