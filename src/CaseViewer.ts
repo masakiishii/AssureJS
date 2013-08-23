@@ -634,12 +634,10 @@ module AssureIt {
 		}
 
 		SetOffset(x: number, y: number): void {
-			var cx = this.GetWidth() / 2;
-			var cy = this.GetHeight() / 2;
 			this.OffsetX = x;
 			this.OffsetY = y;
-			this.LogicalOffsetX = (x - cx) / this.Scale + cx;
-			this.LogicalOffsetY = (y - cy) / this.Scale + cy;
+			this.LogicalOffsetX = this.CalcLogicalOffsetX(x);
+			this.LogicalOffsetY = this.CalcLogicalOffsetY(y);
 			this.UpdateAttr();
 		}
 
@@ -655,6 +653,16 @@ module AssureIt {
 
 		GetLogicalOffsetY(): number {
 			return this.LogicalOffsetY;
+		}
+
+		CalcLogicalOffsetX(OffsetX: number): number {
+			var cx = this.GetWidth() / 2;
+			return (OffsetX - cx) / this.Scale + cx;
+		}
+
+		CalcLogicalOffsetY(OffsetY: number): number {
+			var cy = this.GetHeight() / 2;
+			return (OffsetY - cy) / this.Scale + cy;
 		}
 
 		GetOffsetX(): number {

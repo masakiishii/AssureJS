@@ -652,12 +652,10 @@ var AssureIt;
         };
 
         ScreenManager.prototype.SetOffset = function (x, y) {
-            var cx = this.GetWidth() / 2;
-            var cy = this.GetHeight() / 2;
             this.OffsetX = x;
             this.OffsetY = y;
-            this.LogicalOffsetX = (x - cx) / this.Scale + cx;
-            this.LogicalOffsetY = (y - cy) / this.Scale + cy;
+            this.LogicalOffsetX = this.CalcLogicalOffsetX(x);
+            this.LogicalOffsetY = this.CalcLogicalOffsetY(y);
             this.UpdateAttr();
         };
 
@@ -673,6 +671,16 @@ var AssureIt;
 
         ScreenManager.prototype.GetLogicalOffsetY = function () {
             return this.LogicalOffsetY;
+        };
+
+        ScreenManager.prototype.CalcLogicalOffsetX = function (OffsetX) {
+            var cx = this.GetWidth() / 2;
+            return (OffsetX - cx) / this.Scale + cx;
+        };
+
+        ScreenManager.prototype.CalcLogicalOffsetY = function (OffsetY) {
+            var cy = this.GetHeight() / 2;
+            return (OffsetY - cy) / this.Scale + cy;
         };
 
         ScreenManager.prototype.GetOffsetX = function () {

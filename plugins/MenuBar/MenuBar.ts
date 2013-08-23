@@ -140,22 +140,35 @@ class MenuBar {
 			return;
 		}
 
-		var startZoom = (start: number, target: number, duration: number) => {
-			var delta = (target - start) / (30 * duration / 1000);
-			var current = start;
+		var startZoom = (logicalOffsetX: number, logicalOffsetY: number, initialS: number, target: number, duration: number) => {
+			var cycle = 1000/30;
+			var cycles = duration / cycle;
+			var initialX = screenManager.GetLogicalOffsetX();
+			var initialY = screenManager.GetLogicalOffsetY();
+			var deltaS = (target - initialS) / cycles;
+			var deltaX = (logicalOffsetX - initialX) / cycles;
+			var deltaY = (logicalOffsetY - initialY)  / cycles;
+
+			var currentS = initialS;
+			var currentX = initialX;
+			var currentY = initialY;
+			var count = 0;
 			var zoom = ()=>{
-				if(Math.abs(current - target) > Math.abs(delta)){
-					current += delta;
-					screenManager.SetScale(current);
-					setTimeout(zoom, 1000/30);
+				if(count < cycles){
+					count += 1;
+					currentS += deltaS;
+					currentX += deltaX;
+					currentY += deltaY;
+					screenManager.SetLogicalOffset(currentX, currentY, currentS);
+					setTimeout(zoom, cycle);
 				}else{
-					screenManager.SetScale(target);
+					screenManager.SetLogicalOffset(logicalOffsetX, logicalOffsetY, target);
 				}
 			}
 			zoom();
 		}
 
-		startZoom(1.0, scaleRate, 500);
+		startZoom(screenManager.GetLogicalOffsetX(), screenManager.GetLogicalOffsetY(), 1.0, scaleRate, 500);
 
 		$(".node").unbind();
 
@@ -178,10 +191,12 @@ class MenuBar {
 			}
 		}
 
-		var ScaleDown: () => void = function(): void {
+		var ScaleDown: (e:any) => void = function(e): void {
 			if(!editorIsActive) {
 				timers.push(setTimeout(function() {
-					startZoom(scaleRate, 1.0, 500);
+					var x = screenManager.CalcLogicalOffsetX(e.pageX);
+					var y = screenManager.CalcLogicalOffsetY(e.pageY);
+					startZoom(x, y, scaleRate, 1.0, 500);
 					$("#background").unbind("click", ScaleDown);
 					$("#background").unbind("dblclick", CancelClickEvent);
 					$("#background").unbind("mousemove", CancelClickEvent);
