@@ -109,6 +109,23 @@ var AssureIt;
             return null;
         };
 
+        NodeModel.prototype.eachChildren = function (f) {
+            for (var i = 0; i < this.Children.length; i++) {
+                f(i, this.Children[i]);
+            }
+        };
+
+        NodeModel.prototype.traverse = function (f) {
+            function traverse_(n, f) {
+                n.eachChildren(function (i, v) {
+                    f(i, v);
+                    traverse_(v, f);
+                });
+            }
+            f(-1, this);
+            traverse_(this, f);
+        };
+
         NodeModel.prototype.InvokePlugInModifier = function (EventType, EventBody) {
             var recall = false;
             for (var a in this.Annotations) {

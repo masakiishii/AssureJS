@@ -108,6 +108,23 @@ module AssureIt {
 			return null;
 		}
 
+		eachChildren(f: (i: number, v: NodeModel) => void): void { //FIXME
+			for(var i: number = 0; i < this.Children.length; i++) {
+				f(i, this.Children[i]);
+			}
+		}
+
+		traverse(f: (i: number, v: NodeModel) => void): void {
+			function traverse_(n: NodeModel, f: (i: number, v: NodeModel) => void): void {
+				n.eachChildren((i: number, v: NodeModel) => {
+					f(i, v);
+					traverse_(v, f)
+				});
+			}
+			f(-1, this);
+			traverse_(this, f);
+		}
+
 		/* plug-In */
 		InvokePlugInModifier(EventType : string, EventBody : any) : boolean {
 			var recall = false;
