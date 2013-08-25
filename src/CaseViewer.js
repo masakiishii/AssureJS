@@ -101,6 +101,14 @@ var AssureIt;
             this.ArrowPath.setAttribute("d", "M0,0 C0,0 0,0 0,0");
         };
 
+        SVGShape.prototype.GetSVG = function () {
+            return this.ShapeGroup;
+        };
+
+        SVGShape.prototype.GetSVGPath = function () {
+            return this.ArrowPath;
+        };
+
         SVGShape.prototype.Resize = function (CaseViewer, NodeModel, HTMLDoc) {
             this.Width = HTMLDoc.Width;
             this.Height = HTMLDoc.Height;

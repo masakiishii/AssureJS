@@ -111,6 +111,14 @@ module AssureIt {
 			this.ArrowPath.setAttribute("d", "M0,0 C0,0 0,0 0,0");
 		}
 
+		GetSVG(): SVGGElement {
+			return this.ShapeGroup;
+		}
+
+		GetSVGPath(): SVGPathElement {
+			return this.ArrowPath;
+		}
+
 		Resize(CaseViewer: CaseViewer, NodeModel: NodeModel, HTMLDoc: HTMLDoc): void {
 			this.Width = HTMLDoc.Width;
 			this.Height = HTMLDoc.Height;
