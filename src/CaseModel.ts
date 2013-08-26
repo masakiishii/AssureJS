@@ -246,21 +246,32 @@ module AssureIt {
 
 	//TODO Split file "CommitModel.ts"
 	export class CommitModel {
-		constructor(public CommitId: number, public CaseId: number, public Message:string, public LatestFlag: boolean) {
+		constructor(public CommitId: number, public Message:string, public date: string, public userId:number, public userName: string, public LatestFlag: boolean) {
 		}
 	}
 
 	export class CommitCollection {
-		CommitModels: CommitModel[] = [];
+		CommitModels: CommitModel[];
 
-		constructor() {
+		constructor(CommitModels?: CommitModel[]) {
+			if(CommitModels == null) {
+				CommitModels = [];
+			}
+			this.CommitModels = CommitModels;
 		}
 
-		Append(COModel: CommitModel): void {
-			this.CommitModels.push(COModel);
+		Append(CommitModel: CommitModel): void {
+			this.CommitModels.push(CommitModel);
 		}
 
-		FromJson(json: any): void {
+		static FromJson(json_array: any[]): CommitCollection {
+			var CommitModels: CommitModel[] = [];
+			for(var i: number = 0; i < json_array.length; i++) {
+				var j = json_array[i];
+				CommitModels.push(new CommitModel(j.commitId, j.commitMessage, j.dateTime, j.userId, j.userName, false));
+			}
+			CommitModels[json_array.length - 1].LatestFlag = true; //Latest one
+			return new CommitCollection(CommitModels);
 		}
 
 		forEach(callback: (i:number, v: CommitModel)=>void): void {

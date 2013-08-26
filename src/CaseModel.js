@@ -232,10 +232,12 @@ var AssureIt;
     AssureIt.Case = Case;
 
     var CommitModel = (function () {
-        function CommitModel(CommitId, CaseId, Message, LatestFlag) {
+        function CommitModel(CommitId, Message, date, userId, userName, LatestFlag) {
             this.CommitId = CommitId;
-            this.CaseId = CaseId;
             this.Message = Message;
+            this.date = date;
+            this.userId = userId;
+            this.userName = userName;
             this.LatestFlag = LatestFlag;
         }
         return CommitModel;
@@ -243,14 +245,24 @@ var AssureIt;
     AssureIt.CommitModel = CommitModel;
 
     var CommitCollection = (function () {
-        function CommitCollection() {
-            this.CommitModels = [];
+        function CommitCollection(CommitModels) {
+            if (CommitModels == null) {
+                CommitModels = [];
+            }
+            this.CommitModels = CommitModels;
         }
-        CommitCollection.prototype.Append = function (COModel) {
-            this.CommitModels.push(COModel);
+        CommitCollection.prototype.Append = function (CommitModel) {
+            this.CommitModels.push(CommitModel);
         };
 
-        CommitCollection.prototype.FromJson = function (json) {
+        CommitCollection.FromJson = function (json_array) {
+            var CommitModels = [];
+            for (var i = 0; i < json_array.length; i++) {
+                var j = json_array[i];
+                CommitModels.push(new CommitModel(j.commitId, j.commitMessage, j.dateTime, j.userId, j.userName, false));
+            }
+            CommitModels[json_array.length - 1].LatestFlag = true;
+            return new CommitCollection(CommitModels);
         };
 
         CommitCollection.prototype.forEach = function (callback) {
