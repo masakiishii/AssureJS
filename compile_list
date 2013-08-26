@@ -14,6 +14,7 @@ plugins/BeforeUnload/BeforeUnload.ts
 plugins/DefaultStatementRender/DefaultStatementRender.ts
 plugins/LayoutPortrait/LayoutPortrait.ts
 plugins/Export/Export.ts
+plugins/TimeLine/TimeLine.ts
 src/CaseDecoder.ts
 src/CaseEncoder.ts
 src/CaseModel.ts
