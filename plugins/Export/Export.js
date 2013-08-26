@@ -26,14 +26,13 @@ var ExportMenuPlugIn = (function (_super) {
     };
 
     ExportMenuPlugIn.prototype.Delegate = function (caseViewer, caseModel, element, serverApi) {
-        element.append('<a href="#" ><img id="export-xml" src="' + serverApi.basepath + 'images/icon.png" title="Export XML" alt="XML" /></a>');
         element.append('<a href="#" ><img id="export-pdf" src="' + serverApi.basepath + 'images/icon.png" title="Export PDF" alt="XML" /></a>');
         element.append('<a href="#" ><img id="export-png" src="' + serverApi.basepath + 'images/icon.png" title="Export PNG" alt="XML" /></a>');
         $('#export-pdf').unbind('click');
-        $('#export-xml').unbind('click');
+
         $('#export-png').unbind('click');
         $('#export-pdf').click(this.editorPlugIn.ExportPdf);
-        $('#export-xml').click(this.editorPlugIn.ExportXml);
+
         $('#export-png').click(this.editorPlugIn.ExportPng);
         return true;
     };
@@ -63,7 +62,7 @@ var ExportActionPlugIn = (function (_super) {
         };
 
         this.ExportPdf = ShowExport("pdf");
-        this.ExportXml = ShowExport("xml");
+
         this.ExportPng = ShowExport("png");
 
         return true;
