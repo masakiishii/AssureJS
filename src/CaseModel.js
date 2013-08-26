@@ -253,26 +253,12 @@ var AssureIt;
         CommitCollection.prototype.FromJson = function (json) {
         };
 
-        CommitCollection.prototype.Iterator = function () {
-            return new CommitIterator(this.CommitModels);
+        CommitCollection.prototype.forEach = function (callback) {
+            for (var i = 0; i < this.CommitModels.length; i++) {
+                callback(i, this.CommitModels[i]);
+            }
         };
         return CommitCollection;
     })();
     AssureIt.CommitCollection = CommitCollection;
-
-    var CommitIterator = (function () {
-        function CommitIterator(CommitModels) {
-            this.CommitModels = CommitModels;
-            this.it = 0;
-        }
-        CommitIterator.prototype.HasNext = function () {
-            return this.it < this.CommitModels.length;
-        };
-
-        CommitIterator.prototype.Next = function () {
-            return this.CommitModels[this.it++];
-        };
-        return CommitIterator;
-    })();
-    AssureIt.CommitIterator = CommitIterator;
 })(AssureIt || (AssureIt = {}));

@@ -263,24 +263,10 @@ module AssureIt {
 		FromJson(json: any): void {
 		}
 
-		Iterator(): CommitIterator {
-			return new CommitIterator(this.CommitModels);
-		}
-	}
-
-	export class CommitIterator {
-		it: number;
-
-		constructor(public CommitModels: CommitModel[]) {
-			this.it = 0;
-		}
-
-		HasNext(): boolean {
-			return this.it < this.CommitModels.length;
-		}
-
-		Next(): CommitModel {
-			return this.CommitModels[this.it++];
+		forEach(callback: (i:number, v: CommitModel)=>void): void {
+			for(var i: number = 0; i < this.CommitModels.length; i++) {
+				callback(i, this.CommitModels[i]);
+			}
 		}
 	}
 }
