@@ -4,19 +4,39 @@
 /// <reference path="../Editor/Editor.ts" />
 
 class TimeLine {
-	constructor(public caseViewer: AssureIt.CaseViewer, public nodeModel: AssureIt.NodeModel, public element: JQuery, public serverApi: AssureIt.ServerAPI) {
+	timeline: JQuery;
+	canvas: JQuery;
+	container: JQuery;
+	root: JQuery;
 
+	constructor(public caseViewer: AssureIt.CaseViewer, public nodeModel: AssureIt.NodeModel, public element: JQuery, public serverApi: AssureIt.ServerAPI) {
 	}
 
-	enable() {
-		var commitCollection: AssureIt.CommitCollection = AssureIt.CommitCollection.FromJson(this.serverApi.GetCommitList(this.nodeModel.Case.CaseId));
+	CreateDOM():void {
+		this.root = $(this.caseViewer.Screen.ControlLayer);
+
+		this.container = $("<div></div>").css({
+			position: "absolute", left: 0, top: 0,
+		}).addClass("timeline-container").appendTo(this.root);
+		this.timeline = $("<div></div>")
+			.addClass("timeline").text("hogehogehoge")
+			.appendTo(this.container);
+		this.canvas = $("<canvas></canvas>")
+			.css("position", "absolute")
+			.appendTo(this.timeline);
+	}
+
+	Enable():void {
+		this.CreateDOM();
+
+		var commitCollection: AssureIt.CommitCollection = this.serverApi.GetCommitList(this.nodeModel.Case.CaseId);
 		commitCollection.forEach((i:number, v:AssureIt.CommitModel):void => {
 			console.log(v);
 		});
 	}
 
-	disable() {
-		console.log("disable");
+	Disable() {
+		$(".timeline-container").remove();
 	}
 }
 
@@ -46,10 +66,10 @@ class TimeLineMenuPlugIn extends AssureIt.MenuBarContentsPlugIn {
 
 			var timeline = new TimeLine(caseViewer, caseModel, element, serverApi);
 			if(this.visible) {
-				timeline.enable();
+				timeline.Enable();
 				this.visible = false;
 			}else {
-				timeline.disable();
+				timeline.Disable();
 				this.visible = true;
 			}
 		});

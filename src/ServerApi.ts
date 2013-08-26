@@ -1,4 +1,5 @@
 ///<reference path='../d.ts/jquery.d.ts'/>
+///<reference path='./CaseModel.ts'/>
 
 module AssureIt {
 	var default_success_callback = function(result) {
@@ -73,8 +74,8 @@ module AssureIt {
 				dcaseName: name, contents: tree });
 		}
 
-		GetCommitList(dcaseId: number) {
-			return this.RemoteCall("getCommitList", { dcaseId:dcaseId }).commitList;
+		GetCommitList(dcaseId: number): CommitCollection {
+			return CommitCollection.FromJson(this.RemoteCall("getCommitList", { dcaseId:dcaseId }).commitList);
 		}
 
 		GetTagList() {

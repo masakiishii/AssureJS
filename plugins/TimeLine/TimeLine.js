@@ -11,15 +11,29 @@ var TimeLine = (function () {
         this.element = element;
         this.serverApi = serverApi;
     }
-    TimeLine.prototype.enable = function () {
-        var commitCollection = AssureIt.CommitCollection.FromJson(this.serverApi.GetCommitList(this.nodeModel.Case.CaseId));
+    TimeLine.prototype.CreateDOM = function () {
+        this.root = $(this.caseViewer.Screen.ControlLayer);
+
+        this.container = $("<div></div>").css({
+            position: "absolute",
+            left: 0,
+            top: 0
+        }).addClass("timeline-container").appendTo(this.root);
+        this.timeline = $("<div></div>").addClass("timeline").text("hogehogehoge").appendTo(this.container);
+        this.canvas = $("<canvas></canvas>").css("position", "absolute").appendTo(this.timeline);
+    };
+
+    TimeLine.prototype.Enable = function () {
+        this.CreateDOM();
+
+        var commitCollection = this.serverApi.GetCommitList(this.nodeModel.Case.CaseId);
         commitCollection.forEach(function (i, v) {
             console.log(v);
         });
     };
 
-    TimeLine.prototype.disable = function () {
-        console.log("disable");
+    TimeLine.prototype.Disable = function () {
+        $(".timeline-container").remove();
     };
     return TimeLine;
 })();
@@ -50,10 +64,10 @@ var TimeLineMenuPlugIn = (function (_super) {
         $('#timeline').click(function (ev) {
             var timeline = new TimeLine(caseViewer, caseModel, element, serverApi);
             if (_this.visible) {
-                timeline.enable();
+                timeline.Enable();
                 _this.visible = false;
             } else {
-                timeline.disable();
+                timeline.Disable();
                 _this.visible = true;
             }
         });
