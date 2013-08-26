@@ -64,7 +64,7 @@ function Check_CaseDecoder_ParseJson() {
         ]
     };
 
-    var TestCase = new AssureIt.Case();
+    var TestCase = new AssureIt.Case(JsonData.DCaseName, 0, 0);
     var decoder = new AssureIt.CaseDecoder();
     var root = decoder.ParseJson(TestCase, JsonData);
 

@@ -125,46 +125,15 @@ var AssureIt;
             f(-1, this);
             traverse_(this, f);
         };
-
-        NodeModel.prototype.InvokePlugInModifier = function (EventType, EventBody) {
-            var recall = false;
-            for (var a in this.Annotations) {
-                var f = this.Case.GetPlugInModifier(a.Name);
-                if (f != null) {
-                    recall = f(Case, this, EventType, EventBody) || recall;
-                }
-            }
-            for (var a in this.Notes) {
-                var f = this.Case.GetPlugInModifier(a.Name);
-                if (f != null) {
-                    recall = f(Case, this, EventType, EventBody) || recall;
-                }
-            }
-            return recall;
-        };
         return NodeModel;
     })();
     AssureIt.NodeModel = NodeModel;
 
-    var CaseModifiers = (function () {
-        function CaseModifiers() {
-            this.PlugInMap = {};
-        }
-        CaseModifiers.prototype.AddPlugInModifier = function (key, f) {
-            this.PlugInMap[key] = f;
-        };
-
-        CaseModifiers.prototype.GetPlugInModifier = function (key) {
-            return this.PlugInMap[key];
-        };
-        return CaseModifiers;
-    })();
-    AssureIt.CaseModifiers = CaseModifiers;
-
-    var CaseModifierConfig = new CaseModifiers();
-
     var Case = (function () {
-        function Case() {
+        function Case(CaseName, CaseId, CommitId) {
+            this.CaseName = CaseName;
+            this.CaseId = CaseId;
+            this.CommitId = CommitId;
             this.isModified = false;
             this.isEditable = false;
             this.isLatest = true;
@@ -221,9 +190,6 @@ var AssureIt;
             this.IdCounters[Type] += 1;
             return NodeType[Type].charAt(0) + this.IdCounters[Type];
         };
-        Case.prototype.GetPlugInModifier = function (key) {
-            return CaseModifierConfig.PlugInMap[key];
-        };
 
         Case.prototype.IsLogin = function () {
             var matchResult = document.cookie.match(/userId=(\w+);?/);
@@ -264,4 +230,49 @@ var AssureIt;
         return Case;
     })();
     AssureIt.Case = Case;
+
+    var CommitModel = (function () {
+        function CommitModel(CommitId, CaseId, Message, LatestFlag) {
+            this.CommitId = CommitId;
+            this.CaseId = CaseId;
+            this.Message = Message;
+            this.LatestFlag = LatestFlag;
+        }
+        return CommitModel;
+    })();
+    AssureIt.CommitModel = CommitModel;
+
+    var CommitCollection = (function () {
+        function CommitCollection() {
+            this.CommitModels = [];
+        }
+        CommitCollection.prototype.Append = function (COModel) {
+            this.CommitModels.push(COModel);
+        };
+
+        CommitCollection.prototype.FromJson = function (json) {
+        };
+
+        CommitCollection.prototype.Iterator = function () {
+            return new CommitIterator(this.CommitModels);
+        };
+        return CommitCollection;
+    })();
+    AssureIt.CommitCollection = CommitCollection;
+
+    var CommitIterator = (function () {
+        function CommitIterator(CommitModels) {
+            this.CommitModels = CommitModels;
+            this.it = 0;
+        }
+        CommitIterator.prototype.HasNext = function () {
+            return this.it < this.CommitModels.length;
+        };
+
+        CommitIterator.prototype.Next = function () {
+            return this.CommitModels[this.it++];
+        };
+        return CommitIterator;
+    })();
+    AssureIt.CommitIterator = CommitIterator;
 })(AssureIt || (AssureIt = {}));

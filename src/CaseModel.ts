@@ -126,46 +126,25 @@ module AssureIt {
 		}
 
 		/* plug-In */
-		InvokePlugInModifier(EventType : string, EventBody : any) : boolean {
-			var recall = false;
-			for(var a in this.Annotations) {
-				var f = this.Case.GetPlugInModifier(a.Name);
-				if(f != null) {
-					recall = f(Case, this, EventType, EventBody) || recall;
-				}
-			}
-			for(var a in this.Notes) {
-				var f = this.Case.GetPlugInModifier(a.Name);
-				if(f != null) {
-					recall = f(Case, this, EventType, EventBody) || recall;
-				}
-			}
-			return recall;
-		}
+		//InvokePlugInModifier(EventType : string, EventBody : any) : boolean {
+		//	var recall = false;
+		//	for(var a in this.Annotations) {
+		//		var f = this.Case.GetPlugInModifier(a.Name);
+		//		if(f != null) {
+		//			recall = f(Case, this, EventType, EventBody) || recall;
+		//		}
+		//	}
+		//	for(var a in this.Notes) {
+		//		var f = this.Case.GetPlugInModifier(a.Name);
+		//		if(f != null) {
+		//			recall = f(Case, this, EventType, EventBody) || recall;
+		//		}
+		//	}
+		//	return recall;
+		//}
 	}
-
-	export class CaseModifiers {
-		PlugInMap : { [index: string]: (Case, NodeModel, string, any) => boolean};
-
-		constructor() {
-			this.PlugInMap = {};
-		}
-
-		AddPlugInModifier(key: string, f : (Case, NodeModel, string, any) => boolean) {
-			this.PlugInMap[key] = f;
-		}
-
-		GetPlugInModifier(key : string) : (Case, NodeModel, string, any) => boolean {
-			return this.PlugInMap[key];
-		}
-	}
-
-	var CaseModifierConfig = new CaseModifiers();
 
 	export class Case {
-		CaseId : number;  // TODO
-		CaseName : string;  // TODO
-		CommitId : number; // TODO
 		IdCounters : number[];
 		ElementTop : NodeModel;
 		ElementMap : { [index: string]: NodeModel};
@@ -174,7 +153,7 @@ module AssureIt {
 		isEditable : boolean = false;
 		isLatest   : boolean = true;
 
-		constructor() {
+		constructor(public CaseName: string, public CaseId: number, public CommitId: number) {
 			this.IdCounters = [0, 0, 0, 0, 0];
 			this.ElementMap = {};
 		}
@@ -226,9 +205,6 @@ module AssureIt {
 			this.IdCounters[Type] += 1;
 			return NodeType[Type].charAt(0) + this.IdCounters[Type];
 		}
-		GetPlugInModifier(key : string) : (Case, NodeModel, string, any) => boolean {
-			return CaseModifierConfig.PlugInMap[key];
-		}
 
 		IsLogin(): boolean {
 			var matchResult = document.cookie.match(/userId=(\w+);?/);
@@ -265,6 +241,46 @@ module AssureIt {
 
 		IsLatest(): boolean {
 			return this.isLatest;
+		}
+	}
+
+	//TODO Split file "CommitModel.ts"
+	export class CommitModel {
+		constructor(public CommitId: number, public CaseId: number, public Message:string, public LatestFlag: boolean) {
+		}
+	}
+
+	export class CommitCollection {
+		CommitModels: CommitModel[] = [];
+
+		constructor() {
+		}
+
+		Append(COModel: CommitModel): void {
+			this.CommitModels.push(COModel);
+		}
+
+		FromJson(json: any): void {
+		}
+
+		Iterator(): CommitIterator {
+			return new CommitIterator(this.CommitModels);
+		}
+	}
+
+	export class CommitIterator {
+		it: number;
+
+		constructor(public CommitModels: CommitModel[]) {
+			this.it = 0;
+		}
+
+		HasNext(): boolean {
+			return this.it < this.CommitModels.length;
+		}
+
+		Next(): CommitModel {
+			return this.CommitModels[this.it++];
 		}
 	}
 }
