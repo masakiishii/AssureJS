@@ -5,7 +5,6 @@
 
 class TimeLine {
 	timeline: JQuery;
-	canvas: JQuery;
 	container: JQuery;
 	root: JQuery;
 
@@ -16,27 +15,41 @@ class TimeLine {
 		this.root = $(this.caseViewer.Screen.ControlLayer);
 
 		this.container = $("<div></div>").css({
-			position: "absolute", left: 0, top: 0,
+			position: "absolute", left: 0, top: 0, width: 50, height: 100, background: "#eee"
 		}).addClass("timeline-container").appendTo(this.root);
 		this.timeline = $("<div></div>")
-			.addClass("timeline").text("hogehogehoge")
+			.addClass("timeline")
 			.appendTo(this.container);
-		this.canvas = $("<canvas></canvas>")
-			.css("position", "absolute")
-			.appendTo(this.timeline);
 	}
 
-	Enable():void {
+	Enable(callback: () => void):void {
 		this.CreateDOM();
 
-		var commitCollection: AssureIt.CommitCollection = this.serverApi.GetCommitList(this.nodeModel.Case.CaseId);
-		commitCollection.forEach((i:number, v:AssureIt.CommitModel):void => {
-			console.log(v);
+		var commits: AssureIt.CommitCollection = this.serverApi.GetCommitList(this.nodeModel.Case.CaseId);
+		var Case: AssureIt.Case = this.nodeModel.Case;
+		var TopLabel = Case.ElementTop.Label;
+		var converter = new AssureIt.Converter();
+		var decoder   = new AssureIt.CaseDecoder();
+		commits.forEach((i:number, v:AssureIt.CommitModel):void => {
+			this.timeline.append($('<a id="timeline'+i+'" href="#"></a>').text(v.toString()));
+			$("#timeline"+i).click((e: Event)=>{
+				var oldData = this.serverApi.GetNodeTree(v.CommitId);
+				var j = {contents: JSON.stringify(oldData)};
+				var JsonData = converter.GenNewJson(j);
+				Case.ClearNodes();
+				var ElementTop:AssureIt.NodeModel = decoder.ParseJson(Case, JsonData);
+				Case.SetElementTop(ElementTop);
+				this.caseViewer.DeleteViewsRecursive(this.caseViewer.ViewMap[TopLabel]);
+				this.caseViewer.InitViewMap(Case);
+				this.caseViewer.Draw();
+				this.Disable(callback);
+			});
 		});
 	}
 
-	Disable() {
+	Disable(callback: ()=>void) {
 		$(".timeline-container").remove();
+		callback();
 	}
 }
 
@@ -66,11 +79,12 @@ class TimeLineMenuPlugIn extends AssureIt.MenuBarContentsPlugIn {
 
 			var timeline = new TimeLine(caseViewer, caseModel, element, serverApi);
 			if(this.visible) {
-				timeline.Enable();
+				timeline.Enable(() => {this.visible = true; });
 				this.visible = false;
 			}else {
-				timeline.Disable();
-				this.visible = true;
+				timeline.Disable(() =>{
+					this.visible = true;
+				});
 			}
 		});
 		return true;

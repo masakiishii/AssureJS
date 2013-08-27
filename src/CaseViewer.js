@@ -379,6 +379,7 @@ var AssureIt;
             }
             this.Update();
         };
+
         NodeView.prototype.AppendHTMLElementRecursive = function (svgroot, divroot, caseViewer) {
             var Children = this.Source.Children;
             var ViewMap = this.CaseViewer.ViewMap;
@@ -387,6 +388,7 @@ var AssureIt;
             }
             this.AppendHTMLElement(svgroot, divroot, caseViewer);
         };
+
         NodeView.prototype.DeleteHTMLElement = function (svgroot, divroot) {
             this.HTMLDoc.DocBase.remove();
             $(this.SVGShape.ShapeGroup).remove();
@@ -394,6 +396,7 @@ var AssureIt;
                 $(this.SVGShape.ArrowPath).remove();
             this.Update();
         };
+
         NodeView.prototype.DeleteHTMLElementRecursive = function (svgroot, divroot) {
             var Children = this.Source.Children;
             var ViewMap = this.CaseViewer.ViewMap;
@@ -431,20 +434,21 @@ var AssureIt;
             this.pluginManager = pluginManager;
             this.serverApi = serverApi;
             this.Screen = Screen;
-            this.ViewMap = [];
+            this.InitViewMap(Source);
+            this.Resize();
+        }
+        CaseViewer.prototype.InitViewMap = function (Source) {
+            this.ViewMap = {};
             for (var elementkey in Source.ElementMap) {
                 var element = Source.ElementMap[elementkey];
                 this.ViewMap[element.Label] = new NodeView(this, element);
-            }
-            for (var elementkey in Source.ElementMap) {
-                var element = Source.ElementMap[elementkey];
                 if (element.Parent != null) {
                     this.ViewMap[element.Label].ParentShape = this.ViewMap[element.Parent.Label];
                 }
             }
             this.ElementTop = Source.ElementTop;
-            this.Resize();
-        }
+        };
+
         CaseViewer.prototype.GetPlugInHTMLRender = function (PlugInName) {
             var _this = this;
             return function (viewer, model, e) {
@@ -475,6 +479,7 @@ var AssureIt;
 
         CaseViewer.prototype.DeleteViewsRecursive = function (root) {
             var Children = root.Source.Children;
+            this.ViewMap[root.Source.Label].DeleteHTMLElementRecursive(null, null);
             delete this.ViewMap[root.Source.Label];
             for (var i = 0; i < Children.length; i++) {
                 this.DeleteViewsRecursive(this.ViewMap[Children[i].Label]);

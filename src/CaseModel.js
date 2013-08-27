@@ -149,10 +149,16 @@ var AssureIt;
             this.SetModified(true);
         };
 
+        Case.prototype.ClearNodes = function () {
+            this.IdCounters = [{}, {}, {}, {}, {}];
+            this.ElementMap = {};
+        };
+
         Case.prototype.SetElementTop = function (ElementTop) {
             this.ElementTop = ElementTop;
             this.SaveIdCounterMax(ElementTop);
         };
+
         Case.prototype.SaveIdCounterMax = function (Element) {
             for (var i = 0; i < Element.Children.length; i++) {
                 this.SaveIdCounterMax(Element.Children[i]);

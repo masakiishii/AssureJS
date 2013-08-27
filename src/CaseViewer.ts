@@ -378,6 +378,7 @@ module AssureIt {
 			}
 			this.Update();
 		}
+
 		AppendHTMLElementRecursive(svgroot: JQuery, divroot: JQuery, caseViewer : CaseViewer): void {
 			var Children = this.Source.Children;
 			var ViewMap = this.CaseViewer.ViewMap;
@@ -386,12 +387,14 @@ module AssureIt {
 			}
 			this.AppendHTMLElement(svgroot, divroot, caseViewer);
 		}
+
 	 	private DeleteHTMLElement(svgroot: JQuery, divroot: JQuery): void {
 			this.HTMLDoc.DocBase.remove();
 			$(this.SVGShape.ShapeGroup).remove();
 			if (this.ParentShape != null) $(this.SVGShape.ArrowPath).remove();
 			this.Update();
 	 	}
+
 	 	DeleteHTMLElementRecursive(svgroot: JQuery, divroot: JQuery): void {
 			var Children = this.Source.Children;
 			var ViewMap = this.CaseViewer.ViewMap;
@@ -427,19 +430,20 @@ module AssureIt {
 		static ElementWidth = 250;
 
 		constructor(public Source: Case, public pluginManager : PlugInManager, public serverApi: ServerAPI, public Screen: ScreenManager) {
-			this.ViewMap = <any>[]; // a hack to avoid tsc's problem.
+			this.InitViewMap(Source);
+			this.Resize();
+		}
+
+		InitViewMap(Source: Case) {
+			this.ViewMap = {};
 			for (var elementkey in Source.ElementMap) {
 				var element = Source.ElementMap[elementkey];
 				this.ViewMap[element.Label] = new NodeView(this, element);
-			}
-			for (var elementkey in Source.ElementMap) {
-				var element = Source.ElementMap[elementkey];
 				if (element.Parent != null) {
 					this.ViewMap[element.Label].ParentShape = this.ViewMap[element.Parent.Label];
 				}
 			}
 			this.ElementTop = Source.ElementTop;
-			this.Resize();
 		}
 
 		GetPlugInHTMLRender(PlugInName: string): (caseViewer: CaseViewer, caseModel: NodeModel, element: JQuery) => boolean {
@@ -470,6 +474,7 @@ module AssureIt {
 
 		DeleteViewsRecursive(root : NodeView) : void {
 			var Children = root.Source.Children;
+			this.ViewMap[root.Source.Label].DeleteHTMLElementRecursive(null, null);
 			delete this.ViewMap[root.Source.Label];
 			for (var i = 0; i < Children.length; i++) {
 				this.DeleteViewsRecursive(this.ViewMap[Children[i].Label]);

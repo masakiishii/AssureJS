@@ -17,23 +17,43 @@ var TimeLine = (function () {
         this.container = $("<div></div>").css({
             position: "absolute",
             left: 0,
-            top: 0
+            top: 0,
+            width: 50,
+            height: 100,
+            background: "#eee"
         }).addClass("timeline-container").appendTo(this.root);
-        this.timeline = $("<div></div>").addClass("timeline").text("hogehogehoge").appendTo(this.container);
-        this.canvas = $("<canvas></canvas>").css("position", "absolute").appendTo(this.timeline);
+        this.timeline = $("<div></div>").addClass("timeline").appendTo(this.container);
     };
 
-    TimeLine.prototype.Enable = function () {
+    TimeLine.prototype.Enable = function (callback) {
+        var _this = this;
         this.CreateDOM();
 
-        var commitCollection = this.serverApi.GetCommitList(this.nodeModel.Case.CaseId);
-        commitCollection.forEach(function (i, v) {
-            console.log(v);
+        var commits = this.serverApi.GetCommitList(this.nodeModel.Case.CaseId);
+        var Case = this.nodeModel.Case;
+        var TopLabel = Case.ElementTop.Label;
+        var converter = new AssureIt.Converter();
+        var decoder = new AssureIt.CaseDecoder();
+        commits.forEach(function (i, v) {
+            _this.timeline.append($('<a id="timeline' + i + '" href="#"></a>').text(v.toString()));
+            $("#timeline" + i).click(function (e) {
+                var oldData = _this.serverApi.GetNodeTree(v.CommitId);
+                var j = { contents: JSON.stringify(oldData) };
+                var JsonData = converter.GenNewJson(j);
+                Case.ClearNodes();
+                var ElementTop = decoder.ParseJson(Case, JsonData);
+                Case.SetElementTop(ElementTop);
+                _this.caseViewer.DeleteViewsRecursive(_this.caseViewer.ViewMap[TopLabel]);
+                _this.caseViewer.InitViewMap(Case);
+                _this.caseViewer.Draw();
+                _this.Disable(callback);
+            });
         });
     };
 
-    TimeLine.prototype.Disable = function () {
+    TimeLine.prototype.Disable = function (callback) {
         $(".timeline-container").remove();
+        callback();
     };
     return TimeLine;
 })();
@@ -64,11 +84,14 @@ var TimeLineMenuPlugIn = (function (_super) {
         $('#timeline').click(function (ev) {
             var timeline = new TimeLine(caseViewer, caseModel, element, serverApi);
             if (_this.visible) {
-                timeline.Enable();
+                timeline.Enable(function () {
+                    _this.visible = true;
+                });
                 _this.visible = false;
             } else {
-                timeline.Disable();
-                _this.visible = true;
+                timeline.Disable(function () {
+                    _this.visible = true;
+                });
             }
         });
         return true;

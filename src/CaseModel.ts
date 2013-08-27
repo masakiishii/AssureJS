@@ -167,11 +167,17 @@ module AssureIt {
 			this.SetModified(true);
 		}
 
+		ClearNodes(): void {
+			this.IdCounters = [{}, {}, {}, {}, {}];
+			this.ElementMap = {};
+		}
+
 		/* Deprecated */
-		SetElementTop(ElementTop : NodeModel) : void{
+		SetElementTop(ElementTop : NodeModel) : void {
 			this.ElementTop = ElementTop;
 			this.SaveIdCounterMax(ElementTop);
 		}
+
 		SaveIdCounterMax(Element : NodeModel) : void {
 			for (var i = 0; i < Element.Children.length; i++) {
 				this.SaveIdCounterMax(Element.Children[i]);
