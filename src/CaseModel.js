@@ -240,6 +240,9 @@ var AssureIt;
             this.userName = userName;
             this.LatestFlag = LatestFlag;
         }
+        CommitModel.prototype.toString = function () {
+            return "date:" + this.date + "\n commiter:" + this.userName + "\n";
+        };
         return CommitModel;
     })();
     AssureIt.CommitModel = CommitModel;

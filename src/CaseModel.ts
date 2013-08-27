@@ -252,6 +252,10 @@ module AssureIt {
 	export class CommitModel {
 		constructor(public CommitId: number, public Message:string, public date: string, public userId:number, public userName: string, public LatestFlag: boolean) {
 		}
+
+		toString(): string {
+			return "date:" + this.date + "\n commiter:"+this.userName+"\n";
+		}
 	}
 
 	export class CommitCollection {
