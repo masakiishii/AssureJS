@@ -110,10 +110,10 @@ var AssureIt;
             return this.RemoteCall("getProjectList", { userId: userId });
         };
 
-        ServerAPI.prototype.CreateProject = function (name, userId) {
+        ServerAPI.prototype.CreateProject = function (name, isPublic) {
             return this.RemoteCall("createProject", {
                 name: name,
-                userId: userId
+                isPublic: isPublic
             });
         };
 
