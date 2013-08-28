@@ -487,9 +487,25 @@ module AssureIt {
 			layout.LayoutAllView(this.ElementTop, 0, 0);
 		}
 
+		private UpdateViewMapRecursive(model: NodeModel) {
+			for (var i in model.Children) {
+				var child_model: NodeModel = model.Children[i];
+				if (this.ViewMap[child_model.Label] == null) {
+					var child_view : NodeView = new NodeView(this, child_model);
+					this.ViewMap[child_model.Label] = child_view;
+				}
+				this.UpdateViewMapRecursive(child_model);
+			}
+		}
+
+		private UpdateViewMap() : void {
+			this.UpdateViewMapRecursive(this.ElementTop);
+		}
+
 		Draw(): void {
 			var shapelayer = $(this.Screen.ShapeLayer);
 			var screenlayer = $(this.Screen.ContentLayer);
+			this.UpdateViewMap();
 			this.ViewMap[this.ElementTop.Label].AppendHTMLElementRecursive(shapelayer, screenlayer, this);
 			this.pluginManager.RegisterActionEventListeners(this, this.Source, this.serverApi);
 			this.Update();

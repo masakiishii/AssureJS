@@ -302,7 +302,7 @@ $(function () {
 		]
 	}
 
-	var Case0: AssureIt.Case = new AssureIt.Case(JsonData.DCaseName, 1, 0);
+	var Case0: AssureIt.Case = new AssureIt.Case(JsonData.DCaseName, 1, 0, pluginManager);
 	var caseDecoder: AssureIt.CaseDecoder = new AssureIt.CaseDecoder();
 	var root: AssureIt.NodeModel = caseDecoder.ParseJson(Case0, JsonData);
 

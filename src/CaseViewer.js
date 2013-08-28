@@ -492,9 +492,25 @@ var AssureIt;
             layout.LayoutAllView(this.ElementTop, 0, 0);
         };
 
+        CaseViewer.prototype.UpdateViewMapRecursive = function (model) {
+            for (var i in model.Children) {
+                var child_model = model.Children[i];
+                if (this.ViewMap[child_model.Label] == null) {
+                    var child_view = new NodeView(this, child_model);
+                    this.ViewMap[child_model.Label] = child_view;
+                }
+                this.UpdateViewMapRecursive(child_model);
+            }
+        };
+
+        CaseViewer.prototype.UpdateViewMap = function () {
+            this.UpdateViewMapRecursive(this.ElementTop);
+        };
+
         CaseViewer.prototype.Draw = function () {
             var shapelayer = $(this.Screen.ShapeLayer);
             var screenlayer = $(this.Screen.ContentLayer);
+            this.UpdateViewMap();
             this.ViewMap[this.ElementTop.Label].AppendHTMLElementRecursive(shapelayer, screenlayer, this);
             this.pluginManager.RegisterActionEventListeners(this, this.Source, this.serverApi);
             this.Update();
