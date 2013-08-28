@@ -184,6 +184,7 @@ var FullScreenEditorActionPlugIn = (function (_super) {
                             if (model.Parent != null)
                                 view.ParentShape = caseViewer.ViewMap[model.Parent.Label];
                         })(new_model, new_view);
+                        new_model.EnableEditFlag();
                     } else {
                         case0.ElementMap = orig_ElementMap;
                         case0.IdCounters = orig_idCounters;
