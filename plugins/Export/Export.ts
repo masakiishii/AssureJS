@@ -1,4 +1,5 @@
 /// <reference path="../../src/CaseModel.ts" />
+/// <reference path="../../src/CaseEncoder.ts" />
 /// <reference path="../../src/ServerApi.ts" />
 /// <reference path="../../src/PlugInManager.ts" />
 /// <reference path="../Editor/Editor.ts" />
@@ -26,14 +27,14 @@ class ExportMenuPlugIn extends AssureIt.MenuBarContentsPlugIn {
 	}
 
 	Delegate(caseViewer: AssureIt.CaseViewer, caseModel: AssureIt.NodeModel, element: JQuery, serverApi: AssureIt.ServerAPI): boolean {
-		//element.append('<a href="#" ><img id="export-xml" src="' + serverApi.basepath + 'images/icon.png" title="Export XML" alt="XML" /></a>');
+		element.append('<a href="#" ><img id="export-xml" src="' + serverApi.basepath + 'images/icon.png" title="Export XML" alt="XML" /></a>');
 		element.append('<a href="#" ><img id="export-pdf" src="' + serverApi.basepath + 'images/icon.png" title="Export PDF" alt="XML" /></a>');
 		element.append('<a href="#" ><img id="export-png" src="' + serverApi.basepath + 'images/icon.png" title="Export PNG" alt="XML" /></a>');
 		$('#export-pdf').unbind('click');
-		//$('#export-xml').unbind('click');
+		$('#export-xml').unbind('click');
 		$('#export-png').unbind('click');
 		$('#export-pdf').click(this.editorPlugIn.ExportPdf);
-		//$('#export-xml').click(this.editorPlugIn.ExportXml);
+		$('#export-xml').click(this.editorPlugIn.ExportXml);
 		$('#export-png').click(this.editorPlugIn.ExportPng);
 		return true;
 	}
@@ -41,7 +42,7 @@ class ExportMenuPlugIn extends AssureIt.MenuBarContentsPlugIn {
 
 class ExportActionPlugIn extends AssureIt.ActionPlugIn {
 	ExportPdf: (ev: Event) => void;
-	//ExportXml: (ev: Event) => void;
+	ExportXml: (ev: Event) => void;
 	ExportPng: (ev: Event) => void;
 
 	constructor(plugInManager: AssureIt.PlugInManager) {
@@ -66,8 +67,19 @@ class ExportActionPlugIn extends AssureIt.ActionPlugIn {
 		}
 
 		this.ExportPdf = ShowExport("pdf");
-		//this.ExportXml = ShowExport("xml");
 		this.ExportPng = ShowExport("png");
+
+		this.ExportXml = function(ev: Event): void {
+			ev.stopPropagation();
+
+			var dcaseXml: string = new AssureIt.CaseEncoder().ConvertToDCaseXML(case0.ElementTop);
+			dcaseXml = dcaseXml.replace(/&/g, '&amp;');
+			dcaseXml = dcaseXml.replace(/</g, '&lt;');
+			dcaseXml = dcaseXml.replace(/>/g, '&gt;');
+			dcaseXml = dcaseXml.replace(/"/g, '&quot;');
+			var childWindow = window.open();
+			$(childWindow.document.body).append($('<pre>'+dcaseXml+'</pre>'));
+		};
 
 		return true;
 	}
@@ -79,7 +91,7 @@ class ExportActionPlugIn extends AssureIt.ActionPlugIn {
 			"method" : "post",
 			"target" : "_blank",
 		}).hide().appendTo($body);
-		
+
 		if (data !== undefined) {
 			for (var paramName in data) {
 				$('<input type="hidden">').attr({

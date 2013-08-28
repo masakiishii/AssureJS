@@ -26,13 +26,14 @@ var ExportMenuPlugIn = (function (_super) {
     };
 
     ExportMenuPlugIn.prototype.Delegate = function (caseViewer, caseModel, element, serverApi) {
+        element.append('<a href="#" ><img id="export-xml" src="' + serverApi.basepath + 'images/icon.png" title="Export XML" alt="XML" /></a>');
         element.append('<a href="#" ><img id="export-pdf" src="' + serverApi.basepath + 'images/icon.png" title="Export PDF" alt="XML" /></a>');
         element.append('<a href="#" ><img id="export-png" src="' + serverApi.basepath + 'images/icon.png" title="Export PNG" alt="XML" /></a>');
         $('#export-pdf').unbind('click');
-
+        $('#export-xml').unbind('click');
         $('#export-png').unbind('click');
         $('#export-pdf').click(this.editorPlugIn.ExportPdf);
-
+        $('#export-xml').click(this.editorPlugIn.ExportXml);
         $('#export-png').click(this.editorPlugIn.ExportPng);
         return true;
     };
@@ -62,8 +63,19 @@ var ExportActionPlugIn = (function (_super) {
         };
 
         this.ExportPdf = ShowExport("pdf");
-
         this.ExportPng = ShowExport("png");
+
+        this.ExportXml = function (ev) {
+            ev.stopPropagation();
+
+            var dcaseXml = new AssureIt.CaseEncoder().ConvertToDCaseXML(case0.ElementTop);
+            dcaseXml = dcaseXml.replace(/&/g, '&amp;');
+            dcaseXml = dcaseXml.replace(/</g, '&lt;');
+            dcaseXml = dcaseXml.replace(/>/g, '&gt;');
+            dcaseXml = dcaseXml.replace(/"/g, '&quot;');
+            var childWindow = window.open();
+            $(childWindow.document.body).append($('<pre>' + dcaseXml + '</pre>'));
+        };
 
         return true;
     };

@@ -63,6 +63,53 @@ var AssureIt;
             return this.JsonRoot;
         };
 
+        CaseEncoder.prototype.ConvertToDCaseXML = function (root) {
+            var dcaseXML = '<dcase:Argument xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"' + ' xmlns:dcase="http://www.dependalopble-os.net/2010/03/dcase/"' + ' id="_6A0EENScEeKCdP-goLYu9g">\n';
+            var dcaseLinkXML = "";
+
+            function NodeTypeToString(type) {
+                switch (type) {
+                    case AssureIt.NodeType.Goal:
+                        return "Goal";
+                    case AssureIt.NodeType.Strategy:
+                        return "Strategy";
+                    case AssureIt.NodeType.Evidence:
+                        return "Evidence";
+                    case AssureIt.NodeType.Context:
+                        return "Context";
+                    default:
+                        return "";
+                }
+            }
+
+            var linkIdCounter = 0;
+
+            function createNewLinkId() {
+                linkIdCounter++;
+                return "LINK_" + linkIdCounter;
+            }
+
+            function convert(node) {
+                dcaseXML += '\t<rootBasicNode xsi:type="dcase:' + NodeTypeToString(node.Type) + '"' + ' id="' + node.Label + '"' + ' name="' + node.Label + '"' + ' desc="' + node.Statement + '"' + '/>\n';
+
+                if (node.Parent != null) {
+                    var linkId = createNewLinkId();
+                    dcaseLinkXML += '\t<rootBasicLink xsi:type="dcase:link" id="' + linkId + '"' + ' source="' + node.Parent.Label + '"' + ' target="#' + node.Label + '"' + ' name="' + linkId + '"' + '/>\n';
+                }
+
+                for (var i = 0; i < node.Children.length; i++) {
+                    convert(node.Children[i]);
+                }
+            }
+
+            convert(root);
+
+            dcaseXML += dcaseLinkXML;
+            dcaseXML += '</dcase:Argument>';
+
+            return dcaseXML;
+        };
+
         CaseEncoder.prototype.ConvertToASN = function (root, isSingleNode) {
             var encoded = (function (model, prefix) {
                 var IndentToken = "    ";

@@ -10,6 +10,7 @@ $(function () {
     pluginManager.SetPlugIn("annotation", new AnnotationPlugIn(pluginManager));
     pluginManager.SetPlugIn("note", new NotePlugIn(pluginManager));
     pluginManager.SetPlugIn("monitor", new MonitorPlugIn(pluginManager));
+    pluginManager.SetPlugIn("export", new ExportPlugIn(pluginManager));
     pluginManager.SetPlugIn("portraitlayout", new LayoutPortraitPlugIn(pluginManager));
     pluginManager.SetUseLayoutEngine("portraitlayout");
 

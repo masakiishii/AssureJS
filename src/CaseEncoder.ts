@@ -77,6 +77,63 @@ module AssureIt {
 			return this.JsonRoot;
 		}
 
+		ConvertToDCaseXML(root: NodeModel): string {
+			var dcaseXML: string = '<dcase:Argument xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"'
+									+ ' xmlns:dcase="http://www.dependalopble-os.net/2010/03/dcase/"'
+									+ ' id="_6A0EENScEeKCdP-goLYu9g">\n'; // FIXME: replacee id as case ID
+			var dcaseLinkXML: string = "";
+
+			function NodeTypeToString(type: NodeType): string {
+				switch(type) {
+					case NodeType.Goal:
+						return "Goal";
+					case NodeType.Strategy:
+						return "Strategy";
+					case NodeType.Evidence:
+						return "Evidence";
+					case NodeType.Context:
+						return "Context";
+					default:
+						return "";
+				}
+			}
+
+			var linkIdCounter: number = 0;
+
+			function createNewLinkId(): string {
+				linkIdCounter++;
+				return "LINK_"+linkIdCounter;
+			}
+
+			function convert(node: NodeModel): void {
+				dcaseXML += '\t<rootBasicNode xsi:type="dcase:'+NodeTypeToString(node.Type)+'"'
+							+ ' id="'+node.Label+'"'   // label is also regarded as id in AssureJS
+							+ ' name="'+node.Label+'"'
+							+ ' desc="'+node.Statement+'"'
+							+ '/>\n';
+
+				if(node.Parent != null) {
+					var linkId: string = createNewLinkId();
+					dcaseLinkXML += '\t<rootBasicLink xsi:type="dcase:link" id="'+linkId+'"'
+									+ ' source="'+node.Parent.Label+'"'
+									+ ' target="#'+node.Label+'"'
+									+ ' name="'+linkId+'"'
+									+ '/>\n';
+				}
+
+				for(var i: number = 0; i < node.Children.length; i++) {
+					convert(node.Children[i]);
+				}
+			}
+
+			convert(root);
+
+			dcaseXML += dcaseLinkXML;
+			dcaseXML += '</dcase:Argument>';
+
+			return dcaseXML;
+		}
+
 		ConvertToASN(root : NodeModel, isSingleNode: boolean): string {
 			var encoded : string = (function(model : NodeModel, prefix : string) : string {
 				var IndentToken: string = "    ";
