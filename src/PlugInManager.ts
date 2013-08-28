@@ -12,6 +12,7 @@ module AssureIt {
 		SVGRenderPlugIn: SVGRenderPlugIn;
 		MenuBarContentsPlugIn: MenuBarContentsPlugIn;
 		LayoutEnginePlugIn: LayoutEnginePlugIn;
+		PatternPlugIn: PatternPlugIn;
 
 		constructor(public plugInManager: PlugInManager) {
 			this.ActionPlugIn = null;
@@ -20,6 +21,7 @@ module AssureIt {
 			this.SVGRenderPlugIn = null;
 			this.MenuBarContentsPlugIn = null;
 			this.LayoutEnginePlugIn = null;
+			this.PatternPlugIn = null;
 		}
 	}
 
@@ -133,7 +135,21 @@ module AssureIt {
 			}
 			return -1; 
 		}
+	}
 
+	export class PatternPlugIn extends AbstractPlugIn {
+
+		constructor(public plugInManager: PlugInManager) {
+			super(plugInManager);
+		}
+
+		IsEnabled(caseViewer: CaseViewer, caseModel: NodeModel) : boolean {
+			return true;
+		}
+
+		Delegate(caseModel: NodeModel) : boolean {
+			return true;
+		}
 	}
 
 	export class PlugInManager {
@@ -144,6 +160,7 @@ module AssureIt {
 		SVGRenderPlugInMap        : { [index: string]: SVGRenderPlugIn };
 		MenuBarContentsPlugInMap  : { [index: string]: MenuBarContentsPlugIn };
 		LayoutEnginePlugInMap     : { [index: string]: LayoutEnginePlugIn };
+		PatternPlugInMap          : { [index: string]: PatternPlugIn };
 
 		UILayer: AbstractPlugIn[];
 		UsingLayoutEngine: string;
@@ -155,6 +172,7 @@ module AssureIt {
 			this.SVGRenderPlugInMap = {};
 			this.MenuBarContentsPlugInMap = {};
 			this.LayoutEnginePlugInMap = {};
+			this.PatternPlugInMap = {};
 			this.UILayer = [];
 		}
 
@@ -173,6 +191,9 @@ module AssureIt {
 			}
 			if(plugIn.LayoutEnginePlugIn) {
 				this.SetLayoutEnginePlugIn(key, plugIn.LayoutEnginePlugIn);
+			}
+			if(plugIn.PatternPlugIn) {
+				this.SetPatternPlugIn(key, plugIn.PatternPlugIn);
 			}
 		}
 
@@ -212,6 +233,10 @@ module AssureIt {
 
 		GetLayoutEngine(): LayoutEnginePlugIn {
 			return this.LayoutEnginePlugInMap[this.UsingLayoutEngine];
+		}
+
+		SetPatternPlugIn(key: string, PatternPlugIn: PatternPlugIn) {
+			this.PatternPlugInMap[key] = PatternPlugIn;
 		}
 
 		UseUILayer(plugin :AbstractPlugIn): void {

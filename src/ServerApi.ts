@@ -118,9 +118,9 @@ module AssureIt {
 			return this.RemoteCall("getProjectList", { userId:userId });
 		}
 
-		CreateProject(name: string, userId: number) {
+		CreateProject(name: string, isPublic: boolean) {
 			return this.RemoteCall("createProject", {
-				name: name, userId: userId });
+				name: name, isPublic: isPublic });
 		}
 
 		EditProject(name: string, projectId: number) {

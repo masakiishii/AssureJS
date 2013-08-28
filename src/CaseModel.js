@@ -43,6 +43,7 @@ var AssureIt;
             Case.ElementMap[this.Label] = this;
         }
         NodeModel.prototype.EnableEditFlag = function () {
+            this.InvokePatternPlugIn();
             this.Case.SetModified(true);
         };
 
@@ -125,15 +126,30 @@ var AssureIt;
             f(-1, this);
             traverse_(this, f);
         };
+
+        NodeModel.prototype.InvokePatternPlugInRecursive = function (model) {
+            var pluginMap = this.Case.pluginManager.PatternPlugInMap;
+            for (var key in pluginMap) {
+                var plugin = pluginMap[key];
+                plugin.Delegate(model);
+            }
+            for (var i in model.Children) {
+                this.InvokePatternPlugInRecursive(model.Children[i]);
+            }
+        };
+        NodeModel.prototype.InvokePatternPlugIn = function () {
+            this.InvokePatternPlugInRecursive(this);
+        };
         return NodeModel;
     })();
     AssureIt.NodeModel = NodeModel;
 
     var Case = (function () {
-        function Case(CaseName, CaseId, CommitId) {
+        function Case(CaseName, CaseId, CommitId, pluginManager) {
             this.CaseName = CaseName;
             this.CaseId = CaseId;
             this.CommitId = CommitId;
+            this.pluginManager = pluginManager;
             this.isModified = false;
             this.isEditable = false;
             this.isLatest = true;

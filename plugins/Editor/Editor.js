@@ -96,7 +96,7 @@ var EditorActionPlugIn = (function (_super) {
                     orig_model.Annotations = new_model.Annotations;
                     orig_model.Notes = new_model.Notes;
                     orig_shape.HTMLDoc.Render(caseViewer, orig_model);
-                    new_model.EnableEditFlag();
+                    orig_model.EnableEditFlag();
 
                     caseViewer.Draw();
                 }

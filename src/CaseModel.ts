@@ -42,6 +42,7 @@ module AssureIt {
 		}
 
 		EnableEditFlag(): void {
+			this.InvokePatternPlugIn();
 			this.Case.SetModified(true);
 		}
 
@@ -126,6 +127,20 @@ module AssureIt {
 		}
 
 		/* plug-In */
+		private InvokePatternPlugInRecursive(model: NodeModel) : void {
+			var pluginMap : { [index: string]: PatternPlugIn} = this.Case.pluginManager.PatternPlugInMap;
+			for (var key in pluginMap) {
+				var plugin: PatternPlugIn = pluginMap[key];
+				plugin.Delegate(model);
+			}
+			for (var i in model.Children) {
+				this.InvokePatternPlugInRecursive(model.Children[i]);
+			}
+		}
+		private InvokePatternPlugIn() : void {
+			this.InvokePatternPlugInRecursive(this);
+		}
+
 		//InvokePlugInModifier(EventType : string, EventBody : any) : boolean {
 		//	var recall = false;
 		//	for(var a in this.Annotations) {
@@ -153,7 +168,7 @@ module AssureIt {
 		isEditable : boolean = false;
 		isLatest   : boolean = true;
 
-		constructor(public CaseName: string, public CaseId: number, public CommitId: number) {
+		constructor(public CaseName: string, public CaseId: number, public CommitId: number, public pluginManager: PlugInManager) {
 			this.IdCounters = [{}, {}, {}, {}, {}];
 			this.ElementMap = {};
 		}

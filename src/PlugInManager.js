@@ -15,6 +15,7 @@ var AssureIt;
             this.SVGRenderPlugIn = null;
             this.MenuBarContentsPlugIn = null;
             this.LayoutEnginePlugIn = null;
+            this.PatternPlugIn = null;
         }
         return PlugInSet;
     })();
@@ -142,6 +143,23 @@ var AssureIt;
     })(AbstractPlugIn);
     AssureIt.LayoutEnginePlugIn = LayoutEnginePlugIn;
 
+    var PatternPlugIn = (function (_super) {
+        __extends(PatternPlugIn, _super);
+        function PatternPlugIn(plugInManager) {
+            _super.call(this, plugInManager);
+            this.plugInManager = plugInManager;
+        }
+        PatternPlugIn.prototype.IsEnabled = function (caseViewer, caseModel) {
+            return true;
+        };
+
+        PatternPlugIn.prototype.Delegate = function (caseModel) {
+            return true;
+        };
+        return PatternPlugIn;
+    })(AbstractPlugIn);
+    AssureIt.PatternPlugIn = PatternPlugIn;
+
     var PlugInManager = (function () {
         function PlugInManager(basepath) {
             this.basepath = basepath;
@@ -151,6 +169,7 @@ var AssureIt;
             this.SVGRenderPlugInMap = {};
             this.MenuBarContentsPlugInMap = {};
             this.LayoutEnginePlugInMap = {};
+            this.PatternPlugInMap = {};
             this.UILayer = [];
         }
         PlugInManager.prototype.SetPlugIn = function (key, plugIn) {
@@ -168,6 +187,9 @@ var AssureIt;
             }
             if (plugIn.LayoutEnginePlugIn) {
                 this.SetLayoutEnginePlugIn(key, plugIn.LayoutEnginePlugIn);
+            }
+            if (plugIn.PatternPlugIn) {
+                this.SetPatternPlugIn(key, plugIn.PatternPlugIn);
             }
         };
 
@@ -207,6 +229,10 @@ var AssureIt;
 
         PlugInManager.prototype.GetLayoutEngine = function () {
             return this.LayoutEnginePlugInMap[this.UsingLayoutEngine];
+        };
+
+        PlugInManager.prototype.SetPatternPlugIn = function (key, PatternPlugIn) {
+            this.PatternPlugInMap[key] = PatternPlugIn;
         };
 
         PlugInManager.prototype.UseUILayer = function (plugin) {
