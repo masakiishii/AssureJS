@@ -14,8 +14,10 @@ class TimeLine {
 	CreateDOM():void {
 		this.root = $(this.caseViewer.Screen.ControlLayer);
 
+		var node: JQuery = $("#"+this.nodeModel.Label);
+
 		this.container = $("<div></div>").css({
-			position: "absolute", left: 0, top: 0, width: 50, height: 100, background: "#eee"
+			position: "absolute", left: node.position().left + (node.width() / 2), top: node.position().top + node.height() +  53
 		}).addClass("timeline-container").appendTo(this.root);
 		this.timeline = $("<div></div>")
 			.addClass("timeline")
@@ -30,8 +32,9 @@ class TimeLine {
 		var TopLabel = Case.ElementTop.Label;
 		var converter = new AssureIt.Converter();
 		var decoder   = new AssureIt.CaseDecoder();
+		this.timeline.append($('<ul id="timeline-ul"></ul>'))
 		commits.forEach((i:number, v:AssureIt.CommitModel):void => {
-			this.timeline.append($('<a id="timeline'+i+'" href="#"></a>').text(v.toString()));
+			$("#timeline-ul").append($('<a id="timeline'+i+'" href="#"></a>').text(v.toString()));
 			$("#timeline"+i).click((e: Event)=>{
 				var oldData = this.serverApi.GetNodeTree(v.CommitId);
 				var j = {contents: JSON.stringify(oldData)};
