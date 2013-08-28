@@ -23,13 +23,7 @@ var DScriptMenuPlugIn = (function (_super) {
         this.editorPlugIn = editorPlugIn;
     }
     DScriptMenuPlugIn.prototype.IsEnabled = function (caseViewer, caseModel) {
-        for (var i in caseModel.Notes) {
-            var note = caseModel.Notes[i];
-            if (note.Name == 'Monitor' || note.Name == 'Recovery' || note.Name == 'Condition') {
-                return true;
-            }
-        }
-        return false;
+        return true;
     };
 
     DScriptMenuPlugIn.prototype.Delegate = function (caseViewer, caseModel, element, serverApi) {
@@ -38,10 +32,6 @@ var DScriptMenuPlugIn = (function (_super) {
 
         $('#dscript').unbind('dblclick');
         $('#dscript').click(function (ev) {
-            var Generator = new DScriptGenerator(caseModel);
-            var script = Generator.codegen();
-            console.log(script);
-
             $('#dscript-editor-wrapper').css({ display: 'block' }).addClass("animated fadeInDown").focus().one("blur", { node: caseModel }, function (e, node) {
                 e.stopPropagation();
 
@@ -57,7 +47,12 @@ var DScriptMenuPlugIn = (function (_super) {
                     $('#fullscreen-editor-wrapper').blur();
                 }
             });
-            _this.editorPlugIn.editor_left.setValue(script);
+            var encoder = new AssureIt.CaseEncoder();
+            var encoded = encoder.ConvertToASN(caseModel, false);
+            var Generator = new DScriptGenerator(caseModel);
+            var script = Generator.codegen();
+            _this.editorPlugIn.editor_left.setValue(encoded);
+            _this.editorPlugIn.editor_right.setValue(script);
             _this.editorPlugIn.editor_left.refresh();
             _this.editorPlugIn.editor_right.refresh();
             $('#CodeMirror').focus();
