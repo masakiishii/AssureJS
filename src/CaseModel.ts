@@ -28,7 +28,7 @@ module AssureIt {
 		constructor(Case : Case, Parent : NodeModel, Type : NodeType, Label : string, Statement : string) {
 			this.Case = Case;
 			this.Type = Type;
-			this.Label = (Label == null) ? Case.NewLabel(Type) : Label;
+			this.Label = Case.NewLabel(Type, Label);
 			this.Statement = (Statement == null) ? "" : Statement;
 			this.Parent = Parent;
 			if(Parent != null) {
@@ -222,7 +222,20 @@ module AssureIt {
 				}
 			}
 		}
-		NewLabel(Type : NodeType) : string {
+
+		private Label_getNumber(Label: string) : number {
+			if (Label == null || Label.length <= 1) return -1;
+			return Number(Label.substring(1));
+		}
+
+		NewLabel(Type : NodeType, Label: string) : string {
+			var label = this.Label_getNumber(Label);
+			if (label != -1) {
+				if (this.IdCounters[Type][String(label)] == undefined) {
+					this.IdCounters[Type][String(label)] = true;
+					return Label;
+				}
+			}
 			var i: number = 1;
 			while (this.IdCounters[Type][String(i)] != undefined) {
 				i++;

@@ -1,9 +1,3 @@
-/// <reference path="../../src/CaseModel.ts" />
-/// <reference path="../../src/CaseViewer.ts" />
-/// <reference path="../../src/PlugInManager.ts" />
-/// <reference path="./DScriptGenerator.ts" />
-/* For codemirror */
-/// <reference path="../Editor/Editor.ts" />
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -58,7 +52,6 @@ var DScriptMenuPlugIn = (function (_super) {
             _this.editorPlugIn.rootCaseModel = caseModel;
             _this.editorPlugIn.editor_left.setValue(encoded);
 
-            //this.editorPlugIn.GenerateCode();
             $('#CodeMirror').focus();
             $('#background').click(function () {
                 $('#dscript-editor-wrapper').blur();
@@ -98,7 +91,6 @@ var DScriptEditorPlugIn = (function (_super) {
             background: 'rgba(255, 255, 255, 0.85)'
         });
 
-        /* FIXME Replace it with sophisticated style. */
         $(this.editor_left.getWrapperElement()).css({
             width: '100%',
             height: '100%'

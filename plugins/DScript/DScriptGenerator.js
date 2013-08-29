@@ -1,5 +1,3 @@
-/// <reference path="../../src/Casemodel.ts" />
-/// <reference path="../../src/PlugInManager.ts" />
 var DScriptGenerator = (function () {
     function DScriptGenerator() {
         this.indent = "\t";
@@ -30,7 +28,7 @@ var DScriptGenerator = (function () {
     DScriptGenerator.prototype.GenerateDefault = function (model, Flow) {
         var program = "";
         program += this.GenerateFunctionHeader(model) + " {" + this.linefeed;
-        var statement = model.Statement.replace(/\n+$/g, '').trim();
+        var statement = model.Statement.replace(/\n+$/g, '');
         if (statement.length > 0) {
             var description = statement.split(this.linefeed);
             program += this.indent + "/*" + this.linefeed;

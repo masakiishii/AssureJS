@@ -30,7 +30,7 @@ var AssureIt;
         function NodeModel(Case, Parent, Type, Label, Statement) {
             this.Case = Case;
             this.Type = Type;
-            this.Label = (Label == null) ? Case.NewLabel(Type) : Label;
+            this.Label = Case.NewLabel(Type, Label);
             this.Statement = (Statement == null) ? "" : Statement;
             this.Parent = Parent;
             if (Parent != null) {
@@ -127,7 +127,6 @@ var AssureIt;
             traverse_(this, f);
         };
 
-        /* plug-In */
         NodeModel.prototype.InvokePatternPlugInRecursive = function (model) {
             var pluginMap = this.Case.pluginManager.PatternPlugInMap;
             for (var key in pluginMap) {
@@ -171,7 +170,6 @@ var AssureIt;
             this.ElementMap = {};
         };
 
-        /* Deprecated */
         Case.prototype.SetElementTop = function (ElementTop) {
             this.ElementTop = ElementTop;
             this.SaveIdCounterMax(ElementTop);
@@ -206,7 +204,21 @@ var AssureIt;
                 }
             }
         };
-        Case.prototype.NewLabel = function (Type) {
+
+        Case.prototype.Label_getNumber = function (Label) {
+            if (Label == null || Label.length <= 1)
+                return -1;
+            return Number(Label.substring(1));
+        };
+
+        Case.prototype.NewLabel = function (Type, Label) {
+            var label = this.Label_getNumber(Label);
+            if (label != -1) {
+                if (this.IdCounters[Type][String(label)] == undefined) {
+                    this.IdCounters[Type][String(label)] = true;
+                    return Label;
+                }
+            }
             var i = 1;
             while (this.IdCounters[Type][String(i)] != undefined) {
                 i++;
@@ -255,7 +267,6 @@ var AssureIt;
     })();
     AssureIt.Case = Case;
 
-    //TODO Split file "CommitModel.ts"
     var CommitModel = (function () {
         function CommitModel(CommitId, Message, date, userId, userName, LatestFlag) {
             this.CommitId = CommitId;

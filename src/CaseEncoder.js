@@ -1,6 +1,3 @@
-/// <reference path="../d.ts/jquery.d.ts" />
-/// <reference path="../d.ts/ASNParser.d.ts" />
-/// <reference path="CaseModel.ts" />
 var AssureIt;
 (function (AssureIt) {
     var JsonNodeModel = (function () {
@@ -63,7 +60,6 @@ var AssureIt;
 
             this.JsonRoot.Children = JsonChildNodes;
 
-            //console.log(this.JsonRoot);
             return this.JsonRoot;
         };
 
@@ -121,27 +117,15 @@ var AssureIt;
                 switch (model.Type) {
                     case AssureIt.NodeType["Goal"]:
                         prefix += "*";
-                        ret += (prefix + "Goal");
+                        ret += (prefix + model.Label);
                         break;
-                    case AssureIt.NodeType["Context"]:
-                        if (prefix == "")
-                            prefix += "*";
-                        ret += (prefix + "Context");
-                        break;
-                    case AssureIt.NodeType["Strategy"]:
-                        if (prefix == "")
-                            prefix += "*";
-                        ret += (prefix + "Strategy");
-                        break;
-                    case AssureIt.NodeType["Evidence"]:
-                        if (prefix == "")
-                            prefix += "*";
-                        ret += (prefix + "Evidence");
-                        break;
+
                     default:
+                        if (prefix == "")
+                            prefix += "*";
+                        ret += (prefix + model.Label);
                 }
 
-                //TODO:Label
                 var anno_num = model.Annotations.length;
                 if (anno_num != 0) {
                     for (var i = 0; i < model.Annotations.length; i++) {
@@ -178,6 +162,10 @@ var AssureIt;
                     return ret;
                 }
 
+                if (ret.indexOf("\n") != ret.length - 1) {
+                    ret += "\n";
+                }
+
                 for (var i = 0; i < model.Children.length; i++) {
                     var child_model = model.Children[i];
 
@@ -195,7 +183,6 @@ var AssureIt;
                 return ret;
             })(root, "");
 
-            //console.log(encoded);
             return encoded;
         };
 
