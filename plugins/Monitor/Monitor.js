@@ -1,3 +1,6 @@
+/// <reference path="../../src/CaseModel.ts" />
+/// <reference path="../../src/CaseViewer.ts" />
+/// <reference path="../../src/PlugInManager.ts" />
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -27,12 +30,14 @@ var MonitorHTMLRenderPlugIn = (function (_super) {
     MonitorHTMLRenderPlugIn.prototype.Delegate = function (caseViewer, caseModel, element) {
         var notes = caseModel.Notes;
         var found = false;
-        for (var i in notes) {
-            if (notes[i].Name == "Monitor")
+        for (var i = 0; i < notes.length; ++i) {
+            if (notes[i].Name == "Monitor") {
                 found = true;
+            }
         }
-        if (!found)
+        if (!found) {
             return;
+        }
 
         var text = "";
         var p = element.position();

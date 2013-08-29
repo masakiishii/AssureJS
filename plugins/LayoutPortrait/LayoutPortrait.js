@@ -1,3 +1,6 @@
+/// <reference path="../../src/CaseModel.ts" />
+/// <reference path="../../src/ServerApi.ts" />
+/// <reference path="../../src/PlugInManager.ts" />
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -231,15 +234,20 @@ var LayoutPortraitEnginePlugIn = (function (_super) {
             var h2 = ParentView.HTMLDoc.Height;
             var h = (h1 - h2) / 2;
 
+            //ContextView.ParentAssureIt.Direction = AssureIt.Direction.Left;
             ContextView.AbsX += x;
             ContextView.AbsY += (y - h);
             ContextView.AbsX += this.X_CONTEXT_MARGIN;
 
+            //this.EmitChildrenElement(Element, ParentView.AbsX, ParentView.AbsY, i, ((this.Y_MARGIN > Math.abs(h1 - h2)) ? 0 : Math.abs(h1 - h2)));
             this.EmitChildrenElement(Element, ParentView.AbsX, ParentView.AbsY, i, ((this.Y_MARGIN > Math.abs(h1 - h2)) ? h2 : Math.abs(h1 - h2)));
         } else {
             var h2 = 0;
             var CurrentView = this.ViewMap[Element.Label];
 
+            //if(ParentView != null) {
+            //	h2 = ParentView.HTMLDoc.Height/2;
+            //}
             h2 = CurrentView.HTMLDoc.Height;
             this.EmitChildrenElement(Element, x, y, i, h2);
         }
@@ -262,8 +270,10 @@ var LayoutPortraitEnginePlugIn = (function (_super) {
                 var ParentElementView = this.ViewMap[Node.Label];
                 ElementView.AbsY = y;
 
+                //				ElementView.AbsY += ((height > this.Y_MARGIN) ? height : this.Y_MARGIN) + h;
                 ElementView.AbsY = y + this.Y_MARGIN + h;
 
+                //				ElementView.AbsY += (((ElementView.AbsY - ParentElementView.AbsY) < this.Y_NODE_MARGIN) ? this.Y_NODE_ADJUSTMENT_MARGIN : 0);
                 MaxYPostition = (ElementView.AbsY > MaxYPostition) ? ElementView.AbsY : MaxYPostition;
                 this.Traverse(Node.Children[i], ElementView.AbsX, ElementView.AbsY);
             }

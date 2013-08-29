@@ -20,10 +20,14 @@ class MonitorHTMLRenderPlugIn extends AssureIt.HTMLRenderPlugIn {
 	Delegate(caseViewer: AssureIt.CaseViewer, caseModel: AssureIt.NodeModel, element: JQuery) : boolean {
 		var notes : AssureIt.CaseNote[] = caseModel.Notes;
 		var found : boolean = false;
-		for (var i in notes) {
-			if (notes[i].Name == "Monitor") found = true;
+		for (var i=0; i < notes.length; ++i) {
+			if (notes[i].Name == "Monitor") {
+				found = true;
+			}
 		}
-		if (!found) return;
+		if (!found) {
+			return;
+		}
 
 		var text : string = "";
 		var p : {top: number; left: number} = element.position();

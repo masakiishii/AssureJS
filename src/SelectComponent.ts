@@ -3,10 +3,10 @@
 
 module AssureIt {
 	export class SelectCaseModel {
-		constructor(public id: number, public name: string, public user: string, public lastDate: any, public lastUser: any, public isLogin: bool, public api: ServerAPI) {
+		constructor(public id: number, public name: string, public user: string, public lastDate: any, public lastUser: any, public isLogin: boolean, public api: ServerAPI) {
 		}
 
-		toHtml(callback: (id: number, name: string, user: string, lastDate: any, lastUser: any, isLogin: bool) => JQuery) : JQuery {
+		toHtml(callback: (id: number, name: string, user: string, lastDate: any, lastUser: any, isLogin: boolean) => JQuery) : JQuery {
 			return callback(this.id, this.name, this.user, this.lastDate, this.lastUser, this.isLogin);
 		}
 
@@ -44,7 +44,7 @@ module AssureIt {
 			this.contents.push(s);
 		}
 
-		_updateContentsOrZeroView($tbody: JQuery, zeroStr: string, callback: (id: number, name: string, user: string, lastDate: any, lastUser: any, isLogin: bool) => JQuery):void {
+		_updateContentsOrZeroView($tbody: JQuery, zeroStr: string, callback: (id: number, name: string, user: string, lastDate: any, lastUser: any, isLogin: boolean) => JQuery):void {
 			if(this.contents.length == 0) {
 				$(zeroStr).appendTo($tbody);
 			}
@@ -56,7 +56,7 @@ module AssureIt {
 	}
 
 	export class ThumnailView {
-		static toThumnail(id: number, name: string, user: string, lastDate: any, lastUser: any, isLogin: bool): JQuery {
+		static toThumnail(id: number, name: string, user: string, lastDate: any, lastUser: any, isLogin: boolean): JQuery {
 			var html = '<ul class="thumbnails"><li class="span4"><a href="#" class="thumbnail">'+name+'</a></li></ul>';
 			return $('<div></div>').html(html);
 		}
@@ -78,7 +78,7 @@ module AssureIt {
 	}
 
 	export class TableView {
-		static toTable(id: number, name: string, user: string, lastDate: any, lastUser: any, isLogin: bool): JQuery {
+		static toTable(id: number, name: string, user: string, lastDate: any, lastUser: any, isLogin: boolean): JQuery {
 			//FIXME
 			var Config = { BASEPATH: "FIXME"};
 			var html = '<td><a href="' + Config.BASEPATH + '/dcase/' + id + '">' + name +
@@ -104,7 +104,7 @@ module AssureIt {
 			super._updateContentsOrZeroView($('#case-select-table'), "<tr><td><font color=gray>Caseがありません</font></td><td></td><td></td><td></td></tr>", TableView.toTable);
 		}
 	}
-	
+
 	export class SelectCaseView {
 		pageIndex: number;
 		maxPageSize: number;
@@ -127,7 +127,7 @@ module AssureIt {
 			var searchResults: any = this.api.SearchCase(this.pageIndex, tags);
 			var dcaseList : any = searchResults.dcaseList;
 			this.maxPageSize  = searchResults.summary.maxPage;
-	
+
 			var isLogin = userId != null;
 			$.each(dcaseList, (i, dcase)=>{
 				var s:SelectCaseModel = new SelectCaseModel(dcase.dcaseId, dcase.dcaseName, dcase.userName, dcase.latestCommit.dateTime, dcase.latestCommit.userName, isLogin, this.api);
@@ -146,7 +146,7 @@ module AssureIt {
 				}
 				e.preventDefault();
 			});
-	
+
 			$("#next-page").click((e) => {
 				var i = this.pageIndex - 0;
 				if(this.maxPageSize >= i + 1) {
@@ -156,6 +156,6 @@ module AssureIt {
 				e.preventDefault();
 			});
 		}
-	
+
 	}
 }

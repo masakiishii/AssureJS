@@ -1,3 +1,6 @@
+/// <reference path="../d.ts/jquery.d.ts" />
+/// <reference path="../d.ts/ASNParser.d.ts" />
+/// <reference path="CaseModel.ts" />
 var AssureIt;
 (function (AssureIt) {
     var JsonNodeModel = (function () {
@@ -60,6 +63,7 @@ var AssureIt;
 
             this.JsonRoot.Children = JsonChildNodes;
 
+            //console.log(this.JsonRoot);
             return this.JsonRoot;
         };
 
@@ -137,6 +141,7 @@ var AssureIt;
                     default:
                 }
 
+                //TODO:Label
                 var anno_num = model.Annotations.length;
                 if (anno_num != 0) {
                     for (var i = 0; i < model.Annotations.length; i++) {
@@ -190,6 +195,7 @@ var AssureIt;
                 return ret;
             })(root, "");
 
+            //console.log(encoded);
             return encoded;
         };
 

@@ -1,3 +1,9 @@
+/// <reference path="../../src/CaseModel.ts" />
+/// <reference path="../../src/CaseViewer.ts" />
+/// <reference path="../../src/PlugInManager.ts" />
+/// <reference path="./DScriptGenerator.ts" />
+/* For codemirror */
+/// <reference path="../Editor/Editor.ts" />
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
@@ -49,12 +55,10 @@ var DScriptMenuPlugIn = (function (_super) {
             });
             var encoder = new AssureIt.CaseEncoder();
             var encoded = encoder.ConvertToASN(caseModel, false);
-            var Generator = new DScriptGenerator(caseModel);
-            var script = Generator.codegen();
+            _this.editorPlugIn.rootCaseModel = caseModel;
             _this.editorPlugIn.editor_left.setValue(encoded);
-            _this.editorPlugIn.editor_right.setValue(script);
-            _this.editorPlugIn.editor_left.refresh();
-            _this.editorPlugIn.editor_right.refresh();
+
+            //this.editorPlugIn.GenerateCode();
             $('#CodeMirror').focus();
             $('#background').click(function () {
                 $('#dscript-editor-wrapper').blur();
@@ -75,7 +79,6 @@ var DScriptEditorPlugIn = (function (_super) {
         this.editor_left = CodeMirror.fromTextArea(document.getElementById('dscript-editor-left'), {
             lineNumbers: true,
             mode: "text/x-csrc",
-            readOnly: true,
             lineWrapping: true
         });
         this.editor_right = CodeMirror.fromTextArea(document.getElementById('dscript-editor-right'), {
@@ -95,6 +98,7 @@ var DScriptEditorPlugIn = (function (_super) {
             background: 'rgba(255, 255, 255, 0.85)'
         });
 
+        /* FIXME Replace it with sophisticated style. */
         $(this.editor_left.getWrapperElement()).css({
             width: '100%',
             height: '100%'
@@ -115,6 +119,22 @@ var DScriptEditorPlugIn = (function (_super) {
             float: 'right',
             display: 'block'
         });
+        var self = this;
+        this.editor_left.on("change", function (e) {
+            self.GenerateCode();
+            console.log(self.editor_left.getValue());
+        });
     }
+    DScriptEditorPlugIn.prototype.GenerateCode = function () {
+        var decoder = new AssureIt.CaseDecoder();
+        var ASNData = this.editor_left.getValue();
+        var caseModel = decoder.ParseASN(this.rootCaseModel.Case, ASNData, this.rootCaseModel);
+
+        var Generator = new DScriptGenerator();
+        var script = Generator.codegen(caseModel);
+        this.editor_right.setValue(script);
+        this.editor_left.refresh();
+        this.editor_right.refresh();
+    };
     return DScriptEditorPlugIn;
 })(AssureIt.ActionPlugIn);

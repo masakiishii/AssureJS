@@ -127,6 +127,7 @@ var AssureIt;
             traverse_(this, f);
         };
 
+        /* plug-In */
         NodeModel.prototype.InvokePatternPlugInRecursive = function (model) {
             var pluginMap = this.Case.pluginManager.PatternPlugInMap;
             for (var key in pluginMap) {
@@ -170,6 +171,7 @@ var AssureIt;
             this.ElementMap = {};
         };
 
+        /* Deprecated */
         Case.prototype.SetElementTop = function (ElementTop) {
             this.ElementTop = ElementTop;
             this.SaveIdCounterMax(ElementTop);
@@ -253,6 +255,7 @@ var AssureIt;
     })();
     AssureIt.Case = Case;
 
+    //TODO Split file "CommitModel.ts"
     var CommitModel = (function () {
         function CommitModel(CommitId, Message, date, userId, userName, LatestFlag) {
             this.CommitId = CommitId;

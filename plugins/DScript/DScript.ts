@@ -28,7 +28,6 @@ class DScriptMenuPlugIn extends AssureIt.MenuBarContentsPlugIn {
 	}
 
 	Delegate(caseViewer: AssureIt.CaseViewer, caseModel: AssureIt.NodeModel, element: JQuery, serverApi: AssureIt.ServerAPI): boolean {
-		//console.log("Hello DScript");
 		element.append('<a href="#" ><img id="dscript"  src="'+serverApi.basepath+'images/dse.png" title="DScript" alt="dscript" /></a>');
 
 		$('#dscript').unbind('dblclick');
@@ -55,15 +54,12 @@ class DScriptMenuPlugIn extends AssureIt.MenuBarContentsPlugIn {
 					});
 				var encoder : AssureIt.CaseEncoder = new AssureIt.CaseEncoder();
 				var encoded = encoder.ConvertToASN(caseModel, false);
-				var Generator: DScriptGenerator = new DScriptGenerator(caseModel);
-				var script: string = Generator.codegen();
+				this.editorPlugIn.rootCaseModel = caseModel;
 				this.editorPlugIn.editor_left.setValue(encoded);
-				this.editorPlugIn.editor_right.setValue(script);
-				this.editorPlugIn.editor_left.refresh();
-				this.editorPlugIn.editor_right.refresh();
+				//this.editorPlugIn.GenerateCode();
 				$('#CodeMirror').focus();
 				$('#background').click(function(){
-					$('#dscript-editor-wrapper').blur(); 
+					$('#dscript-editor-wrapper').blur();
 				});
 				window.setTimeout(function() {
 					$('#dscript-editor-wrapper').removeClass();
@@ -76,12 +72,12 @@ class DScriptMenuPlugIn extends AssureIt.MenuBarContentsPlugIn {
 class DScriptEditorPlugIn extends AssureIt.ActionPlugIn {
 	editor_left:  any;
 	editor_right: any;
+	rootCaseModel: AssureIt.NodeModel;
 	constructor(plugInManager: AssureIt.PlugInManager) {
 		super(plugInManager);
 		this.editor_left = CodeMirror.fromTextArea(document.getElementById('dscript-editor-left'), {
 			lineNumbers: true,
 			mode: "text/x-csrc",
-			readOnly: true,
 			lineWrapping: true,
 		});
 		this.editor_right = CodeMirror.fromTextArea(document.getElementById('dscript-editor-right'), {
@@ -124,5 +120,21 @@ class DScriptEditorPlugIn extends AssureIt.ActionPlugIn {
 				float: 'right',
 				display: 'block',
 			});
+		var self = this;
+		this.editor_left.on("change", function(e: JQueryEventObject) {
+			self.GenerateCode();
+			console.log(self.editor_left.getValue());
+		});
+	}
+	GenerateCode() : void {
+		var decoder : AssureIt.CaseDecoder = new AssureIt.CaseDecoder();
+		var ASNData : string = this.editor_left.getValue();
+		var caseModel = decoder.ParseASN(this.rootCaseModel.Case, ASNData, this.rootCaseModel);
+
+		var Generator: DScriptGenerator = new DScriptGenerator();
+		var script: string = Generator.codegen(caseModel);
+		this.editor_right.setValue(script);
+		this.editor_left.refresh();
+		this.editor_right.refresh();
 	}
 }
