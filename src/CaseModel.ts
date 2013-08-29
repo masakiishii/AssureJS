@@ -228,6 +228,67 @@ module AssureIt {
 			return Number(Label.substring(1));
 		}
 
+		ClearIdCounters() : void {
+			this.IdCounters = [{}, {}, {}, {}, {}];
+		}
+
+
+		Object_Clone(obj: any) : any {
+			var f = {};
+			var keys = Object.keys(obj);
+			for (var i in keys) {
+				f[keys[i]] = obj[keys[i]];
+			}
+			return f;
+		}
+
+		private ElementMap_Clone(obj: any) : any {
+			return this.Object_Clone(obj);
+		}
+		
+		private IdCounters_Clone(obj: any[]) : any[] {
+			var IdCounters = [];
+			for (var i in obj) {
+				IdCounters.push(this.Object_Clone(obj[i]));
+			}
+			return IdCounters;
+		}
+		
+		private ElementMap_removeChild(ElementMap, model: NodeModel) {
+			if (ElementMap[model.Label] == undefined) {
+				console.log("wrong with nodemodel");
+			}
+			delete(ElementMap[model.Label]);
+			for (var i in model.Children) {
+				this.ElementMap_removeChild(ElementMap, model.Children[i]);
+			}
+			return ElementMap;
+		}
+		
+		private IdCounters_removeChild(IdCounters: any[], model: NodeModel) {
+			var count = Number(model.Label.substring(1));
+			if (IdCounters[model.Type][count] == undefined) {
+				console.log("wrong with idcounters");
+			}
+			delete(IdCounters[model.Type][count]);
+			for (var i in model.Children) {
+				this.IdCounters_removeChild(IdCounters, model.Children[i]);
+			}
+			return IdCounters;
+		}
+
+		ReserveElementMap (model: NodeModel) {
+			var ElementMap = this.ElementMap;
+			this.ElementMap =this. ElementMap_removeChild(this.ElementMap_Clone(this.ElementMap), model);
+			return ElementMap;
+		}
+
+		ReserveIdCounters (model: NodeModel) {
+			var IdCounters = this.IdCounters;
+			this.IdCounters = this.IdCounters_removeChild(this.IdCounters_Clone(this.IdCounters), model);
+			return IdCounters;
+		}
+
 		NewLabel(Type : NodeType, Label: string) : string {
 			var label = this.Label_getNumber(Label);
 			if (label != -1) {

@@ -211,6 +211,66 @@ var AssureIt;
             return Number(Label.substring(1));
         };
 
+        Case.prototype.ClearIdCounters = function () {
+            this.IdCounters = [{}, {}, {}, {}, {}];
+        };
+
+        Case.prototype.Object_Clone = function (obj) {
+            var f = {};
+            var keys = Object.keys(obj);
+            for (var i in keys) {
+                f[keys[i]] = obj[keys[i]];
+            }
+            return f;
+        };
+
+        Case.prototype.ElementMap_Clone = function (obj) {
+            return this.Object_Clone(obj);
+        };
+
+        Case.prototype.IdCounters_Clone = function (obj) {
+            var IdCounters = [];
+            for (var i in obj) {
+                IdCounters.push(this.Object_Clone(obj[i]));
+            }
+            return IdCounters;
+        };
+
+        Case.prototype.ElementMap_removeChild = function (ElementMap, model) {
+            if (ElementMap[model.Label] == undefined) {
+                console.log("wrong with nodemodel");
+            }
+            delete (ElementMap[model.Label]);
+            for (var i in model.Children) {
+                this.ElementMap_removeChild(ElementMap, model.Children[i]);
+            }
+            return ElementMap;
+        };
+
+        Case.prototype.IdCounters_removeChild = function (IdCounters, model) {
+            var count = Number(model.Label.substring(1));
+            if (IdCounters[model.Type][count] == undefined) {
+                console.log("wrong with idcounters");
+            }
+            delete (IdCounters[model.Type][count]);
+            for (var i in model.Children) {
+                this.IdCounters_removeChild(IdCounters, model.Children[i]);
+            }
+            return IdCounters;
+        };
+
+        Case.prototype.ReserveElementMap = function (model) {
+            var ElementMap = this.ElementMap;
+            this.ElementMap = this.ElementMap_removeChild(this.ElementMap_Clone(this.ElementMap), model);
+            return ElementMap;
+        };
+
+        Case.prototype.ReserveIdCounters = function (model) {
+            var IdCounters = this.IdCounters;
+            this.IdCounters = this.IdCounters_removeChild(this.IdCounters_Clone(this.IdCounters), model);
+            return IdCounters;
+        };
+
         Case.prototype.NewLabel = function (Type, Label) {
             var label = this.Label_getNumber(Label);
             if (label != -1) {

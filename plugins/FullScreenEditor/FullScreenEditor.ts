@@ -157,13 +157,10 @@ class FullScreenEditorActionPlugIn extends AssureIt.ActionPlugIn {
 
 						var orig_model : AssureIt.NodeModel = case0.ElementMap[label];
 						var orig_view : AssureIt.NodeView = caseViewer.ViewMap[label];
-						var orig_idCounters: any[] = case0.IdCounters;
-						var orig_ElementMap = case0.ElementMap;
 
 						/* In order to keep labels the same as much as possible */
-						var new_idCounters = FullScreenEditorActionPlugIn.IdCounters_Clone(orig_idCounters)
-						case0.IdCounters = FullScreenEditorActionPlugIn.IdCounters_removeChild(new_idCounters, orig_model);
-						case0.ElementMap = FullScreenEditorActionPlugIn.ElementMap_removeChild(FullScreenEditorActionPlugIn.ElementMap_Clone(case0.ElementMap), orig_model);
+						var orig_idCounters = case0.ReserveIdCounters(orig_model);
+						var orig_ElementMap = case0.ReserveElementMap(orig_model);
 
 						var decoder    : AssureIt.CaseDecoder = new AssureIt.CaseDecoder();
 						var new_model  : AssureIt.NodeModel = decoder.ParseASN(case0, editor.getValue(), orig_model);
@@ -176,7 +173,7 @@ class FullScreenEditorActionPlugIn extends AssureIt.ActionPlugIn {
 							if (Parent != null) {
 								new_model.Parent = Parent;
 								for (var j in Parent.Children) {
-									if (Parent.Children[j].Label == new_model.Label) {
+									if (Parent.Children[j].Label == orig_model.Label) {
 										Parent.Children[j] = new_model;
 									}
 								}
