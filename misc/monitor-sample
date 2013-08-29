@@ -1,0 +1,14 @@
+#!/bin/bash
+
+. rec-command
+
+function monitor() {
+	while :
+	do
+		random=$(((RANDOM % 100) + 1))
+		rec 'here' 'cpuusage' $random 'xxxxx@gmail.com' 'test'
+		sleep 10
+	done
+}
+
+monitor
