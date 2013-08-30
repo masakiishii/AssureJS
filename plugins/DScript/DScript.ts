@@ -128,7 +128,12 @@ class DScriptEditorPlugIn extends AssureIt.ActionPlugIn {
 	GenerateCode() : void {
 		var decoder : AssureIt.CaseDecoder = new AssureIt.CaseDecoder();
 		var ASNData : string = this.editor_left.getValue();
-		var caseModel = decoder.ParseASN(this.rootCaseModel.Case, ASNData, this.rootCaseModel);
+		var Case: AssureIt.Case = this.rootCaseModel.Case;
+		var orig_IdCounters = Case.ReserveIdCounters(this.rootCaseModel);
+		var orig_ElementMap = Case.ReserveElementMap(this.rootCaseModel);
+		var caseModel = decoder.ParseASN(Case, ASNData, this.rootCaseModel);
+		Case.IdCounters = orig_IdCounters;
+		Case.ElementMap = orig_ElementMap;
 
 		var Generator: DScriptGenerator = new DScriptGenerator();
 		var script: string = Generator.codegen(caseModel);

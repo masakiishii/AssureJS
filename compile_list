@@ -24,4 +24,5 @@ src/Layout.ts
 src/PlugInManager.ts
 src/SelectComponent.ts
 src/ServerApi.ts
+src/RecApi.ts
 test/CaseDecoderTest.ts

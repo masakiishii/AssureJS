@@ -30,7 +30,7 @@ var AssureIt;
         function NodeModel(Case, Parent, Type, Label, Statement) {
             this.Case = Case;
             this.Type = Type;
-            this.Label = (Label == null) ? Case.NewLabel(Type) : Label;
+            this.Label = Case.NewLabel(Type, Label);
             this.Statement = (Statement == null) ? "" : Statement;
             this.Parent = Parent;
             if (Parent != null) {
@@ -206,7 +206,81 @@ var AssureIt;
                 }
             }
         };
-        Case.prototype.NewLabel = function (Type) {
+
+        Case.prototype.Label_getNumber = function (Label) {
+            if (Label == null || Label.length <= 1)
+                return -1;
+            return Number(Label.substring(1));
+        };
+
+        Case.prototype.ClearIdCounters = function () {
+            this.IdCounters = [{}, {}, {}, {}, {}];
+        };
+
+        Case.prototype.Object_Clone = function (obj) {
+            var f = {};
+            var keys = Object.keys(obj);
+            for (var i in keys) {
+                f[keys[i]] = obj[keys[i]];
+            }
+            return f;
+        };
+
+        Case.prototype.ElementMap_Clone = function (obj) {
+            return this.Object_Clone(obj);
+        };
+
+        Case.prototype.IdCounters_Clone = function (obj) {
+            var IdCounters = [];
+            for (var i in obj) {
+                IdCounters.push(this.Object_Clone(obj[i]));
+            }
+            return IdCounters;
+        };
+
+        Case.prototype.ElementMap_removeChild = function (ElementMap, model) {
+            if (ElementMap[model.Label] == undefined) {
+                console.log("wrong with nodemodel");
+            }
+            delete (ElementMap[model.Label]);
+            for (var i in model.Children) {
+                this.ElementMap_removeChild(ElementMap, model.Children[i]);
+            }
+            return ElementMap;
+        };
+
+        Case.prototype.IdCounters_removeChild = function (IdCounters, model) {
+            var count = Number(model.Label.substring(1));
+            if (IdCounters[model.Type][count] == undefined) {
+                console.log("wrong with idcounters");
+            }
+            delete (IdCounters[model.Type][count]);
+            for (var i in model.Children) {
+                this.IdCounters_removeChild(IdCounters, model.Children[i]);
+            }
+            return IdCounters;
+        };
+
+        Case.prototype.ReserveElementMap = function (model) {
+            var ElementMap = this.ElementMap;
+            this.ElementMap = this.ElementMap_removeChild(this.ElementMap_Clone(this.ElementMap), model);
+            return ElementMap;
+        };
+
+        Case.prototype.ReserveIdCounters = function (model) {
+            var IdCounters = this.IdCounters;
+            this.IdCounters = this.IdCounters_removeChild(this.IdCounters_Clone(this.IdCounters), model);
+            return IdCounters;
+        };
+
+        Case.prototype.NewLabel = function (Type, Label) {
+            var label = this.Label_getNumber(Label);
+            if (label != -1) {
+                if (this.IdCounters[Type][String(label)] == undefined) {
+                    this.IdCounters[Type][String(label)] = true;
+                    return Label;
+                }
+            }
             var i = 1;
             while (this.IdCounters[Type][String(i)] != undefined) {
                 i++;

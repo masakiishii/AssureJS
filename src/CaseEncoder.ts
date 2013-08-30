@@ -141,21 +141,23 @@ module AssureIt {
 				switch (model.Type) {
 				case NodeType["Goal"]:
 					prefix += "*";
-					ret += (prefix + "Goal");
+					ret += (prefix + model.Label);
 					break;
-				case NodeType["Context"]:
-					if (prefix == "") prefix += "*";
-					ret += (prefix + "Context");
-					break;
-				case NodeType["Strategy"]:
-					if (prefix == "") prefix += "*";
-					ret += (prefix + "Strategy");
-					break;
-				case NodeType["Evidence"]:
-					if (prefix == "") prefix += "*";
-					ret += (prefix + "Evidence");
-					break;
+				//case NodeType["Context"]:
+				//	if (prefix == "") prefix += "*";
+				//	ret += (prefix + "Context");
+				//	break;
+				//case NodeType["Strategy"]:
+				//	if (prefix == "") prefix += "*";
+				//	ret += (prefix + "Strategy");
+				//	break;
+				//case NodeType["Evidence"]:
+				//	if (prefix == "") prefix += "*";
+				//	ret += (prefix + "Evidence");
+				//	break;
 				default:
+					if (prefix == "") prefix += "*";
+					ret += (prefix + model.Label);
 					//console.log(model.Type);
 				}
 				//TODO:Label
@@ -163,6 +165,7 @@ module AssureIt {
 				if (anno_num != 0) {
 					for (var i = 0; i < model.Annotations.length; i++) {
 						ret += (" @" + model.Annotations[i].Name);
+						ret += (" "  + model.Annotations[i].Body);
 					}
 				}
 				ret += "\n";
@@ -191,6 +194,11 @@ module AssureIt {
 
 				if (isSingleNode) {
 					return ret;
+				}
+
+				/* Insert newline in case a node consists of multiple lines (for presentation).*/
+				if (ret.indexOf("\n") != ret.length - 1) {
+					ret += "\n";
 				}
 
 				for (var i = 0; i < model.Children.length; i++) {

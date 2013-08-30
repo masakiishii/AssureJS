@@ -6,34 +6,34 @@
 
 ## CONST DATA
 jsonrpc='"2.0"'
-method='"rawDataRecord"'
-id='0' #FIXME
-rec_server_url=''
-default_rec_server_url='http://live.assure-it.org/rec/api/1.0/'
+method='"pushRawData"'
+id='0'   # FIXME
+rec_server_url=''   # this data is added by ads server
+default_rec_server_url='http://54.250.206.119/rec/api/2.0/'
 
 
 ## API
 # void rec(String type, String, data, String context);
 function rec() {
-	local location='' #TODO
-	local type='"'$1'"'
-	local data=$2
-	local timestamp='' #TODO
-	local context='"'$3'"'
-	local params='{location:'$location',type:'$type',data:'$data',timestamp:'$timestamp',context:'$context'}'
-	local request='{jsonrpc:'$jsonrpc',method:'$method',id:'$id',params:'$params'}'
+	local location='"'$1'"'
+	local type='"'$2'"'
+	local data=$3
+	local timestamp='""'   # TODO
+	local authid='"'$4'"'
+	local context='"'$5'"'
+	local params='{"location":'$location',"type":'$type',"data":'$data',"timestamp":'$timestamp',"authid":'$authid',"context":'$context'}'
+	local request='{"jsonrpc":'$jsonrpc',"method":'$method',"id":'$id',"params":'$params'}'
 
-	if [ $# -eq 3 ]; then
-		echo $request #FOR DEBUG
+	if [ $# -eq 5 ]; then
+		request=${request/\ /}   # FIXME allow half-width space character
+		echo 'request:"'$request'"'   # DEBUG
 
-		if [ -z '$rec_server_url' ]; then
-			curl -H 'Content-Type=application/json' -d $request $rec_server_url
+		if [ -z "$rec_server_url" ]; then
+			curl -H 'Content-Type: application/json' -d $request $default_rec_server_url
 		else
-			curl -H 'Content-Type=application/json' -d $request $default_rec_server_url
+			curl -H 'Content-Type: application/json' -d $request $rec_server_url
 		fi
 	else
 		exit 1
 	fi
 }
-
-rec hoge 3 hoe

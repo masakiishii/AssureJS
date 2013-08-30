@@ -1,7 +1,7 @@
 module AssureIt {
 
 	export class CaseAnnotation {
-		constructor(public Name: string, public Body: any) {
+		constructor(public Name: string, public Body: string) {
 		}
 	}
 
@@ -28,7 +28,7 @@ module AssureIt {
 		constructor(Case : Case, Parent : NodeModel, Type : NodeType, Label : string, Statement : string) {
 			this.Case = Case;
 			this.Type = Type;
-			this.Label = (Label == null) ? Case.NewLabel(Type) : Label;
+			this.Label = Case.NewLabel(Type, Label);
 			this.Statement = (Statement == null) ? "" : Statement;
 			this.Parent = Parent;
 			if(Parent != null) {
@@ -78,7 +78,7 @@ module AssureIt {
 			return null;
 		}
 
-		SetAnnotation(Name: string, Body : any) : void {
+		SetAnnotation(Name: string, Body : string) : void {
 			for(var i: number = 0; i < this.Annotations.length; i++ ) {
 				if(this.Annotations[i].Name == Name) {
 					this.Annotations[i].Body = Body;
@@ -222,7 +222,81 @@ module AssureIt {
 				}
 			}
 		}
-		NewLabel(Type : NodeType) : string {
+
+		private Label_getNumber(Label: string) : number {
+			if (Label == null || Label.length <= 1) return -1;
+			return Number(Label.substring(1));
+		}
+
+		ClearIdCounters() : void {
+			this.IdCounters = [{}, {}, {}, {}, {}];
+		}
+
+
+		Object_Clone(obj: any) : any {
+			var f = {};
+			var keys = Object.keys(obj);
+			for (var i in keys) {
+				f[keys[i]] = obj[keys[i]];
+			}
+			return f;
+		}
+
+		private ElementMap_Clone(obj: any) : any {
+			return this.Object_Clone(obj);
+		}
+		
+		private IdCounters_Clone(obj: any[]) : any[] {
+			var IdCounters = [];
+			for (var i in obj) {
+				IdCounters.push(this.Object_Clone(obj[i]));
+			}
+			return IdCounters;
+		}
+		
+		private ElementMap_removeChild(ElementMap, model: NodeModel) {
+			if (ElementMap[model.Label] == undefined) {
+				console.log("wrong with nodemodel");
+			}
+			delete(ElementMap[model.Label]);
+			for (var i in model.Children) {
+				this.ElementMap_removeChild(ElementMap, model.Children[i]);
+			}
+			return ElementMap;
+		}
+		
+		private IdCounters_removeChild(IdCounters: any[], model: NodeModel) {
+			var count = Number(model.Label.substring(1));
+			if (IdCounters[model.Type][count] == undefined) {
+				console.log("wrong with idcounters");
+			}
+			delete(IdCounters[model.Type][count]);
+			for (var i in model.Children) {
+				this.IdCounters_removeChild(IdCounters, model.Children[i]);
+			}
+			return IdCounters;
+		}
+
+		ReserveElementMap (model: NodeModel) {
+			var ElementMap = this.ElementMap;
+			this.ElementMap =this. ElementMap_removeChild(this.ElementMap_Clone(this.ElementMap), model);
+			return ElementMap;
+		}
+
+		ReserveIdCounters (model: NodeModel) {
+			var IdCounters = this.IdCounters;
+			this.IdCounters = this.IdCounters_removeChild(this.IdCounters_Clone(this.IdCounters), model);
+			return IdCounters;
+		}
+
+		NewLabel(Type : NodeType, Label: string) : string {
+			var label = this.Label_getNumber(Label);
+			if (label != -1) {
+				if (this.IdCounters[Type][String(label)] == undefined) {
+					this.IdCounters[Type][String(label)] = true;
+					return Label;
+				}
+			}
 			var i: number = 1;
 			while (this.IdCounters[Type][String(i)] != undefined) {
 				i++;

@@ -1,14 +1,9 @@
-/// <reference path="../../src/CaseModel.ts" />
-/// <reference path="../../src/ServerApi.ts" />
-/// <reference path="../../src/PlugInManager.ts" />
-/// <reference path="../Editor/Editor.ts" />
 var __extends = this.__extends || function (d, b) {
     for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
     function __() { this.constructor = d; }
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-//--- CodeMirror
 var FullScreenEditorPlugIn = (function (_super) {
     __extends(FullScreenEditorPlugIn, _super);
     function FullScreenEditorPlugIn(plugInManager) {
@@ -54,9 +49,6 @@ var FullScreenEditorLayoutPlugIn = (function (_super) {
     };
 
     FullScreenEditorLayoutPlugIn.prototype.Delegate = function (caseViewer, caseModel, element) {
-        //if (caseModel.IsEditing) {
-        //	element.height(ExpandedNodeHeight);
-        //}
         return true;
     };
     return FullScreenEditorLayoutPlugIn;
@@ -155,13 +147,9 @@ var FullScreenEditorActionPlugIn = (function (_super) {
 
                     var orig_model = case0.ElementMap[label];
                     var orig_view = caseViewer.ViewMap[label];
-                    var orig_idCounters = case0.IdCounters;
-                    var orig_ElementMap = case0.ElementMap;
 
-                    /* In order to keep labels the same as much as possible */
-                    var new_idCounters = FullScreenEditorActionPlugIn.IdCounters_Clone(orig_idCounters);
-                    case0.IdCounters = FullScreenEditorActionPlugIn.IdCounters_removeChild(new_idCounters, orig_model);
-                    case0.ElementMap = FullScreenEditorActionPlugIn.ElementMap_removeChild(FullScreenEditorActionPlugIn.ElementMap_Clone(case0.ElementMap), orig_model);
+                    var orig_idCounters = case0.ReserveIdCounters(orig_model);
+                    var orig_ElementMap = case0.ReserveElementMap(orig_model);
 
                     var decoder = new AssureIt.CaseDecoder();
                     var new_model = decoder.ParseASN(case0, editor.getValue(), orig_model);
@@ -174,7 +162,7 @@ var FullScreenEditorActionPlugIn = (function (_super) {
                         if (Parent != null) {
                             new_model.Parent = Parent;
                             for (var j in Parent.Children) {
-                                if (Parent.Children[j].Label == new_model.Label) {
+                                if (Parent.Children[j].Label == orig_model.Label) {
                                     Parent.Children[j] = new_model;
                                 }
                             }
@@ -200,7 +188,7 @@ var FullScreenEditorActionPlugIn = (function (_super) {
                     }
                     caseViewer.Draw();
 
-                    /* TODO We need to Draw twice for some unknown reason */ caseViewer.Draw();
+                    caseViewer.Draw();
 
                     var $this = $(this);
                     self.isDisplayed = false;
