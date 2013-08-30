@@ -1,12 +1,25 @@
 /// <reference path="../../src/Casemodel.ts" />
 /// <reference path="../../src/PlugInManager.ts" />
 
+class DScriptError {
+	NodeName : string;
+	LineNumber: number;
+	Message : string;
+	constructor(NodeName: string, LineNumber: number, Message: string) {
+		this.NodeName = NodeName;
+		this.LineNumber = LineNumber;
+		this.Message = Message;
+	}
+}
+
 class DScriptGenerator {
 	indent: string;
 	linefeed: string;
+	errorMessage: DScriptError[];
 	constructor() {
 		this.indent = "\t";
 		this.linefeed = "\n";
+		this.errorMessage = [];
 	}
 
 	getMethodName(model: AssureIt.NodeModel): string {
@@ -17,21 +30,21 @@ class DScriptGenerator {
 		switch(model.Type) {
 			case AssureIt.NodeType.Goal:
 				return this.GenerateGoal(model, Flow);
-			case AssureIt.NodeType.Context:
-				return this.GenerateContext(model, Flow);
+			//case AssureIt.NodeType.Context:
+			//	return this.GenerateContext(model, Flow);
 			case AssureIt.NodeType.Strategy:
 				return this.GenerateStrategy(model, Flow);
 			case AssureIt.NodeType.Evidence:
 				return this.GenerateEvidence(model, Flow);
 		}
-		return this.GenerateDefault(model, Flow);
+		return "";
 	}
 
 	GenerateFunctionHeader(model: AssureIt.NodeModel) : string {
 		return "boolean " + model.Label + "()";
 	}
 
-	GenerateDefault(model: AssureIt.NodeModel, Flow : { [key: string]: AssureIt.NodeModel[];}) : string {
+	GenerateHeader(model: AssureIt.NodeModel) : string {
 		var program : string = "";
 		program += this.GenerateFunctionHeader(model) + " {" + this.linefeed;
 		var statement = model.Statement.replace(/\n+$/g,'');
@@ -43,6 +56,15 @@ class DScriptGenerator {
 			}
 			program += this.indent + " */" + this.linefeed;
 		}
+		return program;
+	}
+
+	GenerateFooter(model: AssureIt.NodeModel, program : string) : string {
+		return program + "}";
+	}
+
+	GenerateDefault(model: AssureIt.NodeModel, Flow : { [key: string]: AssureIt.NodeModel[];}) : string {
+		var program : string = this.GenerateHeader(model);
 		var child : AssureIt.NodeModel[] = Flow[model.Label];
 		program += this.indent + "return ";
 		if(child.length > 0) {
@@ -57,8 +79,7 @@ class DScriptGenerator {
 			program += "true";
 		}
 		program += ";" + this.linefeed;
-		program += "}";
-		return program;
+		return this.GenerateFooter(model, program);
 	}
 
 	GenerateGoal(model: AssureIt.NodeModel, Flow : { [key: string]: AssureIt.NodeModel[];}): string {

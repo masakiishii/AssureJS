@@ -1,9 +1,19 @@
 /// <reference path="../../src/Casemodel.ts" />
 /// <reference path="../../src/PlugInManager.ts" />
+var DScriptError = (function () {
+    function DScriptError(NodeName, LineNumber, Message) {
+        this.NodeName = NodeName;
+        this.LineNumber = LineNumber;
+        this.Message = Message;
+    }
+    return DScriptError;
+})();
+
 var DScriptGenerator = (function () {
     function DScriptGenerator() {
         this.indent = "\t";
         this.linefeed = "\n";
+        this.errorMessage = [];
     }
     DScriptGenerator.prototype.getMethodName = function (model) {
         return model.Label;
@@ -13,24 +23,23 @@ var DScriptGenerator = (function () {
         switch (model.Type) {
             case AssureIt.NodeType.Goal:
                 return this.GenerateGoal(model, Flow);
-            case AssureIt.NodeType.Context:
-                return this.GenerateContext(model, Flow);
+
             case AssureIt.NodeType.Strategy:
                 return this.GenerateStrategy(model, Flow);
             case AssureIt.NodeType.Evidence:
                 return this.GenerateEvidence(model, Flow);
         }
-        return this.GenerateDefault(model, Flow);
+        return "";
     };
 
     DScriptGenerator.prototype.GenerateFunctionHeader = function (model) {
         return "boolean " + model.Label + "()";
     };
 
-    DScriptGenerator.prototype.GenerateDefault = function (model, Flow) {
+    DScriptGenerator.prototype.GenerateHeader = function (model) {
         var program = "";
         program += this.GenerateFunctionHeader(model) + " {" + this.linefeed;
-        var statement = model.Statement.replace(/\n+$/g, '').trim();
+        var statement = model.Statement.replace(/\n+$/g, '');
         if (statement.length > 0) {
             var description = statement.split(this.linefeed);
             program += this.indent + "/*" + this.linefeed;
@@ -39,6 +48,15 @@ var DScriptGenerator = (function () {
             }
             program += this.indent + " */" + this.linefeed;
         }
+        return program;
+    };
+
+    DScriptGenerator.prototype.GenerateFooter = function (model, program) {
+        return program + "}";
+    };
+
+    DScriptGenerator.prototype.GenerateDefault = function (model, Flow) {
+        var program = this.GenerateHeader(model);
         var child = Flow[model.Label];
         program += this.indent + "return ";
         if (child.length > 0) {
@@ -53,8 +71,7 @@ var DScriptGenerator = (function () {
             program += "true";
         }
         program += ";" + this.linefeed;
-        program += "}";
-        return program;
+        return this.GenerateFooter(model, program);
     };
 
     DScriptGenerator.prototype.GenerateGoal = function (model, Flow) {

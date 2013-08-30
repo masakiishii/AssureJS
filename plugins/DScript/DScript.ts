@@ -123,7 +123,6 @@ class DScriptEditorPlugIn extends AssureIt.ActionPlugIn {
 		var self = this;
 		this.editor_left.on("change", function(e: JQueryEventObject) {
 			self.GenerateCode();
-			console.log(self.editor_left.getValue());
 		});
 	}
 	GenerateCode() : void {
