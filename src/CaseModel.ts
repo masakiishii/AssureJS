@@ -1,7 +1,7 @@
 module AssureIt {
 
 	export class CaseAnnotation {
-		constructor(public Name: string, public Body: any) {
+		constructor(public Name: string, public Body: string) {
 		}
 	}
 
@@ -78,7 +78,7 @@ module AssureIt {
 			return null;
 		}
 
-		SetAnnotation(Name: string, Body : any) : void {
+		SetAnnotation(Name: string, Body : string) : void {
 			for(var i: number = 0; i < this.Annotations.length; i++ ) {
 				if(this.Annotations[i].Name == Name) {
 					this.Annotations[i].Body = Body;
