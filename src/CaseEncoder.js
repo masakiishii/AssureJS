@@ -130,6 +130,7 @@ var AssureIt;
                 if (anno_num != 0) {
                     for (var i = 0; i < model.Annotations.length; i++) {
                         ret += (" @" + model.Annotations[i].Name);
+                        ret += (" " + model.Annotations[i].Body);
                     }
                 }
                 ret += "\n";
