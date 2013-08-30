@@ -62,7 +62,7 @@ $(function () {
 				"Statement": "",
 				"NodeType": 1,
 				"Label": "C1",
-				"Annotations": [{"Name" : "Def", "Body" : "a = 1"}],
+				"Annotations": [{"Name" : "Def", "Body" : "(a = 1)"}],
 				"Notes": []
 			},
 			{
@@ -153,7 +153,7 @@ $(function () {
 				"Statement": "",
 				"NodeType": 1,
 				"Label": "C2",
-				"Annotations": [{"Name" : "Def", "Body" : "a = 2"}],
+				"Annotations": [{"Name" : "Def", "Body" : "(a = 2)"}],
 				"Notes": []
 			},
 			{
@@ -172,7 +172,7 @@ $(function () {
 				"Statement": "",
 				"NodeType": 1,
 				"Label": "C4",
-				"Annotations": [{"Name" : "Def", "Body" : "a = 4"}],
+				"Annotations": [{"Name" : "Def", "Body" : "(a = 4)"}],
 				"Notes": []
 			},
 			{
@@ -181,7 +181,7 @@ $(function () {
 				"Statement": "",
 				"NodeType": 1,
 				"Label": "C3",
-				"Annotations": [{"Name" : "Def", "Body" : "a = 3"}],
+				"Annotations": [{"Name" : "Def", "Body" : "(a = 3)"}],
 				"Notes": []
 			},
 			{
