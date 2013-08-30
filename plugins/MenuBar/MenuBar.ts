@@ -1,4 +1,5 @@
 /// <reference path="../../src/CaseModel.ts" />
+/// <reference path="../../src/CaseEncoder.ts" />
 /// <reference path="../../src/PlugInManager.ts" />
 
 class MenuBar {
@@ -296,9 +297,9 @@ class CommitWindow {
 		});
 
 		$('#commit_button').click(function() {
-			var encoder   = new AssureIt.CaseEncoderDeprecated();
 			var converter = new AssureIt.Converter();
-			var contents = converter.GenOldJson(encoder.ConvertToOldJson(case0));
+			var encoder : AssureIt.CaseEncoder = new AssureIt.CaseEncoder();
+			var contents : string = encoder.ConvertToASN(case0.ElementTop, false);
 			serverApi.Commit(contents, $(this).val, case0.CommitId);
 			case0.SetModified(false);
 			window.location.reload(); //FIXME

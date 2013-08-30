@@ -282,9 +282,9 @@ var CommitWindow = (function () {
         });
 
         $('#commit_button').click(function () {
-            var encoder = new AssureIt.CaseEncoderDeprecated();
             var converter = new AssureIt.Converter();
-            var contents = converter.GenOldJson(encoder.ConvertToOldJson(case0));
+            var encoder = new AssureIt.CaseEncoder();
+            var contents = encoder.ConvertToASN(case0.ElementTop, false);
             serverApi.Commit(contents, $(this).val, case0.CommitId);
             case0.SetModified(false);
             window.location.reload();
