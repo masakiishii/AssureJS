@@ -77,6 +77,7 @@ var FullScreenEditorActionPlugIn = (function (_super) {
             display: 'none'
         });
         this.ShowFullScreenEditor = null;
+        this.marker = null;
     }
     FullScreenEditorActionPlugIn.prototype.IsEnabled = function (caseViewer, case0) {
         return true;
@@ -133,6 +134,7 @@ var FullScreenEditorActionPlugIn = (function (_super) {
 
         if (!this.ShowFullScreenEditor) {
             this.ShowFullScreenEditor = function (ev) {
+                $('#background').unbind('dblclick');
                 ev.stopPropagation();
                 self.plugInManager.UseUILayer(self);
                 self.isDisplayed = true;
@@ -142,8 +144,12 @@ var FullScreenEditorActionPlugIn = (function (_super) {
                 var encoder = new AssureIt.CaseEncoder();
                 var encoded = encoder.ConvertToASN(case0.ElementMap[label], false);
 
-                $('#fullscreen-editor-wrapper').css({ display: 'block' }).addClass("animated fadeInDown").focus().one("blur", function (e) {
+                $('#fullscreen-editor-wrapper').css({ display: 'block' }).addClass("animated fadeInDown").focus().on("blur", function (e) {
+                    var _this = this;
                     e.stopPropagation();
+                    if (self.marker != null) {
+                        self.marker.clear();
+                    }
 
                     var orig_model = case0.ElementMap[label];
                     var orig_view = caseViewer.ViewMap[label];
@@ -182,21 +188,27 @@ var FullScreenEditorActionPlugIn = (function (_super) {
                                 view.ParentShape = caseViewer.ViewMap[model.Parent.Label];
                         })(new_model, new_view);
                         new_model.EnableEditFlag();
+
+                        var $this = $(this);
+                        self.isDisplayed = false;
+                        $this.addClass("animated fadeOutUp");
+                        window.setTimeout(function () {
+                            $this.removeClass();
+                            $this.css({ display: 'none' });
+                        }, 1300);
+                        $('#fullscreen-editor-wrapper').unbind();
+                        $('#background').dblclick(function (ev) {
+                            _this.rootModel = case0.ElementTop;
+                            _this.ShowFullScreenEditor(ev);
+                        });
                     } else {
+                        self.ShowAnError(decoder);
                         case0.ElementMap = orig_ElementMap;
                         case0.IdCounters = orig_idCounters;
                     }
                     caseViewer.Draw();
 
                     caseViewer.Draw();
-
-                    var $this = $(this);
-                    self.isDisplayed = false;
-                    $this.addClass("animated fadeOutUp");
-                    window.setTimeout(function () {
-                        $this.removeClass();
-                        $this.css({ display: 'none' });
-                    }, 1300);
                 }).on("keydown", function (e) {
                     if (e.keyCode == 27) {
                         e.stopPropagation();
@@ -205,6 +217,7 @@ var FullScreenEditorActionPlugIn = (function (_super) {
                 });
                 editor.setValue(encoded);
                 editor.refresh();
+
                 editor.focus();
                 $('#CodeMirror').focus();
                 $('#background').click(function () {
@@ -225,6 +238,32 @@ var FullScreenEditorActionPlugIn = (function (_super) {
             _this.ShowFullScreenEditor(ev);
         });
         return true;
+    };
+
+    FullScreenEditorActionPlugIn.prototype.Blink = function (line) {
+        var _this = this;
+        var cycle = 1000 / 30;
+        var cycles = 8;
+        var count = 0;
+        var blink = function () {
+            count = count + 1;
+            if (count < cycles) {
+                console.log("hi");
+                if (count % 2 == 0) {
+                    _this.marker.clear();
+                } else {
+                    _this.marker = _this.editor.markText({ line: line - 1, ch: 0 }, { line: line, ch: 0 }, { className: "CodeMirror-error" });
+                }
+                _this.editor.refresh();
+                setTimeout(blink, cycle);
+            }
+        };
+        blink();
+    };
+
+    FullScreenEditorActionPlugIn.prototype.ShowAnError = function (decoder) {
+        var error = decoder.GetASNError();
+        this.Blink(error.line);
     };
 
     FullScreenEditorActionPlugIn.prototype.DeleteFromDOM = function () {

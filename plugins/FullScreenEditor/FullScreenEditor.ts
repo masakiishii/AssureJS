@@ -61,6 +61,7 @@ class FullScreenEditorActionPlugIn extends AssureIt.ActionPlugIn {
 	ShowFullScreenEditor: (ev: Event) => void;
 	isDisplayed: boolean;
 	rootModel: AssureIt.NodeModel;
+	marker; //For Error.
 	constructor(plugInManager: AssureIt.PlugInManager) {
 		super(plugInManager);
 		this.editor = CodeMirror.fromTextArea(document.getElementById('fullscreen-editor'), {
@@ -83,6 +84,7 @@ class FullScreenEditorActionPlugIn extends AssureIt.ActionPlugIn {
 			//			background : "rgba(255, 255, 255, 0)"
 		});
 		this.ShowFullScreenEditor = null;
+		this.marker = null;
 	}
 
 	IsEnabled (caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case) : boolean {
@@ -139,6 +141,7 @@ class FullScreenEditorActionPlugIn extends AssureIt.ActionPlugIn {
 
 		if(!this.ShowFullScreenEditor) {
 			this.ShowFullScreenEditor = function (ev: Event) {
+				$('#background').unbind('dblclick');
 				ev.stopPropagation();
 				self.plugInManager.UseUILayer(self);
 				self.isDisplayed = true;
@@ -152,8 +155,11 @@ class FullScreenEditorActionPlugIn extends AssureIt.ActionPlugIn {
 					.css({display: 'block'})
 					.addClass("animated fadeInDown")
 					.focus()
-					.one("blur", function(e: JQueryEventObject) {
+					.on("blur", function(e: JQueryEventObject) {
 						e.stopPropagation();
+						if (self.marker != null) {
+							self.marker.clear();
+						}
 
 						var orig_model : AssureIt.NodeModel = case0.ElementMap[label];
 						var orig_view : AssureIt.NodeView = caseViewer.ViewMap[label];
@@ -192,7 +198,22 @@ class FullScreenEditorActionPlugIn extends AssureIt.ActionPlugIn {
 								if (model.Parent != null) view.ParentShape = caseViewer.ViewMap[model.Parent.Label];
 							})(new_model, new_view);
 							new_model.EnableEditFlag();
+
+							/* Close the editor */
+							var $this = $(this);
+							self.isDisplayed = false;
+							$this.addClass("animated fadeOutUp");
+							window.setTimeout(function() {
+								$this.removeClass();
+								$this.css({display: 'none'});
+							}, 1300);
+							$('#fullscreen-editor-wrapper').unbind(); 
+							$('#background').dblclick((ev) => {
+									this.rootModel = case0.ElementTop;
+									this.ShowFullScreenEditor(ev);});
 						} else {
+							/* Show an error */
+							self.ShowAnError(decoder);
 							case0.ElementMap = orig_ElementMap;
 							case0.IdCounters = orig_idCounters;
 						}
@@ -200,13 +221,6 @@ class FullScreenEditorActionPlugIn extends AssureIt.ActionPlugIn {
 						/* TODO We need to Draw twice for some unknown reason */ 
 						caseViewer.Draw();
 
-						var $this = $(this);
-						self.isDisplayed = false;
-						$this.addClass("animated fadeOutUp");
-						window.setTimeout(function() {
-							$this.removeClass();
-							$this.css({display: 'none'});
-						}, 1300);
 					})
 					.on("keydown", function(e: JQueryEventObject) {
 						if(e.keyCode == 27 /* ESC */){
@@ -216,6 +230,7 @@ class FullScreenEditorActionPlugIn extends AssureIt.ActionPlugIn {
 					});
 				editor.setValue(encoded);
 				editor.refresh();
+
 				editor.focus();
 				$('#CodeMirror').focus();
 				$('#background').click(function(){
@@ -235,6 +250,31 @@ class FullScreenEditorActionPlugIn extends AssureIt.ActionPlugIn {
 				this.rootModel = case0.ElementTop;
 				this.ShowFullScreenEditor(ev);});
 		return true;
+	}
+
+	Blink(line: number) {
+		var cycle = 1000 / 30;
+		var cycles = 8;
+		var count = 0;
+		var blink = ()=>{
+			count = count + 1;
+			if(count < cycles){
+				console.log("hi");
+				if (count % 2 == 0) {
+					this.marker.clear();
+				} else {
+					this.marker = this.editor.markText({line: line-1, ch: 0},{line: line, ch: 0}, {className: "CodeMirror-error"});
+				}
+				this.editor.refresh();
+				setTimeout(blink, cycle);
+			}
+		}
+		blink();
+	}
+
+	ShowAnError(decoder: AssureIt.CaseDecoder) {
+		var error = decoder.GetASNError();
+		this.Blink(error.line);
 	}
 
 	DeleteFromDOM(): void {
