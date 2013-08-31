@@ -61,7 +61,7 @@ class FullScreenEditorActionPlugIn extends AssureIt.ActionPlugIn {
 	ShowFullScreenEditor: (ev: Event) => void;
 	isDisplayed: boolean;
 	rootModel: AssureIt.NodeModel;
-	marker; //For Error.
+	marker; //The list of marker where Syntax Error is found.
 	constructor(plugInManager: AssureIt.PlugInManager) {
 		super(plugInManager);
 		this.editor = CodeMirror.fromTextArea(document.getElementById('fullscreen-editor'), {
@@ -84,7 +84,7 @@ class FullScreenEditorActionPlugIn extends AssureIt.ActionPlugIn {
 			//			background : "rgba(255, 255, 255, 0)"
 		});
 		this.ShowFullScreenEditor = null;
-		this.marker = null;
+		this.marker = [];
 	}
 
 	IsEnabled (caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case) : boolean {
@@ -157,9 +157,10 @@ class FullScreenEditorActionPlugIn extends AssureIt.ActionPlugIn {
 					.focus()
 					.on("blur", function(e: JQueryEventObject) {
 						e.stopPropagation();
-						if (self.marker != null) {
-							self.marker.clear();
+						for (var i in self.marker) {
+							self.marker[i].clear();
 						}
+						self.marker = [];
 
 						var orig_model : AssureIt.NodeModel = case0.ElementMap[label];
 						var orig_view : AssureIt.NodeView = caseViewer.ViewMap[label];
@@ -261,9 +262,12 @@ class FullScreenEditorActionPlugIn extends AssureIt.ActionPlugIn {
 			if(count < cycles){
 				console.log("hi");
 				if (count % 2 == 0) {
-					this.marker.clear();
+					for (var i in this.marker) {
+						this.marker[i].clear();
+					}
+					this.marker = [];
 				} else {
-					this.marker = this.editor.markText({line: line-1, ch: 0},{line: line, ch: 0}, {className: "CodeMirror-error"});
+					this.marker.push(this.editor.markText({line: line-1, ch: 0},{line: line, ch: 0}, {className: "CodeMirror-error"}));
 				}
 				this.editor.refresh();
 				setTimeout(blink, cycle);

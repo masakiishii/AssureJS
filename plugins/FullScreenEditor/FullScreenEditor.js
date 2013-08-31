@@ -77,7 +77,7 @@ var FullScreenEditorActionPlugIn = (function (_super) {
             display: 'none'
         });
         this.ShowFullScreenEditor = null;
-        this.marker = null;
+        this.marker = [];
     }
     FullScreenEditorActionPlugIn.prototype.IsEnabled = function (caseViewer, case0) {
         return true;
@@ -147,9 +147,10 @@ var FullScreenEditorActionPlugIn = (function (_super) {
                 $('#fullscreen-editor-wrapper').css({ display: 'block' }).addClass("animated fadeInDown").focus().on("blur", function (e) {
                     var _this = this;
                     e.stopPropagation();
-                    if (self.marker != null) {
-                        self.marker.clear();
+                    for (var i in self.marker) {
+                        self.marker[i].clear();
                     }
+                    self.marker = [];
 
                     var orig_model = case0.ElementMap[label];
                     var orig_view = caseViewer.ViewMap[label];
@@ -250,9 +251,12 @@ var FullScreenEditorActionPlugIn = (function (_super) {
             if (count < cycles) {
                 console.log("hi");
                 if (count % 2 == 0) {
-                    _this.marker.clear();
+                    for (var i in _this.marker) {
+                        _this.marker[i].clear();
+                    }
+                    _this.marker = [];
                 } else {
-                    _this.marker = _this.editor.markText({ line: line - 1, ch: 0 }, { line: line, ch: 0 }, { className: "CodeMirror-error" });
+                    _this.marker.push(_this.editor.markText({ line: line - 1, ch: 0 }, { line: line, ch: 0 }, { className: "CodeMirror-error" }));
                 }
                 _this.editor.refresh();
                 setTimeout(blink, cycle);
