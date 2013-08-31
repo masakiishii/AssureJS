@@ -282,7 +282,6 @@ var CommitWindow = (function () {
         });
 
         $('#commit_button').click(function () {
-            var converter = new AssureIt.Converter();
             var encoder = new AssureIt.CaseEncoder();
             var contents = encoder.ConvertToASN(case0.ElementTop, false);
             serverApi.Commit(contents, $(this).val, case0.CommitId);
