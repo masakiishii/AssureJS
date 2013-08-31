@@ -203,7 +203,7 @@ var AssureIt;
             }
             if (obj["Annotations"].length != 0) {
                 for (var i = 0; i < obj["Annotations"].length; i++) {
-                    Model.SetAnnotation(obj["Annotations"][i].Name, null);
+                    Model.SetAnnotation(obj["Annotations"][i].Name, obj["Annotations"][i].Body);
                 }
             } else {
             }
