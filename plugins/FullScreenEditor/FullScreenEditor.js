@@ -243,13 +243,12 @@ var FullScreenEditorActionPlugIn = (function (_super) {
 
     FullScreenEditorActionPlugIn.prototype.Blink = function (line) {
         var _this = this;
-        var cycle = 1000 / 30;
+        var cycle = 1000 / 15;
         var cycles = 8;
         var count = 0;
         var blink = function () {
             count = count + 1;
             if (count < cycles) {
-                console.log("hi");
                 if (count % 2 == 0) {
                     for (var i in _this.marker) {
                         _this.marker[i].clear();
@@ -258,7 +257,7 @@ var FullScreenEditorActionPlugIn = (function (_super) {
                 } else {
                     _this.marker.push(_this.editor.markText({ line: line - 1, ch: 0 }, { line: line, ch: 0 }, { className: "CodeMirror-error" }));
                 }
-                _this.editor.refresh();
+
                 setTimeout(blink, cycle);
             }
         };
@@ -268,6 +267,8 @@ var FullScreenEditorActionPlugIn = (function (_super) {
     FullScreenEditorActionPlugIn.prototype.ShowAnError = function (decoder) {
         var error = decoder.GetASNError();
         this.Blink(error.line);
+        this.editor.scrollIntoView({ line: error.line, ch: error.column });
+        this.editor.setCursor({ line: error.line - 1 });
     };
 
     FullScreenEditorActionPlugIn.prototype.DeleteFromDOM = function () {

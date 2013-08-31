@@ -163,7 +163,7 @@ var AssureIt;
                     return ret;
                 }
 
-                if (ret.indexOf("\n") != ret.length - 1) {
+                if (ret.indexOf("\n") != ret.lastIndexOf("\n")) {
                     ret += "\n";
                 }
 

@@ -197,7 +197,7 @@ module AssureIt {
 				}
 
 				/* Insert newline in case a node consists of multiple lines (for presentation).*/
-				if (ret.indexOf("\n") != ret.lastIndexOf("\n");) {
+				if (ret.indexOf("\n") != ret.lastIndexOf("\n")) {
 					ret += "\n";
 				}
 

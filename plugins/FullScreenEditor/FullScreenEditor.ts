@@ -254,13 +254,12 @@ class FullScreenEditorActionPlugIn extends AssureIt.ActionPlugIn {
 	}
 
 	Blink(line: number) {
-		var cycle = 1000 / 30;
+		var cycle = 1000 / 15;
 		var cycles = 8;
 		var count = 0;
 		var blink = ()=>{
 			count = count + 1;
 			if(count < cycles){
-				console.log("hi");
 				if (count % 2 == 0) {
 					for (var i in this.marker) {
 						this.marker[i].clear();
@@ -269,7 +268,7 @@ class FullScreenEditorActionPlugIn extends AssureIt.ActionPlugIn {
 				} else {
 					this.marker.push(this.editor.markText({line: line-1, ch: 0},{line: line, ch: 0}, {className: "CodeMirror-error"}));
 				}
-				this.editor.refresh();
+				//this.editor.refresh();
 				setTimeout(blink, cycle);
 			}
 		}
@@ -279,6 +278,8 @@ class FullScreenEditorActionPlugIn extends AssureIt.ActionPlugIn {
 	ShowAnError(decoder: AssureIt.CaseDecoder) {
 		var error = decoder.GetASNError();
 		this.Blink(error.line);
+		this.editor.scrollIntoView({line:error.line, ch: error.column});
+		this.editor.setCursor({line:error.line-1});
 	}
 
 	DeleteFromDOM(): void {
