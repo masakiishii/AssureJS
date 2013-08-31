@@ -65,9 +65,9 @@ class MonitorSVGRenderPlugIn extends AssureIt.SVGRenderPlugIn {
 
 	Delegate(caseViewer: AssureIt.CaseViewer, nodeView: AssureIt.NodeView) : boolean {
 		var element: JQuery = nodeView.HTMLDoc.DocBase;
-		if(element.data('monitor')) {
-			nodeView.SVGShape.SetColor("red", "black");
-		}
+		//if(element.data('monitor')) {
+		//	nodeView.SVGShape.SetColor("red", "black");
+		//}
 		return true;
 	}
 }

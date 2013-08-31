@@ -77,9 +77,7 @@ var MonitorSVGRenderPlugIn = (function (_super) {
 
     MonitorSVGRenderPlugIn.prototype.Delegate = function (caseViewer, nodeView) {
         var element = nodeView.HTMLDoc.DocBase;
-        if (element.data('monitor')) {
-            nodeView.SVGShape.SetColor("red", "black");
-        }
+
         return true;
     };
     return MonitorSVGRenderPlugIn;
