@@ -177,6 +177,11 @@ module AssureIt {
 
 	export class ASNParser extends Parser {
 		Text2NodeTypeMap : any = {"Goal" : NodeType.Goal, "Strategy" : NodeType.Strategy , "Context" : NodeType.Context, "Evidence" : NodeType.Evidence};
+		private error;
+		constructor(Case : Case) {
+			super(Case);
+			this.error = null;
+		}
 		Object2NodeModel(obj : any) : NodeModel {
 			var Case : Case = this.Case;
 			var Parent : NodeModel = obj["Parent"];
@@ -220,15 +225,20 @@ module AssureIt {
 				}
 				return root;
 			} catch(e) {
-				console.log(e);
+				this.error = e;
 				return null;
 			}
+		}
+
+		GetError() {
+			return this.error;
 		}
 	}
 
 	export class CaseDecoder {
-
+		ASNParser : ASNParser;
 		constructor() {
+			this.ASNParser = null;
 		}
 
 		ParseJson(Case : Case, JsonData : any) : NodeModel  {
@@ -244,10 +254,15 @@ module AssureIt {
 		}
 
 		ParseASN(Case : Case,  ASNData: string, orig : NodeModel) : NodeModel {
-			var parser : Parser = new ASNParser(Case);
-			var root : NodeModel = parser.Parse(ASNData, orig);
+			this.ASNParser = new ASNParser(Case);
+			var root : NodeModel = this.ASNParser.Parse(ASNData, orig);
 			return root;
 		}
-
+		GetASNError() {
+			if (this.ASNParser == null || this.ASNParser.GetError() == null) {
+				return null;
+			}
+			return this.ASNParser.GetError();
+		}
 	}
 }

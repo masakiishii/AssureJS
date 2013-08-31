@@ -174,9 +174,10 @@ var AssureIt;
 
     var ASNParser = (function (_super) {
         __extends(ASNParser, _super);
-        function ASNParser() {
-            _super.apply(this, arguments);
+        function ASNParser(Case) {
+            _super.call(this, Case);
             this.Text2NodeTypeMap = { "Goal": AssureIt.NodeType.Goal, "Strategy": AssureIt.NodeType.Strategy, "Context": AssureIt.NodeType.Context, "Evidence": AssureIt.NodeType.Evidence };
+            this.error = null;
         }
         ASNParser.prototype.Object2NodeModel = function (obj) {
             var Case = this.Case;
@@ -217,9 +218,13 @@ var AssureIt;
                 }
                 return root;
             } catch (e) {
-                console.log(e);
+                this.error = e;
                 return null;
             }
+        };
+
+        ASNParser.prototype.GetError = function () {
+            return this.error;
         };
         return ASNParser;
     })(Parser);
@@ -227,6 +232,7 @@ var AssureIt;
 
     var CaseDecoder = (function () {
         function CaseDecoder() {
+            this.ASNParser = null;
         }
         CaseDecoder.prototype.ParseJson = function (Case, JsonData) {
             var parser = new JsonParser(Case);
@@ -241,9 +247,15 @@ var AssureIt;
         };
 
         CaseDecoder.prototype.ParseASN = function (Case, ASNData, orig) {
-            var parser = new ASNParser(Case);
-            var root = parser.Parse(ASNData, orig);
+            this.ASNParser = new ASNParser(Case);
+            var root = this.ASNParser.Parse(ASNData, orig);
             return root;
+        };
+        CaseDecoder.prototype.GetASNError = function () {
+            if (this.ASNParser == null || this.ASNParser.GetError() == null) {
+                return null;
+            }
+            return this.ASNParser.GetError();
         };
         return CaseDecoder;
     })();
