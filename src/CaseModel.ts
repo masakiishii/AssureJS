@@ -68,7 +68,7 @@ module AssureIt {
 			}
 			this.EnableEditFlag();
 		}
-	
+
 		GetAnnotation(Name: string) : CaseAnnotation {
 			for(var i: number = 0; i < this.Annotations.length; i++ ) {
 				if(this.Annotations[i].Name == Name) {
@@ -245,7 +245,7 @@ module AssureIt {
 		private ElementMap_Clone(obj: any) : any {
 			return this.Object_Clone(obj);
 		}
-		
+
 		private IdCounters_Clone(obj: any[]) : any[] {
 			var IdCounters = [];
 			for (var i in obj) {
@@ -253,7 +253,7 @@ module AssureIt {
 			}
 			return IdCounters;
 		}
-		
+
 		private ElementMap_removeChild(ElementMap, model: NodeModel) {
 			if (ElementMap[model.Label] == undefined) {
 				console.log("wrong with nodemodel");
@@ -264,7 +264,7 @@ module AssureIt {
 			}
 			return ElementMap;
 		}
-		
+
 		private IdCounters_removeChild(IdCounters: any[], model: NodeModel) {
 			var count = Number(model.Label.substring(1));
 			if (IdCounters[model.Type][count] == undefined) {

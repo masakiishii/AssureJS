@@ -203,7 +203,7 @@ module AssureIt {
 			}
 			if (obj["Annotations"].length != 0) {
 				for (var i : number = 0; i < obj["Annotations"].length; i++) {
-					Model.SetAnnotation(obj["Annotations"][i].Name, null); //FIX ME!!
+					Model.SetAnnotation(obj["Annotations"][i].Name, obj["Annotations"][i].Body);
 				}
 			}
 			else {
