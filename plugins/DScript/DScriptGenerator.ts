@@ -103,7 +103,7 @@ class DScriptGenerator {
 				return regex.test(Text);
 			});
 			for (var j=0; j < DeclList.length; ++j) {
-				var Decl : string[] = DeclList[i].split("=");
+				var Decl : string[] = DeclList[j].split("=");
 				if(Decl.length != 2) {
 					console.log(new DScriptError(Node.Label, 0, "DeclSyntaxError"));
 				}
@@ -127,6 +127,50 @@ class DScriptGenerator {
 		return null;
 	}
 
+	GetMonitor(Node: AssureIt.NodeModel) : string {
+		if(Node.Type == AssureIt.NodeType.Evidence) {
+			var Monitors : string[] = Node.Statement.split("\n").filter(function(Text : string) {
+				return Text.indexOf("Monitor=") == 0;
+			});
+			for (var i=0; i < Monitors.length; ++i) {
+				var List = Monitors[i].split("Monitor=");
+				if(List.length != 2 || List[1].length == 0) {
+					console.log(new DScriptError(Node.Label, 0, "Monitor has no rule"));
+				} else {
+					return List[1];
+				}
+			}
+		}
+		return "";
+	}
+
+	GetMonitorName(Text : string) : string[] {
+		// (E3.Monitor == true) => ["(E3", "E3", "Monitor"]
+		var res : string[] = Text.match(/^\(+([A-Za-z0-9]+).([A-Za-z0-9]+)/);
+		if(res.length == 3) {
+			return res.splice(1);
+		}
+		return []
+	}
+
+	GetAction(Node: AssureIt.NodeModel) : string {
+		if(Node.Type == AssureIt.NodeType.Evidence) {
+			var Actions : string[] = Node.Statement.split("\n").filter(function(Text : string) {
+				return Text.indexOf("Action=") == 0;
+			});
+			for (var i=0; i < Actions.length; ++i) {
+				var List = Actions[i].split("Action=");
+				if(List.length != 2 || List[1].length == 0) {
+					console.log(new DScriptError(Node.Label, 0, "Action has no rule"));
+				} else {
+					return List[1];
+				}
+			}
+		}
+		return "";
+	}
+
+
 	getMethodName(Node: AssureIt.NodeModel): string {
 		return Node.Label;
 	}
@@ -146,7 +190,10 @@ class DScriptGenerator {
 	}
 
 	GenerateFunctionHeader(Node: AssureIt.NodeModel) : string {
-		return "boolean " + Node.Label + "()";
+		return "boolean Invoke(" + Node.Label + " self)";
+	}
+	GenerateFunctionCall(Node: AssureIt.NodeModel) : string {
+		return "Invoke(new " + Node.Label + "())";
 	}
 
 	GenerateHeader(Node: AssureIt.NodeModel) : string {
@@ -188,7 +235,7 @@ class DScriptGenerator {
 				if(i != 0) {
 					program += " && ";
 				}
-				program += node.Label + "()";
+				program += this.GenerateFunctionCall(node);
 			}
 		} else {
 			program += "true";
@@ -208,10 +255,10 @@ class DScriptGenerator {
 				if(i != 0) {
 					program += " && ";
 				}
-				program += node.Label + "()";
+				program += this.GenerateFunctionCall(node);
 			}
 		} else {
-			program += "false";
+			program += "false/*Undevelopped Goal*/";
 		}
 		program += ";" + this.linefeed;
 		return this.GenerateFooter(Node, program);
@@ -238,20 +285,63 @@ class DScriptGenerator {
 	GenerateStrategy(Node: AssureIt.NodeModel, Flow : { [key: string]: AssureIt.NodeModel[];}): string {
 		var program : string = this.GenerateHeader(Node);
 		var child : AssureIt.NodeModel[] = Flow[Node.Label];
-
-		program += this.indent + "return ";
-		if(child.length > 0) {
-			for (var i=0; i < child.length; ++i) {
-				var node : AssureIt.NodeModel = child[i];
-				if(i != 0) {
-					program += " && ";
+		var ContextList : AssureIt.NodeModel[] = this.GetContextList(child);
+		var FaultList : string[] = [];
+		var FaultAction = "";
+		if(ContextList.length > 0) {
+			for (var i=0; i < ContextList.length; ++i) {
+				var Statements = ContextList[i].Statement.split("\n");
+				for (var j=0; j < Statements.length; ++j) {
+					if (Statements[j].indexOf("fault=") == 0) {
+						if (j + 1 < Statements.length && Statements[j+1].indexOf("fault=") == 0) {
+							FaultList = Statements[j].substring("fault=".length).split(",");
+							FaultAction = Statements[j+1].substring("fault=".length);
+							FaultList = FaultList.map(function(e : string) { return e.trim(); });
+						}
+					}
 				}
-				program += node.Label + "()";
 			}
-		} else {
-			program += "false";
 		}
-		program += ";" + this.linefeed;
+
+		if(FaultList.length > 0) {
+			var self = this;
+			program += this.indent + "enum " + Node.Label + "_FaultType {" + this.linefeed;
+			program += FaultList.map(function(e : string) {
+				return self.indent + self.indent + e;
+			}).join("," + this.linefeed) + this.linefeed;
+
+			program += this.indent + "};" + this.linefeed;
+			program += this.indent + "switch(" + FaultAction + ") {" + this.linefeed;
+			program += this.GetGoalList(Node.Children).map(function(e : AssureIt.NodeModel) {
+				var ret : string = "";
+				console.log(FaultList);
+				console.log(e.Statement);
+				for (var i=0; i < FaultList.length; ++i) {
+					if(e.Statement.indexOf(FaultList[i]) >= 0) {
+						ret += self.indent + "case " + FaultList[i] + ":" + self.linefeed;
+					}
+				}
+				ret += self.indent + self.indent + "return ";
+				ret += self.GenerateFunctionCall(e) + ";";
+				return ret;
+			}).join(this.linefeed) + this.linefeed;
+			program += this.indent + "}" + this.linefeed;
+			program += this.indent + "return false;" + this.linefeed;
+		} else {
+			program += this.indent + "return ";
+			if(child.length > 0) {
+				for (var i=0; i < child.length; ++i) {
+					var node : AssureIt.NodeModel = child[i];
+					if(i != 0) {
+						program += " && ";
+					}
+					program += this.GenerateFunctionCall(node);
+				}
+			} else {
+				program += "false";
+			}
+			program += ";" + this.linefeed;
+		}
 		return this.GenerateFooter(Node, program);
 
 	}
@@ -261,10 +351,8 @@ class DScriptGenerator {
 		var child : AssureIt.NodeModel[] = Flow[Node.Label];
 
 		var Statements = Node.Statement.split("\n");
-		var Monitors : string[] = Statements.filter(function(Text : string) {
-			return Text.indexOf("Monitor=") == 0;
-		});
-		if(Monitors.length > 0) {
+		var Monitor : string = this.GetMonitor(Node);
+		if(Monitor.length > 0) {
 			var env = this.GetEnvironment("Location");
 			if(env == null || env.length == 0) {
 				console.log(new DScriptError(Node.Label, 0, "Location is not defined"));
@@ -272,31 +360,15 @@ class DScriptGenerator {
 				var locations : string[] = env.split(",");
 				program += this.indent + "boolean ret = false;" + this.linefeed;
 				for (var j=0; j < locations.length; ++j) {
-					for (var i=0; i < Monitors.length; ++i) {
-						var List = Monitors[i].split("Monitor=");
-						if(List.length != 2 || List[1].length == 0) {
-							console.log(new DScriptError(Node.Label, 0, "Monitor has no rule"));
-							continue;
-						}
-						var Code = List[1];
-						Code = Code.replace(/([A-Za-z]+)/, locations[j] + ".$1");
-						program += this.indent + "ret = (" + Code + ");" + this.linefeed;
-					}
+					var Code = Monitor.replace(/([A-Za-z]+)/, locations[j] + ".$1");
+					program += this.indent + "ret = (" + Code + ");" + this.linefeed;
 				}
 			}
 		}
 
-		var Actions : string[] = Statements.filter(function(Text : string) {
-			return Text.indexOf("Action=") == 0;
-		});
-		for (var i=0; i < Actions.length; ++i) {
-			var List = Actions[i].split("Action=");
-			if(List.length != 2 || List[1].length == 0) {
-				console.log(new DScriptError(Node.Label, 0, "Action has no rule"));
-				continue;
-			}
-			var Code = List[1];
-			program += this.indent + "if(!" + Code + ") {" + this.linefeed;
+		var Action : string = this.GetAction(Node);
+		if(Action.length > 0) {
+			program += this.indent + "if(!" + Action + ") {" + this.linefeed;
 			program += this.indent + this.indent + "return false;" + this.linefeed;
 			program += this.indent + "}" + this.linefeed;
 		}
@@ -331,7 +403,7 @@ class DScriptGenerator {
 		return flow + program.reverse().join(this.linefeed);
 	}
 
-	CreateControlFlow(rootNode: AssureIt.NodeModel) : { [key: string]: AssureIt.NodeModel[]; } {
+	CollectNodeInfo(rootNode: AssureIt.NodeModel) : { [key: string]: AssureIt.NodeModel[]; } {
 		var queue : AssureIt.NodeModel[] = [];
 		var map: { [key: string]: AssureIt.NodeModel[]; } = {};
 		var NodeList : AssureIt.NodeModel[] = [];
@@ -388,23 +460,60 @@ class DScriptGenerator {
 		if(order != null) {
 			var child : string[] = [];
 			for (var i=0; i < order.length; ++i) {
-				child.push(NodeList[order[i]].Label);
+				var childList : AssureIt.NodeModel[] = [];
+				var Node = NodeList[order[i]];
+				var labels1 = [];
+				var labels2 = [];
+				for (var k=0; k < Node.Children.length; ++k) {
+					labels1.push(Node.Children[k].Label);
+				}
+				for (var j=0; j < order.length; ++j) {
+					for (var k=0; k < Node.Children.length; ++k) {
+						var childNode : AssureIt.NodeModel = Node.Children[k];
+						if(NodeList[order[j]].Label == childNode.Label) {
+							childList.push(childNode);
+							labels2.push(childNode.Label);
+						}
+					}
+				}
+				map[Node.Label] = childList;
 			}
-			console.log(child);
 		}
 		return map;
 	}
 
-	codegen_(Node: AssureIt.NodeModel): string {
+	codegen_(rootNode: AssureIt.NodeModel): string {
 		var res: string = "";
-		if(Node == null) {
+		if(rootNode == null) {
 			return res;
 		}
-		var flow : { [key: string]: AssureIt.NodeModel[]; } = this.CreateControlFlow(Node);
+		var flow : { [key: string]: AssureIt.NodeModel[]; } = this.CollectNodeInfo(rootNode);
 
-		res += this.GenerateCode(Node, flow) + this.linefeed;
+		var queue : AssureIt.NodeModel[] = [];
+		queue.push(rootNode);
+		while(queue.length != 0) {
+			var Node : AssureIt.NodeModel = queue.pop();
+			res += "class " + Node.Label + " {" + this.linefeed;
+			var Monitor : string = this.GetMonitor(Node);
+			if(Monitor.length > 0) {
+				res += this.indent + "boolean Monitor = false;" + this.linefeed;
+			}
+			var Action : string = this.GetAction(Node);
+			if(Action.length > 0) {
+				res += this.indent + "boolean Action = false;" + this.linefeed;
+			}
+
+			res += this.indent + "constructor() {}" + this.linefeed;
+			res += "}" + this.linefeed;
+			for (var k=0; k < Node.Children.length; ++k) {
+				var childNode : AssureIt.NodeModel = Node.Children[k];
+				queue.push(childNode);
+			}
+		}
+
+		res += this.GenerateCode(rootNode, flow) + this.linefeed;
 		res += "@Export int main() {" + this.linefeed;
-		res += this.indent + "if(" + Node.Label + "()) { return 0; }" + this.linefeed;
+		res += this.indent + "if(" + this.GenerateFunctionCall(rootNode) + ") { return 0; }" + this.linefeed;
 		res += this.indent + "return 1;" + this.linefeed;
 		res += "}" + this.linefeed;
 		return res;
