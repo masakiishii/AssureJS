@@ -61,7 +61,7 @@ class FullScreenEditorActionPlugIn extends AssureIt.ActionPlugIn {
 	ShowFullScreenEditor: (ev: Event) => void;
 	isDisplayed: boolean;
 	rootModel: AssureIt.NodeModel;
-	marker; //The list of marker where Syntax Error is found.
+	ErrorHighlight: ErrorHighlight;
 	constructor(plugInManager: AssureIt.PlugInManager) {
 		super(plugInManager);
 		this.editor = CodeMirror.fromTextArea(document.getElementById('fullscreen-editor'), {
@@ -84,7 +84,7 @@ class FullScreenEditorActionPlugIn extends AssureIt.ActionPlugIn {
 			//			background : "rgba(255, 255, 255, 0)"
 		});
 		this.ShowFullScreenEditor = null;
-		this.marker = [];
+		this.ErrorHighlight = new ErrorHighlight(this.editor);
 	}
 
 	IsEnabled (caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case) : boolean {
@@ -157,10 +157,7 @@ class FullScreenEditorActionPlugIn extends AssureIt.ActionPlugIn {
 					.focus()
 					.on("blur", function(e: JQueryEventObject) {
 						e.stopPropagation();
-						for (var i in self.marker) {
-							self.marker[i].clear();
-						}
-						self.marker = [];
+						self.ErrorHighlight.ClearHighlight();
 
 						var orig_model : AssureIt.NodeModel = case0.ElementMap[label];
 						var orig_view : AssureIt.NodeView = caseViewer.ViewMap[label];
@@ -214,7 +211,7 @@ class FullScreenEditorActionPlugIn extends AssureIt.ActionPlugIn {
 									this.ShowFullScreenEditor(ev);});
 						} else {
 							/* Show an error */
-							self.ShowAnError(decoder);
+							self.ErrorHighlight.Highlight(decoder.GetASNError().line-1,"");
 							case0.ElementMap = orig_ElementMap;
 							case0.IdCounters = orig_idCounters;
 						}
@@ -253,34 +250,12 @@ class FullScreenEditorActionPlugIn extends AssureIt.ActionPlugIn {
 		return true;
 	}
 
-	Blink(line: number) {
-		var cycle = 1000 / 15;
-		var cycles = 8;
-		var count = 0;
-		var blink = ()=>{
-			count = count + 1;
-			if(count < cycles){
-				if (count % 2 == 0) {
-					for (var i in this.marker) {
-						this.marker[i].clear();
-					}
-					this.marker = [];
-				} else {
-					this.marker.push(this.editor.markText({line: line-1, ch: 0},{line: line, ch: 0}, {className: "CodeMirror-error"}));
-				}
-				//this.editor.refresh();
-				setTimeout(blink, cycle);
-			}
-		}
-		blink();
-	}
-
-	ShowAnError(decoder: AssureIt.CaseDecoder) {
-		var error = decoder.GetASNError();
-		this.Blink(error.line);
-		this.editor.scrollIntoView({line:error.line, ch: error.column});
-		this.editor.setCursor({line:error.line-1});
-	}
+	//ShowAnError(decoder: AssureIt.CaseDecoder) {
+	//	var error = decoder.GetASNError();
+	//	this.Blink(error.line);
+	//	this.editor.scrollIntoView({line:error.line, ch: error.column});
+	//	this.editor.setCursor({line:error.line-1});
+	//}
 
 	DeleteFromDOM(): void {
 		$('#fullscreen-editor-wrapper').blur();
