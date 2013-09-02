@@ -20,6 +20,7 @@ src/CaseEncoder.ts
 src/CaseModel.ts
 src/CaseViewer.ts
 src/Converter.ts
+src/EditorUtil.ts
 src/Layout.ts
 src/PlugInManager.ts
 src/SelectComponent.ts

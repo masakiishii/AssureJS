@@ -1,7 +1,7 @@
 /// <reference path="../../src/CaseModel.ts" />
 /// <reference path="../../src/ServerApi.ts" />
 /// <reference path="../../src/PlugInManager.ts" />
-/// <reference path="../Editor/Editor.ts" />
+/// <reference path="../../src/EditorUtil.ts" />
 
 //--- CodeMirror
 

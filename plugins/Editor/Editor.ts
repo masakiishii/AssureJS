@@ -1,6 +1,7 @@
 /// <reference path="../../src/CaseModel.ts" />
 /// <reference path="../../src/ServerApi.ts" />
 /// <reference path="../../src/PlugInManager.ts" />
+/// <reference path="../../src/EditorUtil.ts" />
 
 //--- CodeMirror
 
@@ -8,10 +9,6 @@
 
 var ExpandedNodeHeight = 200;
 var InplaceEditorHeight = ExpandedNodeHeight - 50;
-
-declare class CodeMirror {
-	static fromTextArea(selector: any, option: any): any;
-};
 
 class EditorPlugIn extends AssureIt.PlugInSet {
 

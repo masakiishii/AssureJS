@@ -7,8 +7,6 @@ var __extends = this.__extends || function (d, b) {
 var ExpandedNodeHeight = 200;
 var InplaceEditorHeight = ExpandedNodeHeight - 50;
 
-;
-
 var EditorPlugIn = (function (_super) {
     __extends(EditorPlugIn, _super);
     function EditorPlugIn(plugInManager) {
