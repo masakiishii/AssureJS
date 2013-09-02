@@ -114,7 +114,6 @@ var DScriptEditorPlugIn = (function (_super) {
         var self = this;
         this.editor_left.on("change", function (e) {
             self.GenerateCode();
-            console.log(self.editor_left.getValue());
         });
     }
     DScriptEditorPlugIn.prototype.GenerateCode = function () {
