@@ -119,30 +119,81 @@ class MonitorHTMLRenderPlugIn extends AssureIt.HTMLRenderPlugIn {
 
 		function showResult(key: string, result: boolean) {
 			var variable: string = key.split("@")[0];
-			var node: AssureIt.NodeModel = self.EvidenceNodeMap[key];
+			var thisNode: AssureIt.NodeModel = self.EvidenceNodeMap[key];
 			var latestData = self.LatestDataMap[key];
 
-			if(result) { /* success */
-				node.Notes = [{ "Name": "Notes",
-								"Body": { "Status": "Success",
-										  variable: latestData.data,
-										  /* "timestamp": response.timestamp */ }
-							 }];
-			}
-			else { /* fail */
-				node.Notes = [{ "Name": "Notes",
-								"Body": { "Status": "Fail",
-										  variable: latestData.data,
-										  /* "timestamp": response.timestamp */ }
-							 }];
+			function getContext(node: AssureIt.NodeModel): AssureIt.NodeModel {
+				for(var i: number = 0; i < node.Children.length; i++) {
+					var child: AssureIt.NodeModel = node.Children[i];
+
+					if(child.Type == AssureIt.NodeType.Context) {
+						return child;
+					}
+				}
+
+				return null;
 			}
 
+			function appendContext(node: AssureIt.NodeModel): AssureIt.NodeModel {
+				var viewMap: { [index: string]: AssureIt.NodeView } = caseViewer.ViewMap;
+				var thisNodeView: AssureIt.NodeView = viewMap[node.Label];
+				var case0: AssureIt.Case = caseViewer.Source;
+				var contextNode = new AssureIt.NodeModel(case0, thisNodeView.Source, AssureIt.NodeType.Context, null, null);
+				var parentNodeLabel: string = contextNode.Parent.Label;
+				case0.SaveIdCounterMax(case0.ElementTop);
+				viewMap[contextNode.Label] = new AssureIt.NodeView(caseViewer, contextNode);
+				viewMap[contextNode.Label].ParentShape = viewMap[parentNodeLabel];
+
+				var parentOffSet = $("#"+parentNodeLabel).offset();
+				caseViewer.Draw();
+				var currentParentView = viewMap[parentNodeLabel];
+				caseViewer.Screen.SetOffset(parentOffSet.left-currentParentView.AbsX, parentOffSet.top-currentParentView.AbsY);
+				return contextNode;
+			}
+
+			function removeContext(node: AssureIt.NodeModel) {
+				// TODO: remove context
+			}
+
+			function inputContext(node: AssureIt.NodeModel) {
+				var contextNode: AssureIt.NodeModel = getContext(node);
+
+				if(!contextNode) {
+					contextNode = appendContext(node);
+				}
+
+				var noteBody = {};
+				noteBody["Manager"] = latestData.authid;
+				contextNode.Notes = [{ "Name": "Notes", "Body": noteBody }];
+				var element: JQuery = caseViewer.ViewMap[contextNode.Label].HTMLDoc.DocBase;
+				var HTMLRenderPlugIn: Function = caseViewer.GetPlugInHTMLRender("note");
+				HTMLRenderPlugIn(caseViewer, contextNode, element);
+			}
+
+			var thisNoteBody = {};
+
+			if(result) { /* success */
+				thisNoteBody["Status"] = "Success";
+				thisNoteBody[variable] = latestData.data;
+				//thisNoteBody["timestamp"] = latestData.data;
+				removeContext(thisNode);
+			}
+			else { /* fail */
+				thisNoteBody["Status"] = "Fail";
+				thisNoteBody[variable] = latestData.data;
+				//thisNoteBody["timestamp"] = latestData.data;
+				inputContext(thisNode);
+			}
+
+			thisNode.Notes = [{ "Name": "Notes", "Body": thisNoteBody }];
+
 			var HTMLRenderPlugIn: Function = caseViewer.GetPlugInHTMLRender("note");
-			var element: JQuery = caseViewer.ViewMap[node.Label].HTMLDoc.DocBase;
-			HTMLRenderPlugIn(caseViewer, node, element);
+			var thisNodeElement: JQuery = caseViewer.ViewMap[thisNode.Label].HTMLDoc.DocBase;
+			HTMLRenderPlugIn(caseViewer, thisNode, thisNodeElement);
+
 			var SVGRenderPlugIn: Function = caseViewer.GetPlugInSVGRender("monitor");
-			var nodeView: AssureIt.NodeView = caseViewer.ViewMap[node.Label];
-			SVGRenderPlugIn(caseViewer, nodeView);
+			var thisNodeView: AssureIt.NodeView = caseViewer.ViewMap[thisNode.Label];
+			SVGRenderPlugIn(caseViewer, thisNodeView);
 
 			caseViewer.Draw();
 		}
@@ -179,6 +230,14 @@ class MonitorSVGRenderPlugIn extends AssureIt.SVGRenderPlugIn {
 	Delegate(caseViewer: AssureIt.CaseViewer, nodeView: AssureIt.NodeView) : boolean {
 		var nodeModel: AssureIt.NodeModel = nodeView.Source;
 
+		function blushAllChild(node: AssureIt.NodeModel, fill: string, stroke: string) {
+			for(var i: number = 0; i < node.Children.length; i++) {
+				var label: string = node.Children[i].Label;
+				var nodeView: AssureIt.NodeView = caseViewer.ViewMap[label];
+				nodeView.SVGShape.SetColor(fill, stroke);
+			}
+		}
+
 		if(nodeModel.Type == AssureIt.NodeType.Evidence) {
 			var notes: AssureIt.CaseNote[] = nodeModel.Notes;
 
@@ -186,7 +245,11 @@ class MonitorSVGRenderPlugIn extends AssureIt.SVGRenderPlugIn {
 				var body = notes[i].Body;
 
 				if(body["Status"] == "Fail") {
-					nodeView.SVGShape.SetColor("#FF99CC", "none");   // FIXME: allow any color
+					var fill: string = "#FF99CC";   // FIXME: allow any color
+					var stroke: string = "none";
+
+					nodeView.SVGShape.SetColor(fill, stroke);
+					blushAllChild(nodeModel, fill, stroke);
 				}
 			}
 		}

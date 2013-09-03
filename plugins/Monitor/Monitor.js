@@ -109,37 +109,79 @@ var MonitorHTMLRenderPlugIn = (function (_super) {
 
         function showResult(key, result) {
             var variable = key.split("@")[0];
-            var node = self.EvidenceNodeMap[key];
+            var thisNode = self.EvidenceNodeMap[key];
             var latestData = self.LatestDataMap[key];
 
-            if (result) {
-                node.Notes = [
-                    {
-                        "Name": "Notes",
-                        "Body": {
-                            "Status": "Success",
-                            variable: latestData.data
-                        }
+            function getContext(node) {
+                for (var i = 0; i < node.Children.length; i++) {
+                    var child = node.Children[i];
+
+                    if (child.Type == AssureIt.NodeType.Context) {
+                        return child;
                     }
-                ];
-            } else {
-                node.Notes = [
-                    {
-                        "Name": "Notes",
-                        "Body": {
-                            "Status": "Fail",
-                            variable: latestData.data
-                        }
-                    }
-                ];
+                }
+
+                return null;
             }
 
+            function appendContext(node) {
+                var viewMap = caseViewer.ViewMap;
+                var thisNodeView = viewMap[node.Label];
+                var case0 = caseViewer.Source;
+                var contextNode = new AssureIt.NodeModel(case0, thisNodeView.Source, AssureIt.NodeType.Context, null, null);
+                var parentNodeLabel = contextNode.Parent.Label;
+                case0.SaveIdCounterMax(case0.ElementTop);
+                viewMap[contextNode.Label] = new AssureIt.NodeView(caseViewer, contextNode);
+                viewMap[contextNode.Label].ParentShape = viewMap[parentNodeLabel];
+
+                var parentOffSet = $("#" + parentNodeLabel).offset();
+                caseViewer.Draw();
+                var currentParentView = viewMap[parentNodeLabel];
+                caseViewer.Screen.SetOffset(parentOffSet.left - currentParentView.AbsX, parentOffSet.top - currentParentView.AbsY);
+                return contextNode;
+            }
+
+            function removeContext(node) {
+            }
+
+            function inputContext(node) {
+                var contextNode = getContext(node);
+
+                if (!contextNode) {
+                    contextNode = appendContext(node);
+                }
+
+                var noteBody = {};
+                noteBody["Manager"] = latestData.authid;
+                contextNode.Notes = [{ "Name": "Notes", "Body": noteBody }];
+                var element = caseViewer.ViewMap[contextNode.Label].HTMLDoc.DocBase;
+                var HTMLRenderPlugIn = caseViewer.GetPlugInHTMLRender("note");
+                HTMLRenderPlugIn(caseViewer, contextNode, element);
+            }
+
+            var thisNoteBody = {};
+
+            if (result) {
+                thisNoteBody["Status"] = "Success";
+                thisNoteBody[variable] = latestData.data;
+
+                removeContext(thisNode);
+            } else {
+                thisNoteBody["Status"] = "Fail";
+                thisNoteBody[variable] = latestData.data;
+
+                inputContext(thisNode);
+            }
+
+            thisNode.Notes = [{ "Name": "Notes", "Body": thisNoteBody }];
+
             var HTMLRenderPlugIn = caseViewer.GetPlugInHTMLRender("note");
-            var element = caseViewer.ViewMap[node.Label].HTMLDoc.DocBase;
-            HTMLRenderPlugIn(caseViewer, node, element);
+            var thisNodeElement = caseViewer.ViewMap[thisNode.Label].HTMLDoc.DocBase;
+            HTMLRenderPlugIn(caseViewer, thisNode, thisNodeElement);
+
             var SVGRenderPlugIn = caseViewer.GetPlugInSVGRender("monitor");
-            var nodeView = caseViewer.ViewMap[node.Label];
-            SVGRenderPlugIn(caseViewer, nodeView);
+            var thisNodeView = caseViewer.ViewMap[thisNode.Label];
+            SVGRenderPlugIn(caseViewer, thisNodeView);
 
             caseViewer.Draw();
         }
@@ -180,6 +222,14 @@ var MonitorSVGRenderPlugIn = (function (_super) {
     MonitorSVGRenderPlugIn.prototype.Delegate = function (caseViewer, nodeView) {
         var nodeModel = nodeView.Source;
 
+        function blushAllChild(node, fill, stroke) {
+            for (var i = 0; i < node.Children.length; i++) {
+                var label = node.Children[i].Label;
+                var nodeView = caseViewer.ViewMap[label];
+                nodeView.SVGShape.SetColor(fill, stroke);
+            }
+        }
+
         if (nodeModel.Type == AssureIt.NodeType.Evidence) {
             var notes = nodeModel.Notes;
 
@@ -187,7 +237,11 @@ var MonitorSVGRenderPlugIn = (function (_super) {
                 var body = notes[i].Body;
 
                 if (body["Status"] == "Fail") {
-                    nodeView.SVGShape.SetColor("#FF99CC", "none");
+                    var fill = "#FF99CC";
+                    var stroke = "none";
+
+                    nodeView.SVGShape.SetColor(fill, stroke);
+                    blushAllChild(nodeModel, fill, stroke);
                 }
             }
         }
