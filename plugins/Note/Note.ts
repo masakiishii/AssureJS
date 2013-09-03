@@ -17,7 +17,7 @@ class NoteHTMLRenderPlugIn extends AssureIt.HTMLRenderPlugIn {
 	}
 
 	Delegate(caseViewer: AssureIt.CaseViewer, nodeModel: AssureIt.NodeModel, element: JQuery) : boolean {
-		element.children("p").remove()
+		//element.children("p").remove()
 
 		for (var i: number = 0; i < nodeModel.Notes.length; i++) {
 			var note: AssureIt.CaseNote = nodeModel.Notes[i];

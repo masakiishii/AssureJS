@@ -24,8 +24,6 @@ var NoteHTMLRenderPlugIn = (function (_super) {
     };
 
     NoteHTMLRenderPlugIn.prototype.Delegate = function (caseViewer, nodeModel, element) {
-        element.children("p").remove();
-
         for (var i = 0; i < nodeModel.Notes.length; i++) {
             var note = nodeModel.Notes[i];
 
