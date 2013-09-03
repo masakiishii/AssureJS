@@ -734,5 +734,11 @@ module AssureIt {
 			return $("#layer0")[0].getBoundingClientRect().height;
 		}
 
+		SetCaseCenter(DCaseX: number, DCaseY: number, HTMLDoc: HTMLDoc): void {
+			var NewOffsetX = this.OffsetX + (this.GetPageCenterX() - (this.OffsetX + DCaseX)) - HTMLDoc.Width/2;
+			var NewOffsetY = this.OffsetY + (this.GetPageCenterY() - (this.OffsetY + DCaseY)) - HTMLDoc.Height/2;
+			this.SetOffset(NewOffsetX, NewOffsetY);
+		}
+
 	}
 }

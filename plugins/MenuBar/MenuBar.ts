@@ -30,6 +30,7 @@ class MenuBar {
 			'</div>');
 
 		//if(this.case0.IsLogin()) { //TODO login
+		this.menu.append('<a href="#" ><img id="center" src="'+this.serverApi.basepath+'images/scale.png" title="Center" alt="center" /></a>');
 		this.menu.append('<a href="#" ><img id="commit" src="'+this.serverApi.basepath+'images/commit.png" title="Commit" alt="commit" /></a>');
 		if(this.node.children("h4").text() != this.case0.ElementTop.Label) {
 			this.menu.append('<a href="#" ><img id="remove" src="'+this.serverApi.basepath+'images/remove.png" title="Remove" alt="remove" /></a>');
@@ -120,6 +121,13 @@ class MenuBar {
 
 	Commit(): void {
 		(<any>$('#modal')).dialog('open');
+	}
+
+	Center(): void {
+		var thisLabel: string = this.node.children("h4").text();
+		var thisNodeView: AssureIt.NodeView = this.caseViewer.ViewMap[thisLabel];
+		var screenManager = this.caseViewer.Screen;
+		screenManager.SetCaseCenter(thisNodeView.AbsX, thisNodeView.AbsY, thisNodeView.HTMLDoc);
 	}
 
 	Scale(): void {
@@ -246,6 +254,11 @@ class MenuBar {
 		$('#scale').click(() => {
 			this.Scale();
 		});
+
+		$('#center').click(() => {
+			this.Center();
+		});
+
 	}
 
 }

@@ -751,6 +751,12 @@ var AssureIt;
         ScreenManager.prototype.GetCaseHeight = function () {
             return $("#layer0")[0].getBoundingClientRect().height;
         };
+
+        ScreenManager.prototype.SetCaseCenter = function (DCaseX, DCaseY, HTMLDoc) {
+            var NewOffsetX = this.OffsetX + (this.GetPageCenterX() - (this.OffsetX + DCaseX)) - HTMLDoc.Width / 2;
+            var NewOffsetY = this.OffsetY + (this.GetPageCenterY() - (this.OffsetY + DCaseY)) - HTMLDoc.Height / 2;
+            this.SetOffset(NewOffsetX, NewOffsetY);
+        };
         return ScreenManager;
     })();
     AssureIt.ScreenManager = ScreenManager;
