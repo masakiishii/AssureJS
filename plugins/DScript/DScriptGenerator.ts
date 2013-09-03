@@ -190,10 +190,12 @@ class DScriptGenerator {
 	}
 
 	GenerateFunctionHeader(Node: AssureIt.NodeModel) : string {
-		return "boolean Invoke(" + Node.Label + " self)";
+		//return "boolean Invoke(" + Node.Label + " self)";
+		return "boolean " + Node.Label + "()";
 	}
 	GenerateFunctionCall(Node: AssureIt.NodeModel) : string {
-		return "Invoke(new " + Node.Label + "())";
+		//return "Invoke(new " + Node.Label + "())";
+		return Node.Label + "()";
 	}
 
 	GenerateHeader(Node: AssureIt.NodeModel) : string {
@@ -493,18 +495,17 @@ class DScriptGenerator {
 		queue.push(rootNode);
 		while(queue.length != 0) {
 			var Node : AssureIt.NodeModel = queue.pop();
-			res += "class " + Node.Label + " {" + this.linefeed;
-			var Monitor : string = this.GetMonitor(Node);
-			if(Monitor.length > 0) {
-				res += this.indent + "boolean Monitor = false;" + this.linefeed;
-			}
-			var Action : string = this.GetAction(Node);
-			if(Action.length > 0) {
-				res += this.indent + "boolean Action = false;" + this.linefeed;
-			}
-
-			res += this.indent + "constructor() {}" + this.linefeed;
-			res += "}" + this.linefeed;
+			//res += "class " + Node.Label + " {" + this.linefeed;
+			//var Monitor : string = this.GetMonitor(Node);
+			//if(Monitor.length > 0) {
+			//	res += this.indent + "boolean Monitor = false;" + this.linefeed;
+			//}
+			//var Action : string = this.GetAction(Node);
+			//if(Action.length > 0) {
+			//	res += this.indent + "boolean Action = false;" + this.linefeed;
+			//}
+			//res += this.indent + "constructor() {}" + this.linefeed;
+			//res += "}" + this.linefeed;
 			for (var k=0; k < Node.Children.length; ++k) {
 				var childNode : AssureIt.NodeModel = Node.Children[k];
 				queue.push(childNode);
