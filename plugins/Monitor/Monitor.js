@@ -10,6 +10,7 @@ var MonitorPlugIn = (function (_super) {
         _super.call(this, plugInManager);
         this.plugInManager = plugInManager;
         this.HTMLRenderPlugIn = new MonitorHTMLRenderPlugIn(plugInManager);
+        this.SVGRenderPlugIn = new MonitorSVGRenderPlugIn(plugInManager);
     }
     return MonitorPlugIn;
 })(AssureIt.PlugInSet);
@@ -107,14 +108,17 @@ var MonitorHTMLRenderPlugIn = (function (_super) {
         }
 
         function showResult(key, result) {
+            var variable = key.split("@")[0];
             var node = self.EvidenceNodeMap[key];
+            var latestData = self.LatestDataMap[key];
 
             if (result) {
                 node.Notes = [
                     {
                         "Name": "Notes",
                         "Body": {
-                            "status": "Success"
+                            "Status": "Success",
+                            variable: latestData.data
                         }
                     }
                 ];
@@ -123,7 +127,8 @@ var MonitorHTMLRenderPlugIn = (function (_super) {
                     {
                         "Name": "Notes",
                         "Body": {
-                            "status": "Fail"
+                            "Status": "Fail",
+                            variable: latestData.data
                         }
                     }
                 ];
@@ -132,6 +137,11 @@ var MonitorHTMLRenderPlugIn = (function (_super) {
             var HTMLRenderPlugIn = caseViewer.GetPlugInHTMLRender("note");
             var element = caseViewer.ViewMap[node.Label].HTMLDoc.DocBase;
             HTMLRenderPlugIn(caseViewer, node, element);
+            var SVGRenderPlugIn = caseViewer.GetPlugInSVGRender("monitor");
+            var nodeView = caseViewer.ViewMap[node.Label];
+            SVGRenderPlugIn(caseViewer, nodeView);
+
+            caseViewer.Draw();
         }
 
         function evaluateCondition() {
@@ -149,7 +159,7 @@ var MonitorHTMLRenderPlugIn = (function (_super) {
             this.Timer = setInterval(function () {
                 collectLatestData();
                 evaluateCondition();
-            }, 3000);
+            }, 5000);
             this.IsFirstCalled = false;
         }
 
@@ -157,3 +167,32 @@ var MonitorHTMLRenderPlugIn = (function (_super) {
     };
     return MonitorHTMLRenderPlugIn;
 })(AssureIt.HTMLRenderPlugIn);
+
+var MonitorSVGRenderPlugIn = (function (_super) {
+    __extends(MonitorSVGRenderPlugIn, _super);
+    function MonitorSVGRenderPlugIn() {
+        _super.apply(this, arguments);
+    }
+    MonitorSVGRenderPlugIn.prototype.IsEnabled = function (caseViewer, nodeView) {
+        return true;
+    };
+
+    MonitorSVGRenderPlugIn.prototype.Delegate = function (caseViewer, nodeView) {
+        var nodeModel = nodeView.Source;
+
+        if (nodeModel.Type == AssureIt.NodeType.Evidence) {
+            var notes = nodeModel.Notes;
+
+            for (var i = 0; i < notes.length; i++) {
+                var body = notes[i].Body;
+
+                if (body["Status"] == "Fail") {
+                    nodeView.SVGShape.SetColor("#FF99CC", "none");
+                }
+            }
+        }
+
+        return true;
+    };
+    return MonitorSVGRenderPlugIn;
+})(AssureIt.SVGRenderPlugIn);

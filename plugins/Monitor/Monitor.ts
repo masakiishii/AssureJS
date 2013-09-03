@@ -7,6 +7,7 @@ class MonitorPlugIn extends AssureIt.PlugInSet {
 	constructor(public plugInManager: AssureIt.PlugInManager) {
 		super(plugInManager);
 		this.HTMLRenderPlugIn = new MonitorHTMLRenderPlugIn(plugInManager);
+		this.SVGRenderPlugIn = new MonitorSVGRenderPlugIn(plugInManager);
 	}
 
 }
@@ -117,19 +118,21 @@ class MonitorHTMLRenderPlugIn extends AssureIt.HTMLRenderPlugIn {
 		}
 
 		function showResult(key: string, result: boolean) {
+			var variable: string = key.split("@")[0];
 			var node: AssureIt.NodeModel = self.EvidenceNodeMap[key];
+			var latestData = self.LatestDataMap[key];
 
 			if(result) { /* success */
 				node.Notes = [{ "Name": "Notes",
-								"Body": { "status": "Success",
-										  /* variable: response.data, */
+								"Body": { "Status": "Success",
+										  variable: latestData.data,
 										  /* "timestamp": response.timestamp */ }
 							 }];
 			}
 			else { /* fail */
 				node.Notes = [{ "Name": "Notes",
-								"Body": { "status": "Fail",
-										  /* variable: response.data, */
+								"Body": { "Status": "Fail",
+										  variable: latestData.data,
 										  /* "timestamp": response.timestamp */ }
 							 }];
 			}
@@ -137,6 +140,11 @@ class MonitorHTMLRenderPlugIn extends AssureIt.HTMLRenderPlugIn {
 			var HTMLRenderPlugIn: Function = caseViewer.GetPlugInHTMLRender("note");
 			var element: JQuery = caseViewer.ViewMap[node.Label].HTMLDoc.DocBase;
 			HTMLRenderPlugIn(caseViewer, node, element);
+			var SVGRenderPlugIn: Function = caseViewer.GetPlugInSVGRender("monitor");
+			var nodeView: AssureIt.NodeView = caseViewer.ViewMap[node.Label];
+			SVGRenderPlugIn(caseViewer, nodeView);
+
+			caseViewer.Draw();
 		}
 
 		function evaluateCondition() {
@@ -154,8 +162,33 @@ class MonitorHTMLRenderPlugIn extends AssureIt.HTMLRenderPlugIn {
 			this.Timer = setInterval(function() {
 				collectLatestData();
 				evaluateCondition();
-			}, 3000);
+			}, 5000);
 			this.IsFirstCalled = false;
+		}
+
+		return true;
+	}
+}
+
+class MonitorSVGRenderPlugIn extends AssureIt.SVGRenderPlugIn {
+
+	IsEnabled(caseViewer: AssureIt.CaseViewer, nodeView: AssureIt.NodeView) : boolean {
+		return true;
+	}
+
+	Delegate(caseViewer: AssureIt.CaseViewer, nodeView: AssureIt.NodeView) : boolean {
+		var nodeModel: AssureIt.NodeModel = nodeView.Source;
+
+		if(nodeModel.Type == AssureIt.NodeType.Evidence) {
+			var notes: AssureIt.CaseNote[] = nodeModel.Notes;
+
+			for(var i: number = 0; i < notes.length; i++) {
+				var body = notes[i].Body;
+
+				if(body["Status"] == "Fail") {
+					nodeView.SVGShape.SetColor("#FF99CC", "none");   // FIXME: allow any color
+				}
+			}
 		}
 
 		return true;
