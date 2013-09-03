@@ -1,5 +1,6 @@
 mock/Index.ts
 mock/Select.ts
+mock/MonitorTest.ts
 plugins/Annotation/Annotation.ts
 plugins/ColorTheme/ColorTheme.ts
 plugins/Editor/Editor.ts

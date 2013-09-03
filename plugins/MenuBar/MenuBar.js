@@ -20,6 +20,7 @@ var MenuBar = (function () {
         $('#menu').remove();
         this.menu = $('<div id="menu">' + '<a href="#" ><img id="scale"  src="' + this.serverApi.basepath + 'images/scale.png" title="Scale" alt="scale" /></a>' + '</div>');
 
+        this.menu.append('<a href="#" ><img id="center" src="' + this.serverApi.basepath + 'images/scale.png" title="Center" alt="center" /></a>');
         this.menu.append('<a href="#" ><img id="commit" src="' + this.serverApi.basepath + 'images/commit.png" title="Commit" alt="commit" /></a>');
         if (this.node.children("h4").text() != this.case0.ElementTop.Label) {
             this.menu.append('<a href="#" ><img id="remove" src="' + this.serverApi.basepath + 'images/remove.png" title="Remove" alt="remove" /></a>');
@@ -109,6 +110,13 @@ var MenuBar = (function () {
 
     MenuBar.prototype.Commit = function () {
         ($('#modal')).dialog('open');
+    };
+
+    MenuBar.prototype.Center = function () {
+        var thisLabel = this.node.children("h4").text();
+        var thisNodeView = this.caseViewer.ViewMap[thisLabel];
+        var screenManager = this.caseViewer.Screen;
+        screenManager.SetCaseCenter(thisNodeView.AbsX, thisNodeView.AbsY, thisNodeView.HTMLDoc);
     };
 
     MenuBar.prototype.Scale = function () {
@@ -233,6 +241,10 @@ var MenuBar = (function () {
 
         $('#scale').click(function () {
             _this.Scale();
+        });
+
+        $('#center').click(function () {
+            _this.Center();
         });
     };
     return MenuBar;

@@ -6,8 +6,8 @@ function monitor() {
 	while :
 	do
 		random=$(((RANDOM % 100) + 1))
-		rec 'here' 'cpuusage' $random 'xxxxx@gmail.com' 'test'
-		sleep 10
+		rec 'Here' 'CpuUsage' $random 'xxxxx@gmail.com' 'Test'
+		sleep 5
 	done
 }
 

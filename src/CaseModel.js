@@ -127,6 +127,17 @@ var AssureIt;
             traverse_(this, f);
         };
 
+        NodeModel.prototype.SearchNode = function (keyword, HitNodes) {
+            if ((this.Statement).indexOf(keyword) != -1) {
+                HitNodes.push(this);
+            }
+
+            for (var i = 0; i < this.Children.length; i++) {
+                this.Children[i].SearchNode(keyword, HitNodes);
+            }
+            return HitNodes;
+        };
+
         NodeModel.prototype.InvokePatternPlugInRecursive = function (model) {
             var pluginMap = this.Case.pluginManager.PatternPlugInMap;
             for (var key in pluginMap) {
