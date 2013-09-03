@@ -7,7 +7,6 @@ class MonitorPlugIn extends AssureIt.PlugInSet {
 	constructor(public plugInManager: AssureIt.PlugInManager) {
 		super(plugInManager);
 		this.HTMLRenderPlugIn = new MonitorHTMLRenderPlugIn(plugInManager);
-		this.SVGRenderPlugIn = new MonitorSVGRenderPlugIn(plugInManager);
 	}
 
 }
@@ -19,55 +18,60 @@ class MonitorHTMLRenderPlugIn extends AssureIt.HTMLRenderPlugIn {
 
 	Delegate(caseViewer: AssureIt.CaseViewer, caseModel: AssureIt.NodeModel, element: JQuery) : boolean {
 		var notes : AssureIt.CaseNote[] = caseModel.Notes;
-		var found : boolean = false;
-		for (var i=0; i < notes.length; ++i) {
-			if (notes[i].Name == "Monitor") {
-				found = true;
+		var locations: string[] = [];
+		var conditions: string[] = [];
+
+		for(var i: number = 0; i < notes.length; i++) {
+			var body = notes[i].Body;
+
+			if("Location" in body && "Monitor" in body) {
+				locations.push(notes[i].Body.Location);
+				conditions.push(notes[i].Body.Monitor);
+			}
+
+		}
+
+		function extractVariableFromCondition(condtion: string): string {
+			var text: string = condition;
+			text.replace(/<=/g, " ");
+			text.replace(/>=/g, " ");
+			text.replace(/</g, " ");
+			text.replace(/>/g, " ");
+
+			var words: string[] = text.split(" ");
+			var variables: string[] = [];
+
+			for(var i: number = 0; i < words.length; i++) {
+				if(!$.isNumeric(words[i])) {
+					variables.push(words[i]);
+				}
+			}
+
+			if(variables.length != 1) {
+				// TODO: alert
+			}
+
+			return variables[0];
+		}
+
+		var api = new AssureIt.RECAPI("http://54.250.206.119/rec");
+
+		for(var i: number = 0; i < locations.length; i++) {
+			var location: string = locations[i];
+
+			for(var j: number = 0; i < conditions.length; i++) {
+				var condition: string = conditions[j];
+				var variable: string = extractVariableFromCondition(condition);
+
+				var response = api.getLatestData(location, variable);
+				var script: string = "var "+variable+"="+response.data+";";
+				script += condition+";";
+				var result: boolean = eval(script);
+				console.log(result);
+				console.log(caseModel);
 			}
 		}
-		if (!found) {
-			return;
-		}
 
-		var text : string = "";
-		var p : {top: number; left: number} = element.position();
-
-		for(var i : number = 0; i < caseModel.Annotations.length; i++) {
-			text += "@" + caseModel.Annotations[i].Name + "<br>";
-		}
-		$.ajax({
-			url: "http://live.assure-it.org/rec/api/1.0/",
-			type: "POST",
-			async : false,
-			data: {
-				jsonrpc: "2.0",
-				method: "getMonitor",
-				params: {
-						nodeID: "55",
-					},
-				},
-			success: function(msg) {
-				element.attr('data-monitor', msg.result[0]);
-			},
-			error: function(msg) {
-				console.log("error");
-			}
-		});
-
-		return true;
-	}
-}
-
-class MonitorSVGRenderPlugIn extends AssureIt.SVGRenderPlugIn {
-	IsEnable(caseViewer: AssureIt.CaseViewer, element: JQuery) : boolean {
-		return true;
-	}
-
-	Delegate(caseViewer: AssureIt.CaseViewer, nodeView: AssureIt.NodeView) : boolean {
-		var element: JQuery = nodeView.HTMLDoc.DocBase;
-		//if(element.data('monitor')) {
-		//	nodeView.SVGShape.SetColor("red", "black");
-		//}
 		return true;
 	}
 }

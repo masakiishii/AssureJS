@@ -10,7 +10,6 @@ var MonitorPlugIn = (function (_super) {
         _super.call(this, plugInManager);
         this.plugInManager = plugInManager;
         this.HTMLRenderPlugIn = new MonitorHTMLRenderPlugIn(plugInManager);
-        this.SVGRenderPlugIn = new MonitorSVGRenderPlugIn(plugInManager);
     }
     return MonitorPlugIn;
 })(AssureIt.PlugInSet);
@@ -26,59 +25,59 @@ var MonitorHTMLRenderPlugIn = (function (_super) {
 
     MonitorHTMLRenderPlugIn.prototype.Delegate = function (caseViewer, caseModel, element) {
         var notes = caseModel.Notes;
-        var found = false;
-        for (var i = 0; i < notes.length; ++i) {
-            if (notes[i].Name == "Monitor") {
-                found = true;
+        var locations = [];
+        var conditions = [];
+
+        for (var i = 0; i < notes.length; i++) {
+            var body = notes[i].Body;
+
+            if ("Location" in body && "Monitor" in body) {
+                locations.push(notes[i].Body.Location);
+                conditions.push(notes[i].Body.Monitor);
             }
         }
-        if (!found) {
-            return;
-        }
 
-        var text = "";
-        var p = element.position();
+        function extractVariableFromCondition(condtion) {
+            var text = condition;
+            text.replace(/<=/g, " ");
+            text.replace(/>=/g, " ");
+            text.replace(/</g, " ");
+            text.replace(/>/g, " ");
 
-        for (var i = 0; i < caseModel.Annotations.length; i++) {
-            text += "@" + caseModel.Annotations[i].Name + "<br>";
-        }
-        $.ajax({
-            url: "http://live.assure-it.org/rec/api/1.0/",
-            type: "POST",
-            async: false,
-            data: {
-                jsonrpc: "2.0",
-                method: "getMonitor",
-                params: {
-                    nodeID: "55"
+            var words = text.split(" ");
+            var variables = [];
+
+            for (var i = 0; i < words.length; i++) {
+                if (!$.isNumeric(words[i])) {
+                    variables.push(words[i]);
                 }
-            },
-            success: function (msg) {
-                element.attr('data-monitor', msg.result[0]);
-            },
-            error: function (msg) {
-                console.log("error");
             }
-        });
+
+            if (variables.length != 1) {
+            }
+
+            return variables[0];
+        }
+
+        var api = new AssureIt.RECAPI("http://54.250.206.119/rec");
+
+        for (var i = 0; i < locations.length; i++) {
+            var location = locations[i];
+
+            for (var j = 0; i < conditions.length; i++) {
+                var condition = conditions[j];
+                var variable = extractVariableFromCondition(condition);
+
+                var response = api.getLatestData(location, variable);
+                var script = "var " + variable + "=" + response.data + ";";
+                script += condition + ";";
+                var result = eval(script);
+                console.log(result);
+                console.log(caseModel);
+            }
+        }
 
         return true;
     };
     return MonitorHTMLRenderPlugIn;
 })(AssureIt.HTMLRenderPlugIn);
-
-var MonitorSVGRenderPlugIn = (function (_super) {
-    __extends(MonitorSVGRenderPlugIn, _super);
-    function MonitorSVGRenderPlugIn() {
-        _super.apply(this, arguments);
-    }
-    MonitorSVGRenderPlugIn.prototype.IsEnable = function (caseViewer, element) {
-        return true;
-    };
-
-    MonitorSVGRenderPlugIn.prototype.Delegate = function (caseViewer, nodeView) {
-        var element = nodeView.HTMLDoc.DocBase;
-
-        return true;
-    };
-    return MonitorSVGRenderPlugIn;
-})(AssureIt.SVGRenderPlugIn);
