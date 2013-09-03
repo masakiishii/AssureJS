@@ -24,13 +24,19 @@ var NoteHTMLRenderPlugIn = (function (_super) {
     };
 
     NoteHTMLRenderPlugIn.prototype.Delegate = function (caseViewer, nodeModel, element) {
+        element.children("#note").remove();
+
         for (var i = 0; i < nodeModel.Notes.length; i++) {
             var note = nodeModel.Notes[i];
+            var $note = $('<div id="note"></div>');
 
             for (var key in note.Body) {
-                $('<p style="color: DarkOliveGreen">' + key + ": " + note.Body[key] + '</p>').appendTo(element);
+                $('<p style="color: DarkOliveGreen">' + key + ": " + note.Body[key] + '</p>').appendTo($note);
             }
+
+            $note.appendTo(element);
         }
+
         return true;
     };
     return NoteHTMLRenderPlugIn;
