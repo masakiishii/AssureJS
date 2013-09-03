@@ -16,15 +16,19 @@ var MonitorPlugIn = (function (_super) {
 
 var MonitorHTMLRenderPlugIn = (function (_super) {
     __extends(MonitorHTMLRenderPlugIn, _super);
-    function MonitorHTMLRenderPlugIn() {
-        _super.apply(this, arguments);
+    function MonitorHTMLRenderPlugIn(plugInManager) {
+        _super.call(this, plugInManager);
+        this.IsFirstCalled = true;
+        this.LatestDataMap = {};
+        this.ConditionMap = {};
+        this.EvidenceNodeMap = {};
     }
-    MonitorHTMLRenderPlugIn.prototype.IsEnabled = function (caseViewer, caseModel) {
+    MonitorHTMLRenderPlugIn.prototype.IsEnabled = function (caseViewer, nodeModel) {
         return true;
     };
 
-    MonitorHTMLRenderPlugIn.prototype.Delegate = function (caseViewer, caseModel, element) {
-        var notes = caseModel.Notes;
+    MonitorHTMLRenderPlugIn.prototype.Delegate = function (caseViewer, nodeModel, element) {
+        var notes = nodeModel.Notes;
         var locations = [];
         var conditions = [];
 
@@ -59,22 +63,94 @@ var MonitorHTMLRenderPlugIn = (function (_super) {
             return variables[0];
         }
 
-        var api = new AssureIt.RECAPI("http://54.250.206.119/rec");
+        function isEmptyNode(node) {
+            if (node.Statement == "" && node.Annotations.length == 0 && node.Notes.length == 0 && node.Children.length == 0) {
+                return true;
+            }
+
+            return false;
+        }
 
         for (var i = 0; i < locations.length; i++) {
             var location = locations[i];
 
-            for (var j = 0; i < conditions.length; i++) {
+            for (var j = 0; j < conditions.length; j++) {
                 var condition = conditions[j];
                 var variable = extractVariableFromCondition(condition);
+                var key = variable + "@" + location;
+                this.LatestDataMap[key] = null;
+                this.ConditionMap[key] = condition;
 
-                var response = api.getLatestData(location, variable);
-                var script = "var " + variable + "=" + response.data + ";";
-                script += condition + ";";
-                var result = eval(script);
-                console.log(result);
-                console.log(caseModel);
+                var brothers = nodeModel.Parent.Children;
+                for (var i = 0; i < brothers.length; i++) {
+                    if (isEmptyNode(brothers[i])) {
+                        this.EvidenceNodeMap[key] = brothers[i];
+                        break;
+                    }
+                }
             }
+        }
+
+        var self = this;
+        var api = new AssureIt.RECAPI("http://54.250.206.119/rec");
+
+        function collectLatestData() {
+            for (var key in self.LatestDataMap) {
+                var variable = key.split("@")[0];
+                var location = key.split("@")[1];
+                var latestData = api.getLatestData(location, variable);
+                if (latestData == null) {
+                    console.log("latest data is null");
+                }
+                self.LatestDataMap[key] = latestData;
+            }
+        }
+
+        function showResult(key, result) {
+            var node = self.EvidenceNodeMap[key];
+
+            if (result) {
+                node.Notes = [
+                    {
+                        "Name": "Notes",
+                        "Body": {
+                            "status": "Success"
+                        }
+                    }
+                ];
+            } else {
+                node.Notes = [
+                    {
+                        "Name": "Notes",
+                        "Body": {
+                            "status": "Fail"
+                        }
+                    }
+                ];
+            }
+
+            var HTMLRenderPlugIn = caseViewer.GetPlugInHTMLRender("note");
+            var element = caseViewer.ViewMap[node.Label].HTMLDoc.DocBase;
+            HTMLRenderPlugIn(caseViewer, node, element);
+        }
+
+        function evaluateCondition() {
+            for (var key in self.ConditionMap) {
+                var variable = key.split("@")[0];
+                var script = "var " + variable + "=" + self.LatestDataMap[key].data + ";";
+                script += self.ConditionMap[key] + ";";
+                var result = eval(script);
+
+                showResult(key, result);
+            }
+        }
+
+        if (this.IsFirstCalled) {
+            this.Timer = setInterval(function () {
+                collectLatestData();
+                evaluateCondition();
+            }, 3000);
+            this.IsFirstCalled = false;
         }
 
         return true;

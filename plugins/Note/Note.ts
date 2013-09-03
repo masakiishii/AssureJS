@@ -17,8 +17,14 @@ class NoteHTMLRenderPlugIn extends AssureIt.HTMLRenderPlugIn {
 	}
 
 	Delegate(caseViewer: AssureIt.CaseViewer, nodeModel: AssureIt.NodeModel, element: JQuery) : boolean {
+		element.children("p").remove()
+
 		for (var i: number = 0; i < nodeModel.Notes.length; i++) {
-			$('<p style="color: DarkOliveGreen">' + "Note: " + nodeModel.Notes[i].Name + '</p>').appendTo(element);
+			var note: AssureIt.CaseNote = nodeModel.Notes[i];
+
+			for(var key in note.Body) {
+				$('<p style="color: DarkOliveGreen">' + key + ": " + note.Body[key] + '</p>').appendTo(element);
+			}
 		}
 		return true;
 	}
