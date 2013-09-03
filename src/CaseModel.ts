@@ -126,6 +126,17 @@ module AssureIt {
 			traverse_(this, f);
 		}
 
+		SearchNode(keyword: string, HitNodes: NodeModel[]): NodeModel[] {
+			if ((this.Statement).indexOf(keyword) != -1) {
+				HitNodes.push(this);
+			}
+
+			for (var i: number = 0; i < this.Children.length; i++) {
+				this.Children[i].SearchNode(keyword, HitNodes);
+			}
+			return HitNodes;
+		}
+
 		/* plug-In */
 		private InvokePatternPlugInRecursive(model: NodeModel) : void {
 			var pluginMap : { [index: string]: PatternPlugIn} = this.Case.pluginManager.PatternPlugInMap;
