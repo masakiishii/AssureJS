@@ -55,7 +55,6 @@ class DScriptMenuPlugIn extends AssureIt.MenuBarContentsPlugIn {
 				var encoded = encoder.ConvertToASN(caseModel, false);
 				this.editorPlugIn.rootCaseModel = caseModel;
 				this.editorPlugIn.editor_left.setValue(encoded);
-				//this.editorPlugIn.GenerateCode();
 				$('#CodeMirror').focus();
 				$('#background').click(function(){
 					$('#dscript-editor-wrapper').blur();
@@ -71,6 +70,7 @@ class DScriptMenuPlugIn extends AssureIt.MenuBarContentsPlugIn {
 class DScriptEditorPlugIn extends AssureIt.ActionPlugIn {
 	editor_left:  any;
 	editor_right: any;
+	highlighter : ErrorHighlight;
 	rootCaseModel: AssureIt.NodeModel;
 	constructor(plugInManager: AssureIt.PlugInManager) {
 		super(plugInManager);
@@ -119,6 +119,7 @@ class DScriptEditorPlugIn extends AssureIt.ActionPlugIn {
 				float: 'right',
 				display: 'block',
 			});
+		this.highlighter = new ErrorHighlight(this.editor_left)
 		var self = this;
 		this.editor_left.on("change", function(e: JQueryEventObject) {
 			self.GenerateCode();
@@ -131,11 +132,18 @@ class DScriptEditorPlugIn extends AssureIt.ActionPlugIn {
 		var orig_IdCounters = Case.ReserveIdCounters(this.rootCaseModel);
 		var orig_ElementMap = Case.ReserveElementMap(this.rootCaseModel);
 		var caseModel = decoder.ParseASN(Case, ASNData, this.rootCaseModel);
+		//fixupLineNumber(caseModel, ASNData);
 		Case.IdCounters = orig_IdCounters;
 		Case.ElementMap = orig_ElementMap;
 
+		this.highlighter.ClearHighlight();
 		var Generator: DScriptGenerator = new DScriptGenerator();
 		var script: string = Generator.codegen(caseModel);
+		for (var i=0; i < Generator.errorMessage.length; ++i) {
+			var error : DScriptError = Generator.errorMessage[i];
+			console.log(error);
+			this.highlighter.Highlight(error.LineNumber, error.Message);
+		}
 		this.editor_right.setValue(script);
 		this.editor_left.refresh();
 		this.editor_right.refresh();

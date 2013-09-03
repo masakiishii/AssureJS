@@ -23,6 +23,7 @@ module AssureIt {
 		Notes: CaseNote[];
 		Parent : NodeModel;
 		Children: NodeModel[];
+		LineNumber : number;
 
 
 		constructor(Case : Case, Parent : NodeModel, Type : NodeType, Label : string, Statement : string) {
@@ -39,6 +40,7 @@ module AssureIt {
 			this.Notes = [];
 
 			Case.ElementMap[this.Label] = this; // TODO: ensure consistensy of labels
+			this.LineNumber = 1; /*FIXME*/
 		}
 
 		EnableEditFlag(): void {

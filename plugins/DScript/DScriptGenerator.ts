@@ -105,7 +105,7 @@ class DScriptGenerator {
 			for (var j=0; j < DeclList.length; ++j) {
 				var Decl : string[] = DeclList[j].split("=");
 				if(Decl.length != 2) {
-					console.log(new DScriptError(Node.Label, 0, "DeclSyntaxError"));
+					this.errorMessage.push(new DScriptError(Node.Label, Node.LineNumber, "DeclSyntaxError"));
 				}
 				env[Decl[0]] = Decl[1];
 			}
@@ -135,7 +135,7 @@ class DScriptGenerator {
 			for (var i=0; i < Monitors.length; ++i) {
 				var List = Monitors[i].split("Monitor=");
 				if(List.length != 2 || List[1].length == 0) {
-					console.log(new DScriptError(Node.Label, 0, "Monitor has no rule"));
+					this.errorMessage.push(new DScriptError(Node.Label, Node.LineNumber, "Monitor has no rule"));
 				} else {
 					return List[1];
 				}
@@ -161,7 +161,7 @@ class DScriptGenerator {
 			for (var i=0; i < Actions.length; ++i) {
 				var List = Actions[i].split("Action=");
 				if(List.length != 2 || List[1].length == 0) {
-					console.log(new DScriptError(Node.Label, 0, "Action has no rule"));
+					this.errorMessage.push(new DScriptError(Node.Label, Node.LineNumber, "Action has no rule"));
 				} else {
 					return List[1];
 				}
@@ -273,7 +273,7 @@ class DScriptGenerator {
 		var after : AssureIt.CaseAnnotation = Node.GetAnnotation("after");
 		if(after != null) {
 			if(after.Body == null || after.Body.length == 0) {
-				console.log(new DScriptError(Node.Label, 0, "@after needs parameter"));
+				this.errorMessage.push(new DScriptError(Node.Label, Node.LineNumber, "@after needs parameter"));
 			} else {
 				program += this.indent + "defined(" + after.Body + ");" + this.linefeed;
 			}
@@ -314,8 +314,8 @@ class DScriptGenerator {
 			program += this.indent + "switch(" + FaultAction + ") {" + this.linefeed;
 			program += this.GetGoalList(Node.Children).map(function(e : AssureIt.NodeModel) {
 				var ret : string = "";
-				console.log(FaultList);
-				console.log(e.Statement);
+				//console.log(FaultList);
+				//console.log(e.Statement);
 				for (var i=0; i < FaultList.length; ++i) {
 					if(e.Statement.indexOf(FaultList[i]) >= 0) {
 						ret += self.indent + "case " + FaultList[i] + ":" + self.linefeed;
@@ -355,7 +355,7 @@ class DScriptGenerator {
 		if(Monitor.length > 0) {
 			var env = this.GetEnvironment("Location");
 			if(env == null || env.length == 0) {
-				console.log(new DScriptError(Node.Label, 0, "Location is not defined"));
+				this.errorMessage.push(new DScriptError(Node.Label, Node.LineNumber, "Location is not defined"));
 			} else {
 				var locations : string[] = env.split(",");
 				program += this.indent + "boolean ret = false;" + this.linefeed;
@@ -375,7 +375,7 @@ class DScriptGenerator {
 
 		var ContextList : AssureIt.NodeModel[] = this.GetContextList(child);
 		if(child.length != ContextList.length) {
-			console.log(new DScriptError(Node.Label, 0, "EvidenceSyntaxError"));
+			this.errorMessage.push(new DScriptError(Node.Label, Node.LineNumber, "EvidenceSyntaxError"));
 		}
 
 		if(child.length == 0) {
@@ -443,11 +443,11 @@ class DScriptGenerator {
 			var after : AssureIt.CaseAnnotation = Node.GetAnnotation("after");
 			if(after != null) {
 				if(after.Body == null || after.Body.length == 0) {
-					console.log(new DScriptError(Node.Label, 0, "@after needs parameter"));
+					this.errorMessage.push(new DScriptError(Node.Label, Node.LineNumber, "@after needs parameter"));
 				} else {
 					// (E3.Monitor == true) => ["(E3", "E3"]
 					var res : string[] = after.Body.match(/^\(+([A-Za-z0-9]+)/);
-					if(res.length == 2) {
+					if(res != null && res.length == 2) {
 						var src = NodeIdxMap[res[1]];
 						var e = graph[src];
 						e.push(new Edge(src, i));
