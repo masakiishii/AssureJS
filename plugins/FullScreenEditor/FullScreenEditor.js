@@ -128,7 +128,6 @@ var FullScreenEditorActionPlugIn = (function (_super) {
     };
 
     FullScreenEditorActionPlugIn.prototype.Delegate = function (caseViewer, case0, serverApi) {
-        var _this = this;
         var editor = this.editor;
         var self = this;
 
@@ -145,7 +144,6 @@ var FullScreenEditorActionPlugIn = (function (_super) {
                 var encoded = encoder.ConvertToASN(case0.ElementMap[label], false);
 
                 $('#fullscreen-editor-wrapper').css({ display: 'block' }).addClass("animated fadeInDown").focus().on("blur", function (e) {
-                    var _this = this;
                     e.stopPropagation();
                     self.ErrorHighlight.ClearHighlight();
 
@@ -195,10 +193,6 @@ var FullScreenEditorActionPlugIn = (function (_super) {
                             $this.css({ display: 'none' });
                         }, 1300);
                         $('#fullscreen-editor-wrapper').unbind();
-                        $('#background').dblclick(function (ev) {
-                            _this.rootModel = case0.ElementTop;
-                            _this.ShowFullScreenEditor(ev);
-                        });
                     } else {
                         self.ErrorHighlight.Highlight(decoder.GetASNError().line, "");
                         case0.ElementMap = orig_ElementMap;
@@ -231,10 +225,6 @@ var FullScreenEditorActionPlugIn = (function (_super) {
         }
 
         $('#background').unbind('dblclick');
-        $('#background').dblclick(function (ev) {
-            _this.rootModel = case0.ElementTop;
-            _this.ShowFullScreenEditor(ev);
-        });
         return true;
     };
 

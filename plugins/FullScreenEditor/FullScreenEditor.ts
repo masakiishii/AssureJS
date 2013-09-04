@@ -206,9 +206,6 @@ class FullScreenEditorActionPlugIn extends AssureIt.ActionPlugIn {
 								$this.css({display: 'none'});
 							}, 1300);
 							$('#fullscreen-editor-wrapper').unbind(); 
-							$('#background').dblclick((ev) => {
-									this.rootModel = case0.ElementTop;
-									this.ShowFullScreenEditor(ev);});
 						} else {
 							/* Show an error */
 							self.ErrorHighlight.Highlight(decoder.GetASNError().line,"");
@@ -244,9 +241,6 @@ class FullScreenEditorActionPlugIn extends AssureIt.ActionPlugIn {
 		}
 
 		$('#background').unbind('dblclick');
-		$('#background').dblclick((ev) => {
-				this.rootModel = case0.ElementTop;
-				this.ShowFullScreenEditor(ev);});
 		return true;
 	}
 
