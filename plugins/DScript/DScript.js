@@ -44,7 +44,7 @@ var DScriptMenuPlugIn = (function (_super) {
             }).on("keydown", function (e) {
                 if (e.keyCode == 27) {
                     e.stopPropagation();
-                    $('#fullscreen-editor-wrapper').blur();
+                    $('#dscript-editor-wrapper').blur();
                 }
             });
             var encoder = new AssureIt.CaseEncoder();
@@ -67,7 +67,9 @@ var DScriptMenuPlugIn = (function (_super) {
 var DScriptEditorPlugIn = (function (_super) {
     __extends(DScriptEditorPlugIn, _super);
     function DScriptEditorPlugIn(plugInManager) {
+        this.widgets = [];
         _super.call(this, plugInManager);
+
         this.editor_left = CodeMirror.fromTextArea(document.getElementById('dscript-editor-left'), {
             lineNumbers: true,
             mode: "text/x-csrc",
@@ -77,9 +79,10 @@ var DScriptEditorPlugIn = (function (_super) {
             lineNumbers: true,
             mode: "text/x-csrc",
             readOnly: true,
-            placeholder: "Generated code goes here.",
+            placeholder: "Generated DScript code goes here.",
             lineWrapping: true
         });
+
         $('#dscript-editor-wrapper').css({
             position: 'absolute',
             top: '5%',
@@ -98,6 +101,7 @@ var DScriptEditorPlugIn = (function (_super) {
             width: '100%',
             height: '100%'
         });
+
         $('#dscript-editor-left').parent().css({
             width: '50%',
             height: '100%',
@@ -110,12 +114,31 @@ var DScriptEditorPlugIn = (function (_super) {
             float: 'right',
             display: 'block'
         });
+
         this.highlighter = new ErrorHighlight(this.editor_left);
         var self = this;
         this.editor_left.on("change", function (e) {
             self.GenerateCode();
         });
     }
+    DScriptEditorPlugIn.prototype.updateLineComment = function (editor, widgets, Generator) {
+        editor.operation(function () {
+            for (var i = 0; i < widgets.length; ++i)
+                editor.removeLineWidget(widgets[i]);
+            widgets.length = 0;
+            for (var i = 0; i < Generator.errorMessage.length; ++i) {
+                var error = Generator.errorMessage[i];
+                console.log(error);
+
+                var msg = document.createElement("div");
+                var icon = msg.appendChild(document.createElement("span"));
+                msg.appendChild(document.createTextNode(error.Message));
+                $(msg).css("background", "none repeat scroll 0 0 #FFAAAA");
+                widgets.push(editor.addLineWidget(error.LineNumber, msg, { coverGutter: false, noHScroll: true }));
+            }
+        });
+    };
+
     DScriptEditorPlugIn.prototype.GenerateCode = function () {
         var decoder = new AssureIt.CaseDecoder();
         var ASNData = this.editor_left.getValue();
@@ -123,19 +146,18 @@ var DScriptEditorPlugIn = (function (_super) {
         var orig_IdCounters = Case.ReserveIdCounters(this.rootCaseModel);
         var orig_ElementMap = Case.ReserveElementMap(this.rootCaseModel);
         var caseModel = decoder.ParseASN(Case, ASNData, this.rootCaseModel);
+        if (caseModel == null) {
+            this.highlighter.Highlight(decoder.GetASNError().line, decoder.GetASNError().toString());
+        } else {
+            Case.IdCounters = orig_IdCounters;
+            Case.ElementMap = orig_ElementMap;
 
-        Case.IdCounters = orig_IdCounters;
-        Case.ElementMap = orig_ElementMap;
-
-        this.highlighter.ClearHighlight();
-        var Generator = new DScriptGenerator();
-        var script = Generator.codegen(caseModel);
-        for (var i = 0; i < Generator.errorMessage.length; ++i) {
-            var error = Generator.errorMessage[i];
-            console.log(error);
-            this.highlighter.Highlight(error.LineNumber, error.Message);
+            this.highlighter.ClearHighlight();
+            var Generator = new DScriptGenerator();
+            var script = Generator.codegen(caseModel, ASNData);
+            this.updateLineComment(this.editor_left, this.widgets, Generator);
+            this.editor_right.setValue(script);
         }
-        this.editor_right.setValue(script);
         this.editor_left.refresh();
         this.editor_right.refresh();
     };

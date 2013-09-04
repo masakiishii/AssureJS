@@ -19,7 +19,7 @@ class ErrorHighlight {
 				if (count % 2 == 0) {
 					this.ClearHighlight();
 				} else {
-					this.marker.push(this.editor.markText({line: line, ch: 0},{line: line+1, ch: 0}, {className: "CodeMirror-error"}));
+					this.marker.push(this.editor.markText({line: line-1, ch: 0},{line: line, ch: 0}, {className: "CodeMirror-error"}));
 				}
 				//this.editor.refresh();
 				setTimeout(blink, cycle);

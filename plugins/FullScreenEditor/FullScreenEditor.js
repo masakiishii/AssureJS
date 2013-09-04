@@ -200,7 +200,7 @@ var FullScreenEditorActionPlugIn = (function (_super) {
                             _this.ShowFullScreenEditor(ev);
                         });
                     } else {
-                        self.ErrorHighlight.Highlight(decoder.GetASNError().line - 1, "");
+                        self.ErrorHighlight.Highlight(decoder.GetASNError().line, "");
                         case0.ElementMap = orig_ElementMap;
                         case0.IdCounters = orig_idCounters;
                     }

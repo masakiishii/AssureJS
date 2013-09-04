@@ -295,18 +295,23 @@ var DScriptGenerator = (function () {
 
             program += this.indent + "};" + this.linefeed;
             program += this.indent + "switch(" + FaultAction + ") {" + this.linefeed;
+            var matched = 0;
             program += this.GetGoalList(Node.Children).map(function (e) {
                 var ret = "";
 
                 for (var i = 0; i < FaultList.length; ++i) {
                     if (e.Statement.indexOf(FaultList[i]) >= 0) {
+                        matched += 1;
                         ret += self.indent + "case " + FaultList[i] + ":" + self.linefeed;
+                        ret += self.indent + self.indent + "return ";
+                        ret += self.GenerateFunctionCall(e) + ";";
                     }
                 }
-                ret += self.indent + self.indent + "return ";
-                ret += self.GenerateFunctionCall(e) + ";";
                 return ret;
             }).join(this.linefeed) + this.linefeed;
+            if (matched != FaultList.length) {
+                this.errorMessage.push(new DScriptError(Node.Label, Node.LineNumber, Node.Label + " node does not cover some case."));
+            }
             program += this.indent + "}" + this.linefeed;
             program += this.indent + "return false;" + this.linefeed;
         } else {
@@ -424,7 +429,7 @@ var DScriptGenerator = (function () {
             var after = Node.GetAnnotation("after");
             if (after != null) {
                 if (after.Body == null || after.Body.length == 0) {
-                    this.errorMessage.push(new DScriptError(Node.Label, Node.LineNumber, "@after needs parameter"));
+                    this.errorMessage.push(new DScriptError(Node.Label, Node.LineNumber, Node.Label + "'s @after annotation needs parameter"));
                 } else {
                     var res = after.Body.match(/^\(+([A-Za-z0-9]+)/);
                     if (res != null && res.length == 2) {
@@ -462,17 +467,23 @@ var DScriptGenerator = (function () {
         return map;
     };
 
-    DScriptGenerator.prototype.codegen_ = function (rootNode) {
+    DScriptGenerator.prototype.codegen_ = function (rootNode, ASNData) {
         var res = "";
         if (rootNode == null) {
             return res;
         }
         var flow = this.CollectNodeInfo(rootNode);
+        var dataList = ASNData.split("\n");
 
         var queue = [];
         queue.push(rootNode);
         while (queue.length != 0) {
             var Node = queue.pop();
+            for (var i = 0; i < dataList.length; ++i) {
+                if (new RegExp("\\*" + Node.Label).test(dataList[i])) {
+                    Node.LineNumber = i;
+                }
+            }
 
             for (var k = 0; k < Node.Children.length; ++k) {
                 var childNode = Node.Children[k];
@@ -488,8 +499,8 @@ var DScriptGenerator = (function () {
         return res;
     };
 
-    DScriptGenerator.prototype.codegen = function (Node) {
-        return this.codegen_(Node);
+    DScriptGenerator.prototype.codegen = function (Node, ASNData) {
+        return this.codegen_(Node, ASNData);
     };
     return DScriptGenerator;
 })();
