@@ -164,12 +164,12 @@ var MonitorHTMLRenderPlugIn = (function (_super) {
             if (result) {
                 thisNoteBody["Status"] = "Success";
                 thisNoteBody[variable] = latestData.data;
-
+                thisNoteBody["timestamp"] = latestData.timestamp;
                 removeContext(thisNode);
             } else {
                 thisNoteBody["Status"] = "Fail";
                 thisNoteBody[variable] = latestData.data;
-
+                thisNoteBody["timestamp"] = latestData.timestamp;
                 inputContext(thisNode);
             }
 
