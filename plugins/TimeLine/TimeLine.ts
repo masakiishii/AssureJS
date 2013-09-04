@@ -30,22 +30,22 @@ class TimeLine {
 		var commits: AssureIt.CommitCollection = this.serverApi.GetCommitList(this.nodeModel.Case.CaseId);
 		var Case: AssureIt.Case = this.nodeModel.Case;
 		var TopLabel = Case.ElementTop.Label;
-		var converter = new AssureIt.Converter();
 		var decoder   = new AssureIt.CaseDecoder();
 		this.timeline.append($('<ul id="timeline-ul"></ul>'))
 		commits.forEach((i:number, v:AssureIt.CommitModel):void => {
 			$("#timeline-ul").append($('<a id="timeline'+i+'" href="#"></a>').text(v.toString()));
 			$("#timeline"+i).click((e: Event)=>{
-				var oldData = this.serverApi.GetNodeTree(v.CommitId);
-				var j = {contents: JSON.stringify(oldData)};
-				var JsonData = converter.GenNewJson(j);
-				Case.ClearNodes();
-				var ElementTop:AssureIt.NodeModel = decoder.ParseJson(Case, JsonData);
-				Case.SetElementTop(ElementTop);
-				this.caseViewer.DeleteViewsRecursive(this.caseViewer.ViewMap[TopLabel]);
-				this.caseViewer.InitViewMap(Case);
-				this.caseViewer.Draw();
-				this.Disable(callback);
+				location.href += '/commit/' + (i+1);
+				//var oldData = this.serverApi.GetNodeTree(v.CommitId);
+				//var j = {contents: JSON.stringify(oldData)};
+				//var JsonData = converter.GenNewJson(j);
+				//Case.ClearNodes();
+				//var ElementTop:AssureIt.NodeModel = decoder.ParseJson(Case, JsonData);
+				//Case.SetElementTop(ElementTop);
+				//this.caseViewer.DeleteViewsRecursive(this.caseViewer.ViewMap[TopLabel]);
+				//this.caseViewer.InitViewMap(Case);
+				//this.caseViewer.Draw();
+				//this.Disable(callback);
 			});
 		});
 	}

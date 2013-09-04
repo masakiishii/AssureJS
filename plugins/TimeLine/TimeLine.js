@@ -25,28 +25,17 @@ var TimeLine = (function () {
     };
 
     TimeLine.prototype.Enable = function (callback) {
-        var _this = this;
         this.CreateDOM();
 
         var commits = this.serverApi.GetCommitList(this.nodeModel.Case.CaseId);
         var Case = this.nodeModel.Case;
         var TopLabel = Case.ElementTop.Label;
-        var converter = new AssureIt.Converter();
         var decoder = new AssureIt.CaseDecoder();
         this.timeline.append($('<ul id="timeline-ul"></ul>'));
         commits.forEach(function (i, v) {
             $("#timeline-ul").append($('<a id="timeline' + i + '" href="#"></a>').text(v.toString()));
             $("#timeline" + i).click(function (e) {
-                var oldData = _this.serverApi.GetNodeTree(v.CommitId);
-                var j = { contents: JSON.stringify(oldData) };
-                var JsonData = converter.GenNewJson(j);
-                Case.ClearNodes();
-                var ElementTop = decoder.ParseJson(Case, JsonData);
-                Case.SetElementTop(ElementTop);
-                _this.caseViewer.DeleteViewsRecursive(_this.caseViewer.ViewMap[TopLabel]);
-                _this.caseViewer.InitViewMap(Case);
-                _this.caseViewer.Draw();
-                _this.Disable(callback);
+                location.href += '/commit/' + (i + 1);
             });
         });
     };
