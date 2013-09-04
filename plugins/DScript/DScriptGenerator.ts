@@ -314,19 +314,24 @@ class DScriptGenerator {
 
 			program += this.indent + "};" + this.linefeed;
 			program += this.indent + "switch(" + FaultAction + ") {" + this.linefeed;
+			var matched : number = 0;
 			program += this.GetGoalList(Node.Children).map(function(e : AssureIt.NodeModel) {
 				var ret : string = "";
 				//console.log(FaultList);
 				//console.log(e.Statement);
 				for (var i=0; i < FaultList.length; ++i) {
 					if(e.Statement.indexOf(FaultList[i]) >= 0) {
+						matched += 1;
 						ret += self.indent + "case " + FaultList[i] + ":" + self.linefeed;
+						ret += self.indent + self.indent + "return ";
+						ret += self.GenerateFunctionCall(e) + ";";
 					}
 				}
-				ret += self.indent + self.indent + "return ";
-				ret += self.GenerateFunctionCall(e) + ";";
 				return ret;
 			}).join(this.linefeed) + this.linefeed;
+			if(matched != FaultList.length) {
+				this.errorMessage.push(new DScriptError(Node.Label, Node.LineNumber, Node.Label + " node does not cover some case."));
+			}
 			program += this.indent + "}" + this.linefeed;
 			program += this.indent + "return false;" + this.linefeed;
 		} else {
@@ -445,7 +450,7 @@ class DScriptGenerator {
 			var after : AssureIt.CaseAnnotation = Node.GetAnnotation("after");
 			if(after != null) {
 				if(after.Body == null || after.Body.length == 0) {
-					this.errorMessage.push(new DScriptError(Node.Label, Node.LineNumber, "@after needs parameter"));
+					this.errorMessage.push(new DScriptError(Node.Label, Node.LineNumber, Node.Label + "'s @after annotation needs parameter"));
 				} else {
 					// (E3.Monitor == true) => ["(E3", "E3"]
 					var res : string[] = after.Body.match(/^\(+([A-Za-z0-9]+)/);
@@ -484,17 +489,23 @@ class DScriptGenerator {
 		return map;
 	}
 
-	codegen_(rootNode: AssureIt.NodeModel): string {
+	codegen_(rootNode: AssureIt.NodeModel, ASNData : string): string {
 		var res: string = "";
 		if(rootNode == null) {
 			return res;
 		}
 		var flow : { [key: string]: AssureIt.NodeModel[]; } = this.CollectNodeInfo(rootNode);
+		var dataList : string[] = ASNData.split("\n");
 
 		var queue : AssureIt.NodeModel[] = [];
 		queue.push(rootNode);
 		while(queue.length != 0) {
 			var Node : AssureIt.NodeModel = queue.pop();
+			for (var i=0; i < dataList.length; ++i) {
+				if(new RegExp("\\*" + Node.Label).test(dataList[i])) {
+					Node.LineNumber = i;
+				}
+			}
 			//res += "class " + Node.Label + " {" + this.linefeed;
 			//var Monitor : string = this.GetMonitor(Node);
 			//if(Monitor.length > 0) {
@@ -520,8 +531,8 @@ class DScriptGenerator {
 		return res;
 	}
 
-	codegen(Node: AssureIt.NodeModel): string {
-		return this.codegen_(Node);
+	codegen(Node: AssureIt.NodeModel, ASNData : string): string {
+		return this.codegen_(Node, ASNData);
 	}
 }
 
