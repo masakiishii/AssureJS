@@ -2,7 +2,33 @@
 /// <reference path="../../src/CaseViewer.ts" />
 /// <reference path="../../src/PlugInManager.ts" />
 
+function extractVariableFromCondition(condition: string): string {
+	var text: string = condition;
+	text.replace(/<=/g, " ");
+	text.replace(/>=/g, " ");
+	text.replace(/</g, " ");
+	text.replace(/>/g, " ");
+
+	var words: string[] = text.split(" ");
+	var variables: string[] = [];
+
+	for(var i: number = 0; i < words.length; i++) {
+		if(!$.isNumeric(words[i])) {
+			variables.push(words[i]);
+		}
+	}
+
+	if(variables.length != 1) {
+		// TODO: alert
+	}
+
+	return variables[0];
+}
+
 function hasMonitorInfo(node: AssureIt.NodeModel): boolean {
+	if(node.Type != AssureIt.NodeType.Context) return false;   // node isn't 'Context'
+	if(node.Parent.Type != AssureIt.NodeType.Goal) return false;   // parent isn't 'Goal'
+
 	var notes: AssureIt.CaseNote[] = node.Notes;
 
 	for(var i: number = 0; i < notes.length; i++) {
@@ -20,7 +46,7 @@ function appendNode(caseViewer: AssureIt.CaseViewer, node: AssureIt.NodeModel, t
 	var viewMap: { [index: string]: AssureIt.NodeView } = caseViewer.ViewMap;
 	var view: AssureIt.NodeView = viewMap[node.Label];
 	var case0: AssureIt.Case = caseViewer.Source;
-	var newNode = new AssureIt.NodeModel(case0, view.Source, type, null, null);
+	var newNode = new AssureIt.NodeModel(case0, node, type, null, null);
 	case0.SaveIdCounterMax(case0.ElementTop);
 	viewMap[newNode.Label] = new AssureIt.NodeView(caseViewer, newNode);
 	viewMap[newNode.Label].ParentShape = viewMap[node.Label];
@@ -64,13 +90,108 @@ function getContextNode(node: AssureIt.NodeModel): AssureIt.NodeModel {
 }
 
 
+class MonitorNode {
+
+	Location: string;
+	Type: string;
+	LatestDataMap: { [index: string]: any };
+	Condition: string;
+	EvidenceNode: AssureIt.NodeModel;
+	Viewer: AssureIt.CaseViewer;
+	HTMLRenderFunction: Function;
+	SVGRenderFunction: Function;
+
+	constructor(Location: string, Type: string, LatestDataMap: { [index: string]: any }, Condition: string, EvidenceNode: AssureIt.NodeModel, Viewer: AssureIt.CaseViewer, HTMLRenderFunction: Function, SVGRenderFunction: Function) {
+		this.Type = Type;
+		this.Location = Location;
+		this.LatestDataMap = LatestDataMap;
+		this.Condition = Condition;
+		this.EvidenceNode = EvidenceNode;
+		this.Viewer = Viewer;
+		this.HTMLRenderFunction = HTMLRenderFunction;
+		this.SVGRenderFunction = SVGRenderFunction;
+	}
+
+	SetCondition(Condition: string) {
+		this.Condition = Condition;
+	}
+
+	GetLatestData(): any {
+		return this.LatestDataMap[this.Type+"@"+this.Location];
+	}
+
+	EvaluateCondition(latestData: any): boolean {
+		var script: string = "var "+this.Type+"="+latestData.data+";";
+		script += this.Condition+";";
+		return eval(script);   // FIXME: don't use eval()
+	}
+
+	EditResult(result: boolean) {
+		if(this.IsAlreadyFailed()) return;
+
+		var evidenceNode: AssureIt.NodeModel = this.EvidenceNode;
+
+		var latestData = this.GetLatestData();
+		var evidenceNoteBody = {};
+
+		if(result) { /* success */
+			evidenceNoteBody["Status"] = "Success";
+			evidenceNoteBody[this.Type] = latestData.data;
+			evidenceNoteBody["Timestamp"] = latestData.timestamp;
+		}
+		else { /* fail */
+			evidenceNoteBody["Status"] = "Fail";
+			evidenceNoteBody[this.Type] = latestData.data;
+			evidenceNoteBody["Timestamp"] = latestData.timestamp;
+
+			var contextNode: AssureIt.NodeModel = getContextNode(evidenceNode);
+			if(contextNode == null) {
+				contextNode = appendNode(this.Viewer, evidenceNode, AssureIt.NodeType.Context);
+			}
+
+			var contextNoteBody = {};
+			contextNoteBody["Manager"] = latestData.authid;
+			contextNode.Notes = [{ "Name": "Notes", "Body": contextNoteBody }];
+		}
+
+		evidenceNode.Notes = [{ "Name": "Notes", "Body": evidenceNoteBody }];
+	}
+
+	IsAlreadyFailed(): boolean {
+		var notes: AssureIt.CaseNote[] = this.EvidenceNode.Notes;
+
+		for(var i: number = 0; i < notes.length; i++) {
+			var body = notes[i].Body;
+			if(body["Status"] == "Fail") return true;
+		}
+
+		return false;
+	}
+
+	Update() {
+		var element: JQuery = this.Viewer.ViewMap[this.EvidenceNode.Label].HTMLDoc.DocBase;
+		var view: AssureIt.NodeView = this.Viewer.ViewMap[this.EvidenceNode.Label];
+		this.HTMLRenderFunction(this.Viewer, this.EvidenceNode, element);
+		this.SVGRenderFunction(this.Viewer, view);
+
+		var contextNode = getContextNode(this.EvidenceNode);
+		if(contextNode != null) {
+			var element: JQuery = this.Viewer.ViewMap[contextNode.Label].HTMLDoc.DocBase;
+			var view: AssureIt.NodeView = this.Viewer.ViewMap[contextNode.Label];
+			this.HTMLRenderFunction(this.Viewer, contextNode, element);
+			this.SVGRenderFunction(this.Viewer, view);
+		}
+	}
+
+}
+
+
 class MonitorManager {
 
 	RECAPI: AssureIt.RECAPI;
 	Timer: number;
 	LatestDataMap: { [index: string]: any };
-	ConditionMap: { [index: string]: string };
-	EvidenceNodeMap: { [index: string]: AssureIt.NodeModel };
+	MonitorNodeMap: { [index: string]: MonitorNode };
 	Viewer: AssureIt.CaseViewer;
 	HTMLRenderFunction: Function;
 	SVGRenderFunction: Function;
@@ -78,8 +199,7 @@ class MonitorManager {
 	constructor(Viewer: AssureIt.CaseViewer) {
 		this.RECAPI = new AssureIt.RECAPI("http://54.250.206.119/rec");
 		this.LatestDataMap = {};
-		this.ConditionMap = {};
-		this.EvidenceNodeMap = {};
+		this.MonitorNodeMap = {};
 		this.Viewer = Viewer;
 		this.HTMLRenderFunction = this.Viewer.GetPlugInHTMLRender("note");
 		this.SVGRenderFunction = this.Viewer.GetPlugInSVGRender("monitor");
@@ -90,131 +210,71 @@ class MonitorManager {
 
 		this.Timer = setInterval(function() {
 			self.CollectLatestData();
-			self.EvaluateCondition();
-			self.ShowResult();
+
+			for(var key in self.MonitorNodeMap) {
+				var monitorNode = self.MonitorNodeMap[key];
+
+				var latestData = monitorNode.GetLatestData();
+				if(latestData == null) continue;
+
+				var result: boolean =  monitorNode.EvaluateCondition(latestData);
+				monitorNode.EditResult(result);
+
+				monitorNode.Update();
+			}
+
+			self.Viewer.Draw();
+
 		}, interval);
 	}
 
-	SetMonitor(location: string, condition: string, evidenceNode: AssureIt.NodeModel) {
-		var variable: string = extractVariableFromCondition(condition);
-		var key: string = variable+"@"+location;
-		this.LatestDataMap[key] = null;
-		this.ConditionMap[key] = condition;
-		this.EvidenceNodeMap[key] = evidenceNode;
+	SetMonitor(contextNode: AssureIt.NodeModel) {
+		var notes : AssureIt.CaseNote[] = contextNode.Notes;
+		var locations: string[] = [];
+		var conditions: string[] = [];
 
-		function extractVariableFromCondition(condtion: string): string {
-			var text: string = condition;
-			text.replace(/<=/g, " ");
-			text.replace(/>=/g, " ");
-			text.replace(/</g, " ");
-			text.replace(/>/g, " ");
+		for(var i: number = 0; i < notes.length; i++) {
+			var body = notes[i].Body;
 
-			var words: string[] = text.split(" ");
-			var variables: string[] = [];
-
-			for(var i: number = 0; i < words.length; i++) {
-				if(!$.isNumeric(words[i])) {
-					variables.push(words[i]);
-				}
+			if("Location" in body && "Monitor" in body) {
+				locations.push(notes[i].Body.Location);
+				conditions.push(notes[i].Body.Monitor);
 			}
-
-			if(variables.length != 1) {
-				// TODO: alert
-			}
-
-			return variables[0];
 		}
 
+		var location = locations[0];   // FIXME: now, we can set only one monitor at once
+		var condition = conditions[0];   // FIXME: now, we can set only one monitor at once
+		var type: string = extractVariableFromCondition(condition);
+		var latestDataKey: string = type+"@"+location;
+
+		this.LatestDataMap[type+"@"+location] = null;
+
+		var monitorNode = this.MonitorNodeMap[contextNode.Label];
+
+		if(monitorNode == null) {
+			var evidenceNode = getEmptyEvidenceNode(contextNode.Parent);
+			if(evidenceNode == null) {
+				evidenceNode = appendNode(this.Viewer, contextNode.Parent, AssureIt.NodeType.Evidence);
+			}
+
+			this.MonitorNodeMap[contextNode.Label] = new MonitorNode(location, type, this.LatestDataMap, condition, evidenceNode, this.Viewer, this.HTMLRenderFunction, this.SVGRenderFunction);
+		}
+		else {
+			monitorNode.SetCondition(condition);
+		}
 	}
 
 	CollectLatestData() {
 		for(var key in this.LatestDataMap) {
-			var variable: string = key.split("@")[0];
+			var type: string = key.split("@")[0];
 			var location: string = key.split("@")[1];
-			var latestData = this.RECAPI.getLatestData(location, variable);
+			var latestData = this.RECAPI.getLatestData(location, type);
 			if(latestData == null) {
 				// TODO: alert
 				console.log("latest data is null");
 			}
 			this.LatestDataMap[key] = latestData;
 		}
-	}
-
-	EvaluateCondition() {
-		for(var key in this.ConditionMap) {
-			var variable: string = key.split("@")[0];
-			var script: string = "var "+variable+"="+this.LatestDataMap[key].data+";";
-			script += this.ConditionMap[key]+";";
-			var result: boolean = eval(script);   // FIXME: don't use eval()
-			this.EditResult(key, result);
-		}
-	}
-
-	IsAlreadyFailed(evidenceNode: AssureIt.NodeModel): boolean {
-		var notes: AssureIt.CaseNote[] = evidenceNode.Notes;
-
-		for(var i: number = 0; i < notes.length; i++) {
-			var body = notes[i].Body;
-			if(body["Status"] == "Fail") return true;
-		}
-
-		return false;
-	}
-
-	EditResult(key: string, result: boolean) {
-		var variable: string = key.split("@")[0];
-		var evidenceNode: AssureIt.NodeModel = this.EvidenceNodeMap[key];
-
-		if(this.IsAlreadyFailed(evidenceNode)) return;
-
-		var latestData = this.LatestDataMap[key];
-		var evidenceNoteBody = {};
-
-		if(result) { /* success */
-			evidenceNoteBody["Status"] = "Success";
-			evidenceNoteBody[variable] = latestData.data;
-			evidenceNoteBody["Timestamp"] = latestData.timestamp;
-			//removeContext(thisNode);
-		}
-		else { /* fail */
-			evidenceNoteBody["Status"] = "Fail";
-			evidenceNoteBody[variable] = latestData.data;
-			evidenceNoteBody["Timestamp"] = latestData.timestamp;
-			//inputContext(thisNode);
-
-			var contextNode: AssureIt.NodeModel = getContextNode(evidenceNode);
-			if(contextNode == null) {
-				contextNode = appendNode(this.Viewer, evidenceNode, AssureIt.NodeType.Context);
-			}
-
-			var contextNoteBody = {};
-			contextNoteBody["Manager"] = latestData.authid;
-			contextNode.Notes = [{ "Name": "Notes", "Body": contextNoteBody }];
-			var element: JQuery = this.Viewer.ViewMap[contextNode.Label].HTMLDoc.DocBase;
-		}
-
-		evidenceNode.Notes = [{ "Name": "Notes", "Body": evidenceNoteBody }];
-	}
-
-	UpdateNode(node: AssureIt.NodeModel) {
-		var element: JQuery = this.Viewer.ViewMap[node.Label].HTMLDoc.DocBase;
-		var view: AssureIt.NodeView = this.Viewer.ViewMap[node.Label];
-		this.HTMLRenderFunction(this.Viewer, node, element);
-		this.SVGRenderFunction(this.Viewer, view);
-	}
-
-	ShowResult() {
-		for(var key in this.EvidenceNodeMap) {
-			var evidenceNode = this.EvidenceNodeMap[key];
-			this.UpdateNode(evidenceNode);
-
-			var contextNode = getContextNode(evidenceNode);
-			if(contextNode != null) {
-				this.UpdateNode(contextNode);
-			}
-		}
-
-		this.Viewer.Draw();
 	}
 
 }
@@ -251,30 +311,9 @@ class MonitorHTMLRenderPlugIn extends AssureIt.HTMLRenderPlugIn {
 			this.IsFirstCalled = false;
 		}
 
-		if(nodeModel.Type != AssureIt.NodeType.Context) return true;   // except for 'Context'
 		if(!hasMonitorInfo(nodeModel)) return true;
 
-		var notes : AssureIt.CaseNote[] = nodeModel.Notes;
-		var locations: string[] = [];
-		var conditions: string[] = [];
-
-		for(var i: number = 0; i < notes.length; i++) {
-			var body = notes[i].Body;
-
-			if("Location" in body && "Monitor" in body) {
-				locations.push(notes[i].Body.Location);
-				conditions.push(notes[i].Body.Monitor);
-			}
-
-		}
-
-		var evidenceNode = getEmptyEvidenceNode(nodeModel.Parent);
-		if(evidenceNode == null) {
-			evidenceNode = appendNode(caseViewer, nodeModel.Parent, AssureIt.NodeType.Evidence);
-		}
-
-		this.MonitorManager.SetMonitor(locations[0], conditions[0], evidenceNode);
-										// FIXME: now, set only one monitor at once
+		this.MonitorManager.SetMonitor(nodeModel);
 
 		return true;
 	}
@@ -297,7 +336,7 @@ class MonitorSVGRenderPlugIn extends AssureIt.SVGRenderPlugIn {
 				var body = notes[i].Body;
 
 				if(body["Status"] == "Fail") {
-					var fill: string = "#FF99CC";   // FIXME: allow any color
+					var fill: string = "#FF9999";   // FIXME: allow any color
 					var stroke: string = "none";
 
 					nodeView.SVGShape.SetColor(fill, stroke);
