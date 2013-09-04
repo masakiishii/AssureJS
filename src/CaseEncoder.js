@@ -144,19 +144,9 @@ var AssureIt;
                 if (note_num != 0) {
                     for (var i = 0; i < model.Notes.length; i++) {
                         var Note = model.Notes[i];
-                        ret += Note.Name + "::" + "\n";
-                        var keys = Object.keys(Note.Body);
-                        for (var j in keys) {
-                            if (keys[j] == "Description")
-                                continue;
-                            ret += "\t" + keys[j] + ": " + Note.Body[keys[j]] + "\n";
-                        }
-                        if (Note.Body["Description"] != null) {
-                            var desc = Note.Body["Description"];
-                            var desclist = desc.split("\n");
-                            for (var j in desclist) {
-                                ret += IndentToken + desclist[j] + "\n";
-                            }
+                        ret += Note.Name + "::";
+                        if (Note.Body["Description"]) {
+                            ret += " " + Note.Body["Description"] + "\n";
                         }
                     }
                 }
