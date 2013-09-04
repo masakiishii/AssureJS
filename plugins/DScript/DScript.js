@@ -51,7 +51,6 @@ var DScriptMenuPlugIn = (function (_super) {
             var encoded = encoder.ConvertToASN(caseModel, false);
             _this.editorPlugIn.rootCaseModel = caseModel;
             _this.editorPlugIn.editor_left.setValue(encoded);
-
             $('#CodeMirror').focus();
             $('#background').click(function () {
                 $('#dscript-editor-wrapper').blur();
@@ -111,6 +110,7 @@ var DScriptEditorPlugIn = (function (_super) {
             float: 'right',
             display: 'block'
         });
+        this.highlighter = new ErrorHighlight(this.editor_left);
         var self = this;
         this.editor_left.on("change", function (e) {
             self.GenerateCode();
@@ -123,11 +123,18 @@ var DScriptEditorPlugIn = (function (_super) {
         var orig_IdCounters = Case.ReserveIdCounters(this.rootCaseModel);
         var orig_ElementMap = Case.ReserveElementMap(this.rootCaseModel);
         var caseModel = decoder.ParseASN(Case, ASNData, this.rootCaseModel);
+
         Case.IdCounters = orig_IdCounters;
         Case.ElementMap = orig_ElementMap;
 
+        this.highlighter.ClearHighlight();
         var Generator = new DScriptGenerator();
         var script = Generator.codegen(caseModel);
+        for (var i = 0; i < Generator.errorMessage.length; ++i) {
+            var error = Generator.errorMessage[i];
+            console.log(error);
+            this.highlighter.Highlight(error.LineNumber, error.Message);
+        }
         this.editor_right.setValue(script);
         this.editor_left.refresh();
         this.editor_right.refresh();

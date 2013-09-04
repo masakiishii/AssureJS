@@ -94,7 +94,7 @@ var DScriptGenerator = (function () {
             for (var j = 0; j < DeclList.length; ++j) {
                 var Decl = DeclList[j].split("=");
                 if (Decl.length != 2) {
-                    console.log(new DScriptError(Node.Label, 0, "DeclSyntaxError"));
+                    this.errorMessage.push(new DScriptError(Node.Label, Node.LineNumber, "DeclSyntaxError"));
                 }
                 env[Decl[0]] = Decl[1];
             }
@@ -124,7 +124,7 @@ var DScriptGenerator = (function () {
             for (var i = 0; i < Monitors.length; ++i) {
                 var List = Monitors[i].split("Monitor=");
                 if (List.length != 2 || List[1].length == 0) {
-                    console.log(new DScriptError(Node.Label, 0, "Monitor has no rule"));
+                    this.errorMessage.push(new DScriptError(Node.Label, Node.LineNumber, "Monitor has no rule"));
                 } else {
                     return List[1];
                 }
@@ -149,7 +149,7 @@ var DScriptGenerator = (function () {
             for (var i = 0; i < Actions.length; ++i) {
                 var List = Actions[i].split("Action=");
                 if (List.length != 2 || List[1].length == 0) {
-                    console.log(new DScriptError(Node.Label, 0, "Action has no rule"));
+                    this.errorMessage.push(new DScriptError(Node.Label, Node.LineNumber, "Action has no rule"));
                 } else {
                     return List[1];
                 }
@@ -177,10 +177,10 @@ var DScriptGenerator = (function () {
     };
 
     DScriptGenerator.prototype.GenerateFunctionHeader = function (Node) {
-        return "boolean Invoke(" + Node.Label + " self)";
+        return "boolean " + Node.Label + "()";
     };
     DScriptGenerator.prototype.GenerateFunctionCall = function (Node) {
-        return "Invoke(new " + Node.Label + "())";
+        return Node.Label + "()";
     };
 
     DScriptGenerator.prototype.GenerateHeader = function (Node) {
@@ -254,7 +254,7 @@ var DScriptGenerator = (function () {
         var after = Node.GetAnnotation("after");
         if (after != null) {
             if (after.Body == null || after.Body.length == 0) {
-                console.log(new DScriptError(Node.Label, 0, "@after needs parameter"));
+                this.errorMessage.push(new DScriptError(Node.Label, Node.LineNumber, "@after needs parameter"));
             } else {
                 program += this.indent + "defined(" + after.Body + ");" + this.linefeed;
             }
@@ -297,8 +297,7 @@ var DScriptGenerator = (function () {
             program += this.indent + "switch(" + FaultAction + ") {" + this.linefeed;
             program += this.GetGoalList(Node.Children).map(function (e) {
                 var ret = "";
-                console.log(FaultList);
-                console.log(e.Statement);
+
                 for (var i = 0; i < FaultList.length; ++i) {
                     if (e.Statement.indexOf(FaultList[i]) >= 0) {
                         ret += self.indent + "case " + FaultList[i] + ":" + self.linefeed;
@@ -337,7 +336,7 @@ var DScriptGenerator = (function () {
         if (Monitor.length > 0) {
             var env = this.GetEnvironment("Location");
             if (env == null || env.length == 0) {
-                console.log(new DScriptError(Node.Label, 0, "Location is not defined"));
+                this.errorMessage.push(new DScriptError(Node.Label, Node.LineNumber, "Location is not defined"));
             } else {
                 var locations = env.split(",");
                 program += this.indent + "boolean ret = false;" + this.linefeed;
@@ -357,7 +356,7 @@ var DScriptGenerator = (function () {
 
         var ContextList = this.GetContextList(child);
         if (child.length != ContextList.length) {
-            console.log(new DScriptError(Node.Label, 0, "EvidenceSyntaxError"));
+            this.errorMessage.push(new DScriptError(Node.Label, Node.LineNumber, "EvidenceSyntaxError"));
         }
 
         if (child.length == 0) {
@@ -425,10 +424,10 @@ var DScriptGenerator = (function () {
             var after = Node.GetAnnotation("after");
             if (after != null) {
                 if (after.Body == null || after.Body.length == 0) {
-                    console.log(new DScriptError(Node.Label, 0, "@after needs parameter"));
+                    this.errorMessage.push(new DScriptError(Node.Label, Node.LineNumber, "@after needs parameter"));
                 } else {
                     var res = after.Body.match(/^\(+([A-Za-z0-9]+)/);
-                    if (res.length == 2) {
+                    if (res != null && res.length == 2) {
                         var src = NodeIdxMap[res[1]];
                         var e = graph[src];
                         e.push(new Edge(src, i));
@@ -474,18 +473,7 @@ var DScriptGenerator = (function () {
         queue.push(rootNode);
         while (queue.length != 0) {
             var Node = queue.pop();
-            res += "class " + Node.Label + " {" + this.linefeed;
-            var Monitor = this.GetMonitor(Node);
-            if (Monitor.length > 0) {
-                res += this.indent + "boolean Monitor = false;" + this.linefeed;
-            }
-            var Action = this.GetAction(Node);
-            if (Action.length > 0) {
-                res += this.indent + "boolean Action = false;" + this.linefeed;
-            }
 
-            res += this.indent + "constructor() {}" + this.linefeed;
-            res += "}" + this.linefeed;
             for (var k = 0; k < Node.Children.length; ++k) {
                 var childNode = Node.Children[k];
                 queue.push(childNode);

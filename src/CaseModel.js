@@ -41,6 +41,7 @@ var AssureIt;
             this.Notes = [];
 
             Case.ElementMap[this.Label] = this;
+            this.LineNumber = 1;
         }
         NodeModel.prototype.EnableEditFlag = function () {
             this.InvokePatternPlugIn();
