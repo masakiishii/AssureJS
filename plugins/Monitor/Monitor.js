@@ -4,43 +4,91 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-var MonitorPlugIn = (function (_super) {
-    __extends(MonitorPlugIn, _super);
-    function MonitorPlugIn(plugInManager) {
-        _super.call(this, plugInManager);
-        this.plugInManager = plugInManager;
-        this.HTMLRenderPlugIn = new MonitorHTMLRenderPlugIn(plugInManager);
-        this.SVGRenderPlugIn = new MonitorSVGRenderPlugIn(plugInManager);
-    }
-    return MonitorPlugIn;
-})(AssureIt.PlugInSet);
+function hasMonitorInfo(node) {
+    var notes = node.Notes;
 
-var MonitorHTMLRenderPlugIn = (function (_super) {
-    __extends(MonitorHTMLRenderPlugIn, _super);
-    function MonitorHTMLRenderPlugIn(plugInManager) {
-        _super.call(this, plugInManager);
-        this.IsFirstCalled = true;
+    for (var i = 0; i < notes.length; i++) {
+        var body = notes[i].Body;
+
+        if ("Location" in body && "Monitor" in body) {
+            return true;
+        }
+    }
+
+    return false;
+}
+
+function appendNode(caseViewer, node, type) {
+    var viewMap = caseViewer.ViewMap;
+    var view = viewMap[node.Label];
+    var case0 = caseViewer.Source;
+    var newNode = new AssureIt.NodeModel(case0, view.Source, type, null, null);
+    case0.SaveIdCounterMax(case0.ElementTop);
+    viewMap[newNode.Label] = new AssureIt.NodeView(caseViewer, newNode);
+    viewMap[newNode.Label].ParentShape = viewMap[node.Label];
+    return newNode;
+}
+
+function isEmptyEvidenceNode(node) {
+    if (node.Type == AssureIt.NodeType.Evidence && node.Statement == "" && node.Annotations.length == 0 && node.Notes.length == 0 && node.Children.length == 0) {
+        return true;
+    }
+
+    return false;
+}
+
+function getEmptyEvidenceNode(node) {
+    for (var i = 0; i < node.Children.length; i++) {
+        if (isEmptyEvidenceNode(node.Children[i]))
+            return node.Children[i];
+    }
+
+    return null;
+}
+
+function isContextNode(node) {
+    if (node.Type == AssureIt.NodeType.Context) {
+        return true;
+    }
+
+    return false;
+}
+
+function getContextNode(node) {
+    for (var i = 0; i < node.Children.length; i++) {
+        if (isContextNode(node.Children[i]))
+            return node.Children[i];
+    }
+
+    return null;
+}
+
+var MonitorManager = (function () {
+    function MonitorManager(Viewer) {
+        this.RECAPI = new AssureIt.RECAPI("http://54.250.206.119/rec");
         this.LatestDataMap = {};
         this.ConditionMap = {};
         this.EvidenceNodeMap = {};
+        this.Viewer = Viewer;
+        this.HTMLRenderFunction = this.Viewer.GetPlugInHTMLRender("note");
+        this.SVGRenderFunction = this.Viewer.GetPlugInSVGRender("monitor");
     }
-    MonitorHTMLRenderPlugIn.prototype.IsEnabled = function (caseViewer, nodeModel) {
-        return true;
+    MonitorManager.prototype.StartMonitor = function (interval) {
+        var self = this;
+
+        this.Timer = setInterval(function () {
+            self.CollectLatestData();
+            self.EvaluateCondition();
+            self.ShowResult();
+        }, interval);
     };
 
-    MonitorHTMLRenderPlugIn.prototype.Delegate = function (caseViewer, nodeModel, element) {
-        var notes = nodeModel.Notes;
-        var locations = [];
-        var conditions = [];
-
-        for (var i = 0; i < notes.length; i++) {
-            var body = notes[i].Body;
-
-            if ("Location" in body && "Monitor" in body) {
-                locations.push(notes[i].Body.Location);
-                conditions.push(notes[i].Body.Monitor);
-            }
-        }
+    MonitorManager.prototype.SetMonitor = function (location, condition, evidenceNode) {
+        var variable = extractVariableFromCondition(condition);
+        var key = variable + "@" + location;
+        this.LatestDataMap[key] = null;
+        this.ConditionMap[key] = condition;
+        this.EvidenceNodeMap[key] = evidenceNode;
 
         function extractVariableFromCondition(condtion) {
             var text = condition;
@@ -63,147 +111,151 @@ var MonitorHTMLRenderPlugIn = (function (_super) {
 
             return variables[0];
         }
+    };
 
-        function isEmptyNode(node) {
-            if (node.Statement == "" && node.Annotations.length == 0 && node.Notes.length == 0 && node.Children.length == 0) {
-                return true;
-            }
-
-            return false;
-        }
-
-        for (var i = 0; i < locations.length; i++) {
-            var location = locations[i];
-
-            for (var j = 0; j < conditions.length; j++) {
-                var condition = conditions[j];
-                var variable = extractVariableFromCondition(condition);
-                var key = variable + "@" + location;
-                this.LatestDataMap[key] = null;
-                this.ConditionMap[key] = condition;
-
-                var brothers = nodeModel.Parent.Children;
-                for (var i = 0; i < brothers.length; i++) {
-                    if (isEmptyNode(brothers[i])) {
-                        this.EvidenceNodeMap[key] = brothers[i];
-                        break;
-                    }
-                }
-            }
-        }
-
-        var self = this;
-        var api = new AssureIt.RECAPI("http://54.250.206.119/rec");
-
-        function collectLatestData() {
-            for (var key in self.LatestDataMap) {
-                var variable = key.split("@")[0];
-                var location = key.split("@")[1];
-                var latestData = api.getLatestData(location, variable);
-                if (latestData == null) {
-                    console.log("latest data is null");
-                }
-                self.LatestDataMap[key] = latestData;
-            }
-        }
-
-        function showResult(key, result) {
+    MonitorManager.prototype.CollectLatestData = function () {
+        for (var key in this.LatestDataMap) {
             var variable = key.split("@")[0];
-            var thisNode = self.EvidenceNodeMap[key];
-            var latestData = self.LatestDataMap[key];
-
-            function getContext(node) {
-                for (var i = 0; i < node.Children.length; i++) {
-                    var child = node.Children[i];
-
-                    if (child.Type == AssureIt.NodeType.Context) {
-                        return child;
-                    }
-                }
-
-                return null;
+            var location = key.split("@")[1];
+            var latestData = this.RECAPI.getLatestData(location, variable);
+            if (latestData == null) {
+                console.log("latest data is null");
             }
+            this.LatestDataMap[key] = latestData;
+        }
+    };
 
-            function appendContext(node) {
-                var viewMap = caseViewer.ViewMap;
-                var thisNodeView = viewMap[node.Label];
-                var case0 = caseViewer.Source;
-                var contextNode = new AssureIt.NodeModel(case0, thisNodeView.Source, AssureIt.NodeType.Context, null, null);
-                var parentNodeLabel = contextNode.Parent.Label;
-                case0.SaveIdCounterMax(case0.ElementTop);
-                viewMap[contextNode.Label] = new AssureIt.NodeView(caseViewer, contextNode);
-                viewMap[contextNode.Label].ParentShape = viewMap[parentNodeLabel];
+    MonitorManager.prototype.EvaluateCondition = function () {
+        for (var key in this.ConditionMap) {
+            var variable = key.split("@")[0];
+            var script = "var " + variable + "=" + this.LatestDataMap[key].data + ";";
+            script += this.ConditionMap[key] + ";";
+            var result = eval(script);
+            this.EditResult(key, result);
+        }
+    };
 
-                var parentOffSet = $("#" + parentNodeLabel).offset();
-                caseViewer.Draw();
-                var currentParentView = viewMap[parentNodeLabel];
-                caseViewer.Screen.SetOffset(parentOffSet.left - currentParentView.AbsX, parentOffSet.top - currentParentView.AbsY);
-                return contextNode;
-            }
+    MonitorManager.prototype.IsAlreadyFailed = function (evidenceNode) {
+        var notes = evidenceNode.Notes;
 
-            function removeContext(node) {
-            }
-
-            function inputContext(node) {
-                var contextNode = getContext(node);
-
-                if (!contextNode) {
-                    contextNode = appendContext(node);
-                }
-
-                var noteBody = {};
-                noteBody["Manager"] = latestData.authid;
-                contextNode.Notes = [{ "Name": "Notes", "Body": noteBody }];
-                var element = caseViewer.ViewMap[contextNode.Label].HTMLDoc.DocBase;
-                var HTMLRenderPlugIn = caseViewer.GetPlugInHTMLRender("note");
-                HTMLRenderPlugIn(caseViewer, contextNode, element);
-            }
-
-            var thisNoteBody = {};
-
-            if (result) {
-                thisNoteBody["Status"] = "Success";
-                thisNoteBody[variable] = latestData.data;
-                thisNoteBody["timestamp"] = latestData.timestamp;
-                removeContext(thisNode);
-            } else {
-                thisNoteBody["Status"] = "Fail";
-                thisNoteBody[variable] = latestData.data;
-                thisNoteBody["timestamp"] = latestData.timestamp;
-                inputContext(thisNode);
-            }
-
-            thisNode.Notes = [{ "Name": "Notes", "Body": thisNoteBody }];
-
-            var HTMLRenderPlugIn = caseViewer.GetPlugInHTMLRender("note");
-            var thisNodeElement = caseViewer.ViewMap[thisNode.Label].HTMLDoc.DocBase;
-            HTMLRenderPlugIn(caseViewer, thisNode, thisNodeElement);
-
-            var SVGRenderPlugIn = caseViewer.GetPlugInSVGRender("monitor");
-            var thisNodeView = caseViewer.ViewMap[thisNode.Label];
-            SVGRenderPlugIn(caseViewer, thisNodeView);
-
-            caseViewer.Draw();
+        for (var i = 0; i < notes.length; i++) {
+            var body = notes[i].Body;
+            if (body["Status"] == "Fail")
+                return true;
         }
 
-        function evaluateCondition() {
-            for (var key in self.ConditionMap) {
-                var variable = key.split("@")[0];
-                var script = "var " + variable + "=" + self.LatestDataMap[key].data + ";";
-                script += self.ConditionMap[key] + ";";
-                var result = eval(script);
+        return false;
+    };
 
-                showResult(key, result);
+    MonitorManager.prototype.EditResult = function (key, result) {
+        var variable = key.split("@")[0];
+        var evidenceNode = this.EvidenceNodeMap[key];
+
+        if (this.IsAlreadyFailed(evidenceNode))
+            return;
+
+        var latestData = this.LatestDataMap[key];
+        var evidenceNoteBody = {};
+
+        if (result) {
+            evidenceNoteBody["Status"] = "Success";
+            evidenceNoteBody[variable] = latestData.data;
+            evidenceNoteBody["timestamp"] = latestData.timestamp;
+        } else {
+            evidenceNoteBody["Status"] = "Fail";
+            evidenceNoteBody[variable] = latestData.data;
+            evidenceNoteBody["timestamp"] = latestData.timestamp;
+
+            var contextNode = getContextNode(evidenceNode);
+            if (contextNode == null) {
+                contextNode = appendNode(this.Viewer, evidenceNode, AssureIt.NodeType.Context);
+            }
+
+            var contextNoteBody = {};
+            contextNoteBody["Manager"] = latestData.authid;
+            contextNode.Notes = [{ "Name": "Notes", "Body": contextNoteBody }];
+            var element = this.Viewer.ViewMap[contextNode.Label].HTMLDoc.DocBase;
+        }
+
+        evidenceNode.Notes = [{ "Name": "Notes", "Body": evidenceNoteBody }];
+    };
+
+    MonitorManager.prototype.UpdateNode = function (node) {
+        var element = this.Viewer.ViewMap[node.Label].HTMLDoc.DocBase;
+        var view = this.Viewer.ViewMap[node.Label];
+        this.HTMLRenderFunction(this.Viewer, node, element);
+        this.SVGRenderFunction(this.Viewer, view);
+    };
+
+    MonitorManager.prototype.ShowResult = function () {
+        for (var key in this.EvidenceNodeMap) {
+            var evidenceNode = this.EvidenceNodeMap[key];
+            this.UpdateNode(evidenceNode);
+
+            var contextNode = getContextNode(evidenceNode);
+            if (contextNode != null) {
+                this.UpdateNode(contextNode);
             }
         }
 
+        this.Viewer.Draw();
+    };
+    return MonitorManager;
+})();
+
+var MonitorPlugIn = (function (_super) {
+    __extends(MonitorPlugIn, _super);
+    function MonitorPlugIn(plugInManager) {
+        _super.call(this, plugInManager);
+        this.plugInManager = plugInManager;
+        this.HTMLRenderPlugIn = new MonitorHTMLRenderPlugIn(plugInManager);
+        this.SVGRenderPlugIn = new MonitorSVGRenderPlugIn(plugInManager);
+    }
+    return MonitorPlugIn;
+})(AssureIt.PlugInSet);
+
+var MonitorHTMLRenderPlugIn = (function (_super) {
+    __extends(MonitorHTMLRenderPlugIn, _super);
+    function MonitorHTMLRenderPlugIn(plugInManager) {
+        _super.call(this, plugInManager);
+        this.IsFirstCalled = true;
+        this.MonitorManager = null;
+    }
+    MonitorHTMLRenderPlugIn.prototype.IsEnabled = function (caseViewer, nodeModel) {
+        return true;
+    };
+
+    MonitorHTMLRenderPlugIn.prototype.Delegate = function (caseViewer, nodeModel, element) {
         if (this.IsFirstCalled) {
-            this.Timer = setInterval(function () {
-                collectLatestData();
-                evaluateCondition();
-            }, 5000);
+            this.MonitorManager = new MonitorManager(caseViewer);
+            this.MonitorManager.StartMonitor(5000);
             this.IsFirstCalled = false;
         }
+
+        if (nodeModel.Type != AssureIt.NodeType.Context)
+            return true;
+        if (!hasMonitorInfo(nodeModel))
+            return true;
+
+        var notes = nodeModel.Notes;
+        var locations = [];
+        var conditions = [];
+
+        for (var i = 0; i < notes.length; i++) {
+            var body = notes[i].Body;
+
+            if ("Location" in body && "Monitor" in body) {
+                locations.push(notes[i].Body.Location);
+                conditions.push(notes[i].Body.Monitor);
+            }
+        }
+
+        var evidenceNode = getEmptyEvidenceNode(nodeModel.Parent);
+        if (evidenceNode == null) {
+            evidenceNode = appendNode(caseViewer, nodeModel.Parent, AssureIt.NodeType.Evidence);
+        }
+
+        this.MonitorManager.SetMonitor(locations[0], conditions[0], evidenceNode);
 
         return true;
     };
@@ -222,14 +274,6 @@ var MonitorSVGRenderPlugIn = (function (_super) {
     MonitorSVGRenderPlugIn.prototype.Delegate = function (caseViewer, nodeView) {
         var nodeModel = nodeView.Source;
 
-        function blushAllChild(node, fill, stroke) {
-            for (var i = 0; i < node.Children.length; i++) {
-                var label = node.Children[i].Label;
-                var nodeView = caseViewer.ViewMap[label];
-                nodeView.SVGShape.SetColor(fill, stroke);
-            }
-        }
-
         if (nodeModel.Type == AssureIt.NodeType.Evidence) {
             var notes = nodeModel.Notes;
 
@@ -241,12 +285,30 @@ var MonitorSVGRenderPlugIn = (function (_super) {
                     var stroke = "none";
 
                     nodeView.SVGShape.SetColor(fill, stroke);
-                    blushAllChild(nodeModel, fill, stroke);
+                    blushAllAncestor(nodeModel, fill, stroke);
                 }
             }
         }
 
         return true;
+
+        function blushAllAncestor(node, fill, stroke) {
+            if (node != null) {
+                caseViewer.ViewMap[node.Label].SVGShape.SetColor(fill, stroke);
+                blushAllAncestor(node.Parent, fill, stroke);
+                blushContext(node, fill, stroke);
+            }
+        }
+
+        function blushContext(node, fill, stroke) {
+            for (var i = 0; i < node.Children.length; i++) {
+                if (node.Children[i].Type == AssureIt.NodeType.Context) {
+                    var label = node.Children[i].Label;
+                    var nodeView = caseViewer.ViewMap[label];
+                    nodeView.SVGShape.SetColor(fill, stroke);
+                }
+            }
+        }
     };
     return MonitorSVGRenderPlugIn;
 })(AssureIt.SVGRenderPlugIn);
