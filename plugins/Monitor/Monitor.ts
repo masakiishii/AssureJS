@@ -175,13 +175,13 @@ class MonitorHTMLRenderPlugIn extends AssureIt.HTMLRenderPlugIn {
 			if(result) { /* success */
 				thisNoteBody["Status"] = "Success";
 				thisNoteBody[variable] = latestData.data;
-				//thisNoteBody["timestamp"] = latestData.data;
+				thisNoteBody["timestamp"] = latestData.timestamp;
 				removeContext(thisNode);
 			}
 			else { /* fail */
 				thisNoteBody["Status"] = "Fail";
 				thisNoteBody[variable] = latestData.data;
-				//thisNoteBody["timestamp"] = latestData.data;
+				thisNoteBody["timestamp"] = latestData.timestamp;
 				inputContext(thisNode);
 			}
 
