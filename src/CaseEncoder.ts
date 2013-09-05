@@ -181,6 +181,8 @@ module AssureIt {
 						ret += Note.Name + "::";
 						if (Note.Body["Description"]) {
 							ret += " " + Note.Body["Description"] + "\n";
+						} else {
+							ret += "\n";
 						}
 						//var keys = Object.keys(Note.Body);
 						//for (var j in keys) {

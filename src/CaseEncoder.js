@@ -144,9 +144,12 @@ var AssureIt;
                 if (note_num != 0) {
                     for (var i = 0; i < model.Notes.length; i++) {
                         var Note = model.Notes[i];
+                        console.log(Note);
                         ret += Note.Name + "::";
                         if (Note.Body["Description"]) {
                             ret += " " + Note.Body["Description"] + "\n";
+                        } else {
+                            ret += "\n";
                         }
                     }
                 }
