@@ -72,7 +72,7 @@ class TimeLineMenuPlugIn extends AssureIt.MenuBarContentsPlugIn {
 	}
 
 	IsEnabled(caseViewer: AssureIt.CaseViewer, caseModel: AssureIt.NodeModel): boolean {
-		return true;
+		return false;
 	}
 
 	Delegate(caseViewer: AssureIt.CaseViewer, caseModel: AssureIt.NodeModel, element: JQuery, serverApi: AssureIt.ServerAPI): boolean {

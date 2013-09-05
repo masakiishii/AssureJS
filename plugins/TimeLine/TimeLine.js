@@ -63,7 +63,7 @@ var TimeLineMenuPlugIn = (function (_super) {
         this.visible = true;
     }
     TimeLineMenuPlugIn.prototype.IsEnabled = function (caseViewer, caseModel) {
-        return true;
+        return false;
     };
 
     TimeLineMenuPlugIn.prototype.Delegate = function (caseViewer, caseModel, element, serverApi) {
