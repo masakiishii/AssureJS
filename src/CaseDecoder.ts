@@ -184,7 +184,7 @@ module AssureIt {
 			var Type : NodeType = this.Text2NodeTypeMap[obj["Type"]];
 			var Label : string = obj["Label"];
 			var Statement : string = obj["Statement"];
-	 		var Notes = (obj["Notes"] && obj["Notes"].length != 0) ? obj["Notes"] : [];
+	 		var Notes = (obj["Notes"]) ? obj["Notes"] : {};
 			var Model : NodeModel = new NodeModel(Case, Parent,	Type, Label, Statement);
 			Model.Notes = Notes;
 
