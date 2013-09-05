@@ -52,7 +52,14 @@ var LayoutPortraitEnginePlugIn = (function (_super) {
         var ParentView = ContextView.ParentShape;
         ContextView.IsArrowWhite = true;
         ContextView.AbsX = (ParentView.AbsX + this.X_CONTEXT_MARGIN);
-        ContextView.AbsY = ParentView.AbsY;
+        if (ParentView.Source.Type == AssureIt.NodeType.Evidence) {
+            var ContextHeight = ContextView.HTMLDoc.Height;
+            var ParentHeight = ParentView.HTMLDoc.Height;
+            var HeightDiffAve = (ParentHeight - ContextHeight) / 2;
+            ContextView.AbsY = ParentView.AbsY + HeightDiffAve;
+        } else {
+            ContextView.AbsY = ParentView.AbsY;
+        }
     };
 
     LayoutPortraitEnginePlugIn.prototype.SetAllElementPosition = function (Element) {
@@ -230,16 +237,13 @@ var LayoutPortraitEnginePlugIn = (function (_super) {
             var h1 = ContextView.HTMLDoc.Height;
             var h2 = ParentView.HTMLDoc.Height;
             var h = (h1 - h2) / 2;
-
             ContextView.AbsX += x;
             ContextView.AbsY += (y - h);
             ContextView.AbsX += this.X_CONTEXT_MARGIN;
-
             this.EmitChildrenElement(Element, ParentView.AbsX, ParentView.AbsY, i, ((this.Y_MARGIN > Math.abs(h1 - h2)) ? h2 : Math.abs(h1 - h2)));
         } else {
             var h2 = 0;
             var CurrentView = this.ViewMap[Element.Label];
-
             h2 = CurrentView.HTMLDoc.Height;
             this.EmitChildrenElement(Element, x, y, i, h2);
         }
@@ -261,9 +265,7 @@ var LayoutPortraitEnginePlugIn = (function (_super) {
                 var height = (ContextHeight > ElementView.HTMLDoc.Height) ? ContextHeight : ElementView.HTMLDoc.Height;
                 var ParentElementView = this.ViewMap[Node.Label];
                 ElementView.AbsY = y;
-
                 ElementView.AbsY = y + this.Y_MARGIN + h;
-
                 MaxYPostition = (ElementView.AbsY > MaxYPostition) ? ElementView.AbsY : MaxYPostition;
                 this.Traverse(Node.Children[i], ElementView.AbsX, ElementView.AbsY);
             }
