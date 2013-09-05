@@ -9,7 +9,7 @@ module AssureIt {
 		Label: string;
 		Statement: string;
 		Annotations: CaseAnnotation[];
-		Notes: CaseNote[];
+		Notes: { [index: string]: string };
 		Children: JsonNodeModel[];
 
 		constructor() {
@@ -174,29 +174,9 @@ module AssureIt {
 
 				if (model.Statement != "") ret += (model.Statement + "\n");
 
-				var note_num = model.Notes.length;
-				if (note_num != 0) {
-					for (var i = 0; i < model.Notes.length; i++) {
-						var Note = model.Notes[i];
-						ret += Note.Name + "::";
-						if (Note.Body["Description"]) {
-							ret += " " + Note.Body["Description"] + "\n";
-						} else {
-							ret += "\n";
-						}
-						//var keys = Object.keys(Note.Body);
-						//for (var j in keys) {
-						//	if (keys[j] == "Description") continue;
-						//	ret += "\t" + keys[j] + ": " + Note.Body[keys[j]] + "\n";
-						//}
-						//if (Note.Body["Description"] != null) {
-						//	var desc: string = Note.Body["Description"];
-						//	var desclist: any = desc.split("\n");
-						//	for (var j in desclist) {
-						//		ret += IndentToken + desclist[j] + "\n";
-						//	}
-						//}
-					}
+				for(var key in model.Notes) {
+					var Note = model.Notes[key];
+					ret += key + "::" + Note + "\n";
 				}
 
 				if (isSingleNode) {

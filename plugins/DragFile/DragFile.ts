@@ -80,8 +80,7 @@ class DragFileActionPlugIn extends AssureIt.ActionPlugIn {
 		importFile.upload((data: any, label: string) => {
 				var nodeModel: AssureIt.NodeModel = case0.ElementMap[label];
 				var nodeView: AssureIt.NodeView = caseViewer.ViewMap[label];
-				var body = {Type: "ImageFile",URL: data.split('=')[1]};
-				nodeModel.SetNote("ImageFile", body);
+				nodeModel.SetNote("ImageFile", data.split('=')[1]);
 				nodeView.HTMLDoc.Render(caseViewer, nodeModel);
 				caseViewer.Draw();
 		});
@@ -101,15 +100,14 @@ class ImageFileHTMLPlugIn extends AssureIt.HTMLRenderPlugIn {
 
 	Delegate(caseViewer: AssureIt.CaseViewer, nodeModel: AssureIt.NodeModel, element: JQuery) : boolean {
 		var basepath = this.plugInManager.basepath;
-		for (var i: number = 0; i < nodeModel.Notes.length; i++) {
-			if(nodeModel.Notes[i].Name == "ImageFile") {
-				var body = nodeModel.Notes[i].Body;
+			if("ImageFile" in nodeModel.Notes) {
+				var note = nodeModel.Notes["ImageFile"];
 				var img = $(new Image());
 				img.bind('load', function(){
-					$('<a href="' + basepath + '/' + body.URL+'"></a>').append(img).appendTo(element);
+					$('<a href="'+basepath+'/'+note+'"></a>').append(img).appendTo(element);
 					caseViewer.Draw();
 				});
-				img.attr('src',basepath+'/'+body.URL);
+				img.attr('src',basepath+'/'+note);
 				//$('<a href="' + basepath + '/' + body.URL+'"><img id="img-'+ nodeModel.Label + '-' + i + '" src="'+basepath+'/'+body.URL+'" /></a>')
 				//.appendTo(element);
 
@@ -119,7 +117,6 @@ class ImageFileHTMLPlugIn extends AssureIt.HTMLRenderPlugIn {
 				//	caseViewer.Draw();
 				//})
 			}
-		}
 		return true;
 	}
 }

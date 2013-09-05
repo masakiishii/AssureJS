@@ -140,17 +140,9 @@ var AssureIt;
                 if (model.Statement != "")
                     ret += (model.Statement + "\n");
 
-                var note_num = model.Notes.length;
-                if (note_num != 0) {
-                    for (var i = 0; i < model.Notes.length; i++) {
-                        var Note = model.Notes[i];
-                        ret += Note.Name + "::";
-                        if (Note.Body["Description"]) {
-                            ret += " " + Note.Body["Description"] + "\n";
-                        } else {
-                            ret += "\n";
-                        }
-                    }
+                for (var key in model.Notes) {
+                    var Note = model.Notes[key];
+                    ret += key + "::" + Note + "\n";
                 }
 
                 if (isSingleNode) {

@@ -87,8 +87,7 @@ var DragFileActionPlugIn = (function (_super) {
         importFile.upload(function (data, label) {
             var nodeModel = case0.ElementMap[label];
             var nodeView = caseViewer.ViewMap[label];
-            var body = { Type: "ImageFile", URL: data.split('=')[1] };
-            nodeModel.SetNote("ImageFile", body);
+            nodeModel.SetNote("ImageFile", data.split('=')[1]);
             nodeView.HTMLDoc.Render(caseViewer, nodeModel);
             caseViewer.Draw();
         });
@@ -108,16 +107,14 @@ var ImageFileHTMLPlugIn = (function (_super) {
 
     ImageFileHTMLPlugIn.prototype.Delegate = function (caseViewer, nodeModel, element) {
         var basepath = this.plugInManager.basepath;
-        for (var i = 0; i < nodeModel.Notes.length; i++) {
-            if (nodeModel.Notes[i].Name == "ImageFile") {
-                var body = nodeModel.Notes[i].Body;
-                var img = $(new Image());
-                img.bind('load', function () {
-                    $('<a href="' + basepath + '/' + body.URL + '"></a>').append(img).appendTo(element);
-                    caseViewer.Draw();
-                });
-                img.attr('src', basepath + '/' + body.URL);
-            }
+        if ("ImageFile" in nodeModel.Notes) {
+            var note = nodeModel.Notes["ImageFile"];
+            var img = $(new Image());
+            img.bind('load', function () {
+                $('<a href="' + basepath + '/' + note + '"></a>').append(img).appendTo(element);
+                caseViewer.Draw();
+            });
+            img.attr('src', basepath + '/' + note);
         }
         return true;
     };

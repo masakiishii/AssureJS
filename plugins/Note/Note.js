@@ -25,13 +25,11 @@ var NoteHTMLRenderPlugIn = (function (_super) {
 
     NoteHTMLRenderPlugIn.prototype.Delegate = function (caseViewer, nodeModel, element) {
         element.children("#note").remove();
+        var $note = $('<div id="note"></div>');
 
-        for (var i = 0; i < nodeModel.Notes.length; i++) {
-            var note = nodeModel.Notes[i];
-            var $note = $('<div id="note"></div>');
-
-            $('<p style="color: DarkOliveGreen">' + note.Name + ": " + note.Body["Description"] + '</p>').appendTo($note);
-
+        for (var key in nodeModel.Notes) {
+            var note = nodeModel.Notes[key];
+            $('<p style="color: DarkOliveGreen">' + key + ": " + note + '</p>').appendTo($note);
             $note.appendTo(element);
         }
 

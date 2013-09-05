@@ -37,17 +37,13 @@ module AssureIt {
 			var Type : NodeType = NodeModelData["NodeType"]; // fix NodeType's type
 			var Statement : string = NodeModelData["Statement"];
 			var Children : string[] = NodeModelData["Children"];
-			var NoteData : CaseNote[] = NodeModelData["Notes"];
+			var NoteData : { [index: string]: string } = NodeModelData["Notes"];
 			var AnnotationData : any[] = NodeModelData["Annotations"];
 
 			var ChildNodeModel : NodeModel = new NodeModel(this.Case, Parent, Type, childLabel, Statement);
 
 			if(NoteData != null) {
-				for(var i : number = 0; i < NoteData.length; i++) {
-					var note : CaseNote =
-									 new CaseNote(NoteData[i].Name, NoteData[i].Body);
-					ChildNodeModel.Notes.push(note);
-				}
+				ChildNodeModel.Notes = NoteData;
 			}
 
 			if(AnnotationData != null) {

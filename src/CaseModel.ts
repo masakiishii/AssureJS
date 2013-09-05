@@ -5,10 +5,11 @@ module AssureIt {
 		}
 	}
 
-	export class CaseNote {
-		constructor(public Name: string, public Body: any) {
-		}
-	}
+	/* obsolete */
+	//export class CaseNote {
+	//	constructor(public Name: string, public Body: any) {
+	//	}
+	//}
 
 	export enum NodeType {
 		Goal, Context, Strategy, Evidence
@@ -20,7 +21,7 @@ module AssureIt {
 		Label : string;
 		Statement: string;
 		Annotations : CaseAnnotation[];
-		Notes: CaseNote[];
+		Notes: { [index: string]: string };
 		Parent : NodeModel;
 		Children: NodeModel[];
 		LineNumber : number;
@@ -37,7 +38,7 @@ module AssureIt {
 			}
 			this.Children = [];
 			this.Annotations = [];
-			this.Notes = [];
+			this.Notes = {};
 
 			Case.ElementMap[this.Label] = this; // TODO: ensure consistensy of labels
 			this.LineNumber = 1; /*FIXME*/
@@ -91,22 +92,14 @@ module AssureIt {
 			this.EnableEditFlag();
 		}
 
-		SetNote(Name: string, Body : any) : void {
-			for(var i: number = 0; i < this.Notes.length; i++ ) {
-				if(this.Notes[i].Name == Name) {
-					this.Notes[i].Body = Body;
-					return;
-				}
-			}
-			this.Notes.push(new CaseNote(Name, Body));
+		SetNote(Name: string, Body : string) : void {
+			this.Notes[Name] = Body;
 			this.EnableEditFlag();
 		}
 
-		GetNote(Name: string) : CaseNote {
-			for(var i: number = 0; i < this.Notes.length; i++ ) {
-				if(this.Notes[i].Name == Name) {
-					return this.Notes[i];
-				}
+		GetNote(Name: string) : string {
+			if(Name in this.Notes) {
+				return this.Notes[Name];
 			}
 			return null;
 		}

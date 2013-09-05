@@ -34,12 +34,8 @@ function hasMonitorInfo(node) {
 
     var notes = node.Notes;
 
-    for (var i = 0; i < notes.length; i++) {
-        var body = notes[i].Body;
-
-        if ("Location" in body && "Monitor" in body) {
-            return true;
-        }
+    if ("Location" in notes && "Monitor" in notes) {
+        return true;
     }
 
     return false;
@@ -57,7 +53,7 @@ function appendNode(caseViewer, node, type) {
 }
 
 function isEmptyEvidenceNode(node) {
-    if (node.Type == AssureIt.NodeType.Evidence && node.Statement == "" && node.Annotations.length == 0 && node.Notes.length == 0 && node.Children.length == 0) {
+    if (node.Type == AssureIt.NodeType.Evidence && node.Statement == "" && node.Annotations.length == 0 && node.Notes == {} && node.Children.length == 0) {
         return true;
     }
 
@@ -122,39 +118,30 @@ var MonitorNode = (function () {
         var evidenceNode = this.EvidenceNode;
 
         var latestData = this.GetLatestData();
-        var evidenceNoteBody = {};
+        var evidenceNotes = evidenceNode.Notes;
 
         if (result) {
-            evidenceNoteBody["Status"] = "Success";
-            evidenceNoteBody[this.Type] = latestData.data;
-            evidenceNoteBody["Timestamp"] = latestData.timestamp;
+            evidenceNotes["Status"] = "Success";
+            evidenceNotes[this.Type] = latestData.data;
+            evidenceNotes["Timestamp"] = latestData.timestamp;
         } else {
-            evidenceNoteBody["Status"] = "Fail";
-            evidenceNoteBody[this.Type] = latestData.data;
-            evidenceNoteBody["Timestamp"] = latestData.timestamp;
+            evidenceNotes["Status"] = "Fail";
+            evidenceNotes[this.Type] = latestData.data;
+            evidenceNotes["Timestamp"] = latestData.timestamp;
 
             var contextNode = getContextNode(evidenceNode);
             if (contextNode == null) {
                 contextNode = appendNode(this.Viewer, evidenceNode, AssureIt.NodeType.Context);
             }
 
-            var contextNoteBody = {};
-            contextNoteBody["Manager"] = latestData.authid;
-            contextNode.Notes = [{ "Name": "Notes", "Body": contextNoteBody }];
+            var contextNotes = contextNode.Notes;
+            contextNotes["Manager"] = latestData.authid;
         }
-
-        evidenceNode.Notes = [{ "Name": "Notes", "Body": evidenceNoteBody }];
     };
 
     MonitorNode.prototype.IsAlreadyFailed = function () {
-        var notes = this.EvidenceNode.Notes;
-
-        for (var i = 0; i < notes.length; i++) {
-            var body = notes[i].Body;
-            if (body["Status"] == "Fail")
-                return true;
-        }
-
+        if (this.EvidenceNode.Notes["Status"] == "Fail")
+            return true;
         return false;
     };
 
@@ -212,17 +199,8 @@ var MonitorManager = (function () {
         var locations = [];
         var conditions = [];
 
-        for (var i = 0; i < notes.length; i++) {
-            var body = notes[i].Body;
-
-            if ("Location" in body && "Monitor" in body) {
-                locations.push(notes[i].Body.Location);
-                conditions.push(notes[i].Body.Monitor);
-            }
-        }
-
-        var location = locations[0];
-        var condition = conditions[0];
+        var location = notes["Location"];
+        var condition = notes["Monitor"];
         var type = extractVariableFromCondition(condition);
         var latestDataKey = type + "@" + location;
 
@@ -308,18 +286,12 @@ var MonitorSVGRenderPlugIn = (function (_super) {
         var nodeModel = nodeView.Source;
 
         if (nodeModel.Type == AssureIt.NodeType.Evidence) {
-            var notes = nodeModel.Notes;
+            if (nodeModel.Notes["Status"] == "Fail") {
+                var fill = "#FF9999";
+                var stroke = "none";
 
-            for (var i = 0; i < notes.length; i++) {
-                var body = notes[i].Body;
-
-                if (body["Status"] == "Fail") {
-                    var fill = "#FF9999";
-                    var stroke = "none";
-
-                    nodeView.SVGShape.SetColor(fill, stroke);
-                    blushAllAncestor(nodeModel, fill, stroke);
-                }
+                nodeView.SVGShape.SetColor(fill, stroke);
+                blushAllAncestor(nodeModel, fill, stroke);
             }
         }
 

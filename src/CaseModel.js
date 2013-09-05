@@ -9,15 +9,6 @@ var AssureIt;
     })();
     AssureIt.CaseAnnotation = CaseAnnotation;
 
-    var CaseNote = (function () {
-        function CaseNote(Name, Body) {
-            this.Name = Name;
-            this.Body = Body;
-        }
-        return CaseNote;
-    })();
-    AssureIt.CaseNote = CaseNote;
-
     (function (NodeType) {
         NodeType[NodeType["Goal"] = 0] = "Goal";
         NodeType[NodeType["Context"] = 1] = "Context";
@@ -38,7 +29,7 @@ var AssureIt;
             }
             this.Children = [];
             this.Annotations = [];
-            this.Notes = [];
+            this.Notes = {};
 
             Case.ElementMap[this.Label] = this;
             this.LineNumber = 1;
@@ -92,21 +83,13 @@ var AssureIt;
         };
 
         NodeModel.prototype.SetNote = function (Name, Body) {
-            for (var i = 0; i < this.Notes.length; i++) {
-                if (this.Notes[i].Name == Name) {
-                    this.Notes[i].Body = Body;
-                    return;
-                }
-            }
-            this.Notes.push(new CaseNote(Name, Body));
+            this.Notes[Name] = Body;
             this.EnableEditFlag();
         };
 
         NodeModel.prototype.GetNote = function (Name) {
-            for (var i = 0; i < this.Notes.length; i++) {
-                if (this.Notes[i].Name == Name) {
-                    return this.Notes[i];
-                }
+            if (Name in this.Notes) {
+                return this.Notes[Name];
             }
             return null;
         };

@@ -44,10 +44,7 @@ var AssureIt;
             var ChildNodeModel = new AssureIt.NodeModel(this.Case, Parent, Type, childLabel, Statement);
 
             if (NoteData != null) {
-                for (var i = 0; i < NoteData.length; i++) {
-                    var note = new AssureIt.CaseNote(NoteData[i].Name, NoteData[i].Body);
-                    ChildNodeModel.Notes.push(note);
-                }
+                ChildNodeModel.Notes = NoteData;
             }
 
             if (AnnotationData != null) {
