@@ -28,12 +28,20 @@ var DScriptMenuPlugIn = (function (_super) {
 
     DScriptMenuPlugIn.prototype.Delegate = function (caseViewer, caseModel, element, serverApi) {
         var _this = this;
+        var self = this;
         element.append('<a href="#" ><img id="dscript"  src="' + serverApi.basepath + 'images/dse.png" title="DScript" alt="dscript" /></a>');
 
         $('#dscript').unbind('dblclick');
         $('#dscript').click(function (ev) {
+            var encoder = new AssureIt.CaseEncoder();
+            var encoded = encoder.ConvertToASN(caseModel, false);
+            _this.editorPlugIn.rootCaseModel = caseModel;
+            _this.editorPlugIn.editor_left.setValue(encoded);
             $('#dscript-editor-wrapper').css({ display: 'block' }).addClass("animated fadeInDown").focus().one("blur", { node: caseModel }, function (e, node) {
                 e.stopPropagation();
+                var TopNodeView = self.editorPlugIn.caseViewer.ViewMap[caseModel.Label];
+                self.editorPlugIn.caseViewer.DeleteViewsRecursive(TopNodeView);
+                self.editorPlugIn.caseViewer.Draw();
 
                 var $this = $(this);
                 $this.addClass("animated fadeOutUp");
@@ -47,10 +55,6 @@ var DScriptMenuPlugIn = (function (_super) {
                     $('#dscript-editor-wrapper').blur();
                 }
             });
-            var encoder = new AssureIt.CaseEncoder();
-            var encoded = encoder.ConvertToASN(caseModel, false);
-            _this.editorPlugIn.rootCaseModel = caseModel;
-            _this.editorPlugIn.editor_left.setValue(encoded);
             $('#CodeMirror').focus();
             $('#background').click(function () {
                 $('#dscript-editor-wrapper').blur();
@@ -58,6 +62,8 @@ var DScriptMenuPlugIn = (function (_super) {
             window.setTimeout(function () {
                 $('#dscript-editor-wrapper').removeClass();
             }, 1300);
+            _this.editorPlugIn.editor_left.refresh();
+            _this.editorPlugIn.editor_right.refresh();
         });
         return true;
     };
@@ -121,6 +127,11 @@ var DScriptEditorPlugIn = (function (_super) {
             self.GenerateCode();
         });
     }
+    DScriptEditorPlugIn.prototype.Delegate = function (caseViewer, case0, serverApi) {
+        this.caseViewer = caseViewer;
+        return true;
+    };
+
     DScriptEditorPlugIn.prototype.updateLineComment = function (editor, widgets, Generator) {
         editor.operation(function () {
             for (var i = 0; i < widgets.length; ++i)
@@ -148,10 +159,19 @@ var DScriptEditorPlugIn = (function (_super) {
         var caseModel = decoder.ParseASN(Case, ASNData, this.rootCaseModel);
         if (caseModel == null) {
             this.highlighter.Highlight(decoder.GetASNError().line, decoder.GetASNError().toString());
-        } else {
             Case.IdCounters = orig_IdCounters;
             Case.ElementMap = orig_ElementMap;
-
+        } else {
+            var ParentModel = this.rootCaseModel.Parent;
+            if (ParentModel != null) {
+                caseModel.Parent = ParentModel;
+                for (var i in ParentModel.Children) {
+                    if (ParentModel.Children[i].Label == this.rootCaseModel.Label) {
+                        ParentModel.Children[i] = caseModel;
+                    }
+                }
+            }
+            this.rootCaseModel = caseModel;
             this.highlighter.ClearHighlight();
             var Generator = new DScriptGenerator();
             var script = Generator.codegen(caseModel, ASNData);

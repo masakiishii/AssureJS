@@ -27,16 +27,24 @@ class DScriptMenuPlugIn extends AssureIt.MenuBarContentsPlugIn {
 	}
 
 	Delegate(caseViewer: AssureIt.CaseViewer, caseModel: AssureIt.NodeModel, element: JQuery, serverApi: AssureIt.ServerAPI): boolean {
+		var self = this;
 		element.append('<a href="#" ><img id="dscript"  src="'+serverApi.basepath+'images/dse.png" title="DScript" alt="dscript" /></a>');
 
 		$('#dscript').unbind('dblclick');
 		$('#dscript').click((ev) => {
+				var encoder : AssureIt.CaseEncoder = new AssureIt.CaseEncoder();
+				var encoded = encoder.ConvertToASN(caseModel, false);
+				this.editorPlugIn.rootCaseModel = caseModel;
+				this.editorPlugIn.editor_left.setValue(encoded);
 				$('#dscript-editor-wrapper')
 					.css({display: 'block'})
 					.addClass("animated fadeInDown")
 					.focus()
 					.one("blur", {node : caseModel}, function(e: JQueryEventObject, node: JQuery) {
 						e.stopPropagation();
+						var TopNodeView = self.editorPlugIn.caseViewer.ViewMap[caseModel.Label];
+						self.editorPlugIn.caseViewer.DeleteViewsRecursive(TopNodeView);
+						self.editorPlugIn.caseViewer.Draw();
 
 						var $this = $(this);
 						$this.addClass("animated fadeOutUp");
@@ -51,10 +59,6 @@ class DScriptMenuPlugIn extends AssureIt.MenuBarContentsPlugIn {
 							$('#dscript-editor-wrapper').blur();
 						}
 					});
-				var encoder : AssureIt.CaseEncoder = new AssureIt.CaseEncoder();
-				var encoded = encoder.ConvertToASN(caseModel, false);
-				this.editorPlugIn.rootCaseModel = caseModel;
-				this.editorPlugIn.editor_left.setValue(encoded);
 				$('#CodeMirror').focus();
 				$('#background').click(function(){
 					$('#dscript-editor-wrapper').blur();
@@ -62,6 +66,8 @@ class DScriptMenuPlugIn extends AssureIt.MenuBarContentsPlugIn {
 				window.setTimeout(function() {
 					$('#dscript-editor-wrapper').removeClass();
 				}, 1300);
+				this.editorPlugIn.editor_left.refresh();
+				this.editorPlugIn.editor_right.refresh();
 		});
 		return true;
 	}
@@ -74,6 +80,7 @@ class DScriptEditorPlugIn extends AssureIt.ActionPlugIn {
 	widgets : any[]; /*FIXME*/
 	highlighter : ErrorHighlight;
 	rootCaseModel: AssureIt.NodeModel;
+	caseViewer: AssureIt.CaseViewer;
 	constructor(plugInManager: AssureIt.PlugInManager) {
 		this.widgets = [];
 		super(plugInManager);
@@ -156,6 +163,11 @@ class DScriptEditorPlugIn extends AssureIt.ActionPlugIn {
 		});
 	}
 
+	Delegate(caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case, serverApi: AssureIt.ServerAPI) : boolean {
+		this.caseViewer = caseViewer;
+		return true;
+	}
+
 	updateLineComment(editor : any, widgets : any[], Generator: DScriptGenerator) : void{
 		editor.operation(function(){
 			for (var i = 0; i < widgets.length; ++i)
@@ -183,10 +195,19 @@ class DScriptEditorPlugIn extends AssureIt.ActionPlugIn {
 		var caseModel = decoder.ParseASN(Case, ASNData, this.rootCaseModel);
 		if(caseModel == null) {
 			this.highlighter.Highlight(decoder.GetASNError().line, decoder.GetASNError().toString());
-		} else {
 			Case.IdCounters = orig_IdCounters;
 			Case.ElementMap = orig_ElementMap;
-
+		} else {
+			var ParentModel = this.rootCaseModel.Parent;
+			if (ParentModel != null) {
+				caseModel.Parent = ParentModel;
+				for (var i in ParentModel.Children) {
+					if (ParentModel.Children[i].Label == this.rootCaseModel.Label) {
+						ParentModel.Children[i] = caseModel;
+					}
+				}
+			}
+			this.rootCaseModel = caseModel;
 			this.highlighter.ClearHighlight();
 			var Generator: DScriptGenerator = new DScriptGenerator();
 			var script: string = Generator.codegen(caseModel, ASNData);

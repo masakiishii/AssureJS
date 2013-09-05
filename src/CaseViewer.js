@@ -492,19 +492,21 @@ var AssureIt;
             layout.LayoutAllView(this.ElementTop, 0, 0);
         };
 
-        CaseViewer.prototype.UpdateViewMapRecursive = function (model) {
+        CaseViewer.prototype.UpdateViewMapRecursive = function (model, view) {
             for (var i in model.Children) {
                 var child_model = model.Children[i];
-                if (this.ViewMap[child_model.Label] == null) {
-                    var child_view = new NodeView(this, child_model);
+                var child_view = this.ViewMap[child_model.Label];
+                if (child_view == null) {
+                    child_view = new NodeView(this, child_model);
                     this.ViewMap[child_model.Label] = child_view;
+                    child_view.ParentShape = view;
                 }
-                this.UpdateViewMapRecursive(child_model);
+                this.UpdateViewMapRecursive(child_model, child_view);
             }
         };
 
         CaseViewer.prototype.UpdateViewMap = function () {
-            this.UpdateViewMapRecursive(this.ElementTop);
+            this.UpdateViewMapRecursive(this.ElementTop, this.ViewMap[this.ElementTop.Label]);
         };
 
         CaseViewer.prototype.Draw = function () {
