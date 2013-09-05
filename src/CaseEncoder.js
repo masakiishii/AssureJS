@@ -117,13 +117,13 @@ var AssureIt;
                 switch (model.Type) {
                     case AssureIt.NodeType["Goal"]:
                         prefix += "*";
-                        ret += (prefix + model.Label);
+                        ret += (prefix + " " + model.Label);
                         break;
 
                     default:
                         if (prefix == "")
                             prefix += "*";
-                        ret += (prefix + model.Label);
+                        ret += (prefix + " " + model.Label);
                 }
 
                 var anno_num = model.Annotations.length;

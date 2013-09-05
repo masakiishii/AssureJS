@@ -141,7 +141,7 @@ module AssureIt {
 				switch (model.Type) {
 				case NodeType["Goal"]:
 					prefix += "*";
-					ret += (prefix + model.Label);
+					ret += (prefix + " " + model.Label);
 					break;
 				//case NodeType["Context"]:
 				//	if (prefix == "") prefix += "*";
@@ -157,7 +157,7 @@ module AssureIt {
 				//	break;
 				default:
 					if (prefix == "") prefix += "*";
-					ret += (prefix + model.Label);
+					ret += (prefix + " " + model.Label);
 					//console.log(model.Type);
 				}
 				//TODO:Label
