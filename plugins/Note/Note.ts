@@ -23,9 +23,7 @@ class NoteHTMLRenderPlugIn extends AssureIt.HTMLRenderPlugIn {
 			var note: AssureIt.CaseNote = nodeModel.Notes[i];
 			var $note = $('<div id="note"></div>');
 
-			for(var key in note.Body) {
-				$('<p style="color: DarkOliveGreen">' + key + ": " + note.Body[key] + '</p>').appendTo($note);
-			}
+			$('<p style="color: DarkOliveGreen">' + note.Name + ": " + note.Body["Description"] + '</p>').appendTo($note);
 
 			$note.appendTo(element);
 		}
