@@ -42,8 +42,13 @@ class DScriptMenuPlugIn extends AssureIt.MenuBarContentsPlugIn {
 					.focus()
 					.one("blur", {node : caseModel}, function(e: JQueryEventObject, node: JQuery) {
 						e.stopPropagation();
+						var TopNodeModel = self.editorPlugIn.caseViewer.ElementTop;
 						var TopNodeView = self.editorPlugIn.caseViewer.ViewMap[caseModel.Label];
 						self.editorPlugIn.caseViewer.DeleteViewsRecursive(TopNodeView);
+						if (caseModel.Parent == null /* ElementTop */) {
+							var caseView : AssureIt.NodeView = new AssureIt.NodeView(self.editorPlugIn.caseViewer, TopNodeModel);
+							self.editorPlugIn.caseViewer.ViewMap[TopNodeModel.Label] = caseView;
+						}
 						self.editorPlugIn.caseViewer.Draw();
 
 						var $this = $(this);
@@ -206,6 +211,9 @@ class DScriptEditorPlugIn extends AssureIt.ActionPlugIn {
 						ParentModel.Children[i] = caseModel;
 					}
 				}
+			} else {
+				this.caseViewer.ElementTop = caseModel;
+				Case.ElementTop = caseModel;
 			}
 			this.rootCaseModel = caseModel;
 			this.highlighter.ClearHighlight();

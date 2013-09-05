@@ -39,8 +39,13 @@ var DScriptMenuPlugIn = (function (_super) {
             _this.editorPlugIn.editor_left.setValue(encoded);
             $('#dscript-editor-wrapper').css({ display: 'block' }).addClass("animated fadeInDown").focus().one("blur", { node: caseModel }, function (e, node) {
                 e.stopPropagation();
+                var TopNodeModel = self.editorPlugIn.caseViewer.ElementTop;
                 var TopNodeView = self.editorPlugIn.caseViewer.ViewMap[caseModel.Label];
                 self.editorPlugIn.caseViewer.DeleteViewsRecursive(TopNodeView);
+                if (caseModel.Parent == null) {
+                    var caseView = new AssureIt.NodeView(self.editorPlugIn.caseViewer, TopNodeModel);
+                    self.editorPlugIn.caseViewer.ViewMap[TopNodeModel.Label] = caseView;
+                }
                 self.editorPlugIn.caseViewer.Draw();
 
                 var $this = $(this);
@@ -170,6 +175,9 @@ var DScriptEditorPlugIn = (function (_super) {
                         ParentModel.Children[i] = caseModel;
                     }
                 }
+            } else {
+                this.caseViewer.ElementTop = caseModel;
+                Case.ElementTop = caseModel;
             }
             this.rootCaseModel = caseModel;
             this.highlighter.ClearHighlight();
