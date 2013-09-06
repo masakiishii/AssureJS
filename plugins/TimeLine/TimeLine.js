@@ -25,6 +25,7 @@ var TimeLine = (function () {
     };
 
     TimeLine.prototype.Enable = function (callback) {
+        var _this = this;
         this.CreateDOM();
 
         var commits = this.serverApi.GetCommitList(this.nodeModel.Case.CaseId);
@@ -35,7 +36,8 @@ var TimeLine = (function () {
         commits.forEach(function (i, v) {
             $("#timeline-ul").append($('<a id="timeline' + i + '" href="#"></a>').text(v.toString()));
             $("#timeline" + i).click(function (e) {
-                location.href += '/commit/' + (i + 1);
+                var loc = "/case/" + _this.nodeModel.Case.CaseId;
+                location.href = loc + '/history/' + (i);
             });
         });
     };
@@ -63,7 +65,7 @@ var TimeLineMenuPlugIn = (function (_super) {
         this.visible = true;
     }
     TimeLineMenuPlugIn.prototype.IsEnabled = function (caseViewer, caseModel) {
-        return false;
+        return true;
     };
 
     TimeLineMenuPlugIn.prototype.Delegate = function (caseViewer, caseModel, element, serverApi) {

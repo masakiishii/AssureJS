@@ -35,17 +35,8 @@ class TimeLine {
 		commits.forEach((i:number, v:AssureIt.CommitModel):void => {
 			$("#timeline-ul").append($('<a id="timeline'+i+'" href="#"></a>').text(v.toString()));
 			$("#timeline"+i).click((e: Event)=>{
-				location.href += '/commit/' + (i+1);
-				//var oldData = this.serverApi.GetNodeTree(v.CommitId);
-				//var j = {contents: JSON.stringify(oldData)};
-				//var JsonData = converter.GenNewJson(j);
-				//Case.ClearNodes();
-				//var ElementTop:AssureIt.NodeModel = decoder.ParseJson(Case, JsonData);
-				//Case.SetElementTop(ElementTop);
-				//this.caseViewer.DeleteViewsRecursive(this.caseViewer.ViewMap[TopLabel]);
-				//this.caseViewer.InitViewMap(Case);
-				//this.caseViewer.Draw();
-				//this.Disable(callback);
+				var loc = "/case/" + this.nodeModel.Case.CaseId;
+				location.href = loc + '/history/' + (i);
 			});
 		});
 	}
@@ -72,7 +63,7 @@ class TimeLineMenuPlugIn extends AssureIt.MenuBarContentsPlugIn {
 	}
 
 	IsEnabled(caseViewer: AssureIt.CaseViewer, caseModel: AssureIt.NodeModel): boolean {
-		return false;
+		return true;
 	}
 
 	Delegate(caseViewer: AssureIt.CaseViewer, caseModel: AssureIt.NodeModel, element: JQuery, serverApi: AssureIt.ServerAPI): boolean {
