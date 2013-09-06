@@ -86,7 +86,7 @@ module AssureIt {
 			return this.RemoteCall("commit", {
 				contents: tree,
 				commitMessage: msg,
-				commitId: commitId,
+				'commitId': commitId,
 		//		userId: userId
 			}).commitId;
 		}
