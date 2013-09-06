@@ -80,6 +80,11 @@ class TimeLineMenuPlugIn extends AssureIt.MenuBarContentsPlugIn {
 					this.visible = true;
 				});
 			}
+			$('#background').click((ev: Event) => {
+				timeline.Disable(() =>{
+					this.visible = true;
+				});
+			});
 		});
 		return true;
 	}

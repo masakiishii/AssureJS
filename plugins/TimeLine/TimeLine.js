@@ -84,6 +84,11 @@ var TimeLineMenuPlugIn = (function (_super) {
                     _this.visible = true;
                 });
             }
+            $('#background').click(function (ev) {
+                timeline.Disable(function () {
+                    _this.visible = true;
+                });
+            });
         });
         return true;
     };
