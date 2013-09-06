@@ -95,7 +95,7 @@ var AssureIt;
         };
 
         ServerAPI.prototype.GetNodeTree = function (commitId) {
-            return JSON.parse(this.RemoteCall("getNodeTree", { commitId: commitId }).contents);
+            return this.RemoteCall("getNodeTree", { commitId: commitId }).contents;
         };
 
         ServerAPI.prototype.SearchNode = function (text) {
