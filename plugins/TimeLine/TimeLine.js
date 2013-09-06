@@ -36,7 +36,7 @@ var TimeLine = (function () {
         commits.forEach(function (i, v) {
             $("#timeline-ul").append($('<a id="timeline' + i + '" href="#"></a>').text(v.toString()));
             $("#timeline" + i).click(function (e) {
-                var loc = "/case/" + _this.nodeModel.Case.CaseId;
+                var loc = _this.serverApi.basepath + "case/" + _this.nodeModel.Case.CaseId;
                 location.href = loc + '/history/' + (i);
             });
         });

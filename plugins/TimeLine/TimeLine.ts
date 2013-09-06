@@ -35,7 +35,7 @@ class TimeLine {
 		commits.forEach((i:number, v:AssureIt.CommitModel):void => {
 			$("#timeline-ul").append($('<a id="timeline'+i+'" href="#"></a>').text(v.toString()));
 			$("#timeline"+i).click((e: Event)=>{
-				var loc = "/case/" + this.nodeModel.Case.CaseId;
+				var loc = this.serverApi.basepath + "case/" + this.nodeModel.Case.CaseId;
 				location.href = loc + '/history/' + (i);
 			});
 		});
