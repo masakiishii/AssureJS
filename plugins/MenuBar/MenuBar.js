@@ -347,6 +347,9 @@ var MenuBarActionPlugIn = (function (_super) {
             commitWindow.SetEventHandlers(caseViewer, case0, serverApi);
             self.plugInManager.InvokePlugInMenuBarContents(caseViewer, model, menuBar.menu, serverApi);
 
+            var refresh = function () {
+                menuBar.menu.css({ left: node.position().left + (node.outerWidth() - menuBar.menu.width()) / 2 });
+            };
             (menuBar.menu).jqDock({
                 align: 'bottom',
                 fadeIn: 200,
@@ -359,10 +362,9 @@ var MenuBarActionPlugIn = (function (_super) {
                 source: function () {
                     return this.src.replace(/(jpg|gif)$/, 'png');
                 },
-                onReady: function () {
-                    menuBar.menu.css({ left: node.position().left + (node.outerWidth() - menuBar.menu.width()) / 2 });
-                }
+                onReady: refresh
             });
+            menuBar.menu.click(refresh);
         }, function () {
             self.timeoutId = setTimeout(function () {
                 $('#menu').remove();
