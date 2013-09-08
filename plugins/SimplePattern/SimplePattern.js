@@ -21,20 +21,24 @@ var ListPattern = (function (_super) {
     function ListPattern() {
         _super.apply(this, arguments);
     }
-    ListPattern.prototype.Match = function () {
+    ListPattern.prototype.Match = function (model) {
         var _this = this;
-        return this.Type(this.Context, function () {
-            return _this.Note("List", function (value) {
-                console.log(value);
-                return _this.ParentType(_this.Goal, function (Parent) {
-                    return true;
+        return this.Type(model, this.Context, function () {
+            return _this.Note(model, "List", function (value) {
+                _this.ListItem = value.split(",");
+                for (var i in _this.ListItem) {
+                    _this.ListItem[i] = _this.ListItem[i].replace(/[ ]$/g, "");
+                }
+                return _this.ParentType(model, _this.Goal, function (parentModel) {
+                    return parentModel.Children.length == 1;
                 });
             });
         });
     };
 
-    ListPattern.prototype.Success = function () {
+    ListPattern.prototype.Success = function (model) {
         console.log("List");
+        console.log(this.ListItem);
     };
     return ListPattern;
 })(Pattern);
@@ -63,10 +67,11 @@ var SimplePatternInnerPlugIn = (function (_super) {
         this.caseViewer = null;
         this.caseModel = null;
         this.patternList = [];
+        this.InitPattern();
     }
-    SimplePatternInnerPlugIn.prototype.InitPattern = function (caseModel) {
+    SimplePatternInnerPlugIn.prototype.InitPattern = function () {
         this.patternList = [];
-        this.patternList.push(new ListPattern(caseModel));
+        this.patternList.push(new ListPattern());
     };
 
     SimplePatternInnerPlugIn.prototype.IsEnabled = function (caseViewer, caseModel) {
@@ -74,17 +79,16 @@ var SimplePatternInnerPlugIn = (function (_super) {
         return true;
     };
 
-    SimplePatternInnerPlugIn.prototype.InvokePattern = function (caseModel, pattern) {
+    SimplePatternInnerPlugIn.prototype.InvokePattern = function (model, pattern) {
         var matched = false;
-        if (pattern.Match()) {
+        if (pattern.Match(model)) {
             matched = true;
-            pattern.Success();
+            pattern.Success(model);
         }
         return matched;
     };
 
     SimplePatternInnerPlugIn.prototype.Delegate = function (caseModel) {
-        this.InitPattern(caseModel);
         var matched = false;
         for (var i in this.patternList) {
             if (this.InvokePattern(caseModel, this.patternList[i])) {

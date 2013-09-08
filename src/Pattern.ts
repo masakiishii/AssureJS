@@ -7,22 +7,22 @@ class Pattern {
 	Strategy: AssureIt.NodeType;
 	Evidence: AssureIt.NodeType;
 
-	constructor(public caseModel: AssureIt.NodeModel) {
+	constructor() {
 		this.Goal = AssureIt.NodeType.Goal;
 		this.Context = AssureIt.NodeType.Context;
 		this.Strategy = AssureIt.NodeType.Strategy;
 		this.Evidence = AssureIt.NodeType.Evidence;
 	}
 
-	Match(): boolean {
+	Match(model: AssureIt.NodeModel): boolean {
 		return false;
 	}
 
-	Success(): void {
+	Success(model: AssureIt.NodeModel): void {
 	}
 
-	Note(key: string, callback: (string) => boolean) {
-		var Notes = this.caseModel.Notes;
+	Note(model: AssureIt.NodeModel, key: string, callback: (string) => boolean) {
+		var Notes = model.Notes;
 		if (!Notes) return;
 		for (var keystring in Notes) {
 			var value = Notes[keystring];
@@ -33,15 +33,16 @@ class Pattern {
 		return false;
 	}
 
-	Type(Type: AssureIt.NodeType, callback: () => boolean) {
-		if (this.caseModel.Type == Type) {
+	Type(model: AssureIt.NodeModel, Type: AssureIt.NodeType, callback: () => boolean) {
+		if (model.Type == Type) {
 			return callback();
 		}
 		return false;
 	}
 
-	ParentType(Type: AssureIt.NodeType, callback: (caseModel: AssureIt.NodeModel) => boolean) {
-		var Parent = this.caseModel.Parent;
+	ParentType(model: AssureIt.NodeModel, Type: AssureIt.NodeType,
+			callback: (caseModel: AssureIt.NodeModel) => boolean) {
+		var Parent = model.Parent;
 		if (Parent && Parent.Type == Type) {
 			return callback(Parent);
 		}

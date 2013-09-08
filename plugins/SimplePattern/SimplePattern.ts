@@ -15,18 +15,23 @@ class SimplePatternPlugIn extends AssureIt.PlugInSet {
 
 class ListPattern extends Pattern {
 	ListItem: string[];
-	Match(): boolean {
-		return this.Type(this.Context, () => {
-			return this.Note("List", (value) => {
-				return this.ParentType(this.Goal, (Parent) => {
-					return true;
+	Match(model: AssureIt.NodeModel): boolean {
+		return this.Type(model, this.Context, () => {
+			return this.Note(model, "List", (value: string) => {
+				this.ListItem = value.split(",");
+				for (var i in this.ListItem) {
+					this.ListItem[i] = this.ListItem[i].replace(/[ ]$/g, "");	
+				}
+				return this.ParentType(model, this.Goal, (parentModel: AssureIt.NodeModel) => {
+					return parentModel.Children.length == 1;
 				});
 			});
 		});
 	}
 
-	Success(): void {
+	Success(model): void {
 		console.log("List");
+		console.log(this.ListItem);
 	}
 }
 
@@ -55,11 +60,12 @@ class SimplePatternInnerPlugIn extends AssureIt.PatternPlugIn {
 		this.caseViewer = null;
 		this.caseModel = null;
 		this.patternList = [];
+		this.InitPattern();
 	}
 
-	private InitPattern(caseModel: AssureIt.NodeModel): void {
+	private InitPattern(): void {
 		this.patternList = [];
-		this.patternList.push(new ListPattern(caseModel));
+		this.patternList.push(new ListPattern());
 	}
 
 	IsEnabled(caseViewer: AssureIt.CaseViewer, caseModel: AssureIt.NodeModel) : boolean {
@@ -67,17 +73,16 @@ class SimplePatternInnerPlugIn extends AssureIt.PatternPlugIn {
 		return true;
 	}
 
-	InvokePattern(caseModel: AssureIt.NodeModel, pattern: Pattern): boolean {
+	InvokePattern(model: AssureIt.NodeModel, pattern: Pattern): boolean {
 		var matched: boolean = false;
-		if (pattern.Match()) {
+		if (pattern.Match(model)) {
 			matched = true;
-			pattern.Success();
+			pattern.Success(model);
 		}
 		return matched;
 	}
 
 	Delegate(caseModel: AssureIt.NodeModel) : boolean {
-		this.InitPattern(caseModel);
 		var matched: boolean = false;
 		for (var i in this.patternList) {
 			if (this.InvokePattern(caseModel, this.patternList[i])) {

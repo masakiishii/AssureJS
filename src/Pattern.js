@@ -1,20 +1,19 @@
 var Pattern = (function () {
-    function Pattern(caseModel) {
-        this.caseModel = caseModel;
+    function Pattern() {
         this.Goal = AssureIt.NodeType.Goal;
         this.Context = AssureIt.NodeType.Context;
         this.Strategy = AssureIt.NodeType.Strategy;
         this.Evidence = AssureIt.NodeType.Evidence;
     }
-    Pattern.prototype.Match = function () {
+    Pattern.prototype.Match = function (model) {
         return false;
     };
 
-    Pattern.prototype.Success = function () {
+    Pattern.prototype.Success = function (model) {
     };
 
-    Pattern.prototype.Note = function (key, callback) {
-        var Notes = this.caseModel.Notes;
+    Pattern.prototype.Note = function (model, key, callback) {
+        var Notes = model.Notes;
         if (!Notes)
             return;
         for (var keystring in Notes) {
@@ -26,15 +25,15 @@ var Pattern = (function () {
         return false;
     };
 
-    Pattern.prototype.Type = function (Type, callback) {
-        if (this.caseModel.Type == Type) {
+    Pattern.prototype.Type = function (model, Type, callback) {
+        if (model.Type == Type) {
             return callback();
         }
         return false;
     };
 
-    Pattern.prototype.ParentType = function (Type, callback) {
-        var Parent = this.caseModel.Parent;
+    Pattern.prototype.ParentType = function (model, Type, callback) {
+        var Parent = model.Parent;
         if (Parent && Parent.Type == Type) {
             return callback(Parent);
         }
