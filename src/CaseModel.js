@@ -79,7 +79,6 @@ var AssureIt;
                 }
             }
             this.Annotations.push(new CaseAnnotation(Name, Body));
-            this.EnableEditFlag();
         };
 
         NodeModel.prototype.SetNote = function (Name, Body) {

@@ -89,7 +89,6 @@ module AssureIt {
 				}
 			}
 			this.Annotations.push(new CaseAnnotation(Name, Body));
-			this.EnableEditFlag();
 		}
 
 		SetNote(Name: string, Body : string) : void {
