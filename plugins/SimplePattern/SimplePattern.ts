@@ -67,10 +67,10 @@ class ListPattern extends Pattern {
 				});
 			});
 		});
+		return false;
 	}
 
 	Success(): void {
-		this.Parent.AddNode
 	}
 }
 

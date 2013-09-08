@@ -68,6 +68,7 @@ var ListPattern = (function (_super) {
         this.Type(this.Context, function () {
             _this.Note("List", function () {
                 _this.ParentType(_this.Goal, function () {
+                    return true;
                 });
             });
         });
