@@ -70,7 +70,7 @@ var TimeLineMenuPlugIn = (function (_super) {
 
     TimeLineMenuPlugIn.prototype.Delegate = function (caseViewer, caseModel, element, serverApi) {
         var loc = serverApi.basepath + "case/" + caseModel.Case.CaseId + "/history";
-        element.append('<a href="' + loc + '" ><img id="timeline" src="' + serverApi.basepath + 'images/icon.png" title="TimeLine" alt="timeline" /></a>');
+        element.append('<a href="' + loc + '" ><img id="timeline" src="' + serverApi.basepath + 'images/icon.png" title="History" alt="history" /></a>');
 
         return true;
     };

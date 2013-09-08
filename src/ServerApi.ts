@@ -1,6 +1,6 @@
 ///<reference path='../d.ts/jquery.d.ts'/>
 ///<reference path='./CaseModel.ts'/>
-///<reference path='./CommitCollection.ts'/>
+///<reference path='./CommitModel.ts'/>
 
 module AssureIt {
 	var default_success_callback = function(result) {
