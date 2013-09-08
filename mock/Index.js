@@ -3,6 +3,7 @@ $(function () {
     var pluginManager = new AssureIt.PlugInManager('');
     pluginManager.SetPlugIn("menu", new MenuBarPlugIn(pluginManager));
     pluginManager.SetPlugIn("editor", new EditorPlugIn(pluginManager));
+    pluginManager.SetPlugIn("simplepattern", new SimplePatternPlugIn(pluginManager));
     pluginManager.SetPlugIn("dscript", new DScriptPlugIn(pluginManager));
     pluginManager.SetPlugIn("fullscreeneditor", new FullScreenEditorPlugIn(pluginManager));
     pluginManager.SetPlugIn("colortheme", new TiffanyBlueThemePlugIn(pluginManager));

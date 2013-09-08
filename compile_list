@@ -4,6 +4,8 @@ mock/MonitorTest.ts
 plugins/Annotation/Annotation.ts
 plugins/ColorTheme/ColorTheme.ts
 plugins/Editor/Editor.ts
+plugins/SearchNode/SearchNode.ts
+plugins/SimplePattern/SimplePattern.ts
 plugins/DScript/DScript.ts
 plugins/DScript/DScriptGenerator.ts
 plugins/FullScreenEditor/FullScreenEditor.ts

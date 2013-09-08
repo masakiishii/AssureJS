@@ -57,6 +57,7 @@ class DScriptMenuPlugIn extends AssureIt.MenuBarContentsPlugIn {
 							$this.removeClass();
 							$this.css({display: 'none'});
 						}, 1300);
+						TopNodeModel.EnableEditFlag();	
 					})
 					.on("keydown", function(e: JQueryEventObject) {
 						if(e.keyCode == 27 /* ESC */){
