@@ -14,18 +14,64 @@ class SimplePatternPlugIn extends AssureIt.PlugInSet {
 }
 
 class Pattern {
-	constructor() {}
+	Goal: AssureIt.NodeType;
+	Context: AssureIt.NodeType;
+	Strategy: AssureIt.NodeType;
+	Evidence: AssureIt.NodeType;
 
-	match(caseModel: AssureIt.NodeModel): boolean {
-		return true;
+	constructor(public caseModel: AssureIt.NodeModel) {
+		this.Goal = AssureIt.NodeType.Goal;
+		this.Context = AssureIt.NodeType.Context;
+		this.Strategy = AssureIt.NodeType.Strategy;
+		this.Evidence = AssureIt.NodeType.Evidence;
 	}
 
-	success(): void {
+	Match(): boolean {
+		return false;
+	}
+
+	Success(): void {
+	}
+
+	Note(key: string, callback: () => void) {
+		var Notes = this.caseModel.Notes;
+		if (!Notes) return;
+		for (var keystring in Notes) {
+			var value = Notes[keystring];
+			if (keystring == key) {
+				callback();
+			}
+		}
+	}
+
+	Type(Type: AssureIt.NodeType, callback: () => void) {
+		if (this.caseModel.Type == Type) {
+			callback();
+		}
+	}
+
+	ParentType(Type: AssureIt.NodeType, callback: () => void) {
+		var Parent = this.caseModel.Parent;
+		if (Parent && Parent.Type == Type) {
+			callback();
+		}
 	}
 }
 
 class ListPattern extends Pattern {
+	Match(): boolean {
+		this.Type(this.Context, () => {
+			this.Note("List", () => {
+				this.ParentType(this.Goal, () => {
+					return true;
+				});
+			});
+		});
+	}
 
+	Success(): void {
+		this.Parent.AddNode
+	}
 }
 
 class SimplePatternActionPlugIn extends AssureIt.ActionPlugIn {
@@ -53,7 +99,11 @@ class SimplePatternInnerPlugIn extends AssureIt.PatternPlugIn {
 		this.caseViewer = null;
 		this.caseModel = null;
 		this.patternList = [];
-		this.patternList.push(new Pattern());
+	}
+
+	private InitPattern(caseModel: AssureIt.NodeModel): void {
+		this.patternList = [];
+		this.patternList.push(new ListPattern(caseModel));
 	}
 
 	IsEnabled(caseViewer: AssureIt.CaseViewer, caseModel: AssureIt.NodeModel) : boolean {
@@ -61,16 +111,25 @@ class SimplePatternInnerPlugIn extends AssureIt.PatternPlugIn {
 		return true;
 	}
 
-	InvokePattern(pattern: Pattern): void {
-		if (pattern.match(this.caseModel)) {
-			pattern.success();
-			this.ActionPlugIn.caseViewer.Draw();
+	InvokePattern(caseModel: AssureIt.NodeModel, pattern: Pattern): boolean {
+		var matched: boolean = false;
+		if (pattern.Match()) {
+			matched = true;
+			pattern.Success();
 		}
+		return matched;
 	}
 
 	Delegate(caseModel: AssureIt.NodeModel) : boolean {
+		this.InitPattern(caseModel);
+		var matched: boolean = false;
 		for (var i in this.patternList) {
-			this.InvokePattern(this.patternList[i]);
+			if (this.InvokePattern(caseModel, this.patternList[i])) {
+				matched = true;
+			}
+		}
+		if (matched) {
+			this.ActionPlugIn.caseViewer.Draw();
 		}
 		return true;
 	}
