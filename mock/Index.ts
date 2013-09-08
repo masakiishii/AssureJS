@@ -15,6 +15,7 @@
 /// <reference path="../plugins/Note/Note.ts" />
 /// <reference path="../plugins/ColorTheme/ColorTheme.ts" />
 /// <reference path="../plugins/Export/Export.ts" />
+/// <reference path="../plugins/SearchNode/SearchNode.ts" />
 /// <reference path="../d.ts/jquery.d.ts" />
 
 $(function () {

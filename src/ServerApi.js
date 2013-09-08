@@ -68,7 +68,7 @@ var AssureIt;
         };
 
         ServerAPI.prototype.GetCommitList = function (dcaseId) {
-            return AssureIt.CommitCollection.FromJson(this.RemoteCall("getCommitList", { dcaseId: dcaseId }).commitList);
+            return CommitCollection.FromJson(this.RemoteCall("getCommitList", { dcaseId: dcaseId }).commitList);
         };
 
         ServerAPI.prototype.GetTagList = function () {
