@@ -30,4 +30,5 @@ src/SelectComponent.ts
 src/ServerApi.ts
 src/RecApi.ts
 src/CommitModel.ts
+src/Pattern.ts
 test/CaseDecoderTest.ts

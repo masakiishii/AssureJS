@@ -16,48 +16,6 @@ var SimplePatternPlugIn = (function (_super) {
     return SimplePatternPlugIn;
 })(AssureIt.PlugInSet);
 
-var Pattern = (function () {
-    function Pattern(caseModel) {
-        this.caseModel = caseModel;
-        this.Goal = AssureIt.NodeType.Goal;
-        this.Context = AssureIt.NodeType.Context;
-        this.Strategy = AssureIt.NodeType.Strategy;
-        this.Evidence = AssureIt.NodeType.Evidence;
-    }
-    Pattern.prototype.Match = function () {
-        return false;
-    };
-
-    Pattern.prototype.Success = function () {
-    };
-
-    Pattern.prototype.Note = function (key, callback) {
-        var Notes = this.caseModel.Notes;
-        if (!Notes)
-            return;
-        for (var keystring in Notes) {
-            var value = Notes[keystring];
-            if (keystring == key) {
-                callback();
-            }
-        }
-    };
-
-    Pattern.prototype.Type = function (Type, callback) {
-        if (this.caseModel.Type == Type) {
-            callback();
-        }
-    };
-
-    Pattern.prototype.ParentType = function (Type, callback) {
-        var Parent = this.caseModel.Parent;
-        if (Parent && Parent.Type == Type) {
-            callback();
-        }
-    };
-    return Pattern;
-})();
-
 var ListPattern = (function (_super) {
     __extends(ListPattern, _super);
     function ListPattern() {
@@ -65,17 +23,18 @@ var ListPattern = (function (_super) {
     }
     ListPattern.prototype.Match = function () {
         var _this = this;
-        this.Type(this.Context, function () {
-            _this.Note("List", function () {
-                _this.ParentType(_this.Goal, function () {
+        return this.Type(this.Context, function () {
+            return _this.Note("List", function (value) {
+                console.log(value);
+                return _this.ParentType(_this.Goal, function (Parent) {
                     return true;
                 });
             });
         });
-        return false;
     };
 
     ListPattern.prototype.Success = function () {
+        console.log("List");
     };
     return ListPattern;
 })(Pattern);

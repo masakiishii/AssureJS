@@ -1,5 +1,6 @@
 /// <reference path="../../src/CaseModel.ts" />
 /// <reference path="../../src/CaseViewer.ts" />
+/// <reference path="../../src/Pattern.ts" />
 /// <reference path="../../src/PlugInManager.ts" />
 
 class SimplePatternPlugIn extends AssureIt.PlugInSet {
@@ -10,67 +11,22 @@ class SimplePatternPlugIn extends AssureIt.PlugInSet {
 		this.ActionPlugIn = PlugIn;
 		this.PatternPlugIn = new SimplePatternInnerPlugIn(plugInManager, PlugIn);
 	}
-
-}
-
-class Pattern {
-	Goal: AssureIt.NodeType;
-	Context: AssureIt.NodeType;
-	Strategy: AssureIt.NodeType;
-	Evidence: AssureIt.NodeType;
-
-	constructor(public caseModel: AssureIt.NodeModel) {
-		this.Goal = AssureIt.NodeType.Goal;
-		this.Context = AssureIt.NodeType.Context;
-		this.Strategy = AssureIt.NodeType.Strategy;
-		this.Evidence = AssureIt.NodeType.Evidence;
-	}
-
-	Match(): boolean {
-		return false;
-	}
-
-	Success(): void {
-	}
-
-	Note(key: string, callback: () => void) {
-		var Notes = this.caseModel.Notes;
-		if (!Notes) return;
-		for (var keystring in Notes) {
-			var value = Notes[keystring];
-			if (keystring == key) {
-				callback();
-			}
-		}
-	}
-
-	Type(Type: AssureIt.NodeType, callback: () => void) {
-		if (this.caseModel.Type == Type) {
-			callback();
-		}
-	}
-
-	ParentType(Type: AssureIt.NodeType, callback: () => void) {
-		var Parent = this.caseModel.Parent;
-		if (Parent && Parent.Type == Type) {
-			callback();
-		}
-	}
 }
 
 class ListPattern extends Pattern {
+	ListItem: string[];
 	Match(): boolean {
-		this.Type(this.Context, () => {
-			this.Note("List", () => {
-				this.ParentType(this.Goal, () => {
+		return this.Type(this.Context, () => {
+			return this.Note("List", (value) => {
+				return this.ParentType(this.Goal, (Parent) => {
 					return true;
 				});
 			});
 		});
-		return false;
 	}
 
 	Success(): void {
+		console.log("List");
 	}
 }
 
