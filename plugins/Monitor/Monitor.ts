@@ -241,6 +241,7 @@ class MonitorPlugIn extends AssureIt.PlugInSet {
 		super(plugInManager);
 		this.HTMLRenderPlugIn = new MonitorHTMLRenderPlugIn(plugInManager);
 		this.SVGRenderPlugIn = new MonitorSVGRenderPlugIn(plugInManager);
+		this.MenuBarContentsPlugIn = new MonitorMenuPlugIn(plugInManager);
 	}
 
 }
@@ -255,7 +256,6 @@ class MonitorHTMLRenderPlugIn extends AssureIt.HTMLRenderPlugIn {
 	Delegate(caseViewer: AssureIt.CaseViewer, nodeModel: AssureIt.NodeModel, element: JQuery) : boolean {
 		if(monitorManager == null) {
 			monitorManager = new MonitorManager(caseViewer);
-			monitorManager.StartMonitors(5000);   // TODO: invoke it with putting button
 		}
 
 		if(isMonitorNode(nodeModel)) {
@@ -287,6 +287,51 @@ class MonitorSVGRenderPlugIn extends AssureIt.SVGRenderPlugIn {
 				blushAllAncestor(caseViewer, nodeModel, fill, stroke);
 			}
 		}
+
+		return true;
+	}
+
+}
+
+
+class MonitorMenuPlugIn extends AssureIt.MenuBarContentsPlugIn {
+
+	IsMonitoring: boolean;
+
+	constructor(plugInManager: AssureIt.PlugInManager) {
+		super(plugInManager);
+		this.IsMonitoring = false;
+	}
+
+	IsEnabled(caseViewer: AssureIt.CaseViewer, caseModel: AssureIt.NodeModel): boolean {
+		return true;
+	}
+
+	Delegate(caseViewer: AssureIt.CaseViewer, caseModel: AssureIt.NodeModel, element: JQuery, serverApi: AssureIt.ServerAPI): boolean {
+		if(monitorManager == null) {
+			monitorManager = new MonitorManager(caseViewer);
+		}
+
+		if(!this.IsMonitoring) {
+			element.append('<a href="#" ><img id="monitor-tgl" src="'+serverApi.basepath+'images/icon.png" title="Start monitoring" alt="monitor-tgl" /></a>');
+		}
+		else {
+			element.append('<a href="#" ><img id="monitor-tgl" src="'+serverApi.basepath+'images/icon.png" title="Stop monitoring" alt="monitor-tgl" /></a>');
+		}
+
+		var self = this;
+
+		$('#monitor-tgl').unbind('click');
+		$('#monitor-tgl').click(function() {
+			if(!self.IsMonitoring) {
+				monitorManager.StartMonitors(5000);
+			}
+			else {
+				monitorManager.StopMonitors();
+			}
+
+			self.IsMonitoring = !self.IsMonitoring;
+		});
 
 		return true;
 	}
