@@ -23,7 +23,7 @@ var DScriptMenuPlugIn = (function (_super) {
         this.editorPlugIn = editorPlugIn;
     }
     DScriptMenuPlugIn.prototype.IsEnabled = function (caseViewer, caseModel) {
-        return caseModel.Case.IsEditable();
+        return true;
     };
 
     DScriptMenuPlugIn.prototype.Delegate = function (caseViewer, caseModel, element, serverApi) {
@@ -37,6 +37,11 @@ var DScriptMenuPlugIn = (function (_super) {
             var encoded = encoder.ConvertToASN(caseModel, false);
             _this.editorPlugIn.rootCaseModel = caseModel;
             _this.editorPlugIn.editor_left.setValue(encoded);
+            if (caseModel.Case.IsEditable()) {
+                _this.editorPlugIn.editor_left.setOption("readOnly", false);
+            } else {
+                _this.editorPlugIn.editor_left.setOption("readOnly", true);
+            }
             $('#dscript-editor-wrapper').css({ display: 'block' }).addClass("animated fadeInDown").focus().one("blur", { node: caseModel }, function (e, node) {
                 e.stopPropagation();
                 var TopNodeModel = self.editorPlugIn.caseViewer.ElementTop;

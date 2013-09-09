@@ -23,7 +23,7 @@ class DScriptMenuPlugIn extends AssureIt.MenuBarContentsPlugIn {
 	}
 
 	IsEnabled(caseViewer: AssureIt.CaseViewer, caseModel: AssureIt.NodeModel) : boolean {
-		return caseModel.Case.IsEditable();
+		return true;
 	}
 
 	Delegate(caseViewer: AssureIt.CaseViewer, caseModel: AssureIt.NodeModel, element: JQuery, serverApi: AssureIt.ServerAPI): boolean {
@@ -36,6 +36,11 @@ class DScriptMenuPlugIn extends AssureIt.MenuBarContentsPlugIn {
 				var encoded = encoder.ConvertToASN(caseModel, false);
 				this.editorPlugIn.rootCaseModel = caseModel;
 				this.editorPlugIn.editor_left.setValue(encoded);
+				if(caseModel.Case.IsEditable()) {
+					this.editorPlugIn.editor_left.setOption("readOnly", false);
+				} else {
+					this.editorPlugIn.editor_left.setOption("readOnly", true);
+				}
 				$('#dscript-editor-wrapper')
 					.css({display: 'block'})
 					.addClass("animated fadeInDown")
