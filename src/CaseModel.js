@@ -41,6 +41,7 @@ var AssureIt;
 
         NodeModel.prototype.AppendChild = function (Node) {
             this.Children.push(Node);
+            Node.Parent = this;
             this.EnableEditFlag();
         };
 
@@ -288,21 +289,16 @@ var AssureIt;
         };
 
         Case.prototype.SetEditable = function (flag) {
-            if (flag == null) {
-                this.isEditable = this.IsLogin();
-                return;
-            }
-            this.isEditable = flag;
             if (!this.IsLogin()) {
                 this.isEditable = false;
+            }
+            if (flag != null) {
+                this.isEditable = flag;
             }
             return;
         };
 
         Case.prototype.IsEditable = function () {
-            if (!this.IsLogin()) {
-                this.isEditable = false;
-            }
             return this.isEditable;
         };
 

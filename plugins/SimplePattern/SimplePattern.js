@@ -30,6 +30,7 @@ var ListPattern = (function (_super) {
                     _this.ListItem[i] = _this.ListItem[i].replace(/[ ]$/g, "");
                 }
                 return _this.ParentType(model, _this.Goal, function (parentModel) {
+                    _this.parentModel = parentModel;
                     return parentModel.Children.length == 1;
                 });
             });
@@ -37,8 +38,10 @@ var ListPattern = (function (_super) {
     };
 
     ListPattern.prototype.Success = function (model) {
-        console.log("List");
-        console.log(this.ListItem);
+        var strategy = new AssureIt.NodeModel(model.Case, this.parentModel, this.Strategy, null, "Split into following goals described on the context");
+        for (var i in this.ListItem) {
+            var Child = new AssureIt.NodeModel(model.Case, strategy, this.Goal, null, this.ListItem[i]);
+        }
     };
     return ListPattern;
 })(Pattern);

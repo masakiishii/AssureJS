@@ -15,6 +15,7 @@ class SimplePatternPlugIn extends AssureIt.PlugInSet {
 
 class ListPattern extends Pattern {
 	ListItem: string[];
+	parentModel: AssureIt.NodeModel;
 	Match(model: AssureIt.NodeModel): boolean {
 		return this.Type(model, this.Context, () => {
 			return this.Note(model, "List", (value: string) => {
@@ -23,6 +24,7 @@ class ListPattern extends Pattern {
 					this.ListItem[i] = this.ListItem[i].replace(/[ ]$/g, "");	
 				}
 				return this.ParentType(model, this.Goal, (parentModel: AssureIt.NodeModel) => {
+					this.parentModel = parentModel;
 					return parentModel.Children.length == 1;
 				});
 			});
@@ -30,8 +32,10 @@ class ListPattern extends Pattern {
 	}
 
 	Success(model): void {
-		console.log("List");
-		console.log(this.ListItem);
+		var strategy: AssureIt.NodeModel = new AssureIt.NodeModel(model.Case, this.parentModel, this.Strategy, null, "Split into following goals described on the context");
+		for (var i in this.ListItem) {
+			var Child: AssureIt.NodeModel = new AssureIt.NodeModel(model.Case, strategy, this.Goal, null, this.ListItem[i]);
+		}
 	}
 }
 
