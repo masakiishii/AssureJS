@@ -312,7 +312,7 @@ class CommitWindow {
 		$('#commit_button').click(function() {
 			var encoder : AssureIt.CaseEncoder = new AssureIt.CaseEncoder();
 			var contents : string = encoder.ConvertToASN(case0.ElementTop, false);
-			serverApi.Commit(contents, $(this).val, case0.CommitId);
+			serverApi.Commit(contents, $("#message_box").val(), case0.CommitId);
 			case0.SetModified(false);
 			window.location.reload(); //FIXME
 		});
