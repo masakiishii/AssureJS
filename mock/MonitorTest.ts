@@ -318,7 +318,7 @@ $(function () {
 				"NodeType": 0,
 				"Label": "G1",
 				"Annotations": [],
-				"Notes": []
+				"Notes": {}
 			},
 			{
 				"Children": [
@@ -327,7 +327,7 @@ $(function () {
 				"NodeType": 1,
 				"Label": "C1",
 				"Annotations": [],
-				"Notes": [{"Name": "Notes", "Body": { "Location": "Here", "Monitor": "CpuUsage < 50" }}]
+				"Notes": { "Location": "Here" }
 			},
 			{
 				"Children": [
@@ -336,7 +336,7 @@ $(function () {
 				"NodeType": 3,
 				"Label": "E1",
 				"Annotations": [],
-				"Notes": []
+				"Notes": { "Monitor": "{ CpuUsage < 50 }" }
 			}
 		]
 	};
