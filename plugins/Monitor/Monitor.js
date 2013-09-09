@@ -4,7 +4,7 @@ var __extends = this.__extends || function (d, b) {
     __.prototype = b.prototype;
     d.prototype = new __();
 };
-var LatestDataMap;
+var monitorManager = null;
 
 function extractTypeFromCondition(condition) {
     var text = condition.replace(/\{/g, " ").replace(/\}/g, " ").replace(/\(/g, " ").replace(/\)/g, " ").replace(/<=/g, " ").replace(/>=/g, " ").replace(/</g, " ").replace(/>/g, " ");
@@ -85,8 +85,6 @@ function blushAllAncestor(caseViewer, nodeModel, fill, stroke) {
     if (contextNode != null) {
         caseViewer.ViewMap[contextNode.Label].SVGShape.SetColor(fill, stroke);
     }
-
-    blushAllAncestor(caseViewer, nodeModel.Parent, fill, stroke);
 }
 
 var MonitorNode = (function () {
@@ -110,9 +108,15 @@ var MonitorNode = (function () {
         this.Condition = condition;
     };
 
-    MonitorNode.prototype.UpdateLatestData = function () {
+    MonitorNode.prototype.UpdateLatestData = function (RECAPI) {
         if (this.Status == true) {
-            this.LatestData = LatestDataMap[this.Type + "@" + this.Location];
+            var latestData = RECAPI.getLatestData(this.Location, this.Type);
+
+            if (latestData == null) {
+                console.log("latest data is null");
+            } else {
+                this.LatestData = latestData;
+            }
         }
     };
 
@@ -159,12 +163,15 @@ var MonitorManager = (function () {
         var self = this;
 
         this.Timer = setInterval(function () {
-            self.CollectLatestData();
-
             for (var key in self.MonitorNodeMap) {
                 var monitorNode = self.MonitorNodeMap[key];
 
-                monitorNode.UpdateLatestData();
+                if (self.CaseViewer.Source.ElementMap[monitorNode.EvidenceNode.Label] == null) {
+                    delete self.MonitorNodeMap[key];
+                    continue;
+                }
+
+                monitorNode.UpdateLatestData(self.RECAPI);
                 if (monitorNode.LatestData == null)
                     continue;
 
@@ -184,7 +191,6 @@ var MonitorManager = (function () {
         var location = getContextNode(evidenceNode.Parent).Notes["Location"];
         var condition = evidenceNode.Notes["Monitor"];
         var type = extractTypeFromCondition(condition);
-        LatestDataMap[type + "@" + location] = null;
         var monitorNode = this.MonitorNodeMap[evidenceNode.Label];
 
         if (monitorNode == null) {
@@ -193,18 +199,6 @@ var MonitorManager = (function () {
             monitorNode.SetLocation(location);
             monitorNode.SetType(type);
             monitorNode.SetCondition(condition);
-        }
-    };
-
-    MonitorManager.prototype.CollectLatestData = function () {
-        for (var key in LatestDataMap) {
-            var type = key.split("@")[0];
-            var location = key.split("@")[1];
-            var latestData = this.RECAPI.getLatestData(location, type);
-            if (latestData == null) {
-                console.log("latest data is null");
-            }
-            LatestDataMap[key] = latestData;
         }
     };
     return MonitorManager;
@@ -223,25 +217,21 @@ var MonitorPlugIn = (function (_super) {
 
 var MonitorHTMLRenderPlugIn = (function (_super) {
     __extends(MonitorHTMLRenderPlugIn, _super);
-    function MonitorHTMLRenderPlugIn(plugInManager) {
-        _super.call(this, plugInManager);
-        this.IsFirstCalled = true;
-        this.MonitorManager = null;
+    function MonitorHTMLRenderPlugIn() {
+        _super.apply(this, arguments);
     }
     MonitorHTMLRenderPlugIn.prototype.IsEnabled = function (caseViewer, nodeModel) {
         return true;
     };
 
     MonitorHTMLRenderPlugIn.prototype.Delegate = function (caseViewer, nodeModel, element) {
-        if (this.IsFirstCalled) {
-            LatestDataMap = {};
-            this.MonitorManager = new MonitorManager(caseViewer);
-            this.MonitorManager.StartMonitors(5000);
-            this.IsFirstCalled = false;
+        if (monitorManager == null) {
+            monitorManager = new MonitorManager(caseViewer);
+            monitorManager.StartMonitors(5000);
         }
 
         if (isMonitorNode(nodeModel)) {
-            this.MonitorManager.SetMonitor(nodeModel);
+            monitorManager.SetMonitor(nodeModel);
         }
 
         return true;

@@ -2,7 +2,9 @@
 /// <reference path="../../src/CaseViewer.ts" />
 /// <reference path="../../src/PlugInManager.ts" />
 
-var LatestDataMap: { [index: string]: any };
+
+var monitorManager: MonitorManager = null;
+
 
 function extractTypeFromCondition(condition: string): string {
 	var text: string = condition
@@ -87,7 +89,8 @@ function blushAllAncestor(caseViewer: AssureIt.CaseViewer, nodeModel: AssureIt.N
 		caseViewer.ViewMap[contextNode.Label].SVGShape.SetColor(fill, stroke);
 	}
 
-	blushAllAncestor(caseViewer, nodeModel.Parent, fill, stroke);
+	/* TODO: blush all ancestor node */
+	//blushAllAncestor(caseViewer, nodeModel.Parent, fill, stroke);
 }
 
 
@@ -121,9 +124,17 @@ class MonitorNode {
 		this.Condition = condition;
 	}
 
-	UpdateLatestData() {
+	UpdateLatestData(RECAPI: AssureIt.RECAPI) {
 		if(this.Status == true) {
-			this.LatestData = LatestDataMap[this.Type+"@"+this.Location];
+			var latestData = RECAPI.getLatestData(this.Location, this.Type);
+
+			if(latestData == null) {
+				// TODO: alert
+				console.log("latest data is null");
+			}
+			else {
+				this.LatestData = latestData;
+			}
 		}
 	}
 
@@ -182,21 +193,22 @@ class MonitorManager {
 		var self = this;
 
 		this.Timer = setInterval(function() {
-			self.CollectLatestData();
-
 			for(var key in self.MonitorNodeMap) {
 				var monitorNode = self.MonitorNodeMap[key];
 
-				monitorNode.UpdateLatestData();
+				if(self.CaseViewer.Source.ElementMap[monitorNode.EvidenceNode.Label] == null) {
+					delete self.MonitorNodeMap[key];   // delete monitor
+					continue;
+				}
+
+				monitorNode.UpdateLatestData(self.RECAPI);
 				if(monitorNode.LatestData == null) continue;
 
 				monitorNode.UpdateStatus();
 				monitorNode.Show(self.CaseViewer, self.HTMLRenderFunction, self.SVGRenderFunction);
-
 			}
 
 			self.CaseViewer.Draw();
-
 		}, interval);
 	}
 
@@ -208,7 +220,6 @@ class MonitorManager {
 		var location: string = getContextNode(evidenceNode.Parent).Notes["Location"];
 		var condition: string = evidenceNode.Notes["Monitor"];
 		var type: string = extractTypeFromCondition(condition);
-		LatestDataMap[type+"@"+location] = null;
 		var monitorNode = this.MonitorNodeMap[evidenceNode.Label];
 
 		if(monitorNode == null) {
@@ -218,19 +229,6 @@ class MonitorManager {
 			monitorNode.SetLocation(location);
 			monitorNode.SetType(type);
 			monitorNode.SetCondition(condition);
-		}
-	}
-
-	CollectLatestData() {
-		for(var key in LatestDataMap) {
-			var type: string = key.split("@")[0];
-			var location: string = key.split("@")[1];
-			var latestData = this.RECAPI.getLatestData(location, type);
-			if(latestData == null) {
-				// TODO: alert
-				console.log("latest data is null");
-			}
-			LatestDataMap[key] = latestData;
 		}
 	}
 
@@ -250,29 +248,18 @@ class MonitorPlugIn extends AssureIt.PlugInSet {
 
 class MonitorHTMLRenderPlugIn extends AssureIt.HTMLRenderPlugIn {
 
-	IsFirstCalled: boolean;
-	MonitorManager: MonitorManager;
-
-	constructor(plugInManager: AssureIt.PlugInManager) {
-		super(plugInManager);
-		this.IsFirstCalled = true;
-		this.MonitorManager = null;
-	}
-
 	IsEnabled(caseViewer: AssureIt.CaseViewer, nodeModel: AssureIt.NodeModel) : boolean {
 		return true;
 	}
 
 	Delegate(caseViewer: AssureIt.CaseViewer, nodeModel: AssureIt.NodeModel, element: JQuery) : boolean {
-		if(this.IsFirstCalled) {
-			LatestDataMap = {};
-			this.MonitorManager = new MonitorManager(caseViewer);
-			this.MonitorManager.StartMonitors(5000);
-			this.IsFirstCalled = false;
+		if(monitorManager == null) {
+			monitorManager = new MonitorManager(caseViewer);
+			monitorManager.StartMonitors(5000);   // TODO: invoke it with putting button
 		}
 
 		if(isMonitorNode(nodeModel)) {
-			this.MonitorManager.SetMonitor(nodeModel);
+			monitorManager.SetMonitor(nodeModel);
 		}
 
 		return true;
