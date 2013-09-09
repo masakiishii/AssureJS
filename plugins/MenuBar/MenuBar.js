@@ -20,39 +20,40 @@ var MenuBar = (function () {
         $('#menu').remove();
         this.menu = $('<div id="menu">' + '<a href="#" ><img id="scale"  src="' + this.serverApi.basepath + 'images/scale.png" title="Scale" alt="scale" /></a>' + '</div>');
 
-        this.menu.append('<a href="#" ><img id="center" src="' + this.serverApi.basepath + 'images/scale.png" title="Center" alt="center" /></a>');
-        this.menu.append('<a href="#" ><img id="commit" src="' + this.serverApi.basepath + 'images/commit.png" title="Commit" alt="commit" /></a>');
-        if (this.node.children("h4").text() != this.case0.ElementTop.Label) {
-            this.menu.append('<a href="#" ><img id="remove" src="' + this.serverApi.basepath + 'images/remove.png" title="Remove" alt="remove" /></a>');
-        }
-        var hasContext = false;
-
-        for (var i = 0; i < this.model.Children.length; i++) {
-            if (this.model.Children[i].Type == AssureIt.NodeType.Context) {
-                hasContext = true;
+        if (this.case0.IsEditable()) {
+            this.menu.append('<a href="#" ><img id="commit" src="' + this.serverApi.basepath + 'images/commit.png" title="Commit" alt="commit" /></a>');
+            if (this.node.children("h4").text() != this.case0.ElementTop.Label) {
+                this.menu.append('<a href="#" ><img id="remove" src="' + this.serverApi.basepath + 'images/remove.png" title="Remove" alt="remove" /></a>');
             }
-        }
-        switch (thisNodeType) {
-            case AssureIt.NodeType.Goal:
-                if (!hasContext) {
-                    this.menu.append('<a href="#" ><img id="context"  src="' + this.serverApi.basepath + 'images/context.png" title="Context" alt="context" /></a>');
+            var hasContext = false;
+
+            for (var i = 0; i < this.model.Children.length; i++) {
+                if (this.model.Children[i].Type == AssureIt.NodeType.Context) {
+                    hasContext = true;
                 }
-                this.menu.append('<a href="#" ><img id="strategy" src="' + this.serverApi.basepath + 'images/strategy.png" title="Strategy" alt="strategy" /></a>');
-                this.menu.append('<a href="#" ><img id="evidence" src="' + this.serverApi.basepath + 'images/evidence.png" title="Evidence" alt="evidence" /></a>');
-                break;
-            case AssureIt.NodeType.Strategy:
-                this.menu.append('<a href="#" ><img id="goal"     src="' + this.serverApi.basepath + 'images/goal.png" title="Goal" alt="goal" /></a>');
-                if (!hasContext) {
-                    this.menu.append('<a href="#" ><img id="context"  src="' + this.serverApi.basepath + 'images/context.png" title="Context" alt="context" /></a>');
-                }
-                break;
-            case AssureIt.NodeType.Evidence:
-                if (!hasContext) {
-                    this.menu.append('<a href="#" ><img id="context"  src="' + this.serverApi.basepath + 'images/context.png" title="Context" alt="context" /></a>');
-                }
-                break;
-            default:
-                break;
+            }
+            switch (thisNodeType) {
+                case AssureIt.NodeType.Goal:
+                    if (!hasContext) {
+                        this.menu.append('<a href="#" ><img id="context"  src="' + this.serverApi.basepath + 'images/context.png" title="Context" alt="context" /></a>');
+                    }
+                    this.menu.append('<a href="#" ><img id="strategy" src="' + this.serverApi.basepath + 'images/strategy.png" title="Strategy" alt="strategy" /></a>');
+                    this.menu.append('<a href="#" ><img id="evidence" src="' + this.serverApi.basepath + 'images/evidence.png" title="Evidence" alt="evidence" /></a>');
+                    break;
+                case AssureIt.NodeType.Strategy:
+                    this.menu.append('<a href="#" ><img id="goal"     src="' + this.serverApi.basepath + 'images/goal.png" title="Goal" alt="goal" /></a>');
+                    if (!hasContext) {
+                        this.menu.append('<a href="#" ><img id="context"  src="' + this.serverApi.basepath + 'images/context.png" title="Context" alt="context" /></a>');
+                    }
+                    break;
+                case AssureIt.NodeType.Evidence:
+                    if (!hasContext) {
+                        this.menu.append('<a href="#" ><img id="context"  src="' + this.serverApi.basepath + 'images/context.png" title="Context" alt="context" /></a>');
+                    }
+                    break;
+                default:
+                    break;
+            }
         }
     };
 

@@ -52,7 +52,7 @@ class EditorActionPlugIn extends AssureIt.ActionPlugIn {
 	}
 
 	IsEnabled (caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case) : boolean {
-		return true; //case0.IsLogin(); //TODO use case0.IsEditable
+		return case0.IsEditable();
 	}
 
 	Delegate(caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case, serverApi: AssureIt.ServerAPI)  : boolean {

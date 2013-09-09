@@ -29,8 +29,8 @@ class MenuBar {
 			'<a href="#" ><img id="scale"  src="'+this.serverApi.basepath+'images/scale.png" title="Scale" alt="scale" /></a>' +
 			'</div>');
 
-		//if(this.case0.IsLogin()) { //TODO login
-		this.menu.append('<a href="#" ><img id="center" src="'+this.serverApi.basepath+'images/scale.png" title="Center" alt="center" /></a>');
+		if(this.case0.IsEditable()) { //TODO login
+		//this.menu.append('<a href="#" ><img id="center" src="'+this.serverApi.basepath+'images/scale.png" title="Center" alt="center" /></a>');
 		this.menu.append('<a href="#" ><img id="commit" src="'+this.serverApi.basepath+'images/commit.png" title="Commit" alt="commit" /></a>');
 		if(this.node.children("h4").text() != this.case0.ElementTop.Label) {
 			this.menu.append('<a href="#" ><img id="remove" src="'+this.serverApi.basepath+'images/remove.png" title="Remove" alt="remove" /></a>');
@@ -64,7 +64,7 @@ class MenuBar {
 			default:
 				break;
 		}
-		//}
+		}
 	}
 
 	AddNode(nodeType: AssureIt.NodeType): void {
