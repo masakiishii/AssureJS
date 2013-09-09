@@ -53,7 +53,7 @@ var DScriptMenuPlugIn = (function (_super) {
                 }
                 self.editorPlugIn.caseViewer.Draw();
                 var centeringNodeView = self.editorPlugIn.caseViewer.ViewMap[caseModel.Label];
-                caseViewer.Screen.SetCaseCenter(centeringNodeView.AbsX, centeringNodeView.AbsY, TopNodeView.HTMLDoc);
+                caseViewer.Screen.SetCaseCenter(centeringNodeView.AbsX, centeringNodeView.AbsY, centeringNodeView.HTMLDoc);
 
                 var $this = $(this);
                 $this.addClass("animated fadeOutUp");

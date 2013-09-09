@@ -56,7 +56,7 @@ class DScriptMenuPlugIn extends AssureIt.MenuBarContentsPlugIn {
 						}
 						self.editorPlugIn.caseViewer.Draw();
 						var centeringNodeView = self.editorPlugIn.caseViewer.ViewMap[caseModel.Label];
-						caseViewer.Screen.SetCaseCenter(centeringNodeView.AbsX, centeringNodeView.AbsY, TopNodeView.HTMLDoc);
+						caseViewer.Screen.SetCaseCenter(centeringNodeView.AbsX, centeringNodeView.AbsY, centeringNodeView.HTMLDoc);
 
 						var $this = $(this);
 						$this.addClass("animated fadeOutUp");
@@ -64,7 +64,7 @@ class DScriptMenuPlugIn extends AssureIt.MenuBarContentsPlugIn {
 							$this.removeClass();
 							$this.css({display: 'none'});
 						}, 1300);
-						TopNodeModel.EnableEditFlag();	
+						TopNodeModel.EnableEditFlag();
 					})
 					.on("keydown", function(e: JQueryEventObject) {
 						if(e.keyCode == 27 /* ESC */){
