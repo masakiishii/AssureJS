@@ -181,24 +181,24 @@ class MenuBar {
 
 		$(".node").unbind();
 
-		var CancelClickEvent: (ev: JQueryEventObject) => void = function(ev: JQueryEventObject): void {
-			var timer: number = timers.pop();
+		//var CancelClickEvent: (ev: JQueryEventObject) => void = function(ev: JQueryEventObject): void {
+		//	var timer: number = timers.pop();
 
-			while(timer) {
-				clearTimeout(timer);
-				timer = timers.pop();
-			}
+		//	while(timer) {
+		//		clearTimeout(timer);
+		//		timer = timers.pop();
+		//	}
 
-			if(ev.type == "dblclick") {
-				editorIsActive = true;
-			}
-		}
+		//	if(ev.type == "dblclick") {
+		//		editorIsActive = true;
+		//	}
+		//}
 
-		var EscapeFromEditor: (ev: JQueryEventObject) => void = function(ev: JQueryEventObject): void {
-			if(ev.keyCode = 27 /* ESC */) {
-				editorIsActive = false;
-			}
-		}
+		//var EscapeFromEditor: (ev: JQueryEventObject) => void = function(ev: JQueryEventObject): void {
+		//	if(ev.keyCode = 27 /* ESC */) {
+		//		editorIsActive = false;
+		//	}
+		//}
 
 		var ScaleDown: (e:any) => void = function(e): void {
 			if(!editorIsActive) {
@@ -206,10 +206,10 @@ class MenuBar {
 					var x = screenManager.CalcLogicalOffsetXFromPageX(e.pageX);
 					var y = screenManager.CalcLogicalOffsetYFromPageY(e.pageY);
 					startZoom(x, y, scaleRate, 1.0, 500);
-					$("#background").unbind("click", ScaleDown);
-					$("#background").unbind("dblclick", CancelClickEvent);
-					$("#background").unbind("mousemove", CancelClickEvent);
-					$("#fullscreen-editor-wrapper").unbind("keydown", EscapeFromEditor);
+					$("#background").unbind("dblclick", ScaleDown);
+					//$("#background").unbind("dblclick", CancelClickEvent);
+					//$("#background").unbind("mousemove", CancelClickEvent);
+					//$("#fullscreen-editor-wrapper").unbind("keydown", EscapeFromEditor);
 					caseViewer.Draw();
 				}, 500));
 			}
@@ -218,10 +218,9 @@ class MenuBar {
 			}
 		}
 
-		$("#background").click(ScaleDown);
-		$("#background").dblclick(CancelClickEvent);
-		$("#background").mousemove(CancelClickEvent);
-		$("#fullscreen-editor-wrapper").keydown(EscapeFromEditor);
+		$("#background").dblclick(ScaleDown);
+		//$("#background").mousemove(CancelClickEvent);
+		//$("#fullscreen-editor-wrapper").keydown(EscapeFromEditor);
 	}
 
 	SetEventHandlers(): void {

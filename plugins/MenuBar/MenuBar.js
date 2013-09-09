@@ -171,35 +171,14 @@ var MenuBar = (function () {
 
         $(".node").unbind();
 
-        var CancelClickEvent = function (ev) {
-            var timer = timers.pop();
-
-            while (timer) {
-                clearTimeout(timer);
-                timer = timers.pop();
-            }
-
-            if (ev.type == "dblclick") {
-                editorIsActive = true;
-            }
-        };
-
-        var EscapeFromEditor = function (ev) {
-            if (ev.keyCode = 27) {
-                editorIsActive = false;
-            }
-        };
-
         var ScaleDown = function (e) {
             if (!editorIsActive) {
                 timers.push(setTimeout(function () {
                     var x = screenManager.CalcLogicalOffsetXFromPageX(e.pageX);
                     var y = screenManager.CalcLogicalOffsetYFromPageY(e.pageY);
                     startZoom(x, y, scaleRate, 1.0, 500);
-                    $("#background").unbind("click", ScaleDown);
-                    $("#background").unbind("dblclick", CancelClickEvent);
-                    $("#background").unbind("mousemove", CancelClickEvent);
-                    $("#fullscreen-editor-wrapper").unbind("keydown", EscapeFromEditor);
+                    $("#background").unbind("dblclick", ScaleDown);
+
                     caseViewer.Draw();
                 }, 500));
             } else {
@@ -207,10 +186,7 @@ var MenuBar = (function () {
             }
         };
 
-        $("#background").click(ScaleDown);
-        $("#background").dblclick(CancelClickEvent);
-        $("#background").mousemove(CancelClickEvent);
-        $("#fullscreen-editor-wrapper").keydown(EscapeFromEditor);
+        $("#background").dblclick(ScaleDown);
     };
 
     MenuBar.prototype.SetEventHandlers = function () {
