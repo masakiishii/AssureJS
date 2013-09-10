@@ -44,7 +44,7 @@ $(function () {
                 "NodeType": 3,
                 "Label": "E1",
                 "Annotations": [],
-                "Notes": { "Monitor": "{ CpuUsage < 50 }" }
+                "Notes": { "Monitor": "{ CpuUsage < 30 }" }
             }
         ]
     };

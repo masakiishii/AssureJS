@@ -6,9 +6,9 @@ function monitor() {
 	while :
 	do
 		cpuusage1=$(((RANDOM % 100) + 1))
-		cpuusage2=$(((RANDOM % 100) + 1))
+		cpuusage2=$(((RANDOM % 30) + 1))
 		memusage1=$(((RANDOM % 100) + 1))
-		memusage2=$(((RANDOM % 100) + 1))
+		memusage2=$(((RANDOM % 20) + 1))
 		rec 'LocationA' 'CpuUsage' $cpuusage1 'xxxxx@gmail.com' 'Test'
 		rec 'LocationB' 'CpuUsage' $cpuusage2 'xxxxx@gmail.com' 'Test'
 		rec 'LocationA' 'MemUsage' $memusage1 'xxxxx@gmail.com' 'Test'
