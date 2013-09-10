@@ -328,11 +328,6 @@ var MonitorTableWindow = (function () {
             "bInfo": true,
             "bAutoWidth": true
         });
-
-        $('.monitor-table-fail').attr('bgcolor', '#FF9999');
-        console.log($('#monitor-talble'));
-        console.log($('#modal-monitors'));
-        console.log($('.monitor-talble-fail'));
     };
 
     MonitorTableWindow.prototype.Open = function () {

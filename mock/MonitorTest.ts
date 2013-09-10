@@ -327,7 +327,7 @@ $(function () {
 				"NodeType": 1,
 				"Label": "C1",
 				"Annotations": [],
-				"Notes": { "Location": "Here" }
+				"Notes": { "Location": "LocationA" }
 			},
 			{
 				"Children": [

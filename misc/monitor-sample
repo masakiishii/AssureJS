@@ -5,8 +5,14 @@
 function monitor() {
 	while :
 	do
-		random=$(((RANDOM % 100) + 1))
-		rec 'Here' 'CpuUsage' $random 'xxxxx@gmail.com' 'Test'
+		cpuusage1=$(((RANDOM % 100) + 1))
+		cpuusage2=$(((RANDOM % 100) + 1))
+		memusage1=$(((RANDOM % 100) + 1))
+		memusage2=$(((RANDOM % 100) + 1))
+		rec 'LocationA' 'CpuUsage' $cpuusage1 'xxxxx@gmail.com' 'Test'
+		rec 'LocationB' 'CpuUsage' $cpuusage2 'xxxxx@gmail.com' 'Test'
+		rec 'LocationA' 'MemUsage' $memusage1 'xxxxx@gmail.com' 'Test'
+		rec 'LocationB' 'MemUsage' $memusage2 'xxxxx@gmail.com' 'Test'
 		sleep 5
 	done
 }
