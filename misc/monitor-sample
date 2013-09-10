@@ -9,10 +9,10 @@ function monitor() {
 		cpuusage2=$(((RANDOM % 30) + 1))
 		memusage1=$(((RANDOM % 100) + 1))
 		memusage2=$(((RANDOM % 20) + 1))
-		rec 'LocationA' 'CpuUsage' $cpuusage1 'xxxxx@gmail.com' 'Test'
-		rec 'LocationB' 'CpuUsage' $cpuusage2 'xxxxx@gmail.com' 'Test'
-		rec 'LocationA' 'MemUsage' $memusage1 'xxxxx@gmail.com' 'Test'
-		rec 'LocationB' 'MemUsage' $memusage2 'xxxxx@gmail.com' 'Test'
+		rec 'NodeA' 'CpuUsage' $cpuusage1 'xxxxx@gmail.com' 'Test'
+		rec 'NodeB' 'CpuUsage' $cpuusage2 'xxxxx@gmail.com' 'Test'
+		rec 'NodeA' 'MemUsage' $memusage1 'xxxxx@gmail.com' 'Test'
+		rec 'NodeB' 'MemUsage' $memusage2 'xxxxx@gmail.com' 'Test'
 		sleep 5
 	done
 }

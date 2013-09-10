@@ -36,7 +36,7 @@ $(function () {
                 "NodeType": 1,
                 "Label": "C1",
                 "Annotations": [],
-                "Notes": { "Location": "LocationA" }
+                "Notes": { "Location": "NodeA" }
             },
             {
                 "Children": [],
