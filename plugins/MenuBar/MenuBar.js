@@ -110,7 +110,7 @@ var MenuBar = (function () {
     };
 
     MenuBar.prototype.Commit = function () {
-        ($('#modal')).dialog('open');
+        ($('#modal-commit')).dialog('open');
     };
 
     MenuBar.prototype.Center = function () {
@@ -233,8 +233,8 @@ var CommitWindow = (function () {
         this.Init();
     }
     CommitWindow.prototype.Init = function () {
-        $('#modal').remove();
-        var modal = $('<div id="modal" title="Commit Message" />');
+        $('#modal-commit').remove();
+        var modal = $('<div id="modal-commit" title="Commit Message" />');
         (modal).dialog({
             autoOpen: false,
             modal: true,

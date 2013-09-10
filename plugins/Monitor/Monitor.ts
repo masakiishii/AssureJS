@@ -294,6 +294,95 @@ class MonitorSVGRenderPlugIn extends AssureIt.SVGRenderPlugIn {
 }
 
 
+class MonitorTableWindow {
+
+	constructor() {
+		this.InitTable();
+	}
+
+	InitTable() {
+		$('#modal-monitors').remove();
+		var $modal = $('<div id="modal-monitors" title="Monitors" />');
+
+		(<any>$modal).dialog({
+			autoOpen: false,
+			modal: true,
+			resizable: false,
+			draggable: false,
+			show: "clip",
+			hide: "fade",
+			width: 800,
+			height: 500,
+		});
+
+		var $table = $('<table id="monitor-table" bgcolor="#999999">'
+						+ '<thead>'
+							+ '<tr>'
+								+ '<th>Monitor Node</th>'
+								+ '<th>Type</th>'
+								+ '<th>Location</th>'
+								+ '<th>Latest Data</th>'
+								+ '<th>Auth ID</th>'
+								+ '<th>Timestamp</th>'
+								+ '<th>Status</th>'
+							+ '</tr>'
+						+ '</thead>'
+						+ '<tbody>'
+						+ '</tbody>'
+					+ '</table>');
+		$modal.append($table);
+		$modal.appendTo('layer2');
+	}
+
+	UpdateTable() {
+		var $table = $('#monitor-table');
+		$table.find('tbody').remove();
+		var $tbody = $('<tbody></tbody>');
+
+		for(var key in monitorManager.MonitorNodeMap) {
+			var monitorNode = monitorManager.MonitorNodeMap[key];
+
+			if(monitorNode.LatestData != null) {
+				var $tr = $('<tr></tr>');
+				$tr.append('<td>'+key+'</td>');
+				$tr.append('<td>'+monitorNode.LatestData['type']+'</td>');
+				$tr.append('<td>'+monitorNode.LatestData['location']+'</td>');
+				$tr.append('<td>'+monitorNode.LatestData['data']+'</td>');
+				$tr.append('<td>'+monitorNode.LatestData['authid']+'</td>');
+				$tr.append('<td>'+monitorNode.LatestData['timestamp']+'</td>');
+				if(monitorNode.Status) {
+					$tr.append('<td>Success</td>');
+				}
+				else {
+					$tr.append('<td>Fail</td>');
+					$tr.attr('class', 'monitor-table-fail');
+				}
+				$tr.appendTo($tbody);
+			}
+		}
+
+		$tbody.appendTo($table);
+		$table.appendTo('#modal-monitors');
+
+		(<any>$('#monitor-table')).dataTable({
+				"bPaginate": true,
+				"bLengthChange": true,
+				"bFilter": true,
+				"bSort": true,
+				"bInfo": true,
+				"bAutoWidth": true
+		});
+
+		//$('.monitor-table-fail').attr('bgcolor', '#FF9999');   // TODO: set color
+	}
+
+	Open() {
+		(<any>$('#modal-monitors')).dialog('open');
+	}
+
+}
+
+
 class MonitorMenuPlugIn extends AssureIt.MenuBarContentsPlugIn {
 
 	IsMonitoring: boolean;
@@ -312,14 +401,22 @@ class MonitorMenuPlugIn extends AssureIt.MenuBarContentsPlugIn {
 			monitorManager = new MonitorManager(caseViewer);
 		}
 
+		var self = this;
+
 		if(!this.IsMonitoring) {
 			element.append('<a href="#" ><img id="monitor-tgl" src="'+serverApi.basepath+'images/icon.png" title="Start monitoring" alt="monitor-tgl" /></a>');
 		}
 		else {
 			element.append('<a href="#" ><img id="monitor-tgl" src="'+serverApi.basepath+'images/icon.png" title="Stop monitoring" alt="monitor-tgl" /></a>');
-		}
+			element.append('<a href="#" ><img id="monitors" src="'+serverApi.basepath+'images/icon.png" title="Show monitors" alt="monitors" /></a>');
 
-		var self = this;
+			$('#monitors').unbind('click');
+			$('#monitors').click(function() {
+				var monitorTableWindow = new MonitorTableWindow();
+				monitorTableWindow.UpdateTable();
+				monitorTableWindow.Open();
+			});
+		}
 
 		$('#monitor-tgl').unbind('click');
 		$('#monitor-tgl').click(function() {

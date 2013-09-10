@@ -120,7 +120,7 @@ class MenuBar {
 	}
 
 	Commit(): void {
-		(<any>$('#modal')).dialog('open');
+		(<any>$('#modal-commit')).dialog('open');
 	}
 
 	Center(): void {
@@ -271,8 +271,8 @@ class CommitWindow {
 	}
 
 	Init(): void {
-		$('#modal').remove();
-		var modal = $('<div id="modal" title="Commit Message" />');
+		$('#modal-commit').remove();
+		var modal = $('<div id="modal-commit" title="Commit Message" />');
 		(<any>modal).dialog({
 			autoOpen: false,
 			modal: true,
