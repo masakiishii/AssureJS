@@ -318,21 +318,16 @@ module AssureIt {
 		}
 
 		SetEditable(flag?: boolean): void {
-			if(flag == null) {
-				this.isEditable = this.IsLogin();
-				return;
-			}
-			this.isEditable = flag;
 			if(!this.IsLogin()) {
 				this.isEditable = false;
+			}
+			if (flag != null) {
+				this.isEditable = flag;
 			}
 			return;
 		}
 
 		IsEditable(): boolean {
-			if(!this.IsLogin()) {
-				this.isEditable = false;
-			}
 			return this.isEditable;
 		}
 
