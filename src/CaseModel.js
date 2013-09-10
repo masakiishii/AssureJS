@@ -291,6 +291,8 @@ var AssureIt;
         Case.prototype.SetEditable = function (flag) {
             if (!this.IsLogin()) {
                 this.isEditable = false;
+            } else {
+                this.isEditable = true;
             }
             if (flag != null) {
                 this.isEditable = flag;
