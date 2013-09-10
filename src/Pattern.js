@@ -19,7 +19,11 @@ var Pattern = (function () {
         for (var keystring in Notes) {
             var value = Notes[keystring];
             if (keystring == key) {
-                return callback(Notes[key]);
+                if (callback == null) {
+                    return true;
+                } else {
+                    return callback(Notes[key]);
+                }
             }
         }
         return false;
@@ -27,7 +31,11 @@ var Pattern = (function () {
 
     Pattern.prototype.Type = function (model, Type, callback) {
         if (model.Type == Type) {
-            return callback();
+            if (callback == null) {
+                return true;
+            } else {
+                return callback();
+            }
         }
         return false;
     };
@@ -35,7 +43,11 @@ var Pattern = (function () {
     Pattern.prototype.ParentType = function (model, Type, callback) {
         var Parent = model.Parent;
         if (Parent && Parent.Type == Type) {
-            return callback(Parent);
+            if (callback == null) {
+                return true;
+            } else {
+                return callback(Parent);
+            }
         }
         return false;
     };

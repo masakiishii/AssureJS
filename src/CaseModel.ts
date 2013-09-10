@@ -51,6 +51,7 @@ module AssureIt {
 
 		AppendChild(Node : NodeModel) : void {
 			this.Children.push(Node);
+			Node.Parent = this;
 			this.EnableEditFlag();
 		}
 

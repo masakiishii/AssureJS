@@ -27,7 +27,11 @@ class Pattern {
 		for (var keystring in Notes) {
 			var value = Notes[keystring];
 			if (keystring == key) {
-				return callback(Notes[key]);
+				if(callback == null) {
+					return true;
+				} else {
+					return callback(Notes[key]);
+				}
 			}
 		}
 		return false;
@@ -35,7 +39,11 @@ class Pattern {
 
 	Type(model: AssureIt.NodeModel, Type: AssureIt.NodeType, callback: () => boolean) {
 		if (model.Type == Type) {
-			return callback();
+			if (callback == null) {
+				return true;
+			} else {
+				return callback();
+			}
 		}
 		return false;
 	}
@@ -44,7 +52,11 @@ class Pattern {
 			callback: (caseModel: AssureIt.NodeModel) => boolean) {
 		var Parent = model.Parent;
 		if (Parent && Parent.Type == Type) {
-			return callback(Parent);
+			if (callback == null) {
+				return true;
+			} else {
+				return callback(Parent);
+			}
 		}
 		return false;
 	}

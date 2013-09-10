@@ -41,6 +41,7 @@ var AssureIt;
 
         NodeModel.prototype.AppendChild = function (Node) {
             this.Children.push(Node);
+            Node.Parent = this;
             this.EnableEditFlag();
         };
 
