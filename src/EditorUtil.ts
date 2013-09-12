@@ -4,6 +4,7 @@ declare class CodeMirror {
 
 class ErrorHighlight {
 	marker: any[];
+	interval: number;
 
 	constructor(public editor: any) {
 		this.marker = [];
@@ -17,22 +18,27 @@ class ErrorHighlight {
 			count = count + 1;
 			if(count < cycles){
 				if (count % 2 == 0) {
-					this.ClearHighlight();
+					this._ClearHighlight();
 				} else {
 					this.marker.push(this.editor.markText({line: line-1, ch: 0},{line: line, ch: 0}, {className: "CodeMirror-error"}));
 				}
 				//this.editor.refresh();
-				setTimeout(blink, cycle);
+				this.interval = setTimeout(blink, cycle);
 			}
 		}
 		blink();
 	}
 
-	ClearHighlight() : void {
+	private _ClearHighlight(): void {
 		for (var i in this.marker) {
 			this.marker[i].clear();
 		}
 		this.marker = [];
+	}
+
+	ClearHighlight(): void {
+		clearInterval(this.interval);
+		this._ClearHighlight();
 	}
 
 	Highlight(line: number, message: string) : void {

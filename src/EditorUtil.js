@@ -14,22 +14,27 @@ var ErrorHighlight = (function () {
             count = count + 1;
             if (count < cycles) {
                 if (count % 2 == 0) {
-                    _this.ClearHighlight();
+                    _this._ClearHighlight();
                 } else {
                     _this.marker.push(_this.editor.markText({ line: line - 1, ch: 0 }, { line: line, ch: 0 }, { className: "CodeMirror-error" }));
                 }
 
-                setTimeout(blink, cycle);
+                _this.interval = setTimeout(blink, cycle);
             }
         };
         blink();
     };
 
-    ErrorHighlight.prototype.ClearHighlight = function () {
+    ErrorHighlight.prototype._ClearHighlight = function () {
         for (var i in this.marker) {
             this.marker[i].clear();
         }
         this.marker = [];
+    };
+
+    ErrorHighlight.prototype.ClearHighlight = function () {
+        clearInterval(this.interval);
+        this._ClearHighlight();
     };
 
     ErrorHighlight.prototype.Highlight = function (line, message) {
