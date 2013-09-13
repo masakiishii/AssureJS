@@ -301,12 +301,19 @@ var MenuBarActionPlugIn = (function (_super) {
         $('.node').unbind('mouseenter').unbind('mouseleave');
         $('.node').hover(function () {
             var node = $(this);
+            var refresh = function () {
+                var menutop = node.position().top / caseViewer.Screen.GetScale() + node.height() + 5;
+                var menuleft = node.position().left / caseViewer.Screen.GetScale() + (node.outerWidth() - menuBar.menu.width()) / 2;
+                menuBar.menu.css({ position: 'absolute', top: menutop, display: 'block', opacity: 0 });
+                menuBar.menu.css({ left: menuleft });
+            };
 
             var label = node.children('h4').text();
 
             var model = case0.ElementMap[label];
             var menuBar = new MenuBar(caseViewer, model, case0, node, serverApi, self);
             menuBar.menu.appendTo($('#layer2'));
+            refresh();
             menuBar.menu.hover(function () {
                 clearTimeout(self.timeoutId);
             }, function () {
@@ -319,13 +326,6 @@ var MenuBarActionPlugIn = (function (_super) {
             commitWindow.SetEventHandlers(caseViewer, case0, serverApi);
             self.plugInManager.InvokePlugInMenuBarContents(caseViewer, model, menuBar.menu, serverApi);
 
-            var refresh = function () {
-                var menutop = node.position().top / caseViewer.Screen.GetScale() + node.height() + 5;
-                var menuleft = node.position().left / caseViewer.Screen.GetScale() + (node.outerWidth() - menuBar.menu.width()) / 2;
-
-                menuBar.menu.css({ position: 'absolute', top: menutop, display: 'block', opacity: 0 });
-                menuBar.menu.css({ left: menuleft });
-            };
             (menuBar.menu).jqDock({
                 align: 'bottom',
                 fadeIn: 200,
