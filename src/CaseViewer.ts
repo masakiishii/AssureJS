@@ -736,6 +736,16 @@ module AssureIt {
 			return $("#layer0")[0].getBoundingClientRect().height;
 		}
 
+		GetScaleRate() {
+			var svgwidth = this.GetCaseWidth();
+			var svgheight = this.GetCaseHeight();
+			var bodywidth = this.GetWidth();
+			var bodyheight = this.GetHeight();
+			var scaleWidth = bodywidth / svgwidth;
+			var scaleHeight = bodyheight / svgheight;
+			return Math.min(scaleWidth, scaleHeight);
+		}
+
 		SetCaseCenter(DCaseX: number, DCaseY: number, HTMLDoc: HTMLDoc): void {
 			var NewOffsetX = this.OffsetX + (this.GetPageCenterX() - (this.OffsetX + DCaseX)) - HTMLDoc.Width/2;
 			var NewOffsetY = this.OffsetY + (this.GetPageCenterY() - (this.OffsetY + DCaseY)) - HTMLDoc.Height/2;

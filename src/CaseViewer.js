@@ -754,6 +754,16 @@ var AssureIt;
             return $("#layer0")[0].getBoundingClientRect().height;
         };
 
+        ScreenManager.prototype.GetScaleRate = function () {
+            var svgwidth = this.GetCaseWidth();
+            var svgheight = this.GetCaseHeight();
+            var bodywidth = this.GetWidth();
+            var bodyheight = this.GetHeight();
+            var scaleWidth = bodywidth / svgwidth;
+            var scaleHeight = bodyheight / svgheight;
+            return Math.min(scaleWidth, scaleHeight);
+        };
+
         ScreenManager.prototype.SetCaseCenter = function (DCaseX, DCaseY, HTMLDoc) {
             var NewOffsetX = this.OffsetX + (this.GetPageCenterX() - (this.OffsetX + DCaseX)) - HTMLDoc.Width / 2;
             var NewOffsetY = this.OffsetY + (this.GetPageCenterY() - (this.OffsetY + DCaseY)) - HTMLDoc.Height / 2;

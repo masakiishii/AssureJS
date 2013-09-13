@@ -14,14 +14,7 @@ class Scale {
 	}
 
 	Up(e: JQueryEventObject) {
-		var svgwidth = this.ScreenManager.GetCaseWidth();
-		var svgheight = this.ScreenManager.GetCaseHeight();
-		var bodywidth = this.ScreenManager.GetWidth();
-		var bodyheight = this.ScreenManager.GetHeight();
-		var scaleWidth = bodywidth / svgwidth;
-		var scaleHeight = bodyheight / svgheight;
-
-		this.ScaleRate = Math.min(scaleWidth, scaleHeight);
+		this.ScaleRate = this.ScreenManager.GetScaleRate();
 
 		if(this.ScaleRate >= 1.0) {
 			/* We don't have to scale the view up */

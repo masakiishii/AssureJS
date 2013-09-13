@@ -10,14 +10,7 @@ var Scale = (function () {
         this.ScreenManager = ScreenManager;
     }
     Scale.prototype.Up = function (e) {
-        var svgwidth = this.ScreenManager.GetCaseWidth();
-        var svgheight = this.ScreenManager.GetCaseHeight();
-        var bodywidth = this.ScreenManager.GetWidth();
-        var bodyheight = this.ScreenManager.GetHeight();
-        var scaleWidth = bodywidth / svgwidth;
-        var scaleHeight = bodyheight / svgheight;
-
-        this.ScaleRate = Math.min(scaleWidth, scaleHeight);
+        this.ScaleRate = this.ScreenManager.GetScaleRate();
 
         if (this.ScaleRate >= 1.0) {
             return false;
