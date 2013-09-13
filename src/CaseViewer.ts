@@ -736,6 +736,10 @@ module AssureIt {
 			return $("#layer0")[0].getBoundingClientRect().height;
 		}
 
+		GetScale() {
+			return this.Scale;
+		}
+
 		GetScaleRate() {
 			var svgwidth = this.GetCaseWidth();
 			var svgheight = this.GetCaseHeight();

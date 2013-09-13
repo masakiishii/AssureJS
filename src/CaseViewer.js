@@ -754,6 +754,10 @@ var AssureIt;
             return $("#layer0")[0].getBoundingClientRect().height;
         };
 
+        ScreenManager.prototype.GetScale = function () {
+            return this.Scale;
+        };
+
         ScreenManager.prototype.GetScaleRate = function () {
             var svgwidth = this.GetCaseWidth();
             var svgheight = this.GetCaseHeight();

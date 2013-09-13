@@ -352,7 +352,6 @@ class MenuBarActionPlugIn extends AssureIt.ActionPlugIn {
 			var model: AssureIt.NodeModel = case0.ElementMap[label];
 			var menuBar: MenuBar = new MenuBar(caseViewer, model, case0, node, serverApi, self);
 			menuBar.menu.appendTo($('#layer2'));
-			menuBar.menu.css({ position: 'absolute', top: node.position().top + node.height() + 5 , display: 'block', opacity: 0 });
 			menuBar.menu.hover(function () {
 				clearTimeout(self.timeoutId);
 			}, function () {
@@ -366,8 +365,11 @@ class MenuBarActionPlugIn extends AssureIt.ActionPlugIn {
 			self.plugInManager.InvokePlugInMenuBarContents(caseViewer, model, menuBar.menu, serverApi);
 
 			var refresh = () => {
+				var menutop = node.position().top / caseViewer.Screen.GetScale() + node.height() + 5;
+				var menuleft = node.position().left / caseViewer.Screen.GetScale()+(node.outerWidth()-menuBar.menu.width())/ 2;
+				menuBar.menu.css({ position: 'absolute', top: menutop , display: 'block', opacity: 0 });
 				menuBar.menu.css(
-					{ left: node.position().left+(node.outerWidth()-menuBar.menu.width()) / 2 });
+					{ left: menuleft });
 			};
 			(<any>menuBar.menu).jqDock({
 				align: 'bottom',
