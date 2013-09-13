@@ -70,6 +70,7 @@ class DScriptMenuPlugIn extends AssureIt.MenuBarContentsPlugIn {
 						if(e.keyCode == 27 /* ESC */){
 							e.stopPropagation();
 							$('#dscript-editor-wrapper').blur();
+							$('#dscript-editor-wrapper').unbind('keydown');
 						}
 					});
 				$('#CodeMirror').focus();

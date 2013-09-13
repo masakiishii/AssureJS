@@ -20,13 +20,14 @@ var Scale = (function () {
         this.ScaleRate = Math.min(scaleWidth, scaleHeight);
 
         if (this.ScaleRate >= 1.0) {
-            return;
+            return false;
         }
 
         this.OriginalOffsetX = this.ScreenManager.GetLogicalOffsetX();
         this.OriginalOffsetY = this.ScreenManager.GetLogicalOffsetY();
 
         this.Zoom(0, 0, 1.0, this.ScaleRate, 500);
+        return true;
     };
 
     Scale.prototype.DownAtOriginalPlace = function (e) {
@@ -103,8 +104,7 @@ var ScaleActionPlugIn = (function (_super) {
                         self.Scale.DownAtOriginalPlace(e);
                         self.Scale.IsScaledUp = false;
                     } else {
-                        self.Scale.Up(e);
-                        self.Scale.IsScaledUp = true;
+                        self.Scale.IsScaledUp = self.Scale.Up(e);
                     }
                 }
             };

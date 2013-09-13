@@ -1,3 +1,5 @@
+/// <reference path="../../src/CaseViewer.ts" />
+
 class Scale {
 
 	IsScaledUp: boolean;
@@ -22,13 +24,15 @@ class Scale {
 		this.ScaleRate = Math.min(scaleWidth, scaleHeight);
 
 		if(this.ScaleRate >= 1.0) {
-			return;
+			/* We don't have to scale the view up */
+			return false;
 		}
 
 		this.OriginalOffsetX = this.ScreenManager.GetLogicalOffsetX();   // FIXME
 		this.OriginalOffsetY = this.ScreenManager.GetLogicalOffsetY();   // FIXME
 
 		this.Zoom(0, 0, 1.0, this.ScaleRate, 500);
+		return true;
 	}
 
 	DownAtOriginalPlace(e: JQueryEventObject) {
@@ -111,8 +115,7 @@ class ScaleActionPlugIn extends AssureIt.ActionPlugIn {
 						self.Scale.IsScaledUp = false;
 					}
 					else {
-						self.Scale.Up(e);
-						self.Scale.IsScaledUp = true;
+						self.Scale.IsScaledUp = self.Scale.Up(e);
 					}
 				}
 			};

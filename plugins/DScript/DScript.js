@@ -66,6 +66,7 @@ var DScriptMenuPlugIn = (function (_super) {
                 if (e.keyCode == 27) {
                     e.stopPropagation();
                     $('#dscript-editor-wrapper').blur();
+                    $('#dscript-editor-wrapper').unbind('keydown');
                 }
             });
             $('#CodeMirror').focus();
