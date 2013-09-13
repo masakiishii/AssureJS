@@ -127,6 +127,8 @@ class TimeLineKeyPlugIn extends AssureIt.ShortcutKeyPlugIn {
 	ShowPreview(Case: AssureIt.Case, serverApi: AssureIt.ServerAPI): void {
 		var historyId = this.GetHistoryId();
 		if(historyId == -1/* Latest and Edit mode*/) {
+			var commits: AssureIt.CommitCollection = serverApi.GetCommitList(Case.CaseId);
+			historyId = commits.Size() -1;
 		}
 		if(historyId > 0/* not oldest*/) {
 			historyId--;
@@ -138,11 +140,16 @@ class TimeLineKeyPlugIn extends AssureIt.ShortcutKeyPlugIn {
 	ShowNext(Case: AssureIt.Case, serverApi: AssureIt.ServerAPI): void {
 		var historyId = this.GetHistoryId();
 		if(historyId == -1/* Latest and Edit mode*/) {
+			return
 		}
-		if(historyId < 5/* FIXME Latest*/) {
+		var commits: AssureIt.CommitCollection = serverApi.GetCommitList(Case.CaseId);
+		var max = commits.Size() - 2;
+		if(historyId >= 0 && historyId < max/* FIXME Latest*/) {
 			historyId++;
 			var loc = serverApi.basepath + "case/" + Case.CaseId;
 			location.href = loc + '/history/' + (historyId);
+		} else if(historyId == max) {
+			location.href= serverApi.basepath + "case/" + Case.CaseId;
 		}
 	}
 

@@ -39,5 +39,9 @@ module AssureIt {
 				callback(i, this.CommitModels[i]);
 			}
 		}
+
+		Size(): number {
+			return this.CommitModels.length;
+		}
 	}
 }

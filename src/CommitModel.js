@@ -42,6 +42,10 @@ var AssureIt;
                 callback(i, this.CommitModels[i]);
             }
         };
+
+        CommitCollection.prototype.Size = function () {
+            return this.CommitModels.length;
+        };
         return CommitCollection;
     })();
     AssureIt.CommitCollection = CommitCollection;

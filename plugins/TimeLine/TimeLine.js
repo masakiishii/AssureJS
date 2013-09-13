@@ -113,6 +113,8 @@ var TimeLineKeyPlugIn = (function (_super) {
     TimeLineKeyPlugIn.prototype.ShowPreview = function (Case, serverApi) {
         var historyId = this.GetHistoryId();
         if (historyId == -1) {
+            var commits = serverApi.GetCommitList(Case.CaseId);
+            historyId = commits.Size() - 1;
         }
         if (historyId > 0) {
             historyId--;
@@ -124,11 +126,16 @@ var TimeLineKeyPlugIn = (function (_super) {
     TimeLineKeyPlugIn.prototype.ShowNext = function (Case, serverApi) {
         var historyId = this.GetHistoryId();
         if (historyId == -1) {
+            return;
         }
-        if (historyId < 5) {
+        var commits = serverApi.GetCommitList(Case.CaseId);
+        var max = commits.Size() - 2;
+        if (historyId >= 0 && historyId < max) {
             historyId++;
             var loc = serverApi.basepath + "case/" + Case.CaseId;
             location.href = loc + '/history/' + (historyId);
+        } else if (historyId == max) {
+            location.href = serverApi.basepath + "case/" + Case.CaseId;
         }
     };
 
