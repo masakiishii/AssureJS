@@ -54,6 +54,7 @@ var TimeLinePlugIn = (function (_super) {
     function TimeLinePlugIn(plugInManager) {
         _super.call(this, plugInManager);
         this.MenuBarContentsPlugIn = new TimeLineMenuPlugIn(plugInManager);
+        this.ShortcutKeyPlugIn = new TimeLineKeyPlugIn(plugInManager);
     }
     return TimeLinePlugIn;
 })(AssureIt.PlugInSet);
@@ -76,3 +77,65 @@ var TimeLineMenuPlugIn = (function (_super) {
     };
     return TimeLineMenuPlugIn;
 })(AssureIt.MenuBarContentsPlugIn);
+
+var TimeLineKeyPlugIn = (function (_super) {
+    __extends(TimeLineKeyPlugIn, _super);
+    function TimeLineKeyPlugIn(plugInManager) {
+        _super.call(this, plugInManager);
+        this.plugInManager = plugInManager;
+    }
+    TimeLineKeyPlugIn.prototype.IsEnabled = function (Case0, serverApi) {
+        return true;
+    };
+
+    TimeLineKeyPlugIn.prototype.RegisterKeyEvents = function (Case0, serverApi) {
+        var _this = this;
+        $("body").keydown(function (e) {
+            if (e.keyCode == 37 && e.shiftKey) {
+                _this.ShowPreview(Case0, serverApi);
+            }
+            if (e.keyCode == 39 && e.shiftKey) {
+                _this.ShowNext(Case0, serverApi);
+            }
+        });
+        return true;
+    };
+
+    TimeLineKeyPlugIn.prototype.GetHistoryId = function () {
+        var url = location.href;
+        var matches = url.match(/history\/([0-9]*)/);
+        if (matches != null) {
+            return Number(matches[1]);
+        }
+        return -1;
+    };
+
+    TimeLineKeyPlugIn.prototype.ShowPreview = function (Case, serverApi) {
+        var historyId = this.GetHistoryId();
+        if (historyId == -1) {
+        }
+        if (historyId > 0) {
+            historyId--;
+            var loc = serverApi.basepath + "case/" + Case.CaseId;
+            location.href = loc + '/history/' + (historyId);
+        }
+    };
+
+    TimeLineKeyPlugIn.prototype.ShowNext = function (Case, serverApi) {
+        var historyId = this.GetHistoryId();
+        if (historyId == -1) {
+        }
+        if (historyId < 5) {
+            historyId++;
+            var loc = serverApi.basepath + "case/" + Case.CaseId;
+            location.href = loc + '/history/' + (historyId);
+        }
+    };
+
+    TimeLineKeyPlugIn.prototype.DeleteFromDOM = function () {
+    };
+
+    TimeLineKeyPlugIn.prototype.DisableEvent = function (caseViewer, case0, serverApi) {
+    };
+    return TimeLineKeyPlugIn;
+})(AssureIt.ShortcutKeyPlugIn);

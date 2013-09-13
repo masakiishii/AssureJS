@@ -18,7 +18,7 @@ var MenuBar = (function () {
         var thisNodeType = this.model.Type;
 
         $('#menu').remove();
-        this.menu = $('<div id="menu">' + '<a href="#" ><img id="scale"  src="' + this.serverApi.basepath + 'images/scale.png" title="Scale" alt="scale" /></a>' + '</div>');
+        this.menu = $('<div id="menu">' + '</div>');
 
         if (this.case0.IsEditable()) {
             this.menu.append('<a href="#" ><img id="commit" src="' + this.serverApi.basepath + 'images/commit.png" title="Commit" alt="commit" /></a>');
@@ -214,10 +214,6 @@ var MenuBar = (function () {
 
         $('#commit').click(function () {
             _this.Commit();
-        });
-
-        $('#scale').click(function () {
-            _this.Scale();
         });
 
         $('#center').click(function () {
