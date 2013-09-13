@@ -13,6 +13,7 @@ module AssureIt {
 		MenuBarContentsPlugIn: MenuBarContentsPlugIn;
 		LayoutEnginePlugIn: LayoutEnginePlugIn;
 		PatternPlugIn: PatternPlugIn;
+		ShortcutKeyPlugIn: ShortcutKeyPlugIn;
 
 		constructor(public plugInManager: PlugInManager) {
 			this.ActionPlugIn = null;
@@ -22,6 +23,7 @@ module AssureIt {
 			this.MenuBarContentsPlugIn = null;
 			this.LayoutEnginePlugIn = null;
 			this.PatternPlugIn = null;
+			this.ShortcutKeyPlugIn = null;
 		}
 	}
 
@@ -152,6 +154,21 @@ module AssureIt {
 		}
 	}
 
+	export class ShortcutKeyPlugIn extends AbstractPlugIn {
+
+		constructor(public plugInManager: PlugInManager) {
+			super(plugInManager);
+		}
+
+		IsEnabled(Case0: Case, serverApi: ServerAPI) : boolean {
+			return true;
+		}
+
+		RegisterKeyEvents(Case0: Case, serverApi: ServerAPI) : boolean {
+			return true;
+		}
+	}
+
 	export class PlugInManager {
 
 		ActionPlugInMap           : { [index: string]: ActionPlugIn };
@@ -161,6 +178,7 @@ module AssureIt {
 		MenuBarContentsPlugInMap  : { [index: string]: MenuBarContentsPlugIn };
 		LayoutEnginePlugInMap     : { [index: string]: LayoutEnginePlugIn };
 		PatternPlugInMap          : { [index: string]: PatternPlugIn };
+		ShortcutKeyPlugInMap      : { [index: string]: ShortcutKeyPlugIn };
 
 		UILayer: AbstractPlugIn[];
 		UsingLayoutEngine: string;
@@ -173,6 +191,7 @@ module AssureIt {
 			this.MenuBarContentsPlugInMap = {};
 			this.LayoutEnginePlugInMap = {};
 			this.PatternPlugInMap = {};
+			this.ShortcutKeyPlugInMap = {};
 			this.UILayer = [];
 		}
 
@@ -195,6 +214,9 @@ module AssureIt {
 			if(plugIn.PatternPlugIn) {
 				this.SetPatternPlugIn(key, plugIn.PatternPlugIn);
 			}
+			if(plugIn.ShortcutKeyPlugIn) {
+				this.SetShortcutKeyPlugIn(key, plugIn.ShortcutKeyPlugIn);
+			}
 		}
 
 		SetActionPlugIn(key: string, actionPlugIn: ActionPlugIn) {
@@ -211,23 +233,23 @@ module AssureIt {
 			}
 		}
 
-		SetHTMLRenderPlugIn(key: string, HTMLRenderPlugIn: HTMLRenderPlugIn) {
+		SetHTMLRenderPlugIn(key: string, HTMLRenderPlugIn: HTMLRenderPlugIn): void {
 			this.HTMLRenderPlugInMap[key] = HTMLRenderPlugIn;
 		}
 
-		SetSVGRenderPlugIn(key: string, SVGRenderPlugIn: SVGRenderPlugIn) {
+		SetSVGRenderPlugIn(key: string, SVGRenderPlugIn: SVGRenderPlugIn): void {
 			this.SVGRenderPlugInMap[key] = SVGRenderPlugIn;
 		}
 
-		SetMenuBarContentsPlugIn(key: string, MenuBarContentsPlugIn: MenuBarContentsPlugIn) {
+		SetMenuBarContentsPlugIn(key: string, MenuBarContentsPlugIn: MenuBarContentsPlugIn): void {
 			this.MenuBarContentsPlugInMap[key] = MenuBarContentsPlugIn;
 		}
 
-		SetUseLayoutEngine(key: string) {
+		SetUseLayoutEngine(key: string): void {
 			this.UsingLayoutEngine = key;
 		}
 
-		SetLayoutEnginePlugIn(key: string, LayoutEnginePlugIn: LayoutEnginePlugIn) {
+		SetLayoutEnginePlugIn(key: string, LayoutEnginePlugIn: LayoutEnginePlugIn): void {
 			this.LayoutEnginePlugInMap[key] = LayoutEnginePlugIn;
 		}
 
@@ -235,8 +257,12 @@ module AssureIt {
 			return this.LayoutEnginePlugInMap[this.UsingLayoutEngine];
 		}
 
-		SetPatternPlugIn(key: string, PatternPlugIn: PatternPlugIn) {
+		SetPatternPlugIn(key: string, PatternPlugIn: PatternPlugIn): void {
 			this.PatternPlugInMap[key] = PatternPlugIn;
+		}
+
+		SetShortcutKeyPlugIn(key: string, ShortcutKeyPlugIn: ShortcutKeyPlugIn): void {
+			this.ShortcutKeyPlugInMap[key] = ShortcutKeyPlugIn;
 		}
 
 		UseUILayer(plugin :AbstractPlugIn): void {
@@ -255,11 +281,19 @@ module AssureIt {
 		}
 
 		InvokePlugInMenuBarContents(caseViewer: CaseViewer, caseModel: NodeModel, DocBase: JQuery, serverApi: ServerAPI): void {
-			var pluginMap: { [index: string]: MenuBarContentsPlugIn} = caseViewer.pluginManager.MenuBarContentsPlugInMap;
-			for (var key in pluginMap) {
+			for (var key in this.MenuBarContentsPlugInMap) {
 				var contents: MenuBarContentsPlugIn = this.MenuBarContentsPlugInMap[key];
 				if(contents.IsEnabled(caseViewer, caseModel)) {
 					contents.Delegate(caseViewer, caseModel, DocBase, serverApi);
+				}
+			}
+		}
+
+		RegisterKeyEvents(Case0: Case, serverApi: ServerAPI): void {
+			for(var key in this.ShortcutKeyPlugInMap) {
+				var plugin: ShortcutKeyPlugIn = this.ShortcutKeyPlugInMap[key];
+				if(plugin.IsEnabled(Case0, serverApi)) {
+					plugin.RegisterKeyEvents(Case0, serverApi);
 				}
 			}
 		}

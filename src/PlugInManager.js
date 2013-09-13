@@ -16,6 +16,7 @@ var AssureIt;
             this.MenuBarContentsPlugIn = null;
             this.LayoutEnginePlugIn = null;
             this.PatternPlugIn = null;
+            this.ShortcutKeyPlugIn = null;
         }
         return PlugInSet;
     })();
@@ -160,6 +161,23 @@ var AssureIt;
     })(AbstractPlugIn);
     AssureIt.PatternPlugIn = PatternPlugIn;
 
+    var ShortcutKeyPlugIn = (function (_super) {
+        __extends(ShortcutKeyPlugIn, _super);
+        function ShortcutKeyPlugIn(plugInManager) {
+            _super.call(this, plugInManager);
+            this.plugInManager = plugInManager;
+        }
+        ShortcutKeyPlugIn.prototype.IsEnabled = function (Case0, serverApi) {
+            return true;
+        };
+
+        ShortcutKeyPlugIn.prototype.RegisterKeyEvents = function (Case0, serverApi) {
+            return true;
+        };
+        return ShortcutKeyPlugIn;
+    })(AbstractPlugIn);
+    AssureIt.ShortcutKeyPlugIn = ShortcutKeyPlugIn;
+
     var PlugInManager = (function () {
         function PlugInManager(basepath) {
             this.basepath = basepath;
@@ -170,6 +188,7 @@ var AssureIt;
             this.MenuBarContentsPlugInMap = {};
             this.LayoutEnginePlugInMap = {};
             this.PatternPlugInMap = {};
+            this.ShortcutKeyPlugInMap = {};
             this.UILayer = [];
         }
         PlugInManager.prototype.SetPlugIn = function (key, plugIn) {
@@ -190,6 +209,9 @@ var AssureIt;
             }
             if (plugIn.PatternPlugIn) {
                 this.SetPatternPlugIn(key, plugIn.PatternPlugIn);
+            }
+            if (plugIn.ShortcutKeyPlugIn) {
+                this.SetShortcutKeyPlugIn(key, plugIn.ShortcutKeyPlugIn);
             }
         };
 
@@ -235,6 +257,10 @@ var AssureIt;
             this.PatternPlugInMap[key] = PatternPlugIn;
         };
 
+        PlugInManager.prototype.SetShortcutKeyPlugIn = function (key, ShortcutKeyPlugIn) {
+            this.ShortcutKeyPlugInMap[key] = ShortcutKeyPlugIn;
+        };
+
         PlugInManager.prototype.UseUILayer = function (plugin) {
             var beforePlugin = this.UILayer.pop();
             if (beforePlugin != plugin && beforePlugin) {
@@ -251,11 +277,19 @@ var AssureIt;
         };
 
         PlugInManager.prototype.InvokePlugInMenuBarContents = function (caseViewer, caseModel, DocBase, serverApi) {
-            var pluginMap = caseViewer.pluginManager.MenuBarContentsPlugInMap;
-            for (var key in pluginMap) {
+            for (var key in this.MenuBarContentsPlugInMap) {
                 var contents = this.MenuBarContentsPlugInMap[key];
                 if (contents.IsEnabled(caseViewer, caseModel)) {
                     contents.Delegate(caseViewer, caseModel, DocBase, serverApi);
+                }
+            }
+        };
+
+        PlugInManager.prototype.RegisterKeyEvents = function (Case0, serverApi) {
+            for (var key in this.ShortcutKeyPlugInMap) {
+                var plugin = this.ShortcutKeyPlugInMap[key];
+                if (plugin.IsEnabled(Case0, serverApi)) {
+                    plugin.RegisterKeyEvents(Case0, serverApi);
                 }
             }
         };
