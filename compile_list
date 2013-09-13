@@ -18,6 +18,7 @@ plugins/DefaultStatementRender/DefaultStatementRender.ts
 plugins/LayoutPortrait/LayoutPortrait.ts
 plugins/Export/Export.ts
 plugins/TimeLine/TimeLine.ts
+plugins/Scale/Scale.ts
 src/CaseDecoder.ts
 src/CaseEncoder.ts
 src/CaseModel.ts

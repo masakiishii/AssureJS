@@ -26,7 +26,7 @@ class MenuBar {
 
 		$('#menu').remove();
 		this.menu = $('<div id="menu">' +
-			'<a href="#" ><img id="scale"  src="'+this.serverApi.basepath+'images/scale.png" title="Scale" alt="scale" /></a>' +
+			//'<a href="#" ><img id="scale"  src="'+this.serverApi.basepath+'images/scale.png" title="Scale" alt="scale" /></a>' +
 			'</div>');
 
 		if(this.case0.IsEditable()) { //TODO login
@@ -130,6 +130,7 @@ class MenuBar {
 		screenManager.SetCaseCenter(thisNodeView.AbsX, thisNodeView.AbsY, thisNodeView.HTMLDoc);
 	}
 
+	/* obsolete */
 	Scale(): void {
 		var timers: number[] = [];
 		var screenManager = this.caseViewer.Screen;
@@ -250,9 +251,9 @@ class MenuBar {
 			this.Commit();
 		});
 
-		$('#scale').click(() => {
-			this.Scale();
-		});
+//		$('#scale').click(() => {
+//			this.Scale();
+//		});
 
 		$('#center').click(() => {
 			this.Center();

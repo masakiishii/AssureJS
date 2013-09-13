@@ -5,6 +5,7 @@
 /// <reference path="../src/Converter.ts" />
 /// <reference path="../src/ServerApi.ts" />
 /// <reference path="../plugins/MenuBar/MenuBar.ts" />
+/// <reference path="../plugins/Scale/Scale.ts" />
 /// <reference path="../plugins/Editor/Editor.ts" />
 /// <reference path="../plugins/DScript/DScript.ts" />
 /// <reference path="../plugins/FullScreenEditor/FullScreenEditor.ts" />
@@ -22,6 +23,7 @@ $(function () {
 	var serverApi = new AssureIt.ServerAPI('',true); //TODO config for Path
 	var pluginManager = new AssureIt.PlugInManager('');
 	pluginManager.SetPlugIn("menu", new MenuBarPlugIn(pluginManager));
+	pluginManager.SetPlugIn("scale", new ScalePlugIn(pluginManager));
 	pluginManager.SetPlugIn("editor", new EditorPlugIn(pluginManager));
 	pluginManager.SetPlugIn("dscript", new DScriptPlugIn(pluginManager));
 	pluginManager.SetPlugIn("fullscreeneditor", new FullScreenEditorPlugIn(pluginManager));

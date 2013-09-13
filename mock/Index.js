@@ -2,6 +2,7 @@ $(function () {
     var serverApi = new AssureIt.ServerAPI('', true);
     var pluginManager = new AssureIt.PlugInManager('');
     pluginManager.SetPlugIn("menu", new MenuBarPlugIn(pluginManager));
+    pluginManager.SetPlugIn("scale", new ScalePlugIn(pluginManager));
     pluginManager.SetPlugIn("editor", new EditorPlugIn(pluginManager));
     pluginManager.SetPlugIn("simplepattern", new SimplePatternPlugIn(pluginManager));
     pluginManager.SetPlugIn("dscript", new DScriptPlugIn(pluginManager));
