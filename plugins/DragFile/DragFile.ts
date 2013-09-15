@@ -72,7 +72,7 @@ class DragFileActionPlugIn extends AssureIt.ActionPlugIn {
 	}
 
 	IsEnabled(caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case): boolean {
-		return case0.IsLogin();
+		return case0.IsEditable();
 	}
 
 	Delegate(caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case, serverApi: AssureIt.ServerAPI): boolean {

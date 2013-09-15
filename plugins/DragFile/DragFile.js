@@ -79,7 +79,7 @@ var DragFileActionPlugIn = (function (_super) {
         _super.call(this, plugInManager);
     }
     DragFileActionPlugIn.prototype.IsEnabled = function (caseViewer, case0) {
-        return case0.IsLogin();
+        return case0.IsEditable();
     };
 
     DragFileActionPlugIn.prototype.Delegate = function (caseViewer, case0, serverApi) {
