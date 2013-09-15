@@ -282,18 +282,7 @@ var AssureIt;
             return NodeType[Type].charAt(0) + i;
         };
 
-        Case.prototype.IsLogin = function () {
-            var matchResult = document.cookie.match(/userId=(\w+);?/);
-            var userId = matchResult ? parseInt(matchResult[1]) : null;
-            return userId != null;
-        };
-
         Case.prototype.SetEditable = function (flag) {
-            if (!this.IsLogin()) {
-                this.isEditable = false;
-            } else {
-                this.isEditable = true;
-            }
             if (flag != null) {
                 this.isEditable = flag;
             }

@@ -311,18 +311,7 @@ module AssureIt {
 			return NodeType[Type].charAt(0) + i;
 		}
 
-		IsLogin(): boolean {
-			var matchResult = document.cookie.match(/userId=(\w+);?/);
-			var userId = matchResult ? parseInt(matchResult[1]) : null;
-			return userId != null;
-		}
-
-		SetEditable(flag?: boolean): void {
-			if(!this.IsLogin()) {
-				this.isEditable = false;
-			} else {
-				this.isEditable = true;
-			}
+		SetEditable(flag: boolean): void {
 			if (flag != null) {
 				this.isEditable = flag;
 			}
