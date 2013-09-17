@@ -283,8 +283,11 @@ class CommitWindow {
 			hide: "fade"
 		});
 
-		var messageBox = $('<p align="center"><input id="message_box" type="text" size="30" value="' + this.defaultMessage + '" /></p>');
-		messageBox.css('color', 'gray');
+		var messageBox = $('<p align="center"></p>');
+		messageBox.append($('<input id="message_box" type="text" size="30" value="'
+					+ this.defaultMessage
+					+ '" />')
+				.css({ 'color': 'gray', 'width': '18em', 'height': '2em' }));
 
 		var commitButton  = $('<p align="right"><input id="commit_button" type="button" value="commit"/></p>');
 		modal.append(messageBox);
@@ -312,9 +315,15 @@ class CommitWindow {
 		$('#commit_button').click(function() {
 			var encoder : AssureIt.CaseEncoder = new AssureIt.CaseEncoder();
 			var contents : string = encoder.ConvertToASN(case0.ElementTop, false);
-			serverApi.Commit(contents, $("#message_box").val(), case0.CommitId);
-			case0.SetModified(false);
-			window.location.reload(); //FIXME
+
+			if($("#message_box").val() == self.defaultMessage) {
+				alert("Please put some commit message in the text box.");
+			}
+			else {
+				serverApi.Commit(contents, $("#message_box").val(), case0.CommitId);
+				case0.SetModified(false);
+				window.location.reload(); //FIXME
+			}
 		});
 	}
 
