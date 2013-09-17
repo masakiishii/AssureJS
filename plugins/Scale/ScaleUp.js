@@ -39,7 +39,7 @@ var ScaleUpActionPlugIn = (function (_super) {
     ScaleUpActionPlugIn.prototype.Delegate = function (caseViewer, case0, serverApi) {
         var self = this;
         this.ScreenManager = caseViewer.Screen;
-        $('.node').unbind('mouseenter').unbind('mouseleave');
+
         $('.node').hover(function (e) {
             var scale = self.ScreenManager.GetScale();
             if (scale < self.THRESHHOLD) {
@@ -48,6 +48,7 @@ var ScaleUpActionPlugIn = (function (_super) {
                 var oldShapeGroup = view.SVGShape.ShapeGroup;
                 var oldDocBase = view.HTMLDoc.DocBase;
 
+                self.oldLayer1 = $('#layer1');
                 self.Layer0box = $('#layer0box').clone();
                 self.Layer0 = self.Layer0box.children('g');
                 self.Layer0.empty();
@@ -68,6 +69,8 @@ var ScaleUpActionPlugIn = (function (_super) {
                 self.SetPosition(Number(left.substr(0, left.length - 2)) + 100 * (1 / scale), Number(top.substr(0, top.length - 2)) - 100 * (1 / scale));
                 self.Layer0box.appendTo('#viewer');
                 self.Layer1.appendTo('#viewer');
+                $(this).appendTo(self.Layer1);
+                $(this).clone(true).appendTo(self.oldLayer1);
 
                 return;
             }
