@@ -58,6 +58,7 @@ var Scale = (function () {
                 _this.ScreenManager.SetLogicalOffset(currentX, currentY, currentS);
                 setTimeout(zoom, cycle);
             } else {
+                _this.ScreenManager.SetScale(1);
                 _this.ScreenManager.SetLogicalOffset(logicalOffsetX, logicalOffsetY, target);
             }
         };
