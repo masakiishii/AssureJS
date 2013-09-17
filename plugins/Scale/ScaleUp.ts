@@ -12,8 +12,12 @@ class ScaleUpPlugIn extends AssureIt.PlugInSet {
 
 class ScaleUpActionPlugIn extends AssureIt.ActionPlugIn {
 	ScreenManager: AssureIt.ScreenManager;
+	Layer0box: JQuery;
+	Layer0: JQuery;
+	Layer1: JQuery;
 	ShapeGroup: JQuery;
 	DocBase: JQuery;
+	timeoutId: number;
 	private THRESHHOLD: number;
 	constructor(plugInManager: AssureIt.PlugInManager) {
 		this.ScreenManager = null;
@@ -41,6 +45,7 @@ class ScaleUpActionPlugIn extends AssureIt.ActionPlugIn {
 	Delegate(caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case, serverApi: AssureIt.ServerAPI): boolean {
 		var self = this;
 		this.ScreenManager = caseViewer.Screen;
+		$('.node').unbind('mouseenter').unbind('mouseleave');
 		$('.node').hover(function(e) {
 			var scale = self.ScreenManager.GetScale();
 			if (scale < self.THRESHHOLD) {
@@ -49,31 +54,43 @@ class ScaleUpActionPlugIn extends AssureIt.ActionPlugIn {
 				var oldShapeGroup: SVGGElement = view.SVGShape.ShapeGroup;
 				var oldDocBase: JQuery = view.HTMLDoc.DocBase;
 
+				self.Layer0box = $('#layer0box').clone();
+				self.Layer0 = self.Layer0box.children('g');
+				self.Layer0.empty();
+				self.Layer1 = $('#layer1').clone();
+				self.Layer1.empty();
+
 				self.ShapeGroup = $(<any>oldShapeGroup).clone();
 				self.ShapeGroup.attr("transform", "scale(" + (1 / caseViewer.Screen.GetScale()) + ")");
-				self.ShapeGroup.appendTo("#layer0");
+				self.ShapeGroup.appendTo(self.Layer0);
 				self.ShapeGroup.children('rect,polygon').attr('stroke', 'orange');
 
 				self.DocBase = oldDocBase.clone();
 				self.DocBase.attr("style", self.DocBase.attr("style") + "-webkit-transform-origin: 0% 0%;-webkit-transform: scale(" + (1 / caseViewer.Screen.GetScale()) + ")");
-				self.DocBase.appendTo("#layer1");
+				self.DocBase.appendTo(self.Layer1);
 
-				console.log(oldDocBase.css('left'));
 				var left = oldDocBase.css('left');
 				var top = oldDocBase.css('top');
 				self.SetPosition(Number(left.substr(0, left.length-2)) + 100 * (1 / scale), Number(top.substr(0, top.length-2)) - 100 * (1 / scale));
-				//self.SetPosition(e.screenX * (1 / scale), e.screenY * (1 / scale));
+				self.Layer0box.appendTo('#viewer');
+				self.Layer1.appendTo('#viewer');
 
 				return;
 			}
 		}, function() {
-			if (self.ShapeGroup) {
-				self.ShapeGroup.remove();	
-				self.ShapeGroup = null;
-				self.DocBase.remove();
-				self.DocBase = null;
-			}
+			self.removeElement();
 		});
 		return true;
+	}
+	removeElement() {
+		if (this.ShapeGroup) {
+			this.Layer0box.remove();
+			this.Layer1.remove();
+			this.Layer0box = null;
+			this.Layer0 = null;
+			this.Layer1 = null;
+			this.ShapeGroup = null;
+			this.DocBase = null;
+		}
 	}
 }
