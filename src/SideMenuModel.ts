@@ -13,7 +13,7 @@ module AssureIt {
 		static Create(models: SideMenuModel[]) {
 			for(var i: number = 0; i < models.length; i++) {
 				var model:SideMenuModel = models[i];
-				$('<li id="'+model.id+'"><a href="'+model.href+'">'+model.value+'</>').prepend($("#drop-menu"));
+				$("#drop-menu").prepend($('<li id="'+model.id+'"><a href="'+model.href+'">'+model.value+'</a></li>'));
 				$("#"+model.id).click(model.callback);
 			}
 		}

@@ -1,5 +1,6 @@
 /// <reference path="CaseModel.ts" />
 /// <reference path="CaseViewer.ts" />
+/* Layout.ts is deprecated. */
 
 module AssureIt {
 

@@ -8,29 +8,29 @@ var TimeLinePlugIn = (function (_super) {
     __extends(TimeLinePlugIn, _super);
     function TimeLinePlugIn(plugInManager) {
         _super.call(this, plugInManager);
-        this.MenuBarContentsPlugIn = new TimeLineMenuPlugIn(plugInManager);
+        this.SideMenuPlugIn = new TimeLineSideMenuPlugIn(plugInManager);
         this.ShortcutKeyPlugIn = new TimeLineKeyPlugIn(plugInManager);
     }
     return TimeLinePlugIn;
 })(AssureIt.PlugInSet);
 
-var TimeLineMenuPlugIn = (function (_super) {
-    __extends(TimeLineMenuPlugIn, _super);
-    function TimeLineMenuPlugIn(plugInManager) {
+var TimeLineSideMenuPlugIn = (function (_super) {
+    __extends(TimeLineSideMenuPlugIn, _super);
+    function TimeLineSideMenuPlugIn(plugInManager) {
         _super.call(this, plugInManager);
         this.visible = true;
     }
-    TimeLineMenuPlugIn.prototype.IsEnabled = function (caseViewer, caseModel) {
+    TimeLineSideMenuPlugIn.prototype.IsEnabled = function (caseViewer, Case0, serverApi) {
         return true;
     };
 
-    TimeLineMenuPlugIn.prototype.Delegate = function (caseViewer, caseModel, element, serverApi) {
-        var loc = serverApi.basepath + "case/" + caseModel.Case.CaseId + "/history";
-        element.append('<a href="' + loc + '" ><img id="timeline" src="' + serverApi.basepath + 'images/icon.png" title="History" alt="history" /></a>');
-        return true;
+    TimeLineSideMenuPlugIn.prototype.AddMenu = function (caseViewer, Case0, serverApi) {
+        var loc = serverApi.basepath + "case/" + Case0.CaseId + "/history";
+        return new AssureIt.SideMenuModel(loc, "History", "history", function (ev) {
+        });
     };
-    return TimeLineMenuPlugIn;
-})(AssureIt.MenuBarContentsPlugIn);
+    return TimeLineSideMenuPlugIn;
+})(AssureIt.SideMenuPlugIn);
 
 var TimeLineKeyPlugIn = (function (_super) {
     __extends(TimeLineKeyPlugIn, _super);

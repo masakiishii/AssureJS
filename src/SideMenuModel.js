@@ -17,7 +17,7 @@ var AssureIt;
         SideMenu.Create = function (models) {
             for (var i = 0; i < models.length; i++) {
                 var model = models[i];
-                $('<li id="' + model.id + '"><a href="' + model.href + '">' + model.value + '</>').prepend($("#drop-menu"));
+                $("#drop-menu").prepend($('<li id="' + model.id + '"><a href="' + model.href + '">' + model.value + '</a></li>'));
                 $("#" + model.id).click(model.callback);
             }
         };

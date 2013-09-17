@@ -32,4 +32,5 @@ src/ServerApi.ts
 src/RecApi.ts
 src/CommitModel.ts
 src/Pattern.ts
+src/SideMenuModel.ts
 test/CaseDecoderTest.ts

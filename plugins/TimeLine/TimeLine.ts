@@ -1,32 +1,31 @@
 /// <reference path="../../src/CaseModel.ts" />
 /// <reference path="../../src/ServerApi.ts" />
 /// <reference path="../../src/PlugInManager.ts" />
-/// <reference path="../Editor/Editor.ts" />
+/// <reference path="../../src/SideMenuModel.ts" />
 
 class TimeLinePlugIn extends AssureIt.PlugInSet {
 
 	constructor(plugInManager: AssureIt.PlugInManager) {
 		super(plugInManager);
-		this.MenuBarContentsPlugIn = new TimeLineMenuPlugIn(plugInManager);
+		this.SideMenuPlugIn = new TimeLineSideMenuPlugIn(plugInManager);
 		this.ShortcutKeyPlugIn = new TimeLineKeyPlugIn(plugInManager);
 	}
 
 }
 
-class TimeLineMenuPlugIn extends AssureIt.MenuBarContentsPlugIn {
+class TimeLineSideMenuPlugIn extends AssureIt.SideMenuPlugIn {
 	visible: boolean = true;
 	constructor(plugInManager: AssureIt.PlugInManager) {
 		super(plugInManager);
 	}
 
-	IsEnabled(caseViewer: AssureIt.CaseViewer, caseModel: AssureIt.NodeModel): boolean {
+	IsEnabled(caseViewer: AssureIt.CaseViewer, Case0: AssureIt.Case, serverApi: AssureIt.ServerAPI): boolean {
 		return true;
 	}
 
-	Delegate(caseViewer: AssureIt.CaseViewer, caseModel: AssureIt.NodeModel, element: JQuery, serverApi: AssureIt.ServerAPI): boolean {
-		var loc = serverApi.basepath + "case/" + caseModel.Case.CaseId + "/history";
-		element.append('<a href="'+ loc +'" ><img id="timeline" src="' + serverApi.basepath + 'images/icon.png" title="History" alt="history" /></a>');
-		return true;
+	AddMenu(caseViewer: AssureIt.CaseViewer, Case0: AssureIt.Case, serverApi: AssureIt.ServerAPI): AssureIt.SideMenuModel {
+		var loc = serverApi.basepath + "case/" + Case0.CaseId + "/history";
+		return new AssureIt.SideMenuModel(loc, "History", "history", (ev:Event)=>{});
 	}
 }
 
