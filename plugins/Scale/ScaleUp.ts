@@ -11,16 +11,27 @@ class ScaleUpPlugIn extends AssureIt.PlugInSet {
 }
 
 class ScaleUpActionPlugIn extends AssureIt.ActionPlugIn {
-
+	ScreenManager: AssureIt.ScreenManager;
 	constructor(plugInManager: AssureIt.PlugInManager) {
+		this.ScreenManager = null;
 		super(plugInManager);
 	}
 
 	IsEnabled(caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case): boolean {
-		return case0.IsEditable();
+		return true;
 	}
 
 	Delegate(caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case, serverApi: AssureIt.ServerAPI): boolean {
+		var self = this;
+		this.ScreenManager = caseViewer.Screen;
+		$('.node').hover(function() {
+				console.log(self.ScreenManager.GetScaleRate());
+			if (self.ScreenManager.GetScaleRate() < 1.0) {
+				console.log("bye");
+				return;
+			}
+			console.log("hi");
+		});
 		return true;
 	}
 }

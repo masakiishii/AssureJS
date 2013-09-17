@@ -16,13 +16,24 @@ var ScaleUpPlugIn = (function (_super) {
 var ScaleUpActionPlugIn = (function (_super) {
     __extends(ScaleUpActionPlugIn, _super);
     function ScaleUpActionPlugIn(plugInManager) {
+        this.ScreenManager = null;
         _super.call(this, plugInManager);
     }
     ScaleUpActionPlugIn.prototype.IsEnabled = function (caseViewer, case0) {
-        return case0.IsEditable();
+        return true;
     };
 
     ScaleUpActionPlugIn.prototype.Delegate = function (caseViewer, case0, serverApi) {
+        var self = this;
+        this.ScreenManager = caseViewer.Screen;
+        $('.node').hover(function () {
+            console.log(self.ScreenManager.GetScaleRate());
+            if (self.ScreenManager.GetScaleRate() < 1.0) {
+                console.log("bye");
+                return;
+            }
+            console.log("hi");
+        });
         return true;
     };
     return ScaleUpActionPlugIn;
