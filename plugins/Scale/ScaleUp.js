@@ -33,9 +33,7 @@ var ScaleUpActionPlugIn = (function (_super) {
         mat.e = x;
         mat.f = y;
 
-        var X_MARGIN = 50;
-        x = x + X_MARGIN;
-        this.DocBase.css({ left: x + this.DocBase.width() + "px", top: y + this.DocBase.height() + "px" });
+        this.DocBase.css({ left: x + "px", top: y + "px" });
     };
 
     ScaleUpActionPlugIn.prototype.Delegate = function (caseViewer, case0, serverApi) {
@@ -52,15 +50,16 @@ var ScaleUpActionPlugIn = (function (_super) {
                 self.ShapeGroup = $(oldShapeGroup).clone();
                 self.ShapeGroup.attr("transform", "scale(" + (1 / caseViewer.Screen.GetScale()) + ")");
                 self.ShapeGroup.appendTo("#layer0");
+                self.ShapeGroup.children('rect,polygon').attr('stroke', 'orange');
 
                 self.DocBase = oldDocBase.clone();
-                self.DocBase.attr("style", self.DocBase.attr("style") + "-webkit-transform: scale(" + (1 / caseViewer.Screen.GetScale()) + ")");
+                self.DocBase.attr("style", self.DocBase.attr("style") + "-webkit-transform-origin: 0% 0%;-webkit-transform: scale(" + (1 / caseViewer.Screen.GetScale()) + ")");
                 self.DocBase.appendTo("#layer1");
 
                 console.log(oldDocBase.css('left'));
                 var left = oldDocBase.css('left');
                 var top = oldDocBase.css('top');
-                self.SetPosition(Number(left.substr(0, left.length - 2)) + 100 * (1 / scale), Number(top.substr(0, top.length - 2)) - 50 * (1 / scale));
+                self.SetPosition(Number(left.substr(0, left.length - 2)) + 100 * (1 / scale), Number(top.substr(0, top.length - 2)) - 100 * (1 / scale));
 
                 return;
             }
