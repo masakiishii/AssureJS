@@ -65,7 +65,7 @@ class ScaleUpActionPlugIn extends AssureIt.ActionPlugIn {
 				self.ShapeGroup = $(<any>oldShapeGroup).clone();
 				self.ShapeGroup.attr("transform", "scale(" + (1 / caseViewer.Screen.GetScale()) + ")");
 				self.ShapeGroup.appendTo(self.Layer0);
-				self.ShapeGroup.children('rect,polygon').attr('stroke', 'orange');
+				self.ShapeGroup.children('rect,polygon,ellipse').attr('stroke', 'orange');
 
 				self.DocBase = oldDocBase.clone();
 				self.DocBase.attr("style", self.DocBase.attr("style") + "-webkit-transform-origin: 0% 0%;-webkit-transform: scale(" + (1 / caseViewer.Screen.GetScale()) + ")");
