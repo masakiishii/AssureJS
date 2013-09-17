@@ -27,18 +27,23 @@ var ScaleUpActionPlugIn = (function (_super) {
     };
 
     ScaleUpActionPlugIn.prototype.SetPosition = function (x, y) {
-        var mat = ((this.ShapeGroup[0])).transform.baseVal.getItem(0).matrix;
-        mat.e = 200;
-        mat.f = 200;
+        console.log(x, y);
 
-        this.DocBase.css({ left: "200px", top: "200px" });
+        var mat = ((this.ShapeGroup[0])).transform.baseVal.getItem(0).matrix;
+        mat.e = x;
+        mat.f = y;
+
+        var X_MARGIN = 50;
+        x = x + X_MARGIN;
+        this.DocBase.css({ left: x + this.DocBase.width() + "px", top: y + this.DocBase.height() + "px" });
     };
 
     ScaleUpActionPlugIn.prototype.Delegate = function (caseViewer, case0, serverApi) {
         var self = this;
         this.ScreenManager = caseViewer.Screen;
-        $('.node').hover(function () {
-            if (self.ScreenManager.GetScale() < self.THRESHHOLD) {
+        $('.node').hover(function (e) {
+            var scale = self.ScreenManager.GetScale();
+            if (scale < self.THRESHHOLD) {
                 var label = $(this).children('h4').text();
                 var view = caseViewer.ViewMap[label];
                 var oldShapeGroup = view.SVGShape.ShapeGroup;
@@ -52,7 +57,10 @@ var ScaleUpActionPlugIn = (function (_super) {
                 self.DocBase.attr("style", self.DocBase.attr("style") + "-webkit-transform: scale(" + (1 / caseViewer.Screen.GetScale()) + ")");
                 self.DocBase.appendTo("#layer1");
 
-                self.SetPosition(1, 1);
+                console.log(oldDocBase.css('left'));
+                var left = oldDocBase.css('left');
+                var top = oldDocBase.css('top');
+                self.SetPosition(Number(left.substr(0, left.length - 2)) + 100 * (1 / scale), Number(top.substr(0, top.length - 2)) - 50 * (1 / scale));
 
                 return;
             }

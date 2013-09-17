@@ -28,18 +28,25 @@ class ScaleUpActionPlugIn extends AssureIt.ActionPlugIn {
 	}
 
 	SetPosition(x: number, y: number) {
+		console.log(x, y);
+		//x = $('#layer0').position().left;
+		//y = $('#layer0').position().top;
 		var mat = (<any>(this.ShapeGroup[0])).transform.baseVal.getItem(0).matrix;
-		mat.e = 200;
-		mat.f = 200;
+		mat.e = x;
+		mat.f = y;
 
-		this.DocBase.css({ left: "200px", top: "200px"});
+		/* TODO fix the position */
+		var X_MARGIN = 50;
+		x = x + X_MARGIN;
+		this.DocBase.css({ left: x + this.DocBase.width() + "px", top: y + this.DocBase.height() + "px"});
 	}
 
 	Delegate(caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case, serverApi: AssureIt.ServerAPI): boolean {
 		var self = this;
 		this.ScreenManager = caseViewer.Screen;
-		$('.node').hover(function() {
-			if (self.ScreenManager.GetScale() < self.THRESHHOLD) {
+		$('.node').hover(function(e) {
+			var scale = self.ScreenManager.GetScale();
+			if (scale < self.THRESHHOLD) {
 				var label: string = $(this).children('h4').text();
 				var view: AssureIt.NodeView = caseViewer.ViewMap[label];
 				var oldShapeGroup: SVGGElement = view.SVGShape.ShapeGroup;
@@ -53,7 +60,11 @@ class ScaleUpActionPlugIn extends AssureIt.ActionPlugIn {
 				self.DocBase.attr("style", self.DocBase.attr("style") + "-webkit-transform: scale(" + (1 / caseViewer.Screen.GetScale()) + ")");
 				self.DocBase.appendTo("#layer1");
 
-				self.SetPosition(1, 1);
+				console.log(oldDocBase.css('left'));
+				var left = oldDocBase.css('left');
+				var top = oldDocBase.css('top');
+				self.SetPosition(Number(left.substr(0, left.length-2)) + 100 * (1 / scale), Number(top.substr(0, top.length-2)) - 50 * (1 / scale));
+				//self.SetPosition(e.screenX * (1 / scale), e.screenY * (1 / scale));
 
 				return;
 			}
