@@ -305,6 +305,15 @@ var AssureIt;
         Case.prototype.IsLatest = function () {
             return this.isLatest;
         };
+
+        Case.prototype.DiffCase = function (that) {
+            var keys = Object.keys(this.ElementMap);
+            for (var i = 0; i < keys.length; i++) {
+                if (!(keys[i] in that.ElementMap)) {
+                    this.ElementMap[keys[i]].HasDiff = true;
+                }
+            }
+        };
         return Case;
     })();
     AssureIt.Case = Case;

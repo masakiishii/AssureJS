@@ -335,6 +335,15 @@ module AssureIt {
 		IsLatest(): boolean {
 			return this.isLatest;
 		}
+
+		DiffCase(that: Case): void {
+			var keys: string[] = Object.keys(this.ElementMap);
+			for(var i: number =0; i< keys.length; i++) {
+				if(!(keys[i] in that.ElementMap)) {
+					this.ElementMap[keys[i]].HasDiff = true;
+				}
+			}
+		}
 	}
 
 }
