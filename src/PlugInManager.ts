@@ -1,6 +1,7 @@
 /// <reference path="CaseModel.ts" />
 /// <reference path="CaseViewer.ts" />
 /// <reference path="ServerApi.ts" />
+/// <reference path="SideMenuModel.ts" />
 
 module AssureIt {
 
@@ -8,22 +9,30 @@ module AssureIt {
 
 		ActionPlugIn: ActionPlugIn;
 		CheckerPlugIn: CheckerPlugIn;
+
 		HTMLRenderPlugIn: HTMLRenderPlugIn;
 		SVGRenderPlugIn: SVGRenderPlugIn;
-		MenuBarContentsPlugIn: MenuBarContentsPlugIn;
 		LayoutEnginePlugIn: LayoutEnginePlugIn;
+
 		PatternPlugIn: PatternPlugIn;
+
 		ShortcutKeyPlugIn: ShortcutKeyPlugIn;
+		MenuBarContentsPlugIn: MenuBarContentsPlugIn;
+		SideMenuPlugIn: SideMenuPlugIn;
 
 		constructor(public plugInManager: PlugInManager) {
 			this.ActionPlugIn = null;
 			this.CheckerPlugIn = null;
+
 			this.HTMLRenderPlugIn = null;
 			this.SVGRenderPlugIn = null;
-			this.MenuBarContentsPlugIn = null;
 			this.LayoutEnginePlugIn = null;
+
 			this.PatternPlugIn = null;
+
+			this.MenuBarContentsPlugIn = null;
 			this.ShortcutKeyPlugIn = null;
+			this.SideMenuPlugIn = null;
 		}
 	}
 
@@ -169,16 +178,34 @@ module AssureIt {
 		}
 	}
 
+	export class SideMenuPlugIn extends AbstractPlugIn {
+
+		constructor(public plugInManager: PlugInManager) {
+			super(plugInManager);
+		}
+
+		IsEnabled(caseViewer: CaseViewer, Case0: Case, serverApi: ServerAPI) : boolean {
+			return true;
+		}
+
+		AddMenu(caseViewer: CaseViewer, Case0: Case, serverApi: ServerAPI) : SideMenuModel {
+			return null;
+		}
+	}
+
 	export class PlugInManager {
 
 		ActionPlugInMap           : { [index: string]: ActionPlugIn };
 		CheckerPlugInMap          : { [index: string]: CheckerPlugIn };
+
 		HTMLRenderPlugInMap       : { [index: string]: HTMLRenderPlugIn };
 		SVGRenderPlugInMap        : { [index: string]: SVGRenderPlugIn };
-		MenuBarContentsPlugInMap  : { [index: string]: MenuBarContentsPlugIn };
 		LayoutEnginePlugInMap     : { [index: string]: LayoutEnginePlugIn };
 		PatternPlugInMap          : { [index: string]: PatternPlugIn };
+
+		MenuBarContentsPlugInMap  : { [index: string]: MenuBarContentsPlugIn };
 		ShortcutKeyPlugInMap      : { [index: string]: ShortcutKeyPlugIn };
+		SideMenuPlugInMap : { [index: string]: SideMenuPlugIn };
 
 		UILayer: AbstractPlugIn[];
 		UsingLayoutEngine: string;
@@ -186,12 +213,17 @@ module AssureIt {
 		constructor(public basepath: string) {
 			this.ActionPlugInMap = {};
 			this.CheckerPlugInMap = {};
+
 			this.HTMLRenderPlugInMap = {};
 			this.SVGRenderPlugInMap = {};
-			this.MenuBarContentsPlugInMap = {};
 			this.LayoutEnginePlugInMap = {};
+
 			this.PatternPlugInMap = {};
+
+			this.MenuBarContentsPlugInMap = {};
 			this.ShortcutKeyPlugInMap = {};
+			this.SideMenuPlugInMap = {};
+
 			this.UILayer = [];
 		}
 
@@ -217,9 +249,12 @@ module AssureIt {
 			if(plugIn.ShortcutKeyPlugIn) {
 				this.SetShortcutKeyPlugIn(key, plugIn.ShortcutKeyPlugIn);
 			}
+			if(plugIn.SideMenuPlugIn) {
+				this.SetSideMenuPlugIn(key, plugIn.SideMenuPlugIn);
+			}
 		}
 
-		SetActionPlugIn(key: string, actionPlugIn: ActionPlugIn) {
+		private SetActionPlugIn(key: string, actionPlugIn: ActionPlugIn) {
 			this.ActionPlugInMap[key] = actionPlugIn;
 		}
 
@@ -233,15 +268,15 @@ module AssureIt {
 			}
 		}
 
-		SetHTMLRenderPlugIn(key: string, HTMLRenderPlugIn: HTMLRenderPlugIn): void {
+		private SetHTMLRenderPlugIn(key: string, HTMLRenderPlugIn: HTMLRenderPlugIn): void {
 			this.HTMLRenderPlugInMap[key] = HTMLRenderPlugIn;
 		}
 
-		SetSVGRenderPlugIn(key: string, SVGRenderPlugIn: SVGRenderPlugIn): void {
+		private SetSVGRenderPlugIn(key: string, SVGRenderPlugIn: SVGRenderPlugIn): void {
 			this.SVGRenderPlugInMap[key] = SVGRenderPlugIn;
 		}
 
-		SetMenuBarContentsPlugIn(key: string, MenuBarContentsPlugIn: MenuBarContentsPlugIn): void {
+		private SetMenuBarContentsPlugIn(key: string, MenuBarContentsPlugIn: MenuBarContentsPlugIn): void {
 			this.MenuBarContentsPlugInMap[key] = MenuBarContentsPlugIn;
 		}
 
@@ -249,7 +284,7 @@ module AssureIt {
 			this.UsingLayoutEngine = key;
 		}
 
-		SetLayoutEnginePlugIn(key: string, LayoutEnginePlugIn: LayoutEnginePlugIn): void {
+		private SetLayoutEnginePlugIn(key: string, LayoutEnginePlugIn: LayoutEnginePlugIn): void {
 			this.LayoutEnginePlugInMap[key] = LayoutEnginePlugIn;
 		}
 
@@ -257,12 +292,16 @@ module AssureIt {
 			return this.LayoutEnginePlugInMap[this.UsingLayoutEngine];
 		}
 
-		SetPatternPlugIn(key: string, PatternPlugIn: PatternPlugIn): void {
+		private SetPatternPlugIn(key: string, PatternPlugIn: PatternPlugIn): void {
 			this.PatternPlugInMap[key] = PatternPlugIn;
 		}
 
-		SetShortcutKeyPlugIn(key: string, ShortcutKeyPlugIn: ShortcutKeyPlugIn): void {
+		private SetShortcutKeyPlugIn(key: string, ShortcutKeyPlugIn: ShortcutKeyPlugIn): void {
 			this.ShortcutKeyPlugInMap[key] = ShortcutKeyPlugIn;
+		}
+
+		private SetSideMenuPlugIn(key: string, SideMenuPlugIn: SideMenuPlugIn): void {
+			this.SideMenuPlugInMap[key] = SideMenuPlugIn;
 		}
 
 		UseUILayer(plugin :AbstractPlugIn): void {
@@ -296,6 +335,17 @@ module AssureIt {
 					plugin.RegisterKeyEvents(Case0, serverApi);
 				}
 			}
+		}
+
+		CreateSideMenu(caseViewer: CaseViewer, Case0: Case, serverApi: ServerAPI): void {
+			var SideMenuContents: SideMenuModel[] = [];
+			for(var key in this.SideMenuPlugInMap) {
+				var plugin: SideMenuPlugIn = this.SideMenuPlugInMap[key];
+				if(plugin.IsEnabled(caseViewer, Case0, serverApi)) {
+					SideMenuContents.push(plugin.AddMenu(caseViewer, Case0, serverApi));
+				}
+			}
+			SideMenu.Create(SideMenuContents);
 		}
 	}
 }
