@@ -26,6 +26,8 @@ module AssureIt {
 		Children: NodeModel[];
 		LineNumber : number;
 
+		HasDiff: boolean = false;
+
 
 		constructor(Case : Case, Parent : NodeModel, Type : NodeType, Label : string, Statement : string) {
 			this.Case = Case;

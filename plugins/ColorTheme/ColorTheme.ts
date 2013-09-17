@@ -35,7 +35,7 @@ class SimpleColorThemePlugIn extends AssureIt.PlugInSet {
 class ColorThemeSVGRenderPlugIn extends AssureIt.SVGRenderPlugIn {
 
 	stroke: any;
-	fill: any;
+	fill  : any;
 
 	constructor(public plugInManager: AssureIt.PlugInManager) {
 		super(plugInManager);
@@ -43,7 +43,8 @@ class ColorThemeSVGRenderPlugIn extends AssureIt.SVGRenderPlugIn {
 			"Goal":     "none",
 			"Strategy": "none",
 			"Context":  "none",
-			"Evidence": "none"
+			"Evidence": "none",
+			"Diff": "#FF0000"
 		};
 	}
 
@@ -54,23 +55,34 @@ class ColorThemeSVGRenderPlugIn extends AssureIt.SVGRenderPlugIn {
 	Delegate(caseViewer: AssureIt.CaseViewer, nodeView: AssureIt.NodeView): boolean {
 		var thisNodeType: AssureIt.NodeType = nodeView.Source.Type;
 
+		var fill   :string = "none";
+		var stroke :string = "none";
 		switch(thisNodeType) {
 			case AssureIt.NodeType.Goal:
-				nodeView.SVGShape.SetColor(this.fill.Goal, this.stroke.Goal);
+				fill = this.fill.Goal;
+				stroke = this.stroke.Goal;
 				break;
 			case AssureIt.NodeType.Strategy:
-				nodeView.SVGShape.SetColor(this.fill.Strategy, this.stroke.Strategy);
+				fill = this.fill.Strategy;
+				stroke = this.stroke.Strategy;
 				break;
 			case AssureIt.NodeType.Context:
-				nodeView.SVGShape.SetColor(this.fill.Context, this.stroke.Context);
+				fill = this.fill.Context;
+				stroke = this.stroke.Context;
 				break;
 			case AssureIt.NodeType.Evidence:
-				nodeView.SVGShape.SetColor(this.fill.Evidence, this.stroke.Evidence);
+				fill = this.fill.Evidence;
+				stroke = this.stroke.Evidence;
 				break;
 			default:
 				break;
 		}
 
+		if(nodeView.Source.HasDiff) {
+			stroke = this.stroke.Diff;
+		}
+
+		nodeView.SVGShape.SetColor(fill, stroke);
 		return true;
 	}
 
@@ -113,6 +125,7 @@ class SimpleColorThemeSVGRenderPlugIn extends ColorThemeSVGRenderPlugIn {
 			"Strategy": "#000000",
 			"Context":  "#000000",
 			"Evidence": "#000000",
+			"Diff": "#FF0000"
 		};
 		this.fill = {
 			"Goal":     "#ffffff",
