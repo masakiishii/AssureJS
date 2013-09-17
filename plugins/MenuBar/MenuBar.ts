@@ -1,6 +1,6 @@
-/// <reference path="../../src/CaseModel.ts" />
-/// <reference path="../../src/CaseEncoder.ts" />
-/// <reference path="../../src/PlugInManager.ts" />
+///<reference path="../../src/CaseModel.ts" />
+///<reference path="../../src/CaseEncoder.ts" />
+///<reference path="../../src/PlugInManager.ts" />
 
 class MenuBar {
 
@@ -346,6 +346,7 @@ class MenuBarActionPlugIn extends AssureIt.ActionPlugIn {
 		$('.node').unbind('mouseenter').unbind('mouseleave'); // FIXME: this line may cause other plugin's event handler.
 		$('.node').hover(function () {
 			var node = $(this);
+			if (caseViewer.Screen.GetScale() < 1) return; /* Menu bar is enable only if the scale is normal */
 			var refresh = () => {
 				var menutop = node.position().top / caseViewer.Screen.GetScale() + node.height() + 5;
 				var menuleft = node.position().left / caseViewer.Screen.GetScale()+(node.outerWidth()-menuBar.menu.width())/ 2;

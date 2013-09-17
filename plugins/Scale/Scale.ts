@@ -62,6 +62,7 @@ class Scale {
 				this.ScreenManager.SetLogicalOffset(currentX, currentY, currentS);
 				setTimeout(zoom, cycle);
 			}else{
+				this.ScreenManager.SetScale(1);
 				this.ScreenManager.SetLogicalOffset(logicalOffsetX, logicalOffsetY, target);
 			}
 		}

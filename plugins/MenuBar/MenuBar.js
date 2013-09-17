@@ -301,6 +301,8 @@ var MenuBarActionPlugIn = (function (_super) {
         $('.node').unbind('mouseenter').unbind('mouseleave');
         $('.node').hover(function () {
             var node = $(this);
+            if (caseViewer.Screen.GetScale() < 1)
+                return;
             var refresh = function () {
                 var menutop = node.position().top / caseViewer.Screen.GetScale() + node.height() + 5;
                 var menuleft = node.position().left / caseViewer.Screen.GetScale() + (node.outerWidth() - menuBar.menu.width()) / 2;
