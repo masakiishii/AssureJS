@@ -19,6 +19,7 @@ var AssureIt;
 
     var NodeModel = (function () {
         function NodeModel(Case, Parent, Type, Label, Statement) {
+            this.HasDiff = false;
             this.Case = Case;
             this.Type = Type;
             this.Label = Case.NewLabel(Type, Label);
