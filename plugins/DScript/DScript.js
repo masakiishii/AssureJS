@@ -52,7 +52,7 @@ var DScriptMenuPlugIn = (function (_super) {
                     self.editorPlugIn.caseViewer.ViewMap[TopNodeModel.Label] = caseView;
                 }
                 self.editorPlugIn.caseViewer.Draw();
-                var centeringNodeView = self.editorPlugIn.caseViewer.ViewMap[caseModel.Label];
+                var centeringNodeView = self.editorPlugIn.caseViewer.ViewMap[self.editorPlugIn.rootCaseModel.Label];
                 caseViewer.Screen.SetCaseCenter(centeringNodeView.AbsX, centeringNodeView.AbsY, centeringNodeView.HTMLDoc);
 
                 var $this = $(this);
