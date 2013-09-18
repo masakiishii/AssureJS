@@ -51,7 +51,7 @@ class CommitWindow {
 			}
 		});
 
-		$('#commit_button').click(function() {
+		function commit() {
 			var encoder : AssureIt.CaseEncoder = new AssureIt.CaseEncoder();
 			var contents : string = encoder.ConvertToASN(case0.ElementTop, false);
 
@@ -63,7 +63,16 @@ class CommitWindow {
 				case0.SetModified(false);
 				window.location.reload(); //FIXME
 			}
+		}
+
+		$('#message_box').keydown(function(e: JQueryEventObject) {
+			if(e.keyCode == 13) {
+				e.stopPropagation();
+				commit();
+			}
 		});
+
+		$('#commit_button').click(commit);
 	}
 
 }
