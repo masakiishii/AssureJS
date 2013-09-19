@@ -171,6 +171,10 @@ var MonitorManager = (function () {
                     continue;
                 }
 
+                if (monitorNode == null) {
+                    console.log("monitor:'" + key + "' is not registered");
+                }
+
                 monitorNode.UpdateLatestData(self.RECAPI);
                 if (monitorNode.LatestData == null)
                     continue;
@@ -200,6 +204,24 @@ var MonitorManager = (function () {
             monitorNode.SetType(type);
             monitorNode.SetCondition(condition);
         }
+
+        if (Object.keys(this.MonitorNodeMap).length == 1) {
+            this.StartMonitors(5000);
+        }
+    };
+
+    MonitorManager.prototype.RemoveMonitor = function (label) {
+        delete this.MonitorNodeMap[label];
+        if (Object.keys(this.MonitorNodeMap).length == 0) {
+            this.StopMonitors();
+        }
+    };
+
+    MonitorManager.prototype.IsRegisteredMonitor = function (label) {
+        if (label in this.MonitorNodeMap) {
+            return true;
+        }
+        return false;
     };
     return MonitorManager;
 })();
@@ -209,35 +231,12 @@ var MonitorPlugIn = (function (_super) {
     function MonitorPlugIn(plugInManager) {
         _super.call(this, plugInManager);
         this.plugInManager = plugInManager;
-        this.HTMLRenderPlugIn = new MonitorHTMLRenderPlugIn(plugInManager);
         this.SVGRenderPlugIn = new MonitorSVGRenderPlugIn(plugInManager);
-        this.MenuBarContentsPlugIn = new MonitorMenuPlugIn(plugInManager);
+        this.MenuBarContentsPlugIn = new MonitorMenuBarPlugIn(plugInManager);
+        this.SideMenuPlugIn = new MonitorSideMenuPlugIn(plugInManager);
     }
     return MonitorPlugIn;
 })(AssureIt.PlugInSet);
-
-var MonitorHTMLRenderPlugIn = (function (_super) {
-    __extends(MonitorHTMLRenderPlugIn, _super);
-    function MonitorHTMLRenderPlugIn() {
-        _super.apply(this, arguments);
-    }
-    MonitorHTMLRenderPlugIn.prototype.IsEnabled = function (caseViewer, nodeModel) {
-        return true;
-    };
-
-    MonitorHTMLRenderPlugIn.prototype.Delegate = function (caseViewer, nodeModel, element) {
-        if (monitorManager == null) {
-            monitorManager = new MonitorManager(caseViewer);
-        }
-
-        if (isMonitorNode(nodeModel)) {
-            monitorManager.SetMonitor(nodeModel);
-        }
-
-        return true;
-    };
-    return MonitorHTMLRenderPlugIn;
-})(AssureIt.HTMLRenderPlugIn);
 
 var MonitorSVGRenderPlugIn = (function (_super) {
     __extends(MonitorSVGRenderPlugIn, _super);
@@ -336,49 +335,65 @@ var MonitorTableWindow = (function () {
     return MonitorTableWindow;
 })();
 
-var MonitorMenuPlugIn = (function (_super) {
-    __extends(MonitorMenuPlugIn, _super);
-    function MonitorMenuPlugIn(plugInManager) {
+var MonitorMenuBarPlugIn = (function (_super) {
+    __extends(MonitorMenuBarPlugIn, _super);
+    function MonitorMenuBarPlugIn(plugInManager) {
         _super.call(this, plugInManager);
-        this.IsMonitoring = false;
     }
-    MonitorMenuPlugIn.prototype.IsEnabled = function (caseViewer, caseModel) {
+    MonitorMenuBarPlugIn.prototype.IsEnabled = function (caseViewer, caseModel) {
         return true;
     };
 
-    MonitorMenuPlugIn.prototype.Delegate = function (caseViewer, caseModel, element, serverApi) {
+    MonitorMenuBarPlugIn.prototype.Delegate = function (caseViewer, caseModel, element, serverApi) {
         if (monitorManager == null) {
             monitorManager = new MonitorManager(caseViewer);
         }
 
+        if (!isMonitorNode(caseModel)) {
+            return true;
+        }
+
         var self = this;
 
-        if (!this.IsMonitoring) {
-            element.append('<a href="#" ><img id="monitor-tgl" src="' + serverApi.basepath + 'images/icon.png" title="Start monitoring" alt="monitor-tgl" /></a>');
+        if (!monitorManager.IsRegisteredMonitor(caseModel.Label)) {
+            element.append('<a href="#" ><img id="monitor-tgl" src="' + serverApi.basepath + 'images/monitor.png" title="Set monitor" alt="monitor-tgl" /></a>');
         } else {
-            element.append('<a href="#" ><img id="monitor-tgl" src="' + serverApi.basepath + 'images/icon.png" title="Stop monitoring" alt="monitor-tgl" /></a>');
-            element.append('<a href="#" ><img id="monitors" src="' + serverApi.basepath + 'images/icon.png" title="Show monitors" alt="monitors" /></a>');
-
-            $('#monitors').unbind('click');
-            $('#monitors').click(function () {
-                var monitorTableWindow = new MonitorTableWindow();
-                monitorTableWindow.UpdateTable();
-                monitorTableWindow.Open();
-            });
+            element.append('<a href="#" ><img id="monitor-tgl" src="' + serverApi.basepath + 'images/monitor.png" title="Remove monitor" alt="monitor-tgl" /></a>');
         }
 
         $('#monitor-tgl').unbind('click');
         $('#monitor-tgl').click(function () {
-            if (!self.IsMonitoring) {
-                monitorManager.StartMonitors(5000);
+            if (!monitorManager.IsRegisteredMonitor(caseModel.Label)) {
+                monitorManager.SetMonitor(caseModel);
             } else {
-                monitorManager.StopMonitors();
+                monitorManager.RemoveMonitor(caseModel.Label);
             }
-
-            self.IsMonitoring = !self.IsMonitoring;
         });
 
         return true;
     };
-    return MonitorMenuPlugIn;
+    return MonitorMenuBarPlugIn;
 })(AssureIt.MenuBarContentsPlugIn);
+
+var MonitorSideMenuPlugIn = (function (_super) {
+    __extends(MonitorSideMenuPlugIn, _super);
+    function MonitorSideMenuPlugIn(plugInManager) {
+        _super.call(this, plugInManager);
+    }
+    MonitorSideMenuPlugIn.prototype.IsEnabled = function (caseViewer, Case0, serverApi) {
+        return true;
+    };
+
+    MonitorSideMenuPlugIn.prototype.AddMenu = function (caseViewer, Case0, serverApi) {
+        if (monitorManager == null) {
+            monitorManager = new MonitorManager(caseViewer);
+        }
+
+        return new AssureIt.SideMenuModel('#', 'Monitors', "monitors", function (ev) {
+            var monitorTableWindow = new MonitorTableWindow();
+            monitorTableWindow.UpdateTable();
+            monitorTableWindow.Open();
+        });
+    };
+    return MonitorSideMenuPlugIn;
+})(AssureIt.SideMenuPlugIn);

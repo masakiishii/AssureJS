@@ -28,9 +28,17 @@ var NoteHTMLRenderPlugIn = (function (_super) {
         var $note = $('<div id="note"></div>');
 
         for (var key in nodeModel.Notes) {
-            var note = nodeModel.Notes[key];
-            $('<p style="color: DarkOliveGreen">' + key + ": " + note + '</p>').appendTo($note);
-            $note.appendTo(element);
+            switch (key) {
+                case 'TranslatedTextEn':
+                    var note = nodeModel.Notes[key];
+                    $('<p style="color: DarkOliveGreen">' + note + '</p>').appendTo($note);
+                    $note.appendTo(element);
+                    break;
+                default:
+                    var note = nodeModel.Notes[key];
+                    $('<p style="color: DarkOliveGreen">' + key + ": " + note + '</p>').appendTo($note);
+                    $note.appendTo(element);
+            }
         }
 
         return true;
