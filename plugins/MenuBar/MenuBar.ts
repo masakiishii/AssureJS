@@ -30,8 +30,6 @@ class MenuBar {
 			'</div>');
 
 		if(this.case0.IsEditable()) { //TODO login
-		//this.menu.append('<a href="#" ><img id="center" src="'+this.serverApi.basepath+'images/scale.png" title="Center" alt="center" /></a>');
-		this.menu.append('<a href="#" ><img id="commit" src="'+this.serverApi.basepath+'images/commit.png" title="Commit" alt="commit" /></a>');
 		if(this.node.children("h4").text() != this.case0.ElementTop.Label) {
 			this.menu.append('<a href="#" ><img id="remove" src="'+this.serverApi.basepath+'images/remove.png" title="Remove" alt="remove" /></a>');
 		}
@@ -119,109 +117,11 @@ class MenuBar {
 		this.caseViewer.Screen.SetOffset(parentOffSet.left-CurrentParentView.AbsX, parentOffSet.top-CurrentParentView.AbsY);
 	}
 
-	Commit(): void {
-		(<any>$('#modal-commit')).dialog('open');
-	}
-
 	Center(): void {
 		var thisLabel: string = this.node.children("h4").text();
 		var thisNodeView: AssureIt.NodeView = this.caseViewer.ViewMap[thisLabel];
 		var screenManager = this.caseViewer.Screen;
 		screenManager.SetCaseCenter(thisNodeView.AbsX, thisNodeView.AbsY, thisNodeView.HTMLDoc);
-	}
-
-	/* obsolete */
-	Scale(): void {
-		var timers: number[] = [];
-		var screenManager = this.caseViewer.Screen;
-		var caseViewer = this.caseViewer;
-		var editorIsActive: boolean = false;
-
-		var svgwidth = screenManager.GetCaseWidth();
-		var svgheight = screenManager.GetCaseHeight();
-		var bodywidth = screenManager.GetWidth();
-		var bodyheight = screenManager.GetHeight();
-
-		var scaleWidth = bodywidth / svgwidth;
-		var scaleHeight = bodyheight / svgheight;
-
-		var scaleRate = Math.min(scaleWidth, scaleHeight);
-		if(scaleRate >= 1.0) {
-			return;
-		}
-
-		var startZoom = (logicalOffsetX: number, logicalOffsetY: number, initialS: number, target: number, duration: number) => {
-			var cycle = 1000/30;
-			var cycles = duration / cycle;
-			var initialX = screenManager.GetLogicalOffsetX();
-			var initialY = screenManager.GetLogicalOffsetY();
-			var deltaS = (target - initialS) / cycles;
-			var deltaX = (logicalOffsetX - initialX) / cycles;
-			var deltaY = (logicalOffsetY - initialY)  / cycles;
-
-			var currentS = initialS;
-			var currentX = initialX;
-			var currentY = initialY;
-			var count = 0;
-			var zoom = ()=>{
-				if(count < cycles){
-					count += 1;
-					currentS += deltaS;
-					currentX += deltaX;
-					currentY += deltaY;
-					screenManager.SetLogicalOffset(currentX, currentY, currentS);
-					setTimeout(zoom, cycle);
-				}else{
-					screenManager.SetLogicalOffset(logicalOffsetX, logicalOffsetY, target);
-				}
-			}
-			zoom();
-		}
-
-		startZoom(screenManager.GetLogicalOffsetX(), screenManager.GetLogicalOffsetY(), 1.0, scaleRate, 500);
-
-		$(".node").unbind();
-
-		//var CancelClickEvent: (ev: JQueryEventObject) => void = function(ev: JQueryEventObject): void {
-		//	var timer: number = timers.pop();
-
-		//	while(timer) {
-		//		clearTimeout(timer);
-		//		timer = timers.pop();
-		//	}
-
-		//	if(ev.type == "dblclick") {
-		//		editorIsActive = true;
-		//	}
-		//}
-
-		//var EscapeFromEditor: (ev: JQueryEventObject) => void = function(ev: JQueryEventObject): void {
-		//	if(ev.keyCode = 27 /* ESC */) {
-		//		editorIsActive = false;
-		//	}
-		//}
-
-		var ScaleDown: (e:any) => void = function(e): void {
-			if(!editorIsActive) {
-				timers.push(setTimeout(function() {
-					var x = screenManager.CalcLogicalOffsetXFromPageX(e.pageX);
-					var y = screenManager.CalcLogicalOffsetYFromPageY(e.pageY);
-					startZoom(x, y, scaleRate, 1.0, 500);
-					$("#background").unbind("dblclick", ScaleDown);
-					//$("#background").unbind("dblclick", CancelClickEvent);
-					//$("#background").unbind("mousemove", CancelClickEvent);
-					//$("#fullscreen-editor-wrapper").unbind("keydown", EscapeFromEditor);
-					caseViewer.Draw();
-				}, 500));
-			}
-			else {
-				editorIsActive = false;
-			}
-		}
-
-		$("#background").dblclick(ScaleDown);
-		//$("#background").mousemove(CancelClickEvent);
-		//$("#fullscreen-editor-wrapper").keydown(EscapeFromEditor);
 	}
 
 	SetEventHandlers(): void {
@@ -247,87 +147,10 @@ class MenuBar {
 			$('#menu').remove();
 		});
 
-		$('#commit').click(() => {
-			this.Commit();
-		});
-
-//		$('#scale').click(() => {
-//			this.Scale();
-//		});
-
-		$('#center').click(() => {
-			this.Center();
-		});
-
 	}
 
 }
 
-class CommitWindow {
-
-	defaultMessage: string = "Type your commit message...";
-
-	constructor() {
-		this.Init();
-	}
-
-	Init(): void {
-		$('#modal-commit').remove();
-		var modal = $('<div id="modal-commit" title="Commit Message" />');
-		(<any>modal).dialog({
-			autoOpen: false,
-			modal: true,
-			resizable: false,
-			draggable: false,
-			show: "clip",
-			hide: "fade"
-		});
-
-		var messageBox = $('<p align="center"></p>');
-		messageBox.append($('<input id="message_box" type="text" size="30" value="'
-					+ this.defaultMessage
-					+ '" />')
-				.css({ 'color': 'gray', 'width': '18em', 'height': '2em' }));
-
-		var commitButton  = $('<p align="right"><input id="commit_button" type="button" value="commit"/></p>');
-		modal.append(messageBox);
-		modal.append(commitButton);
-		modal.appendTo($('layer2'));
-	}
-
-	SetEventHandlers(caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case, serverApi: AssureIt.ServerAPI): void {
-		var self = this;
-
-		$('#message_box').focus(function() {
-			if($(this).val() == self.defaultMessage) {
-				$(this).val("");
-				$(this).css('color', 'black');
-			}
-		});
-
-		$('#message_box').blur(function() {
-			if($(this).val() == "") {
-				$(this).val(self.defaultMessage);
-				$(this).css('color', 'gray');
-			}
-		});
-
-		$('#commit_button').click(function() {
-			var encoder : AssureIt.CaseEncoder = new AssureIt.CaseEncoder();
-			var contents : string = encoder.ConvertToASN(case0.ElementTop, false);
-
-			if($("#message_box").val() == self.defaultMessage) {
-				alert("Please put some commit message in the text box.");
-			}
-			else {
-				serverApi.Commit(contents, $("#message_box").val(), case0.CommitId);
-				case0.SetModified(false);
-				window.location.reload(); //FIXME
-			}
-		});
-	}
-
-}
 
 class MenuBarPlugIn extends AssureIt.PlugInSet {
 
@@ -337,6 +160,7 @@ class MenuBarPlugIn extends AssureIt.PlugInSet {
 	}
 
 }
+
 
 class MenuBarActionPlugIn extends AssureIt.ActionPlugIn {
 	timeoutId: number;
@@ -378,8 +202,6 @@ class MenuBarActionPlugIn extends AssureIt.ActionPlugIn {
 			self.plugInManager.UseUILayer(self);
 			menuBar.SetEventHandlers();
 
-			var commitWindow: CommitWindow = new CommitWindow();
-			commitWindow.SetEventHandlers(caseViewer, case0, serverApi);
 			self.plugInManager.InvokePlugInMenuBarContents(caseViewer, model, menuBar.menu, serverApi);
 
 			(<any>menuBar.menu).jqDock({

@@ -21,7 +21,6 @@ var MenuBar = (function () {
         this.menu = $('<div id="menu">' + '</div>');
 
         if (this.case0.IsEditable()) {
-            this.menu.append('<a href="#" ><img id="commit" src="' + this.serverApi.basepath + 'images/commit.png" title="Commit" alt="commit" /></a>');
             if (this.node.children("h4").text() != this.case0.ElementTop.Label) {
                 this.menu.append('<a href="#" ><img id="remove" src="' + this.serverApi.basepath + 'images/remove.png" title="Remove" alt="remove" /></a>');
             }
@@ -109,84 +108,11 @@ var MenuBar = (function () {
         this.caseViewer.Screen.SetOffset(parentOffSet.left - CurrentParentView.AbsX, parentOffSet.top - CurrentParentView.AbsY);
     };
 
-    MenuBar.prototype.Commit = function () {
-        ($('#modal-commit')).dialog('open');
-    };
-
     MenuBar.prototype.Center = function () {
         var thisLabel = this.node.children("h4").text();
         var thisNodeView = this.caseViewer.ViewMap[thisLabel];
         var screenManager = this.caseViewer.Screen;
         screenManager.SetCaseCenter(thisNodeView.AbsX, thisNodeView.AbsY, thisNodeView.HTMLDoc);
-    };
-
-    MenuBar.prototype.Scale = function () {
-        var timers = [];
-        var screenManager = this.caseViewer.Screen;
-        var caseViewer = this.caseViewer;
-        var editorIsActive = false;
-
-        var svgwidth = screenManager.GetCaseWidth();
-        var svgheight = screenManager.GetCaseHeight();
-        var bodywidth = screenManager.GetWidth();
-        var bodyheight = screenManager.GetHeight();
-
-        var scaleWidth = bodywidth / svgwidth;
-        var scaleHeight = bodyheight / svgheight;
-
-        var scaleRate = Math.min(scaleWidth, scaleHeight);
-        if (scaleRate >= 1.0) {
-            return;
-        }
-
-        var startZoom = function (logicalOffsetX, logicalOffsetY, initialS, target, duration) {
-            var cycle = 1000 / 30;
-            var cycles = duration / cycle;
-            var initialX = screenManager.GetLogicalOffsetX();
-            var initialY = screenManager.GetLogicalOffsetY();
-            var deltaS = (target - initialS) / cycles;
-            var deltaX = (logicalOffsetX - initialX) / cycles;
-            var deltaY = (logicalOffsetY - initialY) / cycles;
-
-            var currentS = initialS;
-            var currentX = initialX;
-            var currentY = initialY;
-            var count = 0;
-            var zoom = function () {
-                if (count < cycles) {
-                    count += 1;
-                    currentS += deltaS;
-                    currentX += deltaX;
-                    currentY += deltaY;
-                    screenManager.SetLogicalOffset(currentX, currentY, currentS);
-                    setTimeout(zoom, cycle);
-                } else {
-                    screenManager.SetLogicalOffset(logicalOffsetX, logicalOffsetY, target);
-                }
-            };
-            zoom();
-        };
-
-        startZoom(screenManager.GetLogicalOffsetX(), screenManager.GetLogicalOffsetY(), 1.0, scaleRate, 500);
-
-        $(".node").unbind();
-
-        var ScaleDown = function (e) {
-            if (!editorIsActive) {
-                timers.push(setTimeout(function () {
-                    var x = screenManager.CalcLogicalOffsetXFromPageX(e.pageX);
-                    var y = screenManager.CalcLogicalOffsetYFromPageY(e.pageY);
-                    startZoom(x, y, scaleRate, 1.0, 500);
-                    $("#background").unbind("dblclick", ScaleDown);
-
-                    caseViewer.Draw();
-                }, 500));
-            } else {
-                editorIsActive = false;
-            }
-        };
-
-        $("#background").dblclick(ScaleDown);
     };
 
     MenuBar.prototype.SetEventHandlers = function () {
@@ -211,75 +137,8 @@ var MenuBar = (function () {
             _this.RemoveNode();
             $('#menu').remove();
         });
-
-        $('#commit').click(function () {
-            _this.Commit();
-        });
-
-        $('#center').click(function () {
-            _this.Center();
-        });
     };
     return MenuBar;
-})();
-
-var CommitWindow = (function () {
-    function CommitWindow() {
-        this.defaultMessage = "Type your commit message...";
-        this.Init();
-    }
-    CommitWindow.prototype.Init = function () {
-        $('#modal-commit').remove();
-        var modal = $('<div id="modal-commit" title="Commit Message" />');
-        (modal).dialog({
-            autoOpen: false,
-            modal: true,
-            resizable: false,
-            draggable: false,
-            show: "clip",
-            hide: "fade"
-        });
-
-        var messageBox = $('<p align="center"></p>');
-        messageBox.append($('<input id="message_box" type="text" size="30" value="' + this.defaultMessage + '" />').css({ 'color': 'gray', 'width': '18em', 'height': '2em' }));
-
-        var commitButton = $('<p align="right"><input id="commit_button" type="button" value="commit"/></p>');
-        modal.append(messageBox);
-        modal.append(commitButton);
-        modal.appendTo($('layer2'));
-    };
-
-    CommitWindow.prototype.SetEventHandlers = function (caseViewer, case0, serverApi) {
-        var self = this;
-
-        $('#message_box').focus(function () {
-            if ($(this).val() == self.defaultMessage) {
-                $(this).val("");
-                $(this).css('color', 'black');
-            }
-        });
-
-        $('#message_box').blur(function () {
-            if ($(this).val() == "") {
-                $(this).val(self.defaultMessage);
-                $(this).css('color', 'gray');
-            }
-        });
-
-        $('#commit_button').click(function () {
-            var encoder = new AssureIt.CaseEncoder();
-            var contents = encoder.ConvertToASN(case0.ElementTop, false);
-
-            if ($("#message_box").val() == self.defaultMessage) {
-                alert("Please put some commit message in the text box.");
-            } else {
-                serverApi.Commit(contents, $("#message_box").val(), case0.CommitId);
-                case0.SetModified(false);
-                window.location.reload();
-            }
-        });
-    };
-    return CommitWindow;
 })();
 
 var MenuBarPlugIn = (function (_super) {
@@ -329,8 +188,6 @@ var MenuBarActionPlugIn = (function (_super) {
             self.plugInManager.UseUILayer(self);
             menuBar.SetEventHandlers();
 
-            var commitWindow = new CommitWindow();
-            commitWindow.SetEventHandlers(caseViewer, case0, serverApi);
             self.plugInManager.InvokePlugInMenuBarContents(caseViewer, model, menuBar.menu, serverApi);
 
             (menuBar.menu).jqDock({
