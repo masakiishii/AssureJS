@@ -60,7 +60,7 @@ function appendNode(caseViewer, nodeModel, type) {
     var viewMap = caseViewer.ViewMap;
     var view = viewMap[nodeModel.Label];
     var case0 = caseViewer.Source;
-    var newNodeModel = new AssureIt.NodeModel(case0, nodeModel, type, null, null);
+    var newNodeModel = new AssureIt.NodeModel(case0, nodeModel, type, null, null, {});
     case0.SaveIdCounterMax(case0.ElementTop);
     viewMap[newNodeModel.Label] = new AssureIt.NodeView(caseViewer, newNodeModel);
     viewMap[newNodeModel.Label].ParentShape = viewMap[nodeModel.Label];

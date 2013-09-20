@@ -58,7 +58,7 @@ var MenuBar = (function () {
 
     MenuBar.prototype.AddNode = function (nodeType) {
         var thisNodeView = this.caseViewer.ViewMap[this.node.children("h4").text()];
-        var newNodeModel = new AssureIt.NodeModel(this.case0, thisNodeView.Source, nodeType, null, null);
+        var newNodeModel = new AssureIt.NodeModel(this.case0, thisNodeView.Source, nodeType, null, null, {});
         this.case0.SaveIdCounterMax(this.case0.ElementTop);
         this.caseViewer.ViewMap[newNodeModel.Label] = new AssureIt.NodeView(this.caseViewer, newNodeModel);
         this.caseViewer.ViewMap[newNodeModel.Label].ParentShape = this.caseViewer.ViewMap[newNodeModel.Parent.Label];
