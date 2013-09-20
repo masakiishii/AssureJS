@@ -34,6 +34,13 @@ class CommitWindow {
 		modal.appendTo($('layer2'));
 	}
 
+	MakeSummary(case0: AssureIt.Case): any {
+		var ret: any = {};
+
+		ret.count = Object.keys(case0.ElementMap).length;
+		return ret;
+	}
+
 	SetEventHandlers(caseViewer: AssureIt.CaseViewer, case0: AssureIt.Case, serverApi: AssureIt.ServerAPI): void {
 		var self = this;
 
@@ -59,7 +66,7 @@ class CommitWindow {
 				alert("Please put some commit message in the text box.");
 			}
 			else {
-				serverApi.Commit(contents, $("#message_box").val(), case0.CommitId);
+				serverApi.Commit(contents, $("#message_box").val(), case0.CommitId, self.MakeSummary(case0));
 				case0.SetModified(false);
 				window.location.reload(); //FIXME
 			}

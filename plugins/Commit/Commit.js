@@ -30,6 +30,13 @@ var CommitWindow = (function () {
         modal.appendTo($('layer2'));
     };
 
+    CommitWindow.prototype.MakeSummary = function (case0) {
+        var ret = {};
+
+        ret.count = Object.keys(case0.ElementMap).length;
+        return ret;
+    };
+
     CommitWindow.prototype.SetEventHandlers = function (caseViewer, case0, serverApi) {
         var self = this;
 
@@ -54,7 +61,7 @@ var CommitWindow = (function () {
             if ($("#message_box").val() == self.defaultMessage) {
                 alert("Please put some commit message in the text box.");
             } else {
-                serverApi.Commit(contents, $("#message_box").val(), case0.CommitId);
+                serverApi.Commit(contents, $("#message_box").val(), case0.CommitId, self.MakeSummary(case0));
                 case0.SetModified(false);
                 window.location.reload();
             }

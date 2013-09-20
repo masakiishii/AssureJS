@@ -83,12 +83,12 @@ module AssureIt {
 			return this.RemoteCall("getTagList", {});
 		}
 
-		Commit(tree, msg, commitId) {
+		Commit(tree, msg, commitId, summary) {
 			return this.RemoteCall("commit", {
 				contents: tree,
 				commitMessage: msg,
 				'commitId': commitId,
-		//		userId: userId
+				summary: JSON.stringify(summary)
 			}).commitId;
 		}
 
