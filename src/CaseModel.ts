@@ -45,8 +45,8 @@ module AssureIt {
 			this.Notes = (Notes == null)  ? {}: Notes;
 			if (this.Notes['TranslatedTextEn']) {
 				this.Case.SetTranslation(this.Statement, this.Notes['TranslatedTextEn']);
-			} else {
-				this.Notes['TranslatedtextEn'] = this.Case.GetTranslation(this.Statement);
+			} else if (this.Case.GetTranslation(this.Statement)) {
+				this.Notes['TranslatedTextEn'] = this.Case.GetTranslation(this.Statement);
 			}
 
 			Case.ElementMap[this.Label] = this; // TODO: ensure consistensy of labels
