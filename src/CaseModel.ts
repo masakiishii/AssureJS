@@ -1,3 +1,5 @@
+///<reference path="./Pattern.ts" />
+
 module AssureIt {
 
 	export class CaseAnnotation {
@@ -40,7 +42,12 @@ module AssureIt {
 			}
 			this.Children = [];
 			this.Annotations = [];
-			this.Notes = Notes;
+			this.Notes = (Notes == null)  ? {}: Notes;
+			if (this.Notes['TranslatedTextEn']) {
+				this.Case.SetTranslation(this.Statement, this.Notes['TranslatedTextEn']);
+			} else {
+				this.Notes['TranslatedtextEn'] = this.Case.GetTranslation(this.Statement);
+			}
 
 			Case.ElementMap[this.Label] = this; // TODO: ensure consistensy of labels
 			this.LineNumber = 1; /*FIXME*/
@@ -171,6 +178,7 @@ module AssureIt {
 		IdCounters : any[];
 		ElementTop : NodeModel;
 		ElementMap : { [index: string]: NodeModel};
+		TranslationMap : { [index: string]: string};
 
 		private isModified : boolean = false;
 		isEditable : boolean = false;
@@ -179,6 +187,7 @@ module AssureIt {
 		constructor(public CaseName: string, public CaseId: number, public CommitId: number, public pluginManager: PlugInManager) {
 			this.IdCounters = [{}, {}, {}, {}, {}];
 			this.ElementMap = {};
+			this.TranslationMap = {};
 		}
 
 		DeleteNodesRecursive(root : NodeModel) : void {
@@ -343,6 +352,18 @@ module AssureIt {
 					this.ElementMap[keys[i]].HasDiff = true;
 				}
 			}
+		}
+
+		GetTranslation(key: string): string {
+			if (this.TranslationMap[key]) {
+				return this.TranslationMap[key];
+			} else {
+				return '';
+			}
+		}
+
+		SetTranslation(key: string, value: string): void {
+			this.TranslationMap[key] = value;
 		}
 	}
 
