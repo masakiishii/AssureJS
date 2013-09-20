@@ -144,13 +144,20 @@ var ExportActionPlugIn = (function (_super) {
             $target.append($(svg).clone(false));
             $target.append($(connector).clone(false));
 
-            var $svgtext = $(document.createElementNS(SVG_NS, "text")).attr({ x: div.offsetLeft, y: div.offsetTop + 10 });
+            var $svgtext = $(document.createElementNS(SVG_NS, "text")).attr({ "font-size": "18px", x: div.offsetLeft + 10, y: div.offsetTop + 30 });
 
-            $(document.createElementNS(SVG_NS, "tspan")).text(node.Label).attr("font-weight", "bold").appendTo($svgtext);
+            $(document.createElementNS(SVG_NS, "tspan")).text(node.Label).attr({ "font-weight": "bold", "font-family": 'Arial' }).appendTo($svgtext);
+            $(document.createElementNS(SVG_NS, "tspan")).text("").attr({ dy: "10px", "font-weight": "bold", "font-family": 'Arial' }).appendTo($svgtext);
 
-            _this.foreachLine(node.Statement, 1 + ~~(div.offsetWidth * 2 / 13), function (linetext) {
-                $(document.createElementNS(SVG_NS, "tspan")).text(linetext).attr({ x: div.offsetLeft, dy: 15, "font-size": "13px" }).appendTo($svgtext);
+            _this.foreachLine(node.Statement, 1 + ~~(div.offsetWidth * 2 / 15), function (linetext) {
+                $(document.createElementNS(SVG_NS, "tspan")).text(linetext).attr({ x: div.offsetLeft + 10, dy: 15, "font-size": "13px", "font-family": 'Helvetica Neue' }).appendTo($svgtext);
             });
+
+            if (node.Notes && node.Notes['TranslatedTextEn']) {
+                _this.foreachLine(node.Notes['TranslatedTextEn'], 1 + ~~(div.offsetWidth * 2 / 15), function (linetext) {
+                    $(document.createElementNS(SVG_NS, "tspan")).text(linetext).attr({ x: div.offsetLeft + 10, dy: 15, "fill": "green", "font-size": "13px", "font-family": 'Helvetica Neue' }).appendTo($svgtext);
+                });
+            }
 
             $target.append($svgtext);
         });
