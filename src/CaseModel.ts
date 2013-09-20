@@ -29,7 +29,7 @@ module AssureIt {
 		HasDiff: boolean = false;
 
 
-		constructor(Case : Case, Parent : NodeModel, Type : NodeType, Label : string, Statement : string) {
+		constructor(Case: Case, Parent: NodeModel, Type: NodeType, Label: string, Statement: string,Notes: {[index: string]: string}) {
 			this.Case = Case;
 			this.Type = Type;
 			this.Label = Case.NewLabel(Type, Label);
@@ -40,7 +40,7 @@ module AssureIt {
 			}
 			this.Children = [];
 			this.Annotations = [];
-			this.Notes = {};
+			this.Notes = Notes;
 
 			Case.ElementMap[this.Label] = this; // TODO: ensure consistensy of labels
 			this.LineNumber = 1; /*FIXME*/

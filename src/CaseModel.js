@@ -18,7 +18,7 @@ var AssureIt;
     var NodeType = AssureIt.NodeType;
 
     var NodeModel = (function () {
-        function NodeModel(Case, Parent, Type, Label, Statement) {
+        function NodeModel(Case, Parent, Type, Label, Statement, Notes) {
             this.HasDiff = false;
             this.Case = Case;
             this.Type = Type;
@@ -30,7 +30,7 @@ var AssureIt;
             }
             this.Children = [];
             this.Annotations = [];
-            this.Notes = {};
+            this.Notes = Notes;
 
             Case.ElementMap[this.Label] = this;
             this.LineNumber = 1;
