@@ -121,7 +121,7 @@ var MonitorNode = (function () {
     };
 
     MonitorNode.prototype.UpdateStatus = function () {
-        if (this.Status = true) {
+        if (this.Status == true) {
             var script = "var " + this.Type + "=" + this.LatestData.data + ";";
             script += this.Condition + ";";
             this.Status = eval(script);
@@ -152,8 +152,10 @@ var MonitorNode = (function () {
 })();
 
 var MonitorManager = (function () {
-    function MonitorManager(caseViewer) {
-        this.RECAPI = new AssureIt.RECAPI("http://54.250.206.119/rec");
+    function MonitorManager(caseViewer, recpath) {
+        console.log("recpath");
+        console.log(recpath);
+        this.RECAPI = new AssureIt.RECAPI(recpath);
         this.MonitorNodeMap = {};
         this.CaseViewer = caseViewer;
         this.HTMLRenderFunction = this.CaseViewer.GetPlugInHTMLRender("note");
@@ -346,7 +348,7 @@ var MonitorMenuBarPlugIn = (function (_super) {
 
     MonitorMenuBarPlugIn.prototype.Delegate = function (caseViewer, caseModel, element, serverApi) {
         if (monitorManager == null) {
-            monitorManager = new MonitorManager(caseViewer);
+            monitorManager = new MonitorManager(caseViewer, serverApi.recpath);
         }
 
         if (!isMonitorNode(caseModel)) {
@@ -386,7 +388,7 @@ var MonitorSideMenuPlugIn = (function (_super) {
 
     MonitorSideMenuPlugIn.prototype.AddMenu = function (caseViewer, Case0, serverApi) {
         if (monitorManager == null) {
-            monitorManager = new MonitorManager(caseViewer);
+            monitorManager = new MonitorManager(caseViewer, serverApi.recpath);
         }
 
         return new AssureIt.SideMenuModel('#', 'Monitors', "monitors", "glyphicon-list-alt", function (ev) {

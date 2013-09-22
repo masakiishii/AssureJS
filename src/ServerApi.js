@@ -8,15 +8,11 @@ var AssureIt;
     };
 
     var ServerAPI = (function () {
-        function ServerAPI(basepath, isLocal) {
-            if (isLocal == null) {
-                isLocal = false;
-            }
+        function ServerAPI(basepath, recpath) {
             this.uri = basepath + "/api/1.0/";
             this.basepath = basepath;
-            if (!isLocal) {
-                this.basepath = basepath + "/";
-            }
+            this.recpath = recpath;
+            this.basepath = basepath + "/";
         }
         ServerAPI.prototype.RemoteCall = function (method, params) {
             var cmd = {

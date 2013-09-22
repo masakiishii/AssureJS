@@ -140,7 +140,7 @@ class MonitorNode {
 	}
 
 	UpdateStatus() {
-		if(this.Status = true) {
+		if(this.Status == true) {
 			var script: string = "var "+this.Type+"="+this.LatestData.data+";";
 			script += this.Condition+";";
 			this.Status = eval(script);   // FIXME: don't use eval()
@@ -182,8 +182,10 @@ class MonitorManager {
 	HTMLRenderFunction: Function;
 	SVGRenderFunction: Function;
 
-	constructor(caseViewer: AssureIt.CaseViewer) {
-		this.RECAPI = new AssureIt.RECAPI("http://54.250.206.119/rec");
+	constructor(caseViewer: AssureIt.CaseViewer, recpath: string) {
+		console.log("recpath");
+		console.log(recpath);
+		this.RECAPI = new AssureIt.RECAPI(recpath);
 		this.MonitorNodeMap = {};
 		this.CaseViewer = caseViewer;
 		this.HTMLRenderFunction = this.CaseViewer.GetPlugInHTMLRender("note");
@@ -397,7 +399,7 @@ class MonitorMenuBarPlugIn extends AssureIt.MenuBarContentsPlugIn {
 
 	Delegate(caseViewer: AssureIt.CaseViewer, caseModel: AssureIt.NodeModel, element: JQuery, serverApi: AssureIt.ServerAPI): boolean {
 		if(monitorManager == null) {
-			monitorManager = new MonitorManager(caseViewer);
+			monitorManager = new MonitorManager(caseViewer, serverApi.recpath);
 		}
 
 		if(!isMonitorNode(caseModel)) {
@@ -441,7 +443,7 @@ class MonitorSideMenuPlugIn extends AssureIt.SideMenuPlugIn {
 
 	AddMenu(caseViewer: AssureIt.CaseViewer, Case0: AssureIt.Case, serverApi: AssureIt.ServerAPI): AssureIt.SideMenuModel {
 		if(monitorManager == null) {
-			monitorManager = new MonitorManager(caseViewer);
+			monitorManager = new MonitorManager(caseViewer, serverApi.recpath);
 		}
 
 		return new AssureIt.SideMenuModel('#', 'Monitors', "monitors", "glyphicon-list-alt", (ev:Event)=>{

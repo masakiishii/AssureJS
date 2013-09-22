@@ -1,5 +1,5 @@
 $(function () {
-    var serverApi = new AssureIt.ServerAPI('', true);
+    var serverApi = new AssureIt.ServerAPI('', 'http://54.250.206.119/rec/api/2.0/');
     var pluginManager = new AssureIt.PlugInManager('');
     pluginManager.SetPlugIn("menu", new MenuBarPlugIn(pluginManager));
     pluginManager.SetPlugIn("scale", new ScalePlugIn(pluginManager));
