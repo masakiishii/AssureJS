@@ -163,7 +163,7 @@ var MenuBarActionPlugIn = (function (_super) {
         var self = this;
 
         $('.node').unbind('mouseenter').unbind('mouseleave');
-        $('.node').hover(function () {
+        var appendMenu = function () {
             var node = $(this);
             if (caseViewer.Screen.GetScale() < 1)
                 return;
@@ -205,11 +205,14 @@ var MenuBarActionPlugIn = (function (_super) {
                 onReady: refresh
             });
             menuBar.menu.click(refresh);
-        }, function () {
+        };
+        var removeMenu = function () {
             self.timeoutId = setTimeout(function () {
                 $('#menu').remove();
             }, 10);
-        });
+        };
+        $('.node').hover(appendMenu, removeMenu);
+        $('.node').bind({ 'touchstart': removeMenu, 'touchend': appendMenu });
         return true;
     };
 

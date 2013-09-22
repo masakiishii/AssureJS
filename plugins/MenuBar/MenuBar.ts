@@ -177,7 +177,7 @@ class MenuBarActionPlugIn extends AssureIt.ActionPlugIn {
 		var self = this;
 
 		$('.node').unbind('mouseenter').unbind('mouseleave'); // FIXME: this line may cause other plugin's event handler.
-		$('.node').hover(function () {
+		var appendMenu = function () {
 			var node = $(this);
 			if (caseViewer.Screen.GetScale() < 1) return; /* Menu bar is enable only if the scale is normal */
 			var refresh = () => {
@@ -217,11 +217,14 @@ class MenuBarActionPlugIn extends AssureIt.ActionPlugIn {
 				onReady: refresh,
 			});
 			menuBar.menu.click(refresh);
-		}, function () { /* FIXME: don't use setTimeout() */
+		}
+		var removeMenu = function () { /* FIXME: don't use setTimeout() */
 			self.timeoutId = setTimeout(function() {
 				$('#menu').remove();
 			}, 10);
-		});
+		};
+		$('.node').hover(appendMenu, removeMenu);
+		$('.node').bind({'touchstart': removeMenu, 'touchend': appendMenu});
 		return true;
 	}
 
